@@ -38,9 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       title: Text(
         '${AppConstants.appName} [DEV MODE]',
-        style: AppTextStyles.headlineMedium.copyWith(
-          color: AppColors.white,
-        ),
+        style: AppTextStyles.headlineMedium.copyWith(color: AppColors.white),
       ),
       backgroundColor: AppColors.primary,
       iconTheme: const IconThemeData(color: AppColors.white),

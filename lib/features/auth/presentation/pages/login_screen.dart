@@ -2,6 +2,7 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -19,16 +20,41 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordObscured = true;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _requestLocationPermission();
+    });
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  Future<void> _requestLocationPermission() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        await Geolocator.requestPermission();
+      }
+    } catch (e) {
+      debugPrint('Error requesting location permission: $e');
+    }
+  }
+
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
     FocusScope.of(context).unfocus();
+    await _requestLocationPermission();
+
+    if (!mounted) return;
     final authProvider = context.read<AuthProvider>();
 
     final success = await authProvider.login(
@@ -49,7 +75,10 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authProvider.errorMessage ?? "Login gagal. Periksa kembali akun Anda."),
+            content: Text(
+              authProvider.errorMessage ??
+                  "Login gagal. Periksa kembali akun Anda.",
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -65,7 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 32.0,
+            ),
             child: Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
                 return Form(
@@ -84,7 +116,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.15),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.15,
+                                ),
                                 blurRadius: 20,
                                 offset: const Offset(0, 8),
                               ),
@@ -97,18 +131,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 64,
                               height: 64,
                               fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => const Icon(
-                                Icons.location_on_rounded,
-                                size: 48,
-                                color: AppColors.primary,
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.location_on_rounded,
+                                    size: 48,
+                                    color: AppColors.primary,
+                                  ),
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Selamat Datang Kembali',
+                        'Selamat Datang',
                         style: AppTextStyles.headlineLarge.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
@@ -150,20 +185,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan username',
-                                  prefixIcon: const Icon(Icons.person_outline, color: AppColors.grey600),
+                                  prefixIcon: const Icon(
+                                    Icons.person_outline,
+                                    color: AppColors.grey600,
+                                  ),
                                   filled: true,
                                   fillColor: AppColors.grey50,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(color: AppColors.grey300),
+                                    borderSide: BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(color: AppColors.grey300),
+                                    borderSide: BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.primary,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
                                 validator: (value) {
@@ -188,7 +233,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 obscureText: _isPasswordObscured,
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan kata sandi',
-                                  prefixIcon: const Icon(Icons.lock_outline, color: AppColors.grey600),
+                                  prefixIcon: const Icon(
+                                    Icons.lock_outline,
+                                    color: AppColors.grey600,
+                                  ),
                                   suffixIcon: IconButton(
                                     icon: Icon(
                                       _isPasswordObscured
@@ -198,7 +246,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        _isPasswordObscured = !_isPasswordObscured;
+                                        _isPasswordObscured =
+                                            !_isPasswordObscured;
                                       });
                                     },
                                   ),
@@ -206,15 +255,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fillColor: AppColors.grey50,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(color: AppColors.grey300),
+                                    borderSide: BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(color: AppColors.grey300),
+                                    borderSide: BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.primary,
+                                      width: 2,
+                                    ),
                                   ),
                                 ),
                                 validator: (value) {
@@ -231,11 +287,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               // Login Button
                               ElevatedButton(
-                                onPressed: authProvider.isLoading ? null : _handleLogin,
+                                onPressed: authProvider.isLoading
+                                    ? null
+                                    : _handleLogin,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: AppColors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -247,15 +307,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                         width: 22,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2.5,
-                                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                AppColors.white,
+                                              ),
                                         ),
                                       )
                                     : Text(
                                         'MASUK',
-                                        style: AppTextStyles.labelLarge.copyWith(
-                                          color: AppColors.white,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        style: AppTextStyles.labelLarge
+                                            .copyWith(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                               ),
                             ],

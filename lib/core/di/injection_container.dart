@@ -6,6 +6,11 @@ import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/provider/home_provider.dart';
+import 'package:akar/features/tracking/data/datasources/tracking_remote_datasource.dart';
+import 'package:akar/features/tracking/data/repositories/tracking_repository_impl.dart';
+import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
+import 'package:akar/features/tracking/domain/usecases/send_location_usecase.dart';
+import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,18 +31,24 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<TrackingRemoteDatasource>(
+    () => TrackingRemoteDatasourceImpl(),
+  );
 
   // ---------------------- Repositories ----------------------
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(
-      remoteDatasource: sl(),
-      localDatasource: sl(),
-    ),
+    () => AuthRepositoryImpl(remoteDatasource: sl(), localDatasource: sl()),
+  );
+  sl.registerLazySingleton<TrackingRepository>(
+    () => TrackingRepositoryImpl(remoteDatasource: sl()),
   );
 
   // ---------------------- Use Cases ----------------------
   sl.registerLazySingleton<LoginUsecase>(() => LoginUsecase(sl()));
   sl.registerLazySingleton<RegisterUsecase>(() => RegisterUsecase(sl()));
+  sl.registerLazySingleton<SendLocationUsecase>(
+    () => SendLocationUsecase(sl()),
+  );
 
   // ---------------------- Providers ----------------------
   sl.registerLazySingleton<AuthProvider>(
@@ -48,4 +59,7 @@ Future<void> init() async {
     ),
   );
   sl.registerLazySingleton<HomeProvider>(() => HomeProvider());
+  sl.registerLazySingleton<TrackingProvider>(
+    () => TrackingProvider(sendLocationUsecase: sl(), sharedPreferences: sl()),
+  );
 }

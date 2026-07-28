@@ -19,11 +19,11 @@ abstract class AuthModel with _$AuthModel {
       _$AuthModelFromJson(json);
 
   AuthEntity toEntity() => AuthEntity(
-        message: message,
-        accessToken: accessToken,
-        tokenType: tokenType,
-        user: user.toEntity(),
-      );
+    message: message,
+    accessToken: accessToken,
+    tokenType: tokenType,
+    user: user.toEntity(),
+  );
 }
 
 @freezed
@@ -35,7 +35,7 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "name") String? name,
     @JsonKey(name: "email") String? email,
     @JsonKey(name: "username") String? username,
-    @JsonKey(name: "phone_number") String? phoneNumber,
+    @JsonKey(name: "phone") String? phoneNumber,
     @JsonKey(name: "nik") String? nik,
     @JsonKey(name: "latitude") double? latitude,
     @JsonKey(name: "longitude") double? longitude,
@@ -49,32 +49,32 @@ abstract class UserModel with _$UserModel {
       _$UserModelFromJson(json);
 
   UserEntity toEntity() => UserEntity(
-        id: id,
-        name: name,
-        email: email,
-        username: username,
-        phoneNumber: phoneNumber,
-        nik: nik,
-        latitude: latitude,
-        longitude: longitude,
-        emailVerifiedAt: emailVerifiedAt,
-        createdAt: createdAt,
-        updatedAt: updatedAt,
-        villageMembersId: villageMembersId,
-      );
+    id: id,
+    name: name,
+    email: email,
+    username: username,
+    phoneNumber: phoneNumber,
+    nik: nik,
+    latitude: latitude,
+    longitude: longitude,
+    emailVerifiedAt: emailVerifiedAt,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    villageMembersId: villageMembersId,
+  );
 
   factory UserModel.fromEntity(UserEntity entity) => UserModel(
-        id: entity.id,
-        name: entity.name,
-        email: entity.email,
-        username: entity.username,
-        phoneNumber: entity.phoneNumber,
-        nik: entity.nik,
-        latitude: entity.latitude,
-        longitude: entity.longitude,
-        emailVerifiedAt: entity.emailVerifiedAt,
-        createdAt: entity.createdAt,
-        updatedAt: entity.updatedAt,
-        villageMembersId: entity.villageMembersId,
-      );
+    id: entity.id,
+    name: entity.name,
+    email: entity.email,
+    username: entity.username,
+    phoneNumber: entity.phoneNumber,
+    nik: entity.nik,
+    latitude: entity.latitude,
+    longitude: entity.longitude,
+    emailVerifiedAt: entity.emailVerifiedAt,
+    createdAt: entity.createdAt,
+    updatedAt: entity.updatedAt,
+    villageMembersId: entity.villageMembersId,
+  );
 }

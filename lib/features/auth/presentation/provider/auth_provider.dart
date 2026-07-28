@@ -29,7 +29,8 @@ class AuthProvider extends ChangeNotifier {
   String? get successMessage => _successMessage;
   UserEntity? get currentUser => _currentUser;
   String? get token => _token;
-  bool get isLoggedIn => _token != null && _token!.isNotEmpty && _currentUser != null;
+  bool get isLoggedIn =>
+      _token != null && _token!.isNotEmpty && _currentUser != null;
 
   void clearMessages() {
     _errorMessage = null;
@@ -131,7 +132,8 @@ class AuthProvider extends ChangeNotifier {
         if (authEntity.accessToken.isNotEmpty) {
           _currentUser = authEntity.user;
           _token = authEntity.accessToken;
-          DioClient.instance.options.headers['Authorization'] = 'Bearer $_token';
+          DioClient.instance.options.headers['Authorization'] =
+              'Bearer $_token';
         }
         isSuccess = true;
       },

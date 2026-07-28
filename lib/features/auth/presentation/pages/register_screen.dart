@@ -58,7 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Layanan lokasi (GPS) belum aktif. Aktifkan GPS Anda.'),
+              content: Text(
+                'Layanan lokasi (GPS) belum aktif. Aktifkan GPS Anda.',
+              ),
               backgroundColor: AppColors.warning,
             ),
           );
@@ -86,7 +88,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Izin lokasi ditolak secara permanen. Mohon ubah di Pengaturan.'),
+              content: Text(
+                'Izin lokasi ditolak secara permanen. Mohon ubah di Pengaturan.',
+              ),
               backgroundColor: AppColors.error,
             ),
           );
@@ -135,7 +139,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authProvider.successMessage ?? "Registrasi berhasil!"),
+            content: Text(
+              authProvider.successMessage ?? "Registrasi berhasil!",
+            ),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -148,7 +154,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authProvider.errorMessage ?? "Registrasi gagal. Coba lagi."),
+            content: Text(
+              authProvider.errorMessage ?? "Registrasi gagal. Coba lagi.",
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -196,8 +204,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               controller: _nameController,
                               textCapitalization: TextCapitalization.words,
-                              decoration: _inputDecoration('Masukkan nama lengkap', Icons.person_outline),
-                              validator: (val) => val == null || val.trim().isEmpty ? 'Nama wajib diisi' : null,
+                              decoration: _inputDecoration(
+                                'Masukkan nama lengkap',
+                                Icons.person_outline,
+                              ),
+                              validator: (val) =>
+                                  val == null || val.trim().isEmpty
+                                  ? 'Nama wajib diisi'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
 
@@ -206,20 +220,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               controller: _phoneController,
                               keyboardType: TextInputType.phone,
-                              decoration: _inputDecoration('Contoh: 08123456789', Icons.phone_android_outlined),
-                              validator: (val) => val == null || val.trim().isEmpty ? 'Nomor telepon wajib diisi' : null,
+                              decoration: _inputDecoration(
+                                'Contoh: 08123456789',
+                                Icons.phone_android_outlined,
+                              ),
+                              validator: (val) =>
+                                  val == null || val.trim().isEmpty
+                                  ? 'Nomor telepon wajib diisi'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
 
                             // NIK
-                            _buildTextFieldLabel('NIK (Nomor Induk Kependudukan)'),
+                            _buildTextFieldLabel(
+                              'NIK (Nomor Induk Kependudukan)',
+                            ),
                             TextFormField(
                               controller: _nikController,
                               keyboardType: TextInputType.number,
-                              decoration: _inputDecoration('16 digit NIK', Icons.badge_outlined),
+                              decoration: _inputDecoration(
+                                '16 digit NIK',
+                                Icons.badge_outlined,
+                              ),
                               validator: (val) {
-                                if (val == null || val.trim().isEmpty) return 'NIK wajib diisi';
-                                if (val.trim().length < 16) return 'NIK minimal 16 digit';
+                                if (val == null || val.trim().isEmpty)
+                                  return 'NIK wajib diisi';
+                                if (val.trim().length < 16)
+                                  return 'NIK minimal 16 digit';
                                 return null;
                               },
                             ),
@@ -229,8 +256,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Username'),
                             TextFormField(
                               controller: _usernameController,
-                              decoration: _inputDecoration('Masukkan username unik', Icons.alternate_email),
-                              validator: (val) => val == null || val.trim().isEmpty ? 'Username wajib diisi' : null,
+                              decoration: _inputDecoration(
+                                'Masukkan username unik',
+                                Icons.alternate_email,
+                              ),
+                              validator: (val) =>
+                                  val == null || val.trim().isEmpty
+                                  ? 'Username wajib diisi'
+                                  : null,
                             ),
                             const SizedBox(height: 16),
 
@@ -239,38 +272,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
-                              decoration: _inputDecoration('contoh@email.com', Icons.email_outlined),
+                              decoration: _inputDecoration(
+                                'contoh@email.com',
+                                Icons.email_outlined,
+                              ),
                               validator: (val) {
-                                if (val == null || val.trim().isEmpty) return 'Email wajib diisi';
-                                if (!val.contains('@') || !val.contains('.')) return 'Format email tidak valid';
+                                if (val == null || val.trim().isEmpty)
+                                  return 'Email wajib diisi';
+                                if (!val.contains('@') || !val.contains('.'))
+                                  return 'Format email tidak valid';
                                 return null;
                               },
                             ),
                             const SizedBox(height: 16),
-
-
 
                             // Password
                             _buildTextFieldLabel('Kata Sandi'),
                             TextFormField(
                               controller: _passwordController,
                               obscureText: _isPasswordObscured,
-                              decoration: _inputDecoration('Minimal 6 karakter', Icons.lock_outline).copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _isPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                    color: AppColors.grey600,
+                              decoration:
+                                  _inputDecoration(
+                                    'Minimal 6 karakter',
+                                    Icons.lock_outline,
+                                  ).copyWith(
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isPasswordObscured
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: AppColors.grey600,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isPasswordObscured =
+                                              !_isPasswordObscured;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isPasswordObscured = !_isPasswordObscured;
-                                    });
-                                  },
-                                ),
-                              ),
                               validator: (val) {
-                                if (val == null || val.isEmpty) return 'Kata sandi wajib diisi';
-                                if (val.length < 6) return 'Kata sandi minimal 6 karakter';
+                                if (val == null || val.isEmpty)
+                                  return 'Kata sandi wajib diisi';
+                                if (val.length < 6)
+                                  return 'Kata sandi minimal 6 karakter';
                                 return null;
                               },
                             ),
@@ -281,22 +326,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextFormField(
                               controller: _confirmPasswordController,
                               obscureText: _isConfirmPasswordObscured,
-                              decoration: _inputDecoration('Ulangi kata sandi', Icons.lock_reset_outlined).copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _isConfirmPasswordObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                                    color: AppColors.grey600,
+                              decoration:
+                                  _inputDecoration(
+                                    'Ulangi kata sandi',
+                                    Icons.lock_reset_outlined,
+                                  ).copyWith(
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _isConfirmPasswordObscured
+                                            ? Icons.visibility_off_outlined
+                                            : Icons.visibility_outlined,
+                                        color: AppColors.grey600,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _isConfirmPasswordObscured =
+                                              !_isConfirmPasswordObscured;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isConfirmPasswordObscured = !_isConfirmPasswordObscured;
-                                    });
-                                  },
-                                ),
-                              ),
                               validator: (val) {
-                                if (val == null || val.isEmpty) return 'Konfirmasi kata sandi wajib diisi';
-                                if (val != _passwordController.text) return 'Konfirmasi kata sandi tidak cocok';
+                                if (val == null || val.isEmpty)
+                                  return 'Konfirmasi kata sandi wajib diisi';
+                                if (val != _passwordController.text)
+                                  return 'Konfirmasi kata sandi tidak cocok';
                                 return null;
                               },
                             ),
@@ -304,11 +358,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Register Submit Button
                             ElevatedButton(
-                              onPressed: authProvider.isLoading ? null : _handleRegister,
+                              onPressed: authProvider.isLoading
+                                  ? null
+                                  : _handleRegister,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: AppColors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -320,7 +378,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       width: 22,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2.5,
-                                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              AppColors.white,
+                                            ),
                                       ),
                                     )
                                   : Text(

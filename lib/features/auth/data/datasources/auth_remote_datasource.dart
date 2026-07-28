@@ -3,10 +3,7 @@ import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 
 abstract class AuthRemoteDatasource {
-  Future<AuthModel> login({
-    required String username,
-    required String password,
-  });
+  Future<AuthModel> login({required String username, required String password});
   Future<AuthModel> register({
     required String name,
     required String phoneNumber,

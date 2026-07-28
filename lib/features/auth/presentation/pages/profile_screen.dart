@@ -1,6 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,9 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _leftSwipeCount = 0;
   DateTime? _lastSwipeTime;
+
+  int _logoTapCount = 0;
+  DateTime? _lastLogoTapTime;
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     if (details.primaryVelocity != null && details.primaryVelocity! < -200) {
@@ -59,6 +63,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _onLogoTap() {
+    final now = DateTime.now();
+    if (_lastLogoTapTime != null &&
+        now.difference(_lastLogoTapTime!).inSeconds > 3) {
+      _logoTapCount = 0;
+    }
+    _lastLogoTapTime = now;
+    _logoTapCount++;
+
+    if (_logoTapCount >= 10) {
+      _logoTapCount = 0;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.tune_rounded, color: AppColors.white),
+              SizedBox(width: 8),
+              Text('Membuka Pengaturan Tracking...'),
+            ],
+          ),
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      _showTrackingConfigModal(context);
+    } else if (_logoTapCount >= 3) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Tekan logo $_logoTapCount/10 kali untuk Pengaturan Tracking',
+          ),
+          duration: const Duration(milliseconds: 700),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
     showDialog(
       context: context,
@@ -71,9 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text('Keluar Akun'),
           ],
         ),
-        content: const Text(
-          'Apakah Anda yakin ingin keluar dari akun?',
-        ),
+        content: const Text('Apakah Anda yakin ingin keluar dari akun?'),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -82,11 +125,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () => Navigator.pop(dialogContext),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textSecondary,
-                  side: BorderSide(color: AppColors.grey300),
+                  side: const BorderSide(color: AppColors.grey300),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   minimumSize: Size.zero,
                 ),
                 child: const Text('Batal'),
@@ -113,7 +159,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   minimumSize: Size.zero,
                 ),
                 child: const Text('Keluar'),
@@ -125,6 +174,257 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showTrackingConfigModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        return Consumer<TrackingProvider>(
+          builder: (context, trackingProvider, child) {
+            final intervals = [
+              {'value': 5, 'label': '5 Detik'},
+              {'value': 10, 'label': '10 Detik'},
+              {'value': 30, 'label': '30 Detik'},
+              {'value': 60, 'label': '1 Menit'},
+              {'value': 300, 'label': '5 Menit'},
+              {'value': 900, 'label': '15 Menit (Default)'},
+            ];
+
+            return Container(
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.satellite_alt_rounded,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Konfigurasi Tracking API',
+                            style: AppTextStyles.titleLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(modalContext),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 12),
+
+                  // Tracking Status Switch Card
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: trackingProvider.isTrackingActive
+                          ? AppColors.successLight.withValues(alpha: 0.15)
+                          : AppColors.grey200,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Background Tracking',
+                              style: AppTextStyles.bodyLarge.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              trackingProvider.isTrackingActive
+                                  ? 'Aktif (Mengirim otomatis ke API 24/7)'
+                                  : 'Dinonaktifkan',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: trackingProvider.isTrackingActive
+                                    ? AppColors.success
+                                    : AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Switch(
+                          value: trackingProvider.isTrackingActive,
+                          activeThumbColor: AppColors.primary,
+                          onChanged: (val) {
+                            if (val) {
+                              trackingProvider.startTracking();
+                            } else {
+                              trackingProvider.stopTracking();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Interval Selection
+                  Text(
+                    'Interval Pengiriman API',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.grey300),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: trackingProvider.intervalSeconds,
+                        isExpanded: true,
+                        items: intervals.map((item) {
+                          return DropdownMenuItem<int>(
+                            value: item['value'] as int,
+                            child: Text(
+                              item['label'] as String,
+                              style: AppTextStyles.bodyMedium,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            trackingProvider.changeInterval(val);
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Last Sent Status Log
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.grey100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.grey300),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Status Terakhir API:',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              trackingProvider.lastSuccess
+                                  ? Icons.check_circle_rounded
+                                  : Icons.error_rounded,
+                              size: 16,
+                              color: trackingProvider.lastSuccess
+                                  ? AppColors.success
+                                  : AppColors.error,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                trackingProvider.lastMessage ??
+                                    'Belum ada pengiriman ke API',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: trackingProvider.lastSuccess
+                                      ? AppColors.textPrimary
+                                      : AppColors.error,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (trackingProvider.lastLatitude != null &&
+                            trackingProvider.lastLongitude != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'Koordinat Terakhir: ${trackingProvider.lastLatitude}, ${trackingProvider.lastLongitude}',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Manual Trigger Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: trackingProvider.isSending
+                          ? null
+                          : () async {
+                              await trackingProvider.sendLocationNow();
+                            },
+                      icon: trackingProvider.isSending
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.send_rounded),
+                      label: Text(
+                        trackingProvider.isSending
+                            ? 'Mengirim...'
+                            : 'Kirim Lokasi Ke API Sekarang',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
@@ -133,6 +433,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
+          bottomNavigationBar: IgnorePointer(
+            child: BottomNavigationBar(
+              currentIndex: 0,
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: AppColors.white,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: AppColors.grey500,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              elevation: 8,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_rounded),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.analytics_outlined),
+                  label: 'Analisis',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.flash_on_outlined),
+                  label: 'Aktivasi',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  label: 'Profil',
+                ),
+              ],
+            ),
+          ),
           body: SafeArea(
             child: GestureDetector(
               onHorizontalDragEnd: _onHorizontalDragEnd,
@@ -183,7 +513,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: OutlinedButton.icon(
-                                    onPressed: () => context.goNamed('register'),
+                                    onPressed: () =>
+                                        context.goNamed('register'),
                                     icon: const Icon(Icons.person_add_outlined),
                                     label: const Text('Daftar'),
                                     style: OutlinedButton.styleFrom(
@@ -202,7 +533,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     )
                   : SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 12.0,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -246,36 +580,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
 
-                          // Header Logo & Branding Section
-                          Container(
-                            width: 88,
-                            height: 88,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.black.withValues(alpha: 0.08),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  'assets/logo.webp',
-                                  width: 72,
-                                  height: 72,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.location_on_rounded,
-                                      size: 56,
-                                      color: AppColors.primary,
-                                    );
-                                  },
+                          // Header Logo & Branding Section (Tapping Logo 10x unlocks Tracking Config)
+                          GestureDetector(
+                            onTap: _onLogoTap,
+                            behavior: HitTestBehavior.opaque,
+                            child: Container(
+                              width: 88,
+                              height: 88,
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(24),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.black.withValues(
+                                      alpha: 0.08,
+                                    ),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.asset(
+                                    'assets/logo.webp',
+                                    width: 72,
+                                    height: 72,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const Icon(
+                                        Icons.location_on_rounded,
+                                        size: 56,
+                                        color: AppColors.primary,
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -307,7 +647,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Data Diri Card
                           Card(
                             elevation: 3,
-                            shadowColor: AppColors.black.withValues(alpha: 0.08),
+                            shadowColor: AppColors.black.withValues(
+                              alpha: 0.08,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -334,7 +676,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     'Username',
                                     user.username,
                                   ),
-                                  _buildInfoRow(Icons.email, 'Email', user.email),
+                                  _buildInfoRow(
+                                    Icons.email,
+                                    'Email',
+                                    user.email,
+                                  ),
                                   _buildInfoRow(Icons.badge, 'NIK', user.nik),
                                   _buildInfoRow(
                                     Icons.phone,
@@ -357,7 +703,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildInfoRow(IconData icon, String label, String? value) {
-    final displayValue = (value != null && value.trim().isNotEmpty) ? value.trim() : '-';
+    final displayValue = (value != null && value.trim().isNotEmpty)
+        ? value.trim()
+        : '-';
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Row(
