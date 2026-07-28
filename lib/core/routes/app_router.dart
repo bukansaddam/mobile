@@ -1,3 +1,6 @@
+import 'package:akar/features/auth/presentation/pages/login_screen.dart';
+import 'package:akar/features/auth/presentation/pages/profile_screen.dart';
+import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/home/presentation/pages/setting_screen.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
@@ -11,6 +14,21 @@ class AppRouter {
         path: '/',
         name: 'splash',
         builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        name: 'register',
+        builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        name: 'profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/home',

@@ -36,18 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   PreferredSizeWidget _buildAppBar(HomeProvider provider) {
     return AppBar(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppConstants.appName,
-            style: AppTextStyles.headlineMedium.copyWith(
-              color: AppColors.white,
-            ),
-          ),
-        ],
+      title: Text(
+        '${AppConstants.appName} [DEV MODE]',
+        style: AppTextStyles.headlineMedium.copyWith(
+          color: AppColors.white,
+        ),
       ),
       backgroundColor: AppColors.primary,
+      iconTheme: const IconThemeData(color: AppColors.white),
     );
   }
 

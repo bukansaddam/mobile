@@ -2,6 +2,7 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/home/presentation/provider/home_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SettingScreenState extends State<SettingScreen> {
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       title: Text(
-        'Setting',
+        'Pengaturan',
         style: AppTextStyles.headlineMedium.copyWith(color: AppColors.white),
       ),
       iconTheme: const IconThemeData(color: AppColors.white),
@@ -42,12 +43,37 @@ class _SettingScreenState extends State<SettingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _buildProfileSection(context),
+          const SizedBox(height: 20),
           _buildTrackingControlSection(provider),
           const SizedBox(height: 20),
           _buildIntervalSection(provider),
           const SizedBox(height: 20),
           _buildBtnClear(provider, context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProfileSection(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+          child: const Icon(Icons.person, color: AppColors.primary),
+        ),
+        title: Text(
+          'Profil Saya',
+          style: AppTextStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          'Lihat informasi akun & token tersimpan',
+          style: AppTextStyles.bodySmall,
+        ),
+        trailing: const Icon(Icons.chevron_right, color: AppColors.grey600),
+        onTap: () => context.pushNamed('profile'),
       ),
     );
   }

@@ -32,3 +32,11 @@ class Failure {
   @override
   String toString() => 'Failure: $message';
 }
+
+class ServerFailure extends Failure {
+  const ServerFailure(super.message, {super.statusCode});
+}
+
+class CacheFailure extends Failure {
+  const CacheFailure(super.message, {super.statusCode});
+}

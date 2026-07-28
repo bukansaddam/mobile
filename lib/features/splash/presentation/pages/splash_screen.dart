@@ -1,8 +1,10 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -27,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _initAnimations();
     _startAnimations();
-    _navigateToHome();
+    _navigateToNextScreen();
   }
 
   void _initAnimations() {
@@ -95,12 +97,27 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
-  void _navigateToHome() {
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        context.goNamed('home');
+  Future<void> _navigateToNextScreen() async {
+    final startTime = DateTime.now();
+    final authProvider = context.read<AuthProvider>();
+
+    // Periksa status login dari SharedPreferences (token & user)
+    await authProvider.checkAuthStatus();
+
+    // Pastikan splash setidaknya tampil 2.5 detik untuk animasi yang halus
+    final elapsedMs = DateTime.now().difference(startTime).inMilliseconds;
+    final remainingMs = 2500 - elapsedMs;
+    if (remainingMs > 0) {
+      await Future.delayed(Duration(milliseconds: remainingMs));
+    }
+
+    if (mounted) {
+      if (authProvider.isLoggedIn) {
+        context.goNamed('profile');
+      } else {
+        context.goNamed('login');
       }
-    });
+    }
   }
 
   @override
