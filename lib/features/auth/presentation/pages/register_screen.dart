@@ -243,10 +243,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Icons.badge_outlined,
                               ),
                               validator: (val) {
-                                if (val == null || val.trim().isEmpty)
+                                if (val == null || val.trim().isEmpty) {
                                   return 'NIK wajib diisi';
-                                if (val.trim().length < 16)
+                                }
+                                if (val.trim().length < 16) {
                                   return 'NIK minimal 16 digit';
+                                }
                                 return null;
                               },
                             ),
@@ -277,10 +279,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 Icons.email_outlined,
                               ),
                               validator: (val) {
-                                if (val == null || val.trim().isEmpty)
+                                if (val == null || val.trim().isEmpty) {
                                   return 'Email wajib diisi';
-                                if (!val.contains('@') || !val.contains('.'))
+                                }
+                                if (!val.contains('@') || !val.contains('.')) {
                                   return 'Format email tidak valid';
+                                }
                                 return null;
                               },
                             ),
@@ -312,10 +316,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                               validator: (val) {
-                                if (val == null || val.isEmpty)
+                                if (val == null || val.isEmpty) {
                                   return 'Kata sandi wajib diisi';
-                                if (val.length < 6)
+                                }
+                                if (val.length < 6) {
                                   return 'Kata sandi minimal 6 karakter';
+                                }
                                 return null;
                               },
                             ),
@@ -347,10 +353,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                   ),
                               validator: (val) {
-                                if (val == null || val.isEmpty)
+                                if (val == null || val.isEmpty) {
                                   return 'Konfirmasi kata sandi wajib diisi';
-                                if (val != _passwordController.text)
+                                }
+                                if (val != _passwordController.text) {
                                   return 'Konfirmasi kata sandi tidak cocok';
+                                }
                                 return null;
                               },
                             ),

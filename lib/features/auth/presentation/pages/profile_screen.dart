@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +17,30 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  int _currentTabIndex = 0;
+
   int _leftSwipeCount = 0;
   DateTime? _lastSwipeTime;
 
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
+
+  late int _totalTugasCount;
+  late int _totalAgendaCount;
+  late int _totalLaporanCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateRandomCounts();
+  }
+
+  void _generateRandomCounts() {
+    final random = Random();
+    _totalTugasCount = random.nextInt(12) + 3;
+    _totalAgendaCount = random.nextInt(8) + 2;
+    _totalLaporanCount = random.nextInt(25) + 5;
+  }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     if (details.primaryVelocity != null && details.primaryVelocity! < -200) {
@@ -433,35 +455,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          bottomNavigationBar: IgnorePointer(
-            child: BottomNavigationBar(
-              currentIndex: 0,
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: AppColors.white,
-              selectedItemColor: AppColors.primary,
-              unselectedItemColor: AppColors.grey500,
-              selectedFontSize: 12,
-              unselectedFontSize: 12,
-              elevation: 8,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home_rounded),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.analytics_outlined),
-                  label: 'Analisis',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.flash_on_outlined),
-                  label: 'Aktivasi',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_rounded),
-                  label: 'Profil',
-                ),
-              ],
-            ),
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentTabIndex,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: AppColors.white,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: AppColors.grey500,
+            selectedFontSize: 12,
+            unselectedFontSize: 12,
+            elevation: 8,
+            onTap: (index) {
+              if (index == 0 || index == 3) {
+                setState(() {
+                  _currentTabIndex = index;
+                });
+              } else {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Menu belum tersedia'),
+                    duration: Duration(milliseconds: 900),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.analytics_outlined),
+                label: 'Analisis',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.flash_on_outlined),
+                label: 'Aktivasi',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline_rounded),
+                label: 'Profil',
+              ),
+            ],
           ),
           body: SafeArea(
             child: GestureDetector(
@@ -531,174 +567,331 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     )
-                  : SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20.0,
-                        vertical: 12.0,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Top Right 3-Dots Menu Button
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: PopupMenuButton<String>(
-                              icon: const Icon(
-                                Icons.more_vert,
-                                color: AppColors.grey800,
-                                size: 28,
-                              ),
-                              tooltip: 'Menu Opsional',
-                              onSelected: (value) {
-                                if (value == 'logout') {
-                                  _showLogoutDialog(context, authProvider);
-                                }
-                              },
-                              itemBuilder: (BuildContext context) => [
-                                PopupMenuItem<String>(
-                                  value: 'logout',
-                                  child: Row(
-                                    children: const [
-                                      Icon(
-                                        Icons.logout_rounded,
-                                        color: AppColors.error,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 10),
-                                      Text(
-                                        'Keluar Akun',
-                                        style: TextStyle(
-                                          color: AppColors.error,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Header Logo & Branding Section (Tapping Logo 10x unlocks Tracking Config)
-                          GestureDetector(
-                            onTap: _onLogoTap,
-                            behavior: HitTestBehavior.opaque,
-                            child: Container(
-                              width: 88,
-                              height: 88,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(24),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withValues(
-                                      alpha: 0.08,
-                                    ),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.asset(
-                                    'assets/logo.webp',
-                                    width: 72,
-                                    height: 72,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(
-                                        Icons.location_on_rounded,
-                                        size: 56,
-                                        color: AppColors.primary,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            'A K A R',
-                            style: AppTextStyles.displayLarge.copyWith(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.textPrimary,
-                              letterSpacing: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'AKTIVASI KOMANDO AKAR RUMPUT',
-                            style: AppTextStyles.labelLarge.copyWith(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
-                              letterSpacing: 1.2,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 32),
-
-                          // Data Diri Card
-                          Card(
-                            elevation: 3,
-                            shadowColor: AppColors.black.withValues(
-                              alpha: 0.08,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Data Diri',
-                                    style: AppTextStyles.titleLarge.copyWith(
-                                      color: AppColors.textPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Divider(height: 24),
-                                  _buildInfoRow(
-                                    Icons.person,
-                                    'Nama Lengkap',
-                                    user.name,
-                                  ),
-                                  _buildInfoRow(
-                                    Icons.alternate_email,
-                                    'Username',
-                                    user.username,
-                                  ),
-                                  _buildInfoRow(
-                                    Icons.email,
-                                    'Email',
-                                    user.email,
-                                  ),
-                                  _buildInfoRow(Icons.badge, 'NIK', user.nik),
-                                  _buildInfoRow(
-                                    Icons.phone,
-                                    'No. Telepon',
-                                    user.phoneNumber,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
+                  : IndexedStack(
+                      index: _currentTabIndex,
+                      children: [
+                        _buildHomePage(),
+                        _buildPlaceholderPage(
+                          'Analisis',
+                          Icons.analytics_outlined,
+                        ),
+                        _buildPlaceholderPage(
+                          'Aktivasi',
+                          Icons.flash_on_outlined,
+                        ),
+                        _buildProfilPage(user, authProvider),
+                      ],
                     ),
             ),
           ),
         );
       },
+    );
+  }
+
+  // --- HOME PAGE (INDEX 0) ---
+  Widget _buildHomePage() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Logo & Nama Apps (Tapping Logo 10x unlocks Tracking Config)
+          GestureDetector(
+            onTap: _onLogoTap,
+            behavior: HitTestBehavior.opaque,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.asset(
+                    'assets/logo.webp',
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.location_on_rounded,
+                        size: 52,
+                        color: AppColors.primary,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'A K A R',
+            style: AppTextStyles.displayLarge.copyWith(
+              fontSize: 34,
+              fontWeight: FontWeight.w900,
+              color: AppColors.textPrimary,
+              letterSpacing: 16,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'AKTIVASI KOMANDO AKAR RUMPUT',
+            style: AppTextStyles.labelLarge.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+              letterSpacing: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+
+          // 3 Cards Menurun dengan Angka Random Dinamis
+          _buildFullWidthCard(
+            title: 'Total Daftar Tugas',
+            count: '$_totalTugasCount',
+            subtitle: 'Daftar tugas aktif',
+            icon: Icons.assignment_outlined,
+            gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+          ),
+          const SizedBox(height: 16),
+          _buildFullWidthCard(
+            title: 'Total Agenda',
+            count: '$_totalAgendaCount',
+            subtitle: 'Agenda kegiatan mendatang',
+            icon: Icons.event_note_rounded,
+            gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+          ),
+          const SizedBox(height: 16),
+          _buildFullWidthCard(
+            title: 'Total Laporan',
+            count: '$_totalLaporanCount',
+            subtitle: 'Laporan telah terkirim',
+            icon: Icons.insert_drive_file_outlined,
+            gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  // --- PROFIL PAGE (INDEX 3) ---
+  Widget _buildProfilPage(UserEntity user, AuthProvider authProvider) {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Title Profile & 3-Dots Menu Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Profil',
+                style: AppTextStyles.displayMedium.copyWith(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              PopupMenuButton<String>(
+                icon: const Icon(
+                  Icons.more_vert,
+                  color: AppColors.grey800,
+                  size: 28,
+                ),
+                tooltip: 'Menu Opsional',
+                onSelected: (value) {
+                  if (value == 'logout') {
+                    _showLogoutDialog(context, authProvider);
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem<String>(
+                    value: 'logout',
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.logout_rounded,
+                          color: AppColors.error,
+                          size: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Keluar Akun',
+                          style: TextStyle(
+                            color: AppColors.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // Data Diri Card
+          Card(
+            elevation: 3,
+            shadowColor: AppColors.black.withValues(alpha: 0.08),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Data Diri',
+                    style: AppTextStyles.headlineSmall.copyWith(
+                      fontSize: 20,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Divider(height: 24),
+                  _buildInfoRow(Icons.person, 'Nama Lengkap', user.name),
+                  _buildInfoRow(
+                    Icons.alternate_email,
+                    'Username',
+                    user.username,
+                  ),
+                  _buildInfoRow(Icons.email, 'Email', user.email),
+                  _buildInfoRow(Icons.badge, 'NIK', user.nik),
+                  _buildInfoRow(Icons.phone, 'No. Telepon', user.phoneNumber),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderPage(String title, IconData icon) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 70,
+              color: AppColors.primary.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: AppTextStyles.headlineSmall.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Fitur $title dalam tahap pengembangan.',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFullWidthCard({
+    required String title,
+    required String count,
+    required String subtitle,
+    required IconData icon,
+    required List<Color> gradientColors,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: gradientColors.first.withValues(alpha: 0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: AppColors.white, size: 30),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTextStyles.titleLarge.copyWith(
+                      fontSize: 18,
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontSize: 13,
+                      color: AppColors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              count,
+              style: AppTextStyles.headlineLarge.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.white,
+                fontSize: 34,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
