@@ -5,6 +5,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def gmp_key = properties.getProperty('GMP_KEY')
+
 android {
     namespace = "com.akar.akar.akar"
     compileSdk = flutter.compileSdkVersion

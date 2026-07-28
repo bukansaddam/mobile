@@ -1,5 +1,6 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/features/home/presentation/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,9 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        // Register feature providers here when features are added
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => di.sl<HomeProvider>())],
       child: MaterialApp.router(
         title: AppConstants.appName,
         debugShowCheckedModeBanner: false,
