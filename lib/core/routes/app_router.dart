@@ -1,5 +1,6 @@
 import 'package:akar/features/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/home/presentation/pages/setting_screen.dart';
+import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -8,7 +9,12 @@ class AppRouter {
     routes: [
       GoRoute(
         path: '/',
-        name: 'initial',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/home',
+        name: 'home',
         builder: (context, state) => const HomeScreen(),
         routes: [
           GoRoute(

@@ -2,7 +2,7 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'Akar';
+  static const String appName = 'AKAR';
   static const String appVersion = '1.0.0';
 
   // Storage Keys
