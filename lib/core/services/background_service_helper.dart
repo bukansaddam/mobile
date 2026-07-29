@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
+import '../network/logging_interceptor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -77,6 +79,7 @@ class BackgroundServiceHelper {
         },
       ),
     );
+    dio.interceptors.add(LoggingInterceptor());
 
     if (service is AndroidServiceInstance) {
       service.on('setAsForeground').listen((event) {
@@ -99,7 +102,7 @@ class BackgroundServiceHelper {
     Timer? timer;
     bool isExecRunning = false;
 
-    Future<void> sendLocationUpdate() async {
+    Future<void> sendLocationUpdate({bool force = false}) async {
       if (isExecRunning) return;
       isExecRunning = true;
 
@@ -107,6 +110,25 @@ class BackgroundServiceHelper {
         final updatedPrefs = await SharedPreferences.getInstance();
         isTrackingActive = updatedPrefs.getBool('isTrackingActive') ?? true;
         if (!isTrackingActive) return;
+
+        currentIntervalSeconds =
+            updatedPrefs.getInt('trackingIntervalSeconds') ?? currentIntervalSeconds;
+
+        // Jika tidak dipaksa (force), cek apakah interval waktu dari pengiriman terakhir sudah tercapai
+        if (!force) {
+          final lastTimeStr = updatedPrefs.getString('LAST_TRACKING_TIME');
+          if (lastTimeStr != null) {
+            final lastTime = DateTime.tryParse(lastTimeStr);
+            if (lastTime != null) {
+              final elapsedSeconds =
+                  DateTime.now().difference(lastTime).inSeconds;
+              if (elapsedSeconds < currentIntervalSeconds) {
+                // Interval belum tercapai, lewati pengiriman API
+                return;
+              }
+            }
+          }
+        }
 
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) return;
@@ -179,7 +201,7 @@ class BackgroundServiceHelper {
       currentIntervalSeconds = seconds;
 
       // Execute immediately on timer start/reset so location sends right away
-      sendLocationUpdate();
+      sendLocationUpdate(force: true);
 
       timer = Timer.periodic(Duration(seconds: seconds), (_) {
         sendLocationUpdate();
@@ -189,6 +211,21 @@ class BackgroundServiceHelper {
 
     // Start initial timer
     resetTimer(currentIntervalSeconds);
+
+    // On iOS, active background location stream with allowsBackgroundLocationUpdates is required
+    // to prevent iOS from suspending the Dart isolate in background.
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      Geolocator.getPositionStream(
+        locationSettings: AppleSettings(
+          accuracy: LocationAccuracy.medium,
+          allowBackgroundLocationUpdates: true,
+          showBackgroundLocationIndicator: true,
+          pauseLocationUpdatesAutomatically: false,
+        ),
+      ).listen((Position position) {
+        sendLocationUpdate();
+      });
+    }
 
     // Listen for live interval change events from main UI
     service.on('updateInterval').listen((event) {

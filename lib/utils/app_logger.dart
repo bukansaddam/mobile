@@ -4,11 +4,12 @@ class AppLogger {
   AppLogger._();
 
   static final Logger _logger = Logger(
+    filter: ProductionFilter(),
     printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 8,
       lineLength: 120,
-      colors: true,
+      colors: false,
       printEmojis: true,
       dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
     ),
