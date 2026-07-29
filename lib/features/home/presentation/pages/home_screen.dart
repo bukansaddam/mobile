@@ -4,6 +4,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
 import 'package:akar/features/home/presentation/widgets/home_summary_card.dart';
+import 'package:akar/features/home/presentation/widgets/notification_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
@@ -93,7 +94,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            actions: const [],
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () => NotificationModalSheet.show(context),
+                      icon: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: AppColors.textPrimary,
+                        size: 26,
+                      ),
+                      tooltip: 'Notifikasi Kegiatan',
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: AppColors.error,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: const Text(
+                          '5',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),

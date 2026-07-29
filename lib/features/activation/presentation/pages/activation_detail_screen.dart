@@ -5,6 +5,7 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
+import 'package:akar/features/activation/presentation/widgets/activation_detail_modal.dart';
 import 'package:akar/features/activation/presentation/widgets/add_report_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -74,6 +75,30 @@ class ActivationDetailScreen extends StatelessWidget {
                 fontSize: 18,
               ),
             ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.grey300),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.info_outline_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
+                    onPressed: () =>
+                        ActivationDetailModal.show(context, activity),
+                    tooltip: 'Informasi Ringkasan Kegiatan',
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+            ],
           ),
           bottomNavigationBar: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -131,18 +156,7 @@ class ActivationDetailScreen extends StatelessWidget {
                 const SizedBox(height: 20),
 
                 _buildAddressSection(activity),
-                const SizedBox(height: 20),
-
-                if (activity.description != null &&
-                    activity.description!.isNotEmpty) ...[
-                  _buildDescriptionSection(activity),
-                  const SizedBox(height: 20),
-                ],
-
-                if (activity.notes != null && activity.notes!.isNotEmpty) ...[
-                  _buildNotesSection(activity),
-                  const SizedBox(height: 24),
-                ],
+                const SizedBox(height: 24),
 
                 _buildReportsSection(context, activity),
                 const SizedBox(height: 32),
@@ -234,7 +248,16 @@ class ActivationDetailScreen extends StatelessWidget {
     final endDateStr = dateFormat.format(activity.endDate);
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          'Tenggat Waktu',
+          style: AppTextStyles.labelMedium.copyWith(
+            color: AppColors.grey600,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -360,74 +383,6 @@ class ActivationDetailScreen extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDescriptionSection(ActivationActivity activity) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Deskripsi Kegiatan',
-          style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          activity.description!,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-            height: 1.45,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNotesSection(ActivationActivity activity) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Catatan Khusus',
-          style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.warningLight.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(
-                Icons.info_outline_rounded,
-                color: AppColors.warning,
-                size: 20,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  activity.notes!,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textPrimary,
-                    height: 1.35,
-                  ),
-                ),
-              ),
-            ],
-          ),
         ),
       ],
     );

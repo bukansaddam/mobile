@@ -193,16 +193,19 @@ class BackgroundServiceHelper {
 
         String errorMessage = e.toString();
         if (e is DioException) {
-          final serverMsg = e.response?.data?['message'] ??
+          final serverMsg =
+              e.response?.data?['message'] ??
               e.response?.data?['meta']?['message'];
           if (serverMsg != null && serverMsg.toString().trim().isNotEmpty) {
             errorMessage = serverMsg.toString();
           } else if (e.response?.statusCode == 422) {
             errorMessage = 'Format/data lokasi ditolak server (Error 422)';
           } else if (e.response?.statusCode == 401) {
-            errorMessage = 'Sesi telah berakhir, silakan login ulang (Error 401)';
+            errorMessage =
+                'Sesi telah berakhir, silakan login ulang (Error 401)';
           } else if (e.response?.statusCode != null) {
-            errorMessage = 'Gagal mengirim lokasi (Error ${e.response?.statusCode})';
+            errorMessage =
+                'Gagal mengirim lokasi (Error ${e.response?.statusCode})';
           } else {
             errorMessage = 'Koneksi ke server terputus';
           }
@@ -232,30 +235,34 @@ class BackgroundServiceHelper {
     // On iOS, active background location stream with allowsBackgroundLocationUpdates is required
     // to prevent iOS from suspending the Dart isolate in background.
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      Geolocator.checkPermission().then((permission) {
-        if (permission == LocationPermission.always ||
-            permission == LocationPermission.whileInUse) {
-          Geolocator.getPositionStream(
-            locationSettings: AppleSettings(
-              accuracy: LocationAccuracy.medium,
-              allowBackgroundLocationUpdates: true,
-              showBackgroundLocationIndicator: true,
-              pauseLocationUpdatesAutomatically: false,
-            ),
-          ).listen(
-            (Position position) {
-              sendLocationUpdate();
-            },
-            onError: (error) {
-              debugPrint('Error listening to iOS location stream: $error');
-            },
-          );
-        } else {
-          debugPrint('Izin lokasi belum ada di iOS, geolocator stream ditunda');
-        }
-      }).catchError((error) {
-        debugPrint('Gagal mengecek izin lokasi iOS: $error');
-      });
+      Geolocator.checkPermission()
+          .then((permission) {
+            if (permission == LocationPermission.always ||
+                permission == LocationPermission.whileInUse) {
+              Geolocator.getPositionStream(
+                locationSettings: AppleSettings(
+                  accuracy: LocationAccuracy.medium,
+                  allowBackgroundLocationUpdates: true,
+                  showBackgroundLocationIndicator: true,
+                  pauseLocationUpdatesAutomatically: false,
+                ),
+              ).listen(
+                (Position position) {
+                  sendLocationUpdate();
+                },
+                onError: (error) {
+                  debugPrint('Error listening to iOS location stream: $error');
+                },
+              );
+            } else {
+              debugPrint(
+                'Izin lokasi belum ada di iOS, geolocator stream ditunda',
+              );
+            }
+          })
+          .catchError((error) {
+            debugPrint('Gagal mengecek izin lokasi iOS: $error');
+          });
     }
 
     // Listen for live interval change events from main UI

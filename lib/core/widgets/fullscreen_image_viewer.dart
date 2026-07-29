@@ -19,10 +19,8 @@ class FullscreenImageViewer extends StatelessWidget {
     return Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => FullscreenImageViewer(
-          imagePathOrUrl: imagePathOrUrl,
-          title: title,
-        ),
+        builder: (context) =>
+            FullscreenImageViewer(imagePathOrUrl: imagePathOrUrl, title: title),
         fullscreenDialog: true,
       ),
     );
@@ -55,7 +53,11 @@ class FullscreenImageViewer extends StatelessWidget {
           file,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) => const Center(
-            child: Icon(Icons.broken_image_rounded, color: Colors.white54, size: 64),
+            child: Icon(
+              Icons.broken_image_rounded,
+              color: Colors.white54,
+              size: 64,
+            ),
           ),
         );
       } else {
@@ -63,7 +65,11 @@ class FullscreenImageViewer extends StatelessWidget {
           imagePathOrUrl,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) => const Center(
-            child: Icon(Icons.broken_image_rounded, color: Colors.white54, size: 64),
+            child: Icon(
+              Icons.broken_image_rounded,
+              color: Colors.white54,
+              size: 64,
+            ),
           ),
         );
       }
@@ -82,9 +88,7 @@ class FullscreenImageViewer extends StatelessWidget {
               child: InteractiveViewer(
                 minScale: 0.8,
                 maxScale: 4.0,
-                child: Center(
-                  child: _buildImage(),
-                ),
+                child: Center(child: _buildImage()),
               ),
             ),
 

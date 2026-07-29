@@ -9,8 +9,9 @@ class ActivationProvider extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   ActivationCategory? get selectedCategoryFilter => _selectedCategoryFilter;
 
-  final List<ActivationActivity> _activities =
-      List.from(DummyActivationData.activities);
+  final List<ActivationActivity> _activities = List.from(
+    DummyActivationData.activities,
+  );
 
   List<ActivationActivity> get activities => _activities;
 
@@ -65,8 +66,8 @@ class ActivationProvider extends ChangeNotifier {
       final newStatus = (newCompleted >= old.totalSteps)
           ? ActivationStatus.selesai
           : (old.status == ActivationStatus.terjadwal
-              ? ActivationStatus.sedangBerjalan
-              : old.status);
+                ? ActivationStatus.sedangBerjalan
+                : old.status);
 
       _activities[index] = old.copyWith(
         reports: updatedReports,
