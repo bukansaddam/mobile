@@ -1,3 +1,4 @@
+import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
@@ -62,4 +63,5 @@ Future<void> init() async {
   sl.registerLazySingleton<TrackingProvider>(
     () => TrackingProvider(sendLocationUsecase: sl(), sharedPreferences: sl()),
   );
+  sl.registerLazySingleton<ActivationProvider>(() => ActivationProvider());
 }

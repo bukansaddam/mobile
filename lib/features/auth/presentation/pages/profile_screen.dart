@@ -1,6 +1,7 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/activation/presentation/pages/activation_screen.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
@@ -537,7 +538,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             unselectedFontSize: 12,
             elevation: 8,
             onTap: (index) {
-              if (index == 0 || index == 3) {
+              if (index == 0 || index == 2 || index == 3) {
                 setState(() {
                   _currentTabIndex = index;
                 });
@@ -662,10 +663,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Analisis',
                             Icons.analytics_outlined,
                           ),
-                          _buildPlaceholderPage(
-                            'Aktivasi',
-                            Icons.flash_on_outlined,
-                          ),
+                          const ActivationScreen(),
                           _buildProfilPage(user, authProvider),
                         ],
                       ),

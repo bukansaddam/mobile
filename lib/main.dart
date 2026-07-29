@@ -1,3 +1,4 @@
+import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/theme/app_theme.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<AuthProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<HomeProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<TrackingProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<ActivationProvider>()),
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,
