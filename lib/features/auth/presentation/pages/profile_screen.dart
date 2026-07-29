@@ -1,9 +1,10 @@
-import 'dart:math';
-
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
+import 'package:akar/features/home/presentation/widgets/home_summary_card.dart';
 import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -37,10 +38,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _generateRandomCounts() {
-    final random = Random();
-    _totalTugasCount = random.nextInt(12) + 3;
-    _totalAgendaCount = random.nextInt(8) + 2;
-    _totalLaporanCount = random.nextInt(25) + 5;
+    _totalTugasCount = 4;
+    _totalAgendaCount = 5;
+    _totalLaporanCount = 9;
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
@@ -252,7 +252,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Divider(),
                   const SizedBox(height: 12),
 
-                  // Tracking Status Switch Card
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -302,7 +301,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Interval Selection
                   Text(
                     'Interval Pengiriman API',
                     style: AppTextStyles.bodyMedium.copyWith(
@@ -343,7 +341,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Last Sent Status Log
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
@@ -426,7 +423,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Manual Trigger Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
@@ -478,6 +474,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
+          appBar: AppBar(
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: const Color(0xFFD6E6FE),
+            foregroundColor: AppColors.textPrimary,
+            centerTitle: false,
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.08),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/logo.webp',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.location_on_rounded,
+                        size: 20,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  AppConstants.appName,
+                  style: AppTextStyles.headlineSmall.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+            actions: const [],
+          ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentTabIndex,
             type: BottomNavigationBarType.fixed,
@@ -523,88 +572,104 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           body: SafeArea(
-            child: GestureDetector(
-              onHorizontalDragEnd: _onHorizontalDragEnd,
-              behavior: HitTestBehavior.translucent,
-              child: user == null
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.account_circle_outlined,
-                              size: 80,
-                              color: AppColors.grey400,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Sesi Pengguna Tidak Ditemukan',
-                              style: AppTextStyles.headlineSmall,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Silakan masuk terlebih dahulu untuk mengakses aplikasi.',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFFD6E6FE),
+                    Color(0xFFF0F6FF),
+                    AppColors.background,
+                  ],
+                  stops: [0.0, 0.25, 0.5],
+                ),
+              ),
+              child: GestureDetector(
+                onHorizontalDragEnd: _onHorizontalDragEnd,
+                behavior: HitTestBehavior.translucent,
+                child: user == null
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.account_circle_outlined,
+                                size: 80,
+                                color: AppColors.grey400,
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () => context.goNamed('login'),
-                                    icon: const Icon(Icons.login),
-                                    label: const Text('Masuk'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primary,
-                                      foregroundColor: AppColors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
+                              const SizedBox(height: 16),
+                              Text(
+                                'Sesi Pengguna Tidak Ditemukan',
+                                style: AppTextStyles.headlineSmall,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Silakan masuk terlebih dahulu untuk mengakses aplikasi.',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () => context.goNamed('login'),
+                                      icon: const Icon(Icons.login),
+                                      label: const Text('Masuk'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        foregroundColor: AppColors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: OutlinedButton.icon(
-                                    onPressed: () =>
-                                        context.goNamed('register'),
-                                    icon: const Icon(Icons.person_add_outlined),
-                                    label: const Text('Daftar'),
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: AppColors.primary,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () =>
+                                          context.goNamed('register'),
+                                      icon: const Icon(
+                                        Icons.person_add_outlined,
+                                      ),
+                                      label: const Text('Daftar'),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: AppColors.primary,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
+                      )
+                    : IndexedStack(
+                        index: _currentTabIndex,
+                        children: [
+                          _buildHomePage(),
+                          _buildPlaceholderPage(
+                            'Analisis',
+                            Icons.analytics_outlined,
+                          ),
+                          _buildPlaceholderPage(
+                            'Aktivasi',
+                            Icons.flash_on_outlined,
+                          ),
+                          _buildProfilPage(user, authProvider),
+                        ],
                       ),
-                    )
-                  : IndexedStack(
-                      index: _currentTabIndex,
-                      children: [
-                        _buildHomePage(),
-                        _buildPlaceholderPage(
-                          'Analisis',
-                          Icons.analytics_outlined,
-                        ),
-                        _buildPlaceholderPage(
-                          'Aktivasi',
-                          Icons.flash_on_outlined,
-                        ),
-                        _buildProfilPage(user, authProvider),
-                      ],
-                    ),
+              ),
             ),
           ),
         );
@@ -612,107 +677,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // --- HOME PAGE (INDEX 0) ---
   Widget _buildHomePage() {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Logo & Nama Apps (Tapping Logo 10x unlocks Tracking Config)
-          GestureDetector(
-            onTap: _onLogoTap,
-            behavior: HitTestBehavior.opaque,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/logo.webp',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.location_on_rounded,
-                        size: 52,
-                        color: AppColors.primary,
-                      );
-                    },
-                  ),
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        final user = authProvider.currentUser;
+
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: _onLogoTap,
+                  child: HomeProfileCard(user: user),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'A K A R',
-            style: AppTextStyles.displayLarge.copyWith(
-              fontSize: 34,
-              fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
-              letterSpacing: 16,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'AKTIVASI KOMANDO AKAR RUMPUT',
-            style: AppTextStyles.labelLarge.copyWith(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              letterSpacing: 1.2,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
-          // 3 Cards Menurun dengan Angka Random Dinamis
-          _buildFullWidthCard(
-            title: 'Total Daftar Tugas',
-            count: '$_totalTugasCount',
-            subtitle: 'Daftar tugas aktif',
-            icon: Icons.assignment_outlined,
-            gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+              Text(
+                'Ringkasan Kegiatan',
+                style: AppTextStyles.titleLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              HomeSummaryCard(
+                title: 'Total Daftar Tugas',
+                subtitle: 'Daftar tugas aktif',
+                count: '$_totalTugasCount',
+                icon: Icons.assignment_outlined,
+                gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+              ),
+              const SizedBox(height: 16),
+              HomeSummaryCard(
+                title: 'Total Agenda',
+                subtitle: 'Agenda kegiatan mendatang',
+                count: '$_totalAgendaCount',
+                icon: Icons.event_note_rounded,
+                gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+              ),
+              const SizedBox(height: 16),
+              HomeSummaryCard(
+                title: 'Total Laporan',
+                subtitle: 'Laporan telah terkirim',
+                count: '$_totalLaporanCount',
+                icon: Icons.insert_drive_file_outlined,
+                gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 16),
-          _buildFullWidthCard(
-            title: 'Total Agenda',
-            count: '$_totalAgendaCount',
-            subtitle: 'Agenda kegiatan mendatang',
-            icon: Icons.event_note_rounded,
-            gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
-          ),
-          const SizedBox(height: 16),
-          _buildFullWidthCard(
-            title: 'Total Laporan',
-            count: '$_totalLaporanCount',
-            subtitle: 'Laporan telah terkirim',
-            icon: Icons.insert_drive_file_outlined,
-            gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
-          ),
-          const SizedBox(height: 24),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  // --- PROFIL PAGE (INDEX 3) ---
   Widget _buildProfilPage(UserEntity user, AuthProvider authProvider) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -720,7 +744,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title Profile & 3-Dots Menu Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -771,7 +794,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Data Diri Card
           Card(
             elevation: 3,
             shadowColor: AppColors.black.withValues(alpha: 0.08),
@@ -838,79 +860,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: AppColors.textSecondary,
               ),
               textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFullWidthCard({
-    required String title,
-    required String count,
-    required String subtitle,
-    required IconData icon,
-    required List<Color> gradientColors,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: gradientColors.first.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, color: AppColors.white, size: 30),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontSize: 18,
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: 13,
-                      color: AppColors.white.withValues(alpha: 0.85),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              count,
-              style: AppTextStyles.headlineLarge.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.white,
-                fontSize: 34,
-              ),
             ),
           ],
         ),

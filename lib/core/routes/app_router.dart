@@ -6,6 +6,8 @@ import 'package:akar/features/home/presentation/pages/setting_screen.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:akar/features/home/presentation/pages/map_tracking_screen.dart';
+
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
@@ -41,6 +43,11 @@ class AppRouter {
             builder: (context, state) => const SettingScreen(),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/map-tracking',
+        name: 'map_tracking',
+        builder: (context, state) => const MapTrackingScreen(),
       ),
     ],
   );

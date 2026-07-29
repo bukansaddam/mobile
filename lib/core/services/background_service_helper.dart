@@ -112,7 +112,8 @@ class BackgroundServiceHelper {
         if (!isTrackingActive) return;
 
         currentIntervalSeconds =
-            updatedPrefs.getInt('trackingIntervalSeconds') ?? currentIntervalSeconds;
+            updatedPrefs.getInt('trackingIntervalSeconds') ??
+            currentIntervalSeconds;
 
         // Jika tidak dipaksa (force), cek apakah interval waktu dari pengiriman terakhir sudah tercapai
         if (!force) {
@@ -120,8 +121,9 @@ class BackgroundServiceHelper {
           if (lastTimeStr != null) {
             final lastTime = DateTime.tryParse(lastTimeStr);
             if (lastTime != null) {
-              final elapsedSeconds =
-                  DateTime.now().difference(lastTime).inSeconds;
+              final elapsedSeconds = DateTime.now()
+                  .difference(lastTime)
+                  .inSeconds;
               if (elapsedSeconds < currentIntervalSeconds) {
                 // Interval belum tercapai, lewati pengiriman API
                 return;
