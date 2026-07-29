@@ -42,12 +42,13 @@ class TrackingProvider extends ChangeNotifier {
     _loadBackgroundStatus();
 
     // Periodically sync UI state with background service logs
-    _statusRefreshTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+    _statusRefreshTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       _loadBackgroundStatus();
     });
   }
 
-  void _loadBackgroundStatus() {
+  Future<void> _loadBackgroundStatus() async {
+    await sharedPreferences.reload();
     _lastLatitude =
         sharedPreferences.getDouble('LAST_TRACKING_LAT') ?? _lastLatitude;
     _lastLongitude =
@@ -133,6 +134,8 @@ class TrackingProvider extends ChangeNotifier {
     final service = FlutterBackgroundService();
     if (!await service.isRunning()) {
       await service.startService();
+    } else {
+      service.invoke('updateStatus', {'active': true});
     }
     notifyListeners();
   }
@@ -140,6 +143,10 @@ class TrackingProvider extends ChangeNotifier {
   Future<void> stopTracking() async {
     _isTrackingActive = false;
     await sharedPreferences.setBool('isTrackingActive', false);
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      service.invoke('updateStatus', {'active': false});
+    }
     notifyListeners();
   }
 
@@ -147,6 +154,10 @@ class TrackingProvider extends ChangeNotifier {
     if (_intervalSeconds == seconds) return;
     _intervalSeconds = seconds;
     await sharedPreferences.setInt('trackingIntervalSeconds', seconds);
+    final service = FlutterBackgroundService();
+    if (await service.isRunning()) {
+      service.invoke('updateInterval', {'interval': seconds});
+    }
     notifyListeners();
   }
 

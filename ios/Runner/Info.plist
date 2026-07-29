@@ -69,8 +69,20 @@
 		<key>DART_DEFINES_MAPS_API_KEY</key>
 		<string>$(GOOGLE_MAPS_API_KEY)</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app requires access to your location to mark your route on the map.</string>
+		<string>Aplikasi membutuhkan akses lokasi untuk pelacakan komando AKAR.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>This app requires access to your location to mark your route on the map.</string>
+		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando AKAR.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando AKAR.</string>
+		<key>BGTaskSchedulerPermittedIdentifiers</key>
+		<array>
+			<string>dev.flutter.background.refresh</string>
+		</array>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>location</string>
+			<string>processing</string>
+		</array>
 	</dict>
 </plist>

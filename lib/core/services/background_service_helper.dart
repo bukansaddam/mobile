@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+@pragma('vm:entry-point')
 class BackgroundServiceHelper {
   BackgroundServiceHelper._();
 
@@ -68,8 +69,8 @@ class BackgroundServiceHelper {
     final Dio dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -92,25 +93,21 @@ class BackgroundServiceHelper {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    int intervalSeconds = prefs.getInt('trackingIntervalSeconds') ?? 900;
+    int currentIntervalSeconds = prefs.getInt('trackingIntervalSeconds') ?? 900;
     bool isTrackingActive = prefs.getBool('isTrackingActive') ?? true;
 
-    Timer.periodic(Duration(seconds: intervalSeconds), (timer) async {
-      // Re-check prefs per tick in case user updated settings
-      final updatedPrefs = await SharedPreferences.getInstance();
-      isTrackingActive = updatedPrefs.getBool('isTrackingActive') ?? true;
-      final newInterval = updatedPrefs.getInt('trackingIntervalSeconds') ?? 900;
+    Timer? timer;
+    bool isExecRunning = false;
 
-      if (newInterval != intervalSeconds) {
-        intervalSeconds = newInterval;
-        timer.cancel();
-        onStart(service);
-        return;
-      }
-
-      if (!isTrackingActive) return;
+    Future<void> sendLocationUpdate() async {
+      if (isExecRunning) return;
+      isExecRunning = true;
 
       try {
+        final updatedPrefs = await SharedPreferences.getInstance();
+        isTrackingActive = updatedPrefs.getBool('isTrackingActive') ?? true;
+        if (!isTrackingActive) return;
+
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) return;
 
@@ -120,10 +117,12 @@ class BackgroundServiceHelper {
           return;
         }
 
-        Position position = await Geolocator.getCurrentPosition(
+        // Use fast last known position first, fallback to quick medium accuracy position
+        Position? position = await Geolocator.getLastKnownPosition();
+        position ??= await Geolocator.getCurrentPosition(
           locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-            timeLimit: Duration(seconds: 10),
+            accuracy: LocationAccuracy.medium,
+            timeLimit: Duration(seconds: 4),
           ),
         );
 
@@ -152,25 +151,68 @@ class BackgroundServiceHelper {
         await updatedPrefs.setString(
           'LAST_TRACKING_MSG',
           response.data?['message']?.toString() ??
-              'Lokasi berhasil terkirim ke API (24/7)',
+              'Lokasi terkirim otomatis (${currentIntervalSeconds}s)',
         );
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', true);
 
         if (service is AndroidServiceInstance) {
           if (await service.isForegroundService()) {
             service.setForegroundNotificationInfo(
-              title: 'AKAR Location Tracking 24/7',
+              title: 'AKAR Location Tracking (${currentIntervalSeconds}s)',
               content:
                   'Terkirim: ${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}',
             );
           }
         }
       } catch (e) {
-        debugPrint('Error in 24/7 background tracking tick: $e');
+        debugPrint('Error in background tracking tick: $e');
         final updatedPrefs = await SharedPreferences.getInstance();
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
         await updatedPrefs.setString('LAST_TRACKING_MSG', e.toString());
+      } finally {
+        isExecRunning = false;
+      }
+    }
+
+    void resetTimer(int seconds) {
+      timer?.cancel();
+      currentIntervalSeconds = seconds;
+
+      // Execute immediately on timer start/reset so location sends right away
+      sendLocationUpdate();
+
+      timer = Timer.periodic(Duration(seconds: seconds), (_) {
+        sendLocationUpdate();
+      });
+      debugPrint('Background service timer reset to $seconds seconds');
+    }
+
+    // Start initial timer
+    resetTimer(currentIntervalSeconds);
+
+    // Listen for live interval change events from main UI
+    service.on('updateInterval').listen((event) {
+      if (event != null && event['interval'] != null) {
+        final int newInterval = event['interval'] as int;
+        resetTimer(newInterval);
+      }
+    });
+
+    // Listen for live active/inactive status events from main UI
+    service.on('updateStatus').listen((event) {
+      if (event != null && event['active'] != null) {
+        isTrackingActive = event['active'] as bool;
       }
     });
   }
+}
+
+@pragma('vm:entry-point')
+Future<bool> onIosBackground(ServiceInstance service) async {
+  return BackgroundServiceHelper.onIosBackground(service);
+}
+
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  BackgroundServiceHelper.onStart(service);
 }
