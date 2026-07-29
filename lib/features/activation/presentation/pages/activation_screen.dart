@@ -1,9 +1,9 @@
+import 'package:go_router/go_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/activation/presentation/widgets/activation_card.dart';
-import 'package:akar/features/activation/presentation/widgets/activation_detail_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -216,8 +216,10 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     final activity = filteredList[index];
                     return ActivationCard(
                       activity: activity,
-                      onTap: () =>
-                          ActivationDetailModal.show(context, activity),
+                      onTap: () => context.pushNamed(
+                        'activation_detail',
+                        extra: activity.id,
+                      ),
                     );
                   },
                 ),

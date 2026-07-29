@@ -165,6 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ElevatedButton(
                 onPressed: () async {
                   Navigator.pop(dialogContext);
+                  if (context.mounted) {
+                    await context.read<TrackingProvider>().stopTracking();
+                  }
                   await authProvider.logout();
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(

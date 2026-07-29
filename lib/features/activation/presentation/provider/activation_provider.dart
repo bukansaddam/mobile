@@ -4,14 +4,13 @@ import 'package:flutter/material.dart';
 
 class ActivationProvider extends ChangeNotifier {
   String _searchQuery = '';
-  ActivationCategory? _selectedCategoryFilter; // null = Semua
+  ActivationCategory? _selectedCategoryFilter;
 
   String get searchQuery => _searchQuery;
   ActivationCategory? get selectedCategoryFilter => _selectedCategoryFilter;
 
-  final List<ActivationActivity> _activities = List.from(
-    DummyActivationData.activities,
-  );
+  final List<ActivationActivity> _activities =
+      List.from(DummyActivationData.activities);
 
   List<ActivationActivity> get activities => _activities;
 
@@ -46,5 +45,35 @@ class ActivationProvider extends ChangeNotifier {
   void clearSearch() {
     _searchQuery = '';
     notifyListeners();
+  }
+
+  ActivationActivity? getActivityById(String id) {
+    try {
+      return _activities.firstWhere((act) => act.id == id);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void addReport(String activityId, ActivationReport newReport) {
+    final index = _activities.indexWhere((act) => act.id == activityId);
+    if (index != -1) {
+      final old = _activities[index];
+      final updatedReports = List<ActivationReport>.from(old.reports)
+        ..add(newReport);
+      final newCompleted = (old.completedSteps + 1).clamp(0, old.totalSteps);
+      final newStatus = (newCompleted >= old.totalSteps)
+          ? ActivationStatus.selesai
+          : (old.status == ActivationStatus.terjadwal
+              ? ActivationStatus.sedangBerjalan
+              : old.status);
+
+      _activities[index] = old.copyWith(
+        reports: updatedReports,
+        completedSteps: newCompleted,
+        status: newStatus,
+      );
+      notifyListeners();
+    }
   }
 }

@@ -39,7 +39,7 @@ class BackgroundServiceHelper {
     await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
-        autoStart: true,
+        autoStart: false,
         isForegroundMode: true,
         notificationChannelId: notificationChannelId,
         initialNotificationTitle: 'AKAR Tracking Service 24/7',
@@ -47,13 +47,11 @@ class BackgroundServiceHelper {
         foregroundServiceNotificationId: notificationId,
       ),
       iosConfiguration: IosConfiguration(
-        autoStart: true,
+        autoStart: false,
         onForeground: onStart,
         onBackground: onIosBackground,
       ),
     );
-
-    await service.startService();
   }
 
   @pragma('vm:entry-point')
@@ -192,7 +190,24 @@ class BackgroundServiceHelper {
         debugPrint('Error in background tracking tick: $e');
         final updatedPrefs = await SharedPreferences.getInstance();
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
-        await updatedPrefs.setString('LAST_TRACKING_MSG', e.toString());
+
+        String errorMessage = e.toString();
+        if (e is DioException) {
+          final serverMsg = e.response?.data?['message'] ??
+              e.response?.data?['meta']?['message'];
+          if (serverMsg != null && serverMsg.toString().trim().isNotEmpty) {
+            errorMessage = serverMsg.toString();
+          } else if (e.response?.statusCode == 422) {
+            errorMessage = 'Format/data lokasi ditolak server (Error 422)';
+          } else if (e.response?.statusCode == 401) {
+            errorMessage = 'Sesi telah berakhir, silakan login ulang (Error 401)';
+          } else if (e.response?.statusCode != null) {
+            errorMessage = 'Gagal mengirim lokasi (Error ${e.response?.statusCode})';
+          } else {
+            errorMessage = 'Koneksi ke server terputus';
+          }
+        }
+        await updatedPrefs.setString('LAST_TRACKING_MSG', errorMessage);
       } finally {
         isExecRunning = false;
       }
@@ -217,15 +232,29 @@ class BackgroundServiceHelper {
     // On iOS, active background location stream with allowsBackgroundLocationUpdates is required
     // to prevent iOS from suspending the Dart isolate in background.
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      Geolocator.getPositionStream(
-        locationSettings: AppleSettings(
-          accuracy: LocationAccuracy.medium,
-          allowBackgroundLocationUpdates: true,
-          showBackgroundLocationIndicator: true,
-          pauseLocationUpdatesAutomatically: false,
-        ),
-      ).listen((Position position) {
-        sendLocationUpdate();
+      Geolocator.checkPermission().then((permission) {
+        if (permission == LocationPermission.always ||
+            permission == LocationPermission.whileInUse) {
+          Geolocator.getPositionStream(
+            locationSettings: AppleSettings(
+              accuracy: LocationAccuracy.medium,
+              allowBackgroundLocationUpdates: true,
+              showBackgroundLocationIndicator: true,
+              pauseLocationUpdatesAutomatically: false,
+            ),
+          ).listen(
+            (Position position) {
+              sendLocationUpdate();
+            },
+            onError: (error) {
+              debugPrint('Error listening to iOS location stream: $error');
+            },
+          );
+        } else {
+          debugPrint('Izin lokasi belum ada di iOS, geolocator stream ditunda');
+        }
+      }).catchError((error) {
+        debugPrint('Gagal mengecek izin lokasi iOS: $error');
       });
     }
 
