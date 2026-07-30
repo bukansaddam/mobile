@@ -73,6 +73,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           );
         }
 
+        final isOngoing = activity.status == ActivationStatus.sedangBerjalan;
+
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
@@ -130,43 +132,49 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.08),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: () => _startPhotoSubmission(context, activity),
-                  icon: const Icon(Icons.add_a_photo_rounded),
-                  label: Text(
-                    'Kirim Bukti Laporan Foto',
-                    style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.bold,
+          bottomNavigationBar: isOngoing
+              ? Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  child: SafeArea(
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton.icon(
+                        onPressed: () =>
+                            _startPhotoSubmission(context, activity),
+                        icon: const Icon(Icons.add_a_photo_rounded),
+                        label: Text(
+                          'Kirim Bukti Laporan Foto',
+                          style: AppTextStyles.titleMedium.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 2,
+                        ),
+                      ),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 2,
-                  ),
-                ),
-              ),
-            ),
-          ),
+                )
+              : null,
           body: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(
