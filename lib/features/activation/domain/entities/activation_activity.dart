@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
-enum ActivationCategory { pemasanganPerangkat, doorToDoor }
+enum ActivationCategory {
+  pemasanganApk,
+  doorToDoor,
+}
 
-enum ActivationStatus { terjadwal, sedangBerjalan, selesai, dibatalkan }
+enum ActivationStatus {
+  terjadwal,
+  sedangBerjalan,
+  selesai,
+  dibatalkan,
+}
 
 extension ActivationCategoryExtension on ActivationCategory {
   String get label {
     switch (this) {
-      case ActivationCategory.pemasanganPerangkat:
-        return 'Pemasangan Perangkat';
+      case ActivationCategory.pemasanganApk:
+        return 'Pemasangan APK';
       case ActivationCategory.doorToDoor:
         return 'Door to Door';
     }
@@ -16,7 +24,7 @@ extension ActivationCategoryExtension on ActivationCategory {
 
   Color get color {
     switch (this) {
-      case ActivationCategory.pemasanganPerangkat:
+      case ActivationCategory.pemasanganApk:
         return const Color(0xFF00897B);
       case ActivationCategory.doorToDoor:
         return const Color(0xFF8E24AA);
@@ -25,7 +33,7 @@ extension ActivationCategoryExtension on ActivationCategory {
 
   Color get stripColor {
     switch (this) {
-      case ActivationCategory.pemasanganPerangkat:
+      case ActivationCategory.pemasanganApk:
         return const Color(0xFF00897B);
       case ActivationCategory.doorToDoor:
         return const Color(0xFF8E24AA);
@@ -34,8 +42,8 @@ extension ActivationCategoryExtension on ActivationCategory {
 
   IconData get icon {
     switch (this) {
-      case ActivationCategory.pemasanganPerangkat:
-        return Icons.router_rounded;
+      case ActivationCategory.pemasanganApk:
+        return Icons.flag_rounded;
       case ActivationCategory.doorToDoor:
         return Icons.meeting_room_rounded;
     }

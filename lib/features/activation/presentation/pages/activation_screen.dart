@@ -98,7 +98,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Category Filter Pills (Semua, Pemasangan Perangkat, Door to Door)
+              // Category Filter Pills (Semua, Pemasangan APK, Door to Door)
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -111,13 +111,13 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     ),
                     const SizedBox(width: 8),
                     _buildFilterChip(
-                      label: 'Pemasangan Perangkat',
-                      icon: Icons.router_rounded,
+                      label: 'Pemasangan APK',
+                      icon: Icons.flag_rounded,
                       isSelected:
                           provider.selectedCategoryFilter ==
-                          ActivationCategory.pemasanganPerangkat,
+                          ActivationCategory.pemasanganApk,
                       onTap: () => provider.setCategoryFilter(
-                        ActivationCategory.pemasanganPerangkat,
+                        ActivationCategory.pemasanganApk,
                       ),
                     ),
                     const SizedBox(width: 8),
