@@ -36,9 +36,12 @@ class TrackingProvider extends ChangeNotifier {
   }
 
   void _init() {
-    _isTrackingActive = sharedPreferences.getBool('isTrackingActive') ?? true;
-    _intervalSeconds =
-        sharedPreferences.getInt('trackingIntervalSeconds') ?? 900;
+    _isTrackingActive = sharedPreferences.getBool('isTrackingActive') ??
+        sharedPreferences.getBool('isTrackingEnabled') ??
+        true;
+    _intervalSeconds = sharedPreferences.getInt('trackingIntervalSeconds') ??
+        sharedPreferences.getInt('intervalSeconds') ??
+        900;
     _loadBackgroundStatus();
 
     // Periodically sync UI state with background service logs
@@ -49,6 +52,12 @@ class TrackingProvider extends ChangeNotifier {
 
   Future<void> _loadBackgroundStatus() async {
     await sharedPreferences.reload();
+    _isTrackingActive = sharedPreferences.getBool('isTrackingActive') ??
+        sharedPreferences.getBool('isTrackingEnabled') ??
+        _isTrackingActive;
+    _intervalSeconds = sharedPreferences.getInt('trackingIntervalSeconds') ??
+        sharedPreferences.getInt('intervalSeconds') ??
+        _intervalSeconds;
     _lastLatitude =
         sharedPreferences.getDouble('LAST_TRACKING_LAT') ?? _lastLatitude;
     _lastLongitude =
@@ -131,6 +140,7 @@ class TrackingProvider extends ChangeNotifier {
   Future<void> startTracking() async {
     _isTrackingActive = true;
     await sharedPreferences.setBool('isTrackingActive', true);
+    await sharedPreferences.setBool('isTrackingEnabled', true);
     final service = FlutterBackgroundService();
     if (!await service.isRunning()) {
       await service.startService();
@@ -143,6 +153,7 @@ class TrackingProvider extends ChangeNotifier {
   Future<void> stopTracking() async {
     _isTrackingActive = false;
     await sharedPreferences.setBool('isTrackingActive', false);
+    await sharedPreferences.setBool('isTrackingEnabled', false);
     final service = FlutterBackgroundService();
     if (await service.isRunning()) {
       service.invoke('updateStatus', {'active': false});
@@ -154,6 +165,7 @@ class TrackingProvider extends ChangeNotifier {
     if (_intervalSeconds == seconds) return;
     _intervalSeconds = seconds;
     await sharedPreferences.setInt('trackingIntervalSeconds', seconds);
+    await sharedPreferences.setInt('intervalSeconds', seconds);
     final service = FlutterBackgroundService();
     if (await service.isRunning()) {
       service.invoke('updateInterval', {'interval': seconds});

@@ -1,6 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/home/presentation/provider/home_provider.dart';
+import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -45,9 +46,9 @@ class _SettingScreenState extends State<SettingScreen> {
         children: [
           _buildProfileSection(context),
           const SizedBox(height: 20),
-          _buildTrackingControlSection(provider),
+          _buildTrackingControlSection(context, provider),
           const SizedBox(height: 20),
-          _buildIntervalSection(provider),
+          _buildIntervalSection(context, provider),
           const SizedBox(height: 20),
           _buildBtnClear(provider, context),
         ],
@@ -97,7 +98,10 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Widget _buildTrackingControlSection(HomeProvider provider) {
+  Widget _buildTrackingControlSection(
+    BuildContext context,
+    HomeProvider provider,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -120,7 +124,10 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: ElevatedButton.icon(
                     onPressed: provider.isTrackingEnabled
                         ? null
-                        : () => provider.startTracking(),
+                        : () {
+                            provider.startTracking();
+                            context.read<TrackingProvider>().startTracking();
+                          },
                     icon: const Icon(Icons.play_arrow),
                     label: const Text("Start"),
                     style: ElevatedButton.styleFrom(
@@ -143,7 +150,10 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: ElevatedButton.icon(
                     onPressed: !provider.isTrackingEnabled
                         ? null
-                        : () => provider.stopTracking(),
+                        : () {
+                            provider.stopTracking();
+                            context.read<TrackingProvider>().stopTracking();
+                          },
                     icon: const Icon(Icons.pause),
                     label: const Text("Pause"),
                     style: ElevatedButton.styleFrom(
@@ -169,13 +179,14 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Widget _buildIntervalSection(HomeProvider provider) {
+  Widget _buildIntervalSection(BuildContext context, HomeProvider provider) {
     final intervals = [
       {'value': 5, 'label': '5 Detik'},
       {'value': 10, 'label': '10 Detik'},
       {'value': 30, 'label': '30 Detik'},
       {'value': 60, 'label': '1 Menit'},
       {'value': 300, 'label': '5 Menit'},
+      {'value': 900, 'label': '15 Menit'},
     ];
 
     return Card(
@@ -187,7 +198,7 @@ class _SettingScreenState extends State<SettingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Interval Pengambilan Lokasi",
+              "Interval Pengambilan Lokasi & Pengiriman API",
               style: AppTextStyles.bodyLarge.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -195,7 +206,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              "Seberapa sering aplikasi akan menandai lokasi Anda di peta.",
+              "Seberapa sering aplikasi akan mengirimkan lokasi Anda ke API server.",
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -209,7 +220,11 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
-                  value: provider.intervalSeconds,
+                  value: intervals.any(
+                        (i) => i['value'] == provider.intervalSeconds,
+                      )
+                      ? provider.intervalSeconds
+                      : 900,
                   isExpanded: true,
                   items: intervals.map((item) {
                     return DropdownMenuItem<int>(
@@ -225,6 +240,9 @@ class _SettingScreenState extends State<SettingScreen> {
                   onChanged: (newValue) {
                     if (newValue != null) {
                       provider.changeInterval(newValue);
+                      context
+                          .read<TrackingProvider>()
+                          .changeInterval(newValue);
                     }
                   },
                 ),

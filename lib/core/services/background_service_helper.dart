@@ -94,8 +94,12 @@ class BackgroundServiceHelper {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    int currentIntervalSeconds = prefs.getInt('trackingIntervalSeconds') ?? 900;
-    bool isTrackingActive = prefs.getBool('isTrackingActive') ?? true;
+    int currentIntervalSeconds = prefs.getInt('trackingIntervalSeconds') ??
+        prefs.getInt('intervalSeconds') ??
+        900;
+    bool isTrackingActive = prefs.getBool('isTrackingActive') ??
+        prefs.getBool('isTrackingEnabled') ??
+        true;
 
     Timer? timer;
     bool isExecRunning = false;
@@ -106,23 +110,25 @@ class BackgroundServiceHelper {
 
       try {
         final updatedPrefs = await SharedPreferences.getInstance();
-        isTrackingActive = updatedPrefs.getBool('isTrackingActive') ?? true;
+        isTrackingActive = updatedPrefs.getBool('isTrackingActive') ??
+            updatedPrefs.getBool('isTrackingEnabled') ??
+            true;
         if (!isTrackingActive) return;
 
         currentIntervalSeconds =
             updatedPrefs.getInt('trackingIntervalSeconds') ??
+            updatedPrefs.getInt('intervalSeconds') ??
             currentIntervalSeconds;
 
-        // Jika tidak dipaksa (force), cek apakah interval waktu dari pengiriman terakhir sudah tercapai
+        // Jika tidak dipaksa (force), cek apakah interval waktu dari pengiriman terakhir sudah tercapai (dengan toleransi 500ms)
         if (!force) {
           final lastTimeStr = updatedPrefs.getString('LAST_TRACKING_TIME');
           if (lastTimeStr != null) {
             final lastTime = DateTime.tryParse(lastTimeStr);
             if (lastTime != null) {
-              final elapsedSeconds = DateTime.now()
-                  .difference(lastTime)
-                  .inSeconds;
-              if (elapsedSeconds < currentIntervalSeconds) {
+              final elapsedMs =
+                  DateTime.now().difference(lastTime).inMilliseconds;
+              if (elapsedMs < (currentIntervalSeconds * 1000 - 500)) {
                 // Interval belum tercapai, lewati pengiriman API
                 return;
               }
