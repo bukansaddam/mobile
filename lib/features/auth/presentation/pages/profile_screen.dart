@@ -25,58 +25,12 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   int _currentTabIndex = 0;
 
-  int _leftSwipeCount = 0;
-  DateTime? _lastSwipeTime;
-
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void _onHorizontalDragEnd(DragEndDetails details) {
-    if (details.primaryVelocity != null && details.primaryVelocity! < -200) {
-      final now = DateTime.now();
-      if (_lastSwipeTime != null &&
-          now.difference(_lastSwipeTime!).inSeconds > 3) {
-        _leftSwipeCount = 0;
-      }
-      _lastSwipeTime = now;
-      _leftSwipeCount++;
-
-      if (_leftSwipeCount >= 5) {
-        _leftSwipeCount = 0;
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Row(
-              children: [
-                Icon(Icons.developer_mode, color: AppColors.white),
-                SizedBox(width: 8),
-                Text('Mode Developer: Membuka Halaman Home & Tracking...'),
-              ],
-            ),
-            backgroundColor: AppColors.primary,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
-        );
-        context.pushNamed('home');
-      } else if (_leftSwipeCount >= 2) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Dev Mode: Swipe ke kiri $_leftSwipeCount/5 kali untuk opsi Dev',
-            ),
-            duration: const Duration(milliseconds: 900),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
   }
 
   void _onLogoTap() {
@@ -95,9 +49,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SnackBar(
           content: Row(
             children: [
-              Icon(Icons.tune_rounded, color: AppColors.white),
+              Icon(Icons.stars_rounded, color: AppColors.white),
               SizedBox(width: 8),
-              Text('Membuka Pengaturan Tracking...'),
+              Text('Mode Eksklusif: Membuka Pengaturan Tracking...'),
             ],
           ),
           backgroundColor: AppColors.primary,
@@ -111,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Tekan logo $_logoTapCount/10 kali untuk Pengaturan Tracking',
+            'Mode Eksklusif: Tekan kartu profil $_logoTapCount/10 kali',
           ),
           duration: const Duration(milliseconds: 700),
           behavior: SnackBarBehavior.floating,
@@ -634,88 +588,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   stops: [0.0, 0.25, 0.5],
                 ),
               ),
-              child: GestureDetector(
-                onHorizontalDragEnd: _onHorizontalDragEnd,
-                behavior: HitTestBehavior.translucent,
-                child: user == null
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.account_circle_outlined,
-                                size: 80,
-                                color: AppColors.grey400,
+              child: user == null
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.account_circle_outlined,
+                              size: 80,
+                              color: AppColors.grey400,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Sesi Pengguna Tidak Ditemukan',
+                              style: AppTextStyles.headlineSmall,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Silakan masuk terlebih dahulu untuk mengakses aplikasi.',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textSecondary,
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Sesi Pengguna Tidak Ditemukan',
-                                style: AppTextStyles.headlineSmall,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Silakan masuk terlebih dahulu untuk mengakses aplikasi.',
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textSecondary,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () => context.goNamed('login'),
+                                    icon: const Icon(Icons.login),
+                                    label: const Text('Masuk'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primary,
+                                      foregroundColor: AppColors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 24),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () => context.goNamed('login'),
-                                      icon: const Icon(Icons.login),
-                                      label: const Text('Masuk'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.primary,
-                                        foregroundColor: AppColors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: OutlinedButton.icon(
+                                    onPressed: () =>
+                                        context.goNamed('register'),
+                                    icon: const Icon(
+                                      Icons.person_add_outlined,
+                                    ),
+                                    label: const Text('Daftar'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppColors.primary,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: OutlinedButton.icon(
-                                      onPressed: () =>
-                                          context.goNamed('register'),
-                                      icon: const Icon(
-                                        Icons.person_add_outlined,
-                                      ),
-                                      label: const Text('Daftar'),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: AppColors.primary,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      )
-                    : IndexedStack(
-                        index: _currentTabIndex,
-                        children: [
-                          _buildHomePage(),
-                          _buildPlaceholderPage(
-                            'Analisis',
-                            Icons.analytics_outlined,
-                          ),
-                          const ActivationScreen(),
-                          _buildProfilPage(user, authProvider),
-                        ],
                       ),
-              ),
+                    )
+                  : IndexedStack(
+                      index: _currentTabIndex,
+                      children: [
+                        _buildHomePage(),
+                        _buildPlaceholderPage(
+                          'Analisis',
+                          Icons.analytics_outlined,
+                        ),
+                        const ActivationScreen(),
+                        _buildProfilPage(user, authProvider),
+                      ],
+                    ),
             ),
           ),
         );
