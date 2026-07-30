@@ -1,7 +1,9 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/activation/presentation/pages/activation_screen.dart';
+import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
@@ -29,20 +31,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
 
-  late int _totalTugasCount;
-  late int _totalAgendaCount;
-  late int _totalLaporanCount;
-
   @override
   void initState() {
     super.initState();
-    _generateRandomCounts();
-  }
-
-  void _generateRandomCounts() {
-    _totalTugasCount = 4;
-    _totalAgendaCount = 5;
-    _totalLaporanCount = 9;
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
@@ -722,9 +713,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildHomePage() {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
+    return Consumer2<AuthProvider, ActivationProvider>(
+      builder: (context, authProvider, activationProvider, child) {
         final user = authProvider.currentUser;
+        final activities = activationProvider.activities;
+
+        final totalTugasCount = activities.length;
+        final totalAgendaCount = activities
+            .where((act) => act.status == ActivationStatus.sedangBerjalan)
+            .length;
+        final totalLaporanCount = activities
+            .where((act) => act.status == ActivationStatus.selesai)
+            .length;
 
         return SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -752,26 +752,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               HomeSummaryCard(
                 title: 'Total Daftar Tugas',
-                subtitle: 'Daftar tugas aktif',
-                count: '$_totalTugasCount',
+                subtitle: 'Daftar kegiatan aktif',
+                count: '$totalTugasCount',
                 icon: Icons.assignment_outlined,
                 gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+                onTap: () {
+                  setState(() {
+                    _currentTabIndex = 2;
+                  });
+                },
               ),
               const SizedBox(height: 16),
               HomeSummaryCard(
                 title: 'Total Agenda',
-                subtitle: 'Agenda kegiatan mendatang',
-                count: '$_totalAgendaCount',
+                subtitle: 'Kegiatan sedang berjalan',
+                count: '$totalAgendaCount',
                 icon: Icons.event_note_rounded,
                 gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+                onTap: () {
+                  setState(() {
+                    _currentTabIndex = 2;
+                  });
+                },
               ),
               const SizedBox(height: 16),
               HomeSummaryCard(
                 title: 'Total Laporan',
-                subtitle: 'Laporan telah terkirim',
-                count: '$_totalLaporanCount',
+                subtitle: 'Kegiatan telah selesai',
+                count: '$totalLaporanCount',
                 icon: Icons.insert_drive_file_outlined,
                 gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
+                onTap: () {
+                  setState(() {
+                    _currentTabIndex = 2;
+                  });
+                },
               ),
               const SizedBox(height: 24),
             ],

@@ -10,11 +10,41 @@ import 'package:akar/features/activation/presentation/widgets/add_report_bottom_
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ActivationDetailScreen extends StatelessWidget {
+class ActivationDetailScreen extends StatefulWidget {
   final String activityId;
+  final bool autoShowInfo;
 
-  const ActivationDetailScreen({super.key, required this.activityId});
+  const ActivationDetailScreen({
+    super.key,
+    required this.activityId,
+    this.autoShowInfo = false,
+  });
+
+  @override
+  State<ActivationDetailScreen> createState() => _ActivationDetailScreenState();
+}
+
+class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
+  bool _infoShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoShowInfo) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_infoShown && mounted) {
+          _infoShown = true;
+          final provider = context.read<ActivationProvider>();
+          final activity = provider.getActivityById(widget.activityId);
+          if (activity != null) {
+            ActivationDetailModal.show(context, activity);
+          }
+        }
+      });
+    }
+  }
 
   Future<void> _startPhotoSubmission(
     BuildContext context,
@@ -34,7 +64,7 @@ class ActivationDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ActivationProvider>(
       builder: (context, provider, child) {
-        final activity = provider.getActivityById(activityId);
+        final activity = provider.getActivityById(widget.activityId);
 
         if (activity == null) {
           return Scaffold(
@@ -311,6 +341,62 @@ class ActivationDetailScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _openWhatsApp(
+    BuildContext context,
+    String rawPhone,
+    String ownerName,
+  ) async {
+    String cleanPhone = rawPhone.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '62${cleanPhone.substring(1)}';
+    }
+
+    final Uri appUri = Uri.parse('whatsapp://send?phone=$cleanPhone');
+    final Uri shortWebUri = Uri.parse('https://wa.me/$cleanPhone');
+    final Uri webUri = Uri.parse(
+      'https://api.whatsapp.com/send?phone=$cleanPhone',
+    );
+
+    bool launched = false;
+
+    // 1. Try WhatsApp App directly
+    try {
+      if (await canLaunchUrl(appUri)) {
+        launched = await launchUrl(
+          appUri,
+          mode: LaunchMode.externalNonBrowserApplication,
+        );
+      }
+    } catch (_) {}
+
+    // 2. Try wa.me in external browser
+    if (!launched) {
+      try {
+        launched = await launchUrl(
+          shortWebUri,
+          mode: LaunchMode.externalApplication,
+        );
+      } catch (_) {}
+    }
+
+    // 3. Try platform default browser fallback
+    if (!launched) {
+      try {
+        launched = await launchUrl(webUri, mode: LaunchMode.platformDefault);
+      } catch (_) {}
+    }
+
+    if (!launched && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal membuka WhatsApp untuk nomor $rawPhone'),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
   Widget _buildOwnerSection(ActivationActivity activity) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,23 +412,85 @@ class ActivationDetailScreen extends StatelessWidget {
         Row(
           children: [
             CircleAvatar(
-              radius: 18,
+              radius: 20,
               backgroundColor: AppColors.primary.withValues(alpha: 0.15),
               child: const Icon(
                 Icons.person_rounded,
                 color: AppColors.primary,
-                size: 20,
+                size: 22,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(
-                activity.ownerName,
-                style: AppTextStyles.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 15,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    activity.ownerName,
+                    style: AppTextStyles.titleMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  InkWell(
+                    onTap: () => _openWhatsApp(
+                      context,
+                      activity.ownerPhone,
+                      activity.ownerName,
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            activity.ownerPhone,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.grey600,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF25D366,
+                              ).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.chat_bubble_rounded,
+                                  size: 10,
+                                  color: Color(0xFF128C7E),
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  'Chat WA',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: const Color(0xFF128C7E),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -356,7 +504,7 @@ class ActivationDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Alamat Lengkap',
+          'Wilayah Penugasan',
           style: AppTextStyles.labelMedium.copyWith(
             color: AppColors.grey600,
             fontWeight: FontWeight.w600,
@@ -517,6 +665,40 @@ class ActivationDetailScreen extends StatelessWidget {
                           fit: BoxFit.cover,
                         ),
                       ),
+                      // Multi-photo count badge
+                      if (report.photoUrls.length > 1)
+                        Positioned(
+                          top: 6,
+                          left: 6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.black.withValues(alpha: 0.75),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.photo_library_rounded,
+                                  size: 10,
+                                  color: AppColors.white,
+                                ),
+                                const SizedBox(width: 3),
+                                Text(
+                                  '${report.photoUrls.length} Foto',
+                                  style: const TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       Positioned(
                         left: 6,
                         bottom: 6,
@@ -641,137 +823,255 @@ class ActivationDetailScreen extends StatelessWidget {
     ActivationActivity activity,
   ) {
     final timeFormat = DateFormat('dd MMMM yyyy, HH:mm');
+    int selectedPhotoIdx = 0;
+    final PageController dialogPageController = PageController();
+
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
-                FullscreenImageViewer.show(
-                  context,
-                  imagePathOrUrl: report.photoUrl,
-                  title: 'Foto Laporan Bukti',
-                );
-              },
-              child: Stack(
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                    child: _buildReportImage(
-                      report.photoUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 250,
+                  // Main Swipeable Photo View (PageView)
+                  SizedBox(
+                    height: 230,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                          child: PageView.builder(
+                            controller: dialogPageController,
+                            itemCount: report.photoUrls.length,
+                            onPageChanged: (idx) {
+                              setDialogState(() {
+                                selectedPhotoIdx = idx;
+                              });
+                            },
+                            itemBuilder: (context, idx) {
+                              final photoUrl = report.photoUrls[idx];
+                              return GestureDetector(
+                                onTap: () {
+                                  FullscreenImageViewer.show(
+                                    context,
+                                    imagePathOrUrl: photoUrl,
+                                    images: report.photoUrls,
+                                    initialIndex: idx,
+                                    title: 'Foto Laporan Bukti',
+                                  );
+                                },
+                                child: _buildReportImage(
+                                  photoUrl,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 230,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        // Photo Counter Badge
+                        Positioned(
+                          top: 10,
+                          left: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.65),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${selectedPhotoIdx + 1} / ${report.photoUrls.length}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Fullscreen Button Overlay
+                        Positioned(
+                          right: 10,
+                          bottom: 10,
+                          child: GestureDetector(
+                            onTap: () {
+                              FullscreenImageViewer.show(
+                                context,
+                                imagePathOrUrl:
+                                    report.photoUrls[selectedPhotoIdx],
+                                images: report.photoUrls,
+                                initialIndex: selectedPhotoIdx,
+                                title: 'Foto Laporan Bukti',
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.fullscreen_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Fullscreen',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Positioned(
-                    right: 10,
-                    bottom: 10,
-                    child: Container(
+
+                  // Horizontal Thumbnails bar if multiple photos
+                  if (report.photoUrls.length > 1) ...[
+                    Container(
+                      height: 64,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(12),
+                      color: AppColors.grey100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: report.photoUrls.length,
+                        itemBuilder: (context, idx) {
+                          final isSelected = idx == selectedPhotoIdx;
+                          return GestureDetector(
+                            onTap: () {
+                              setDialogState(() {
+                                selectedPhotoIdx = idx;
+                              });
+                              dialogPageController.animateToPage(
+                                idx,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : Colors.transparent,
+                                  width: 2.5,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: _buildReportImage(
+                                  report.photoUrls[idx],
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.fullscreen_rounded,
-                            color: Colors.white,
-                            size: 16,
+                    ),
+                  ],
+
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.my_location_rounded,
+                              color: AppColors.primary,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'GPS: ${report.latitude.toStringAsFixed(6)}, ${report.longitude.toStringAsFixed(6)}',
+                                style: AppTextStyles.labelMedium.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Waktu: ${timeFormat.format(report.submittedAt)} (${report.photoUrls.length} Foto)',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
                           ),
-                          SizedBox(width: 4),
+                        ),
+                        if (report.recipientName != null) ...[
+                          const Divider(height: 16),
                           Text(
-                            'Fullscreen',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
+                            'Nama Penerima: ${report.recipientName}',
+                            style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          Text(
+                            'NIK Penerima: ${report.recipientNik}',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                         ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.my_location_rounded,
-                        color: AppColors.primary,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'GPS: ${report.latitude.toStringAsFixed(6)}, ${report.longitude.toStringAsFixed(6)}',
-                          style: AppTextStyles.labelMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                        if (report.notes != null) ...[
+                          const Divider(height: 16),
+                          Text(
+                            'Catatan: ${report.notes}',
+                            style: AppTextStyles.bodyMedium,
+                          ),
+                        ],
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Tutup'),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Waktu: ${timeFormat.format(report.submittedAt)}',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  if (report.recipientName != null) ...[
-                    const Divider(height: 16),
-                    Text(
-                      'Nama Penerima: ${report.recipientName}',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'NIK Penerima: ${report.recipientNik}',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                  if (report.notes != null) ...[
-                    const Divider(height: 16),
-                    Text(
-                      'Catatan: ${report.notes}',
-                      style: AppTextStyles.bodyMedium,
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Tutup'),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

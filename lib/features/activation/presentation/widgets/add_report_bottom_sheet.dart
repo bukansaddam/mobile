@@ -46,7 +46,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   final TextEditingController _nikController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  late String _currentPhotoUrl;
+  late List<String> _photoUrls;
   double _latitude = -6.8915;
   double _longitude = 107.6107;
   bool _isLoadingGps = false;
@@ -55,7 +55,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _currentPhotoUrl = widget.capturedPhotoUrl;
+    _photoUrls = [widget.capturedPhotoUrl];
     _fetchLocation();
   }
 
@@ -98,17 +98,44 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     }
   }
 
-  Future<void> _retakePhoto() async {
+  Future<void> _addNewPhoto() async {
+    if (_photoUrls.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Maksimal 5 foto per laporan bukti.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     final newPhoto = await CameraCaptureScreen.open(context);
     if (newPhoto != null && mounted) {
       setState(() {
-        _currentPhotoUrl = newPhoto;
+        _photoUrls.add(newPhoto);
       });
     }
   }
 
+  void _removePhoto(int index) {
+    if (_photoUrls.length <= 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Laporan wajib menyertakan minimal 1 foto.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _photoUrls.removeAt(index);
+    });
+  }
+
   void _submitReport() {
     if (!_formKey.currentState!.validate()) return;
+    if (_photoUrls.isEmpty) return;
 
     setState(() => _isSubmitting = true);
 
@@ -117,7 +144,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
 
     final report = ActivationReport(
       id: 'rep-${DateTime.now().millisecondsSinceEpoch}',
-      photoUrl: _currentPhotoUrl,
+      photoUrls: List.from(_photoUrls),
       submittedAt: DateTime.now(),
       latitude: _latitude,
       longitude: _longitude,
@@ -132,52 +159,94 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
 
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Bukti foto laporan berhasil dikirim!'),
+      SnackBar(
+        content: Text(
+          'Bukti foto laporan (${_photoUrls.length} foto) berhasil dikirim!',
+        ),
         backgroundColor: AppColors.success,
         behavior: SnackBarBehavior.floating,
       ),
     );
   }
 
-  Widget _buildPhotoPreview(String pathOrUrl) {
+  Widget _buildPhotoTile(String pathOrUrl, int index) {
+    Widget imageWidget;
     if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
-      return Image.network(
+      imageWidget = Image.network(
         pathOrUrl,
-        width: double.infinity,
-        height: 180,
+        width: 100,
+        height: 100,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
-          height: 180,
+          width: 100,
+          height: 100,
           color: AppColors.grey200,
-          child: const Center(
-            child: Icon(
-              Icons.camera_alt_rounded,
-              size: 50,
-              color: AppColors.grey500,
-            ),
+          child: const Icon(
+            Icons.broken_image_rounded,
+            color: AppColors.grey500,
           ),
         ),
       );
     } else {
-      return Image.file(
+      imageWidget = Image.file(
         File(pathOrUrl),
-        width: double.infinity,
-        height: 180,
+        width: 100,
+        height: 100,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
-          height: 180,
+          width: 100,
+          height: 100,
           color: AppColors.grey200,
-          child: const Center(
-            child: Icon(
-              Icons.camera_alt_rounded,
-              size: 50,
-              color: AppColors.grey500,
-            ),
+          child: const Icon(
+            Icons.broken_image_rounded,
+            color: AppColors.grey500,
           ),
         ),
       );
     }
+
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          GestureDetector(
+            onTap: () {
+              FullscreenImageViewer.show(
+                context,
+                imagePathOrUrl: pathOrUrl,
+                title: 'Foto Bukti ${index + 1}',
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: imageWidget,
+            ),
+          ),
+          // Delete photo button
+          if (_photoUrls.length > 1)
+            Positioned(
+              top: -6,
+              right: -6,
+              child: GestureDetector(
+                onTap: () => _removePhoto(index),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: AppColors.error,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    size: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -235,61 +304,91 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                 ),
                 const Divider(height: 16),
 
-                // Captured Photo Preview Card (Tap for Fullscreen)
-                Stack(
+                // Section Header: Photos Count Badge (Max 5)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        FullscreenImageViewer.show(
-                          context,
-                          imagePathOrUrl: _currentPhotoUrl,
-                          title: 'Foto Laporan Bukti',
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: _buildPhotoPreview(_currentPhotoUrl),
+                    Text(
+                      'Foto Bukti Kegiatan',
+                      style: AppTextStyles.labelMedium.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
                     ),
-                    // Retake photo overlay button
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Material(
-                        color: Colors.black.withValues(alpha: 0.7),
-                        borderRadius: BorderRadius.circular(20),
-                        child: InkWell(
-                          onTap: _retakePhoto,
-                          borderRadius: BorderRadius.circular(20),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _photoUrls.length >= 5
+                            ? AppColors.warning.withValues(alpha: 0.15)
+                            : AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${_photoUrls.length}/5 Foto',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: _photoUrls.length >= 5
+                              ? AppColors.warning
+                              : AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                // Horizontal List of Captured Photos & Add Photo Tile
+                SizedBox(
+                  height: 108,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount:
+                        _photoUrls.length + (_photoUrls.length < 5 ? 1 : 0),
+                    itemBuilder: (context, idx) {
+                      if (idx < _photoUrls.length) {
+                        return _buildPhotoTile(_photoUrls[idx], idx);
+                      } else {
+                        // Add photo button card
+                        return GestureDetector(
+                          onTap: _addNewPhoto,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.3),
+                                style: BorderStyle.solid,
+                              ),
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(
-                                  Icons.camera_alt_rounded,
-                                  size: 16,
-                                  color: Colors.white,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.add_a_photo_rounded,
+                                  color: AppColors.primary,
+                                  size: 28,
                                 ),
-                                SizedBox(width: 6),
+                                const SizedBox(height: 4),
                                 Text(
-                                  'Foto Ulang',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
+                                  '+ Foto',
+                                  style: AppTextStyles.labelSmall.copyWith(
+                                    color: AppColors.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+                        );
+                      }
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -465,7 +564,9 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                           )
                         : const Icon(Icons.send_rounded),
                     label: Text(
-                      _isSubmitting ? 'Mengirim...' : 'Kirim Laporan',
+                      _isSubmitting
+                          ? 'Mengirim...'
+                          : 'Kirim ${_photoUrls.length} Foto Laporan',
                       style: AppTextStyles.titleMedium.copyWith(
                         color: AppColors.white,
                         fontWeight: FontWeight.bold,

@@ -55,8 +55,19 @@ class AppRouter {
         path: '/activation-detail',
         name: 'activation_detail',
         builder: (context, state) {
-          final activityId = state.extra as String;
-          return ActivationDetailScreen(activityId: activityId);
+          String activityId = '';
+          bool autoShowInfo = false;
+          if (state.extra is Map<String, dynamic>) {
+            final map = state.extra as Map<String, dynamic>;
+            activityId = map['activityId'] as String? ?? '';
+            autoShowInfo = map['autoShowInfo'] as bool? ?? false;
+          } else if (state.extra is String) {
+            activityId = state.extra as String;
+          }
+          return ActivationDetailScreen(
+            activityId: activityId,
+            autoShowInfo: autoShowInfo,
+          );
         },
       ),
     ],

@@ -1,6 +1,8 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/activation/domain/entities/activation_activity.dart';
+import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
 import 'package:akar/features/home/presentation/widgets/home_summary_card.dart';
@@ -20,30 +22,38 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestHomePermissions();
-    });
+    _checkLocationPermission();
   }
 
-  Future<void> _requestHomePermissions() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        await Geolocator.requestPermission();
-      }
-    } catch (e) {
-      debugPrint('Error requesting permissions on Home: $e');
+  Future<void> _checkLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
+    return Consumer2<AuthProvider, ActivationProvider>(
+      builder: (context, authProvider, activationProvider, child) {
         final user = authProvider.currentUser;
+        final activities = activationProvider.activities;
+
+        final totalTugasCount = activities.length;
+        final totalAgendaCount = activities
+            .where((act) => act.status == ActivationStatus.sedangBerjalan)
+            .length;
+        final totalLaporanCount = activities
+            .where((act) => act.status == ActivationStatus.selesai)
+            .length;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -162,24 +172,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 HomeSummaryCard(
                   title: 'Total Daftar Tugas',
-                  subtitle: 'Daftar tugas aktif',
-                  count: '4',
+                  subtitle: 'Daftar kegiatan aktif',
+                  count: '$totalTugasCount',
                   icon: Icons.assignment_outlined,
                   gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
                 ),
                 const SizedBox(height: 16),
                 HomeSummaryCard(
                   title: 'Total Agenda',
-                  subtitle: 'Agenda kegiatan mendatang',
-                  count: '5',
+                  subtitle: 'Kegiatan sedang berjalan',
+                  count: '$totalAgendaCount',
                   icon: Icons.event_note_rounded,
                   gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
                 ),
                 const SizedBox(height: 16),
                 HomeSummaryCard(
                   title: 'Total Laporan',
-                  subtitle: 'Laporan telah terkirim',
-                  count: '9',
+                  subtitle: 'Kegiatan telah selesai',
+                  count: '$totalLaporanCount',
                   icon: Icons.insert_drive_file_outlined,
                   gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
                 ),

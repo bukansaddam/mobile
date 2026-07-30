@@ -174,7 +174,10 @@ class NotificationModalSheet extends StatelessWidget {
                       Navigator.pop(context);
                       context.pushNamed(
                         'activation_detail',
-                        extra: activity.id,
+                        extra: {
+                          'activityId': activity.id,
+                          'autoShowInfo': true,
+                        },
                       );
                     },
                     borderRadius: BorderRadius.circular(14),

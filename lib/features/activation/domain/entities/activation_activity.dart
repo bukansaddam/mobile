@@ -85,7 +85,7 @@ extension ActivationStatusExtension on ActivationStatus {
 
 class ActivationReport {
   final String id;
-  final String photoUrl;
+  final List<String> photoUrls; // Supports up to 5 photos per report card!
   final DateTime submittedAt;
   final double latitude;
   final double longitude;
@@ -96,7 +96,7 @@ class ActivationReport {
 
   const ActivationReport({
     required this.id,
-    required this.photoUrl,
+    required this.photoUrls,
     required this.submittedAt,
     required this.latitude,
     required this.longitude,
@@ -104,6 +104,8 @@ class ActivationReport {
     this.recipientName,
     this.recipientNik,
   });
+
+  String get photoUrl => photoUrls.isNotEmpty ? photoUrls.first : '';
 }
 
 class ActivationActivity {
@@ -113,6 +115,7 @@ class ActivationActivity {
   final String location;
   final String address;
   final String ownerName;
+  final String ownerPhone;
   final ActivationStatus status;
   final DateTime startDate;
   final DateTime endDate;
@@ -129,6 +132,7 @@ class ActivationActivity {
     required this.location,
     required this.address,
     required this.ownerName,
+    this.ownerPhone = '081234567890',
     required this.status,
     required this.startDate,
     required this.endDate,
@@ -149,6 +153,7 @@ class ActivationActivity {
     String? location,
     String? address,
     String? ownerName,
+    String? ownerPhone,
     ActivationStatus? status,
     DateTime? startDate,
     DateTime? endDate,
@@ -165,6 +170,7 @@ class ActivationActivity {
       location: location ?? this.location,
       address: address ?? this.address,
       ownerName: ownerName ?? this.ownerName,
+      ownerPhone: ownerPhone ?? this.ownerPhone,
       status: status ?? this.status,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,

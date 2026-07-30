@@ -1,32 +1,65 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-class FullscreenImageViewer extends StatelessWidget {
-  final String imagePathOrUrl;
+class FullscreenImageViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
   final String? title;
 
   const FullscreenImageViewer({
     super.key,
-    required this.imagePathOrUrl,
+    required this.images,
+    this.initialIndex = 0,
     this.title,
   });
 
   static Future<void> show(
     BuildContext context, {
     required String imagePathOrUrl,
+    List<String>? images,
+    int initialIndex = 0,
     String? title,
   }) {
+    final imageList = images ?? [imagePathOrUrl];
+    final startIndex = images != null && images.contains(imagePathOrUrl)
+        ? images.indexOf(imagePathOrUrl)
+        : initialIndex;
+
     return Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            FullscreenImageViewer(imagePathOrUrl: imagePathOrUrl, title: title),
+        builder: (context) => FullscreenImageViewer(
+          images: imageList,
+          initialIndex: startIndex,
+          title: title,
+        ),
         fullscreenDialog: true,
       ),
     );
   }
 
-  Widget _buildImage() {
+  @override
+  State<FullscreenImageViewer> createState() => _FullscreenImageViewerState();
+}
+
+class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex.clamp(0, widget.images.length - 1);
+    _pageController = PageController(initialPage: _currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildSingleImage(String imagePathOrUrl) {
     if (imagePathOrUrl.startsWith('http://') ||
         imagePathOrUrl.startsWith('https://')) {
       return Image.network(
@@ -78,21 +111,36 @@ class FullscreenImageViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final total = widget.images.length;
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: [
-            // Pinch-to-zoom interactive viewer
+            // Swipeable PageView with Pinch-to-Zoom
             Positioned.fill(
-              child: InteractiveViewer(
-                minScale: 0.8,
-                maxScale: 4.0,
-                child: Center(child: _buildImage()),
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: total,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return InteractiveViewer(
+                    minScale: 0.8,
+                    maxScale: 4.0,
+                    child: Center(
+                      child: _buildSingleImage(widget.images[index]),
+                    ),
+                  );
+                },
               ),
             ),
 
-            // Top Header Bar
+            // Top Bar Header
             Positioned(
               top: 12,
               left: 16,
@@ -115,7 +163,7 @@ class FullscreenImageViewer extends StatelessWidget {
                       tooltip: 'Tutup',
                     ),
                   ),
-                  if (title != null && title!.isNotEmpty)
+                  if (widget.title != null && widget.title!.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -126,7 +174,28 @@ class FullscreenImageViewer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        title!,
+                        total > 1
+                            ? '${widget.title} (${_currentIndex + 1}/$total)'
+                            : widget.title!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  else if (total > 1)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_currentIndex + 1} / $total',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -139,30 +208,53 @@ class FullscreenImageViewer extends StatelessWidget {
               ),
             ),
 
-            // Bottom hint label
+            // Bottom Navigation Dots / Swipe Hint
             Positioned(
               bottom: 20,
               left: 0,
               right: 0,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Text(
-                    'Cubit / Zoom untuk memperbesar foto',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+              child: Column(
+                children: [
+                  if (total > 1) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(total, (idx) {
+                        final isActive = idx == _currentIndex;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: isActive ? 18 : 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: isActive ? Colors.white : Colors.white38,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      total > 1
+                          ? 'Geser ◄ ► untuk melihat foto • Cubit untuk zoom'
+                          : 'Cubit / Zoom untuk memperbesar foto',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ],
