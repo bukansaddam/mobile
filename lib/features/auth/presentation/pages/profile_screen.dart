@@ -523,44 +523,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () => NotificationModalSheet.show(context),
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: AppColors.textPrimary,
-                        size: 26,
-                      ),
-                      tooltip: 'Notifikasi Kegiatan',
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: AppColors.error,
-                          shape: BoxShape.circle,
-                        ),
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () => NotificationModalSheet.show(context),
+                        padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
+                          minWidth: 48,
+                          minHeight: 48,
                         ),
-                        child: const Text(
-                          '5',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
+                        icon: const Icon(
+                          Icons.notifications_none_rounded,
+                          color: AppColors.textPrimary,
+                          size: 26,
+                        ),
+                        tooltip: 'Notifikasi Kegiatan',
+                      ),
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: IgnorePointer(
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.error,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: const Text(
+                              '5',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
