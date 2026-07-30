@@ -1,6 +1,7 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:dio/dio.dart';
 import '../constants/api_constants.dart';
+import 'auth_interceptor.dart';
 import 'logging_interceptor.dart';
 
 class DioClient {
@@ -32,7 +33,10 @@ class DioClient {
       ),
     );
 
-    dio.interceptors.addAll([LoggingInterceptor()]);
+    dio.interceptors.addAll([
+      LoggingInterceptor(),
+      AuthInterceptor(),
+    ]);
 
     return dio;
   }
