@@ -29,203 +29,211 @@ class _ActivationScreenState extends State<ActivationScreen> {
       builder: (context, provider, child) {
         final filteredList = provider.filteredActivities;
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Search Input Field
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => provider.setSearchQuery(val),
-                  decoration: InputDecoration(
-                    hintText: 'Cari kegiatan, lokasi, atau kategori...',
-                    hintStyle: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.grey500,
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.search_rounded,
-                      color: AppColors.primary,
-                    ),
-                    suffixIcon: _searchController.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(
-                              Icons.clear_rounded,
-                              color: AppColors.grey500,
-                            ),
-                            onPressed: () {
-                              _searchController.clear();
-                              provider.clearSearch();
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: AppColors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: AppColors.grey300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: AppColors.grey200),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Category Filter Pills (Semua, Pemasangan APK, Door to Door)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                child: Row(
-                  children: [
-                    _buildFilterChip(
-                      label: 'Semua',
-                      isSelected: provider.selectedCategoryFilter == null,
-                      onTap: () => provider.setCategoryFilter(null),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildFilterChip(
-                      label: 'Pemasangan APK',
-                      icon: Icons.flag_rounded,
-                      isSelected:
-                          provider.selectedCategoryFilter ==
-                          ActivationCategory.pemasanganApk,
-                      onTap: () => provider.setCategoryFilter(
-                        ActivationCategory.pemasanganApk,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildFilterChip(
-                      label: 'Door to Door',
-                      icon: Icons.meeting_room_rounded,
-                      isSelected:
-                          provider.selectedCategoryFilter ==
-                          ActivationCategory.doorToDoor,
-                      onTap: () => provider.setCategoryFilter(
-                        ActivationCategory.doorToDoor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // Daftar Kegiatan Header & List (Title di Kiri, Total Count di Kanan)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Fixed Top Section (Search Bar, Category Filter Pills & Header)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Daftar Kegiatan',
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                      fontSize: 18,
-                    ),
-                  ),
+                  // Search Input Field
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      '${filteredList.length} Kegiatan',
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (val) => provider.setSearchQuery(val),
+                      decoration: InputDecoration(
+                        hintText: 'Cari kegiatan, lokasi, atau kategori...',
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.grey500,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.search_rounded,
+                          color: AppColors.primary,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(
+                                  Icons.clear_rounded,
+                                  color: AppColors.grey500,
+                                ),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  provider.clearSearch();
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: AppColors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: AppColors.grey300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(color: AppColors.grey200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 14),
+                  const SizedBox(height: 16),
 
-              // Activities List (or empty state)
-              if (filteredList.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(32),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.grey200),
+                  // Category Filter Pills (Semua, Pemasangan APK, Door to Door)
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      children: [
+                        _buildFilterChip(
+                          label: 'Semua',
+                          isSelected: provider.selectedCategoryFilter == null,
+                          onTap: () => provider.setCategoryFilter(null),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFilterChip(
+                          label: 'Pemasangan APK',
+                          icon: Icons.flag_rounded,
+                          isSelected:
+                              provider.selectedCategoryFilter ==
+                              ActivationCategory.pemasanganApk,
+                          onTap: () => provider.setCategoryFilter(
+                            ActivationCategory.pemasanganApk,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFilterChip(
+                          label: 'Door to Door',
+                          icon: Icons.meeting_room_rounded,
+                          isSelected:
+                              provider.selectedCategoryFilter ==
+                              ActivationCategory.doorToDoor,
+                          onTap: () => provider.setCategoryFilter(
+                            ActivationCategory.doorToDoor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
+                  const SizedBox(height: 20),
+
+                  // Section Header (Title & Total Count)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.search_off_rounded,
-                        size: 56,
-                        color: AppColors.grey400,
-                      ),
-                      const SizedBox(height: 12),
                       Text(
-                        'Kegiatan Tidak Ditemukan',
-                        style: AppTextStyles.headlineSmall.copyWith(
-                          fontSize: 16,
+                        'Daftar Kegiatan',
+                        style: AppTextStyles.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
+                          fontSize: 18,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Coba kata kunci lain atau ubah filter kategori.',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 13,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
-                        textAlign: TextAlign.center,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${filteredList.length} Kegiatan',
+                          style: AppTextStyles.labelSmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                )
-              else
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filteredList.length,
-                  itemBuilder: (context, index) {
-                    final activity = filteredList[index];
-                    return ActivationCard(
-                      activity: activity,
-                      onTap: () => context.pushNamed(
-                        'activation_detail',
-                        extra: activity.id,
+                ],
+              ),
+            ),
+
+            // Scrollable List Only Section
+            Expanded(
+              child: filteredList.isEmpty
+                  ? SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(32),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.grey200),
+                        ),
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.search_off_rounded,
+                              size: 56,
+                              color: AppColors.grey400,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Kegiatan Tidak Ditemukan',
+                              style: AppTextStyles.headlineSmall.copyWith(
+                                fontSize: 16,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Coba kata kunci lain atau ubah filter kategori.',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 13,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  },
-                ),
-              const SizedBox(height: 24),
-            ],
-          ),
+                    )
+                  : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(20.0, 4.0, 20.0, 24.0),
+                      itemCount: filteredList.length,
+                      itemBuilder: (context, index) {
+                        final activity = filteredList[index];
+                        return ActivationCard(
+                          activity: activity,
+                          onTap: () => context.pushNamed(
+                            'activation_detail',
+                            extra: activity.id,
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         );
       },
     );

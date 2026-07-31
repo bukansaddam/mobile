@@ -98,9 +98,13 @@ class ActivationReport {
   final double latitude;
   final double longitude;
   final String? notes;
-  // Door to door mandatory fields:
+  // Door to door mandatory & detail fields:
   final String? recipientName;
+  final String? recipientKk;
   final String? recipientNik;
+  final String? rt;
+  final String? rw;
+  final String? houseNumber;
 
   const ActivationReport({
     required this.id,
@@ -110,7 +114,11 @@ class ActivationReport {
     required this.longitude,
     this.notes,
     this.recipientName,
+    this.recipientKk,
     this.recipientNik,
+    this.rt,
+    this.rw,
+    this.houseNumber,
   });
 
   String get photoUrl => photoUrls.isNotEmpty ? photoUrls.first : '';
@@ -153,6 +161,20 @@ class ActivationActivity {
 
   double get progressPercentage =>
       totalSteps > 0 ? (completedSteps / totalSteps).clamp(0.0, 1.0) : 0.0;
+
+  double get deadlineProgressPercentage {
+    final now = DateTime.now();
+    if (now.isBefore(startDate)) {
+      return 0.0;
+    }
+    if (now.isAfter(endDate)) {
+      return 1.0;
+    }
+    final totalSeconds = endDate.difference(startDate).inSeconds;
+    if (totalSeconds <= 0) return 1.0;
+    final elapsedSeconds = now.difference(startDate).inSeconds;
+    return (elapsedSeconds / totalSeconds).clamp(0.0, 1.0);
+  }
 
   ActivationActivity copyWith({
     String? id,

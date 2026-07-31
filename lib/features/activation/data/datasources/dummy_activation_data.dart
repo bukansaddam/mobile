@@ -2,7 +2,7 @@ import 'package:akar/features/activation/domain/entities/activation_activity.dar
 
 class DummyActivationData {
   static final List<ActivationActivity> activities = [
-    // 1. Sedang Berjalan (Pemasangan APK)
+    // 1. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-01',
       title: 'Pemasangan Baliho Menyapa Warga Kelurahan Menteng',
@@ -14,49 +14,16 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 25),
       endDate: DateTime(2026, 8, 5),
-      completedSteps: 3,
+      completedSteps: 0,
       totalSteps: 5,
       description:
           'Penggelaran Alat Peraga Kampanye (APK) berupa baliho utama dan spanduk sosialisasi di titik-titik strategis Kelurahan Menteng secara tertib.',
       notes:
           'Pastikan konstruksi rangka kayu/bambu terikat kokoh dan tidak mengganggu jarak pandang pengguna jalan.',
-      reports: [
-        ActivationReport(
-          id: 'rep-01',
-          photoUrls: [
-            'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
-            'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
-          ],
-          submittedAt: DateTime(2026, 7, 26, 10, 30),
-          latitude: -6.1965,
-          longitude: 106.8317,
-          notes: 'Pemasangan kerangka kayu baliho di simpang kelurahan selesai (2 foto).',
-        ),
-        ActivationReport(
-          id: 'rep-02',
-          photoUrls: [
-            'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400',
-          ],
-          submittedAt: DateTime(2026, 7, 27, 14, 15),
-          latitude: -6.1970,
-          longitude: 106.8320,
-          notes: 'Pemasangan kain terpal baliho utama kencang dan rapi.',
-        ),
-        ActivationReport(
-          id: 'rep-03',
-          photoUrls: [
-            'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400',
-            'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
-          ],
-          submittedAt: DateTime(2026, 7, 29, 09, 45),
-          latitude: -6.1975,
-          longitude: 106.8325,
-          notes: 'Pembersihan sisa material kayu dan sampah sekitar lokasi.',
-        ),
-      ],
+      reports: [],
     ),
 
-    // 2. Sedang Berjalan (Door to Door)
+    // 2. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-02',
       title: 'Pembagian Paket Sembako Peduli Warga Kelurahan Senayan',
@@ -68,30 +35,16 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 28),
       endDate: DateTime(2026, 8, 10),
-      completedSteps: 1,
+      completedSteps: 0,
       totalSteps: 4,
       description:
           'Penyerahan bantuan sosial berupa paket sembako dan cenderamata secara langsung ke rumah warga lansia dan membutuhkan.',
       notes:
           'Sapa warga dengan santun, sampaikan salam hangat, serta catat data penerima manfaat secara lengkap.',
-      reports: [
-        ActivationReport(
-          id: 'rep-04',
-          photoUrls: [
-            'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400',
-            'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400',
-          ],
-          submittedAt: DateTime(2026, 7, 29, 11, 20),
-          latitude: -6.2250,
-          longitude: 106.8050,
-          recipientName: 'Budi Santoso',
-          recipientNik: '3174011204850001',
-          notes: 'Penyerahan paket bansos tahap 1 secara langsung kepada penerima.',
-        ),
-      ],
+      reports: [],
     ),
 
-    // 3. Selesai (Pemasangan APK)
+    // 3. Selesai
     ActivationActivity(
       id: 'act-03',
       title: 'Pemasangan Baliho Silaturahmi Kelurahan Tebet Barat',
@@ -108,16 +61,10 @@ class DummyActivationData {
       description:
           'Pemasangan media peraga kampanye baliho ucapan salam hangat dan pesan edukasi politik santun untuk masyarakat Kelurahan Tebet Barat.',
       notes: 'Pemasangan telah selesai 100% dan mendapat respons positif dari warga.',
-      reports: [
-        ActivationReport(id: 'rep-05', photoUrls: ['https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400'], submittedAt: DateTime(2026, 7, 11), latitude: -6.2300, longitude: 106.8400, notes: 'Survei titik lokasi.'),
-        ActivationReport(id: 'rep-06', photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], submittedAt: DateTime(2026, 7, 13), latitude: -6.2305, longitude: 106.8405, notes: 'Perakitan kerangka.'),
-        ActivationReport(id: 'rep-07', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'], submittedAt: DateTime(2026, 7, 15), latitude: -6.2310, longitude: 106.8410, notes: 'Penataan media baliho.'),
-        ActivationReport(id: 'rep-08', photoUrls: ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'], submittedAt: DateTime(2026, 7, 18), latitude: -6.2315, longitude: 106.8415, notes: 'Penguatan tiang penyangga.'),
-        ActivationReport(id: 'rep-09', photoUrls: ['https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'], submittedAt: DateTime(2026, 7, 22), latitude: -6.2320, longitude: 106.8420, notes: 'Serah terima hasil pemasangan.'),
-      ],
+      reports: [],
     ),
 
-    // 4. Terjadwal (Pemasangan APK)
+    // 4. Terjadwal
     ActivationActivity(
       id: 'act-04',
       title: 'Pemasangan Spanduk Pesan Kebangsaan Kelurahan Kemang',
@@ -137,7 +84,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 5. Dibatalkan (Door to Door)
+    // 5. Dibatalkan
     ActivationActivity(
       id: 'act-05',
       title: 'Penyaluran Paket Nutrisi Balita Kelurahan Cikini',
@@ -157,7 +104,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 6. Sedang Berjalan (Pemasangan APK)
+    // 6. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-06',
       title: 'Pemasangan Baliho Aspirasi Warga Kelurahan Rawamangun',
@@ -169,18 +116,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 20),
       endDate: DateTime(2026, 8, 3),
-      completedSteps: 2,
+      completedSteps: 0,
       totalSteps: 4,
       description:
           'Pemasangan baliho APK peraga yang memuat gagasan pembangunan wilayah dan ajakan menjaga kesatuan warga.',
       notes: 'Gunakan simpul tali yang kuat agar bertahan menghadapi cuaca hujan dan angin.',
-      reports: [
-        ActivationReport(id: 'rep-10', photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], submittedAt: DateTime(2026, 7, 22), latitude: -6.1950, longitude: 106.8820, notes: 'Pengantaran material peraga.'),
-        ActivationReport(id: 'rep-11', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'], submittedAt: DateTime(2026, 7, 26), latitude: -6.1955, longitude: 106.8825, notes: 'Pemasangan tiang pancang (2 foto).'),
-      ],
+      reports: [],
     ),
 
-    // 7. Terjadwal (Pemasangan APK)
+    // 7. Terjadwal
     ActivationActivity(
       id: 'act-07',
       title: 'Pemasangan Baliho Apresiasi Tokoh Kelurahan Kebon Sirih',
@@ -200,7 +144,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 8. Selesai (Door to Door)
+    // 8. Selesai
     ActivationActivity(
       id: 'act-08',
       title: 'Penyaluran Bantuan Sembako Berkah Kelurahan Sunter Agung',
@@ -217,51 +161,10 @@ class DummyActivationData {
       description:
           'Pembagian sembako dan cenderamata peralatan rumah tangga kepada keluarga penerima manfaat di lingkungan RW 05.',
       notes: 'Seluruh paket telah tersalurkan 100% tepat sasaran.',
-      reports: [
-        ActivationReport(
-          id: 'rep-12',
-          photoUrls: ['https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400'],
-          submittedAt: DateTime(2026, 7, 2),
-          latitude: -6.1380,
-          longitude: 106.8600,
-          recipientName: 'Siti Aminah',
-          recipientNik: '3172025508750002',
-          notes: 'Pendataan calon penerima bantuan.',
-        ),
-        ActivationReport(
-          id: 'rep-13',
-          photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'],
-          submittedAt: DateTime(2026, 7, 5),
-          latitude: -6.1385,
-          longitude: 106.8605,
-          recipientName: 'Joko Susilo',
-          recipientNik: '3172021003800004',
-          notes: 'Pembagian sembako kluster RT 01-03.',
-        ),
-        ActivationReport(
-          id: 'rep-14',
-          photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'],
-          submittedAt: DateTime(2026, 7, 8),
-          latitude: -6.1390,
-          longitude: 106.8610,
-          recipientName: 'Dewi Lestari',
-          recipientNik: '3172024411920001',
-          notes: 'Pembagian sembako kluster RT 04-06.',
-        ),
-        ActivationReport(
-          id: 'rep-15',
-          photoUrls: ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'],
-          submittedAt: DateTime(2026, 7, 12),
-          latitude: -6.1395,
-          longitude: 106.8615,
-          recipientName: 'Ahmad Subagja',
-          recipientNik: '3172021506680003',
-          notes: 'Verifikasi akhir TTD penyerahan.',
-        ),
-      ],
+      reports: [],
     ),
 
-    // 9. Sedang Berjalan (Pemasangan APK)
+    // 9. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-09',
       title: 'Pemasangan Baliho Peduli Sesama Kelurahan Palmerah',
@@ -273,17 +176,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 29),
       endDate: DateTime(2026, 8, 12),
-      completedSteps: 1,
+      completedSteps: 0,
       totalSteps: 3,
       description:
           'Pemasangan baliho APK bertema gotong royong dan kemandirian ekonomi warga Kelurahan Palmerah.',
       notes: 'Hindari memasang pada pepohonan atau menutupi papan penunjuk jalan.',
-      reports: [
-        ActivationReport(id: 'rep-16', photoUrls: ['https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'], submittedAt: DateTime(2026, 7, 29, 16, 00), latitude: -6.1910, longitude: 106.7910, notes: 'Pengiriman peraga sampai di lokasi.'),
-      ],
+      reports: [],
     ),
 
-    // 10. Terjadwal (Door to Door)
+    // 10. Terjadwal
     ActivationActivity(
       id: 'act-10',
       title: 'Pembagian Perlengkapan Sekolah Anak Kelurahan Pasar Minggu',
@@ -303,7 +204,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 11. Dibatalkan (Pemasangan APK)
+    // 11. Dibatalkan
     ActivationActivity(
       id: 'act-11',
       title: 'Pemasangan Baliho Harapan Warga Kelurahan Tomang',
@@ -323,7 +224,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 12. Sedang Berjalan (Pemasangan APK)
+    // 12. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-12',
       title: 'Pemasangan Spanduk Pesan Kebersamaan Kelurahan Cempaka Putih',
@@ -335,18 +236,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 22),
       endDate: DateTime(2026, 8, 4),
-      completedSteps: 2,
+      completedSteps: 0,
       totalSteps: 4,
       description:
           'Pemasangan media kain spanduk APK berisi pesan perdamaian dan kerukunan warga di kawasan Cempaka Putih.',
       notes: 'Tetap utamakan estetika dan kebersihan area sekitar lokasi penempatan.',
-      reports: [
-        ActivationReport(id: 'rep-17', photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], submittedAt: DateTime(2026, 7, 24), latitude: -6.1780, longitude: 106.8680, notes: 'Survei lokasi ikatan.'),
-        ActivationReport(id: 'rep-18', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'], submittedAt: DateTime(2026, 7, 28), latitude: -6.1785, longitude: 106.8685, notes: 'Pemasangan spanduk pertama.'),
-      ],
+      reports: [],
     ),
 
-    // 13. Selesai (Pemasangan APK)
+    // 13. Selesai
     ActivationActivity(
       id: 'act-13',
       title: 'Pemasangan Baliho Gagasan Masa Depan Kelurahan Duren Sawit',
@@ -363,14 +261,10 @@ class DummyActivationData {
       description:
           'Pemasangan peraga baliho APK ukuran besar secara aman di area persimpangan Kelurahan Duren Sawit.',
       notes: 'Kegiatan berjalan lancar tanpa kendala teknis.',
-      reports: [
-        ActivationReport(id: 'rep-19', photoUrls: ['https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400'], submittedAt: DateTime(2026, 7, 14), latitude: -6.2210, longitude: 106.9010, notes: 'Persiapan kerangka.'),
-        ActivationReport(id: 'rep-20', photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], submittedAt: DateTime(2026, 7, 18), latitude: -6.2215, longitude: 106.9015, notes: 'Pemasangan baliho.'),
-        ActivationReport(id: 'rep-21', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400', 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'], submittedAt: DateTime(2026, 7, 24), latitude: -6.2220, longitude: 106.9020, notes: 'Pemeriksaan akhir (2 foto).'),
-      ],
+      reports: [],
     ),
 
-    // 14. Terjadwal (Door to Door)
+    // 14. Terjadwal
     ActivationActivity(
       id: 'act-14',
       title: 'Penyaluran Bantuan Sembako Maritim Kelurahan Pluit',
@@ -390,7 +284,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 15. Sedang Berjalan (Pemasangan APK)
+    // 15. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-15',
       title: 'Pemasangan Baliho Edukasi Politik Kelurahan Jatinegara',
@@ -402,17 +296,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 27),
       endDate: DateTime(2026, 8, 8),
-      completedSteps: 1,
+      completedSteps: 0,
       totalSteps: 3,
       description:
           'Sosialisasi visual melalui baliho APK mengenai pentingnya partisipasi aktif warga dalam pesta demokrasi.',
       notes: 'Pastikan tali ikatan kencang dan konstruksi baliho simetris.',
-      reports: [
-        ActivationReport(id: 'rep-22', photoUrls: ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'], submittedAt: DateTime(2026, 7, 28), latitude: -6.2250, longitude: 106.8650, notes: 'Pemasangan fondasi awal.'),
-      ],
+      reports: [],
     ),
 
-    // 16. Terjadwal (Pemasangan APK)
+    // 16. Terjadwal
     ActivationActivity(
       id: 'act-16',
       title: 'Pemasangan Baliho Peduli Pemuda Kelurahan Jagakarsa',
@@ -432,7 +324,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 17. Selesai (Door to Door)
+    // 17. Selesai
     ActivationActivity(
       id: 'act-17',
       title: 'Penyerahan Paket Sembako & Kesehatan Kelurahan Kalideres',
@@ -449,41 +341,10 @@ class DummyActivationData {
       description:
           'Kunjungan langsung ke kediaman warga lansia untuk membagikan paket bahan pokok dan vitamin kesehatan.',
       notes: 'Kegiatan didampingi tokoh masyarakat setempat.',
-      reports: [
-        ActivationReport(
-          id: 'rep-23',
-          photoUrls: ['https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'],
-          submittedAt: DateTime(2026, 7, 10),
-          latitude: -6.1510,
-          longitude: 106.7010,
-          recipientName: 'Rahmat Hidayat',
-          recipientNik: '3173051208700005',
-          notes: 'Pengemasan paket bansos.',
-        ),
-        ActivationReport(
-          id: 'rep-24',
-          photoUrls: ['https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400'],
-          submittedAt: DateTime(2026, 7, 14),
-          latitude: -6.1515,
-          longitude: 106.7015,
-          recipientName: 'Sri Wahyuni',
-          recipientNik: '3173055201820002',
-          notes: 'Penyerahan bantuan door to door.',
-        ),
-        ActivationReport(
-          id: 'rep-25',
-          photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400', 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'],
-          submittedAt: DateTime(2026, 7, 20),
-          latitude: -6.1520,
-          longitude: 106.7020,
-          recipientName: 'Endang Kartika',
-          recipientNik: '3173056109780001',
-          notes: 'Pendataan tanda terima penerima.',
-        ),
-      ],
+      reports: [],
     ),
 
-    // 18. Sedang Berjalan (Pemasangan APK)
+    // 18. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-18',
       title: 'Pemasangan Baliho Senyum Warga Kelurahan Pondok Indah',
@@ -495,19 +356,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 24),
       endDate: DateTime(2026, 8, 6),
-      completedSteps: 3,
+      completedSteps: 0,
       totalSteps: 4,
       description:
           'Penataan baliho APK gambar pesan ramah dan optimisme pembangunan daerah untuk warga Kebayoran Lama.',
       notes: 'Lakukan pengecekan rutin pada kawat pengikat baliho secara berkala.',
-      reports: [
-        ActivationReport(id: 'rep-26', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'], submittedAt: DateTime(2026, 7, 25), latitude: -6.2700, longitude: 106.7780, notes: 'Bahan kayu siap.'),
-        ActivationReport(id: 'rep-27', photoUrls: ['https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400'], submittedAt: DateTime(2026, 7, 27), latitude: -6.2705, longitude: 106.7785, notes: 'Perakitan selesai.'),
-        ActivationReport(id: 'rep-28', photoUrls: ['https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400'], submittedAt: DateTime(2026, 7, 29), latitude: -6.2710, longitude: 106.7790, notes: 'Baliho terpasang.'),
-      ],
+      reports: [],
     ),
 
-    // 19. Terjadwal (Door to Door)
+    // 19. Terjadwal
     ActivationActivity(
       id: 'act-19',
       title: 'Aksi Peduli Sembako Murah Kelurahan Kelapa Gading',
@@ -527,7 +384,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 20. Selesai (Pemasangan APK)
+    // 20. Selesai
     ActivationActivity(
       id: 'act-20',
       title: 'Pemasangan Spanduk Peduli Lingkungan Kelurahan Pancoran',
@@ -544,13 +401,10 @@ class DummyActivationData {
       description:
           'Pemasangan spanduk APK imbauan kebersihan lingkungan dan kebersamaan warga Kelurahan Pancoran.',
       notes: 'Pemasangan selesai dan telah didokumentasikan.',
-      reports: [
-        ActivationReport(id: 'rep-29', photoUrls: ['https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400'], submittedAt: DateTime(2026, 7, 16), latitude: -6.2480, longitude: 106.8480, notes: 'Pengikatan sisi kiri.'),
-        ActivationReport(id: 'rep-30', photoUrls: ['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400'], submittedAt: DateTime(2026, 7, 20), latitude: -6.2485, longitude: 106.8485, notes: 'Pengikatan sisi kanan.'),
-      ],
+      reports: [],
     ),
 
-    // 21. Dibatalkan (Pemasangan APK)
+    // 21. Dibatalkan
     ActivationActivity(
       id: 'act-21',
       title: 'Pemasangan Baliho Kebangsaan Kelurahan Kebayoran Lama',
@@ -570,7 +424,7 @@ class DummyActivationData {
       reports: [],
     ),
 
-    // 22. Sedang Berjalan (Pemasangan APK)
+    // 22. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-22',
       title: 'Pemasangan Baliho Sahabat Masyarakat Kelurahan Cilincing',
@@ -582,17 +436,15 @@ class DummyActivationData {
       status: ActivationStatus.sedangBerjalan,
       startDate: DateTime(2026, 7, 26),
       endDate: DateTime(2026, 8, 7),
-      completedSteps: 1,
+      completedSteps: 0,
       totalSteps: 5,
       description:
           'Pemasangan baliho APK peraga sosialisasi gagasan perubahan positif untuk kesejahteraan masyarakat Kelurahan Cilincing.',
       notes: 'Koordinasi bersama pemuda setempat berjalan sangat harmonis.',
-      reports: [
-        ActivationReport(id: 'rep-31', photoUrls: ['https://images.unsplash.com/photo-1518770660439-4636190af475?w=400'], submittedAt: DateTime(2026, 7, 28), latitude: -6.1120, longitude: 106.9120, notes: 'Pemasangan tiang utama.'),
-      ],
+      reports: [],
     ),
 
-    // 23. Terjadwal (Door to Door)
+    // 23. Terjadwal
     ActivationActivity(
       id: 'act-23',
       title: 'Penyaluran Paket Kehangatan Lansia Kelurahan Ciracas',

@@ -232,11 +232,13 @@ class ActivationCard extends StatelessWidget {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: LinearProgressIndicator(
-                          value: activity.progressPercentage,
+                          value: activity.deadlineProgressPercentage,
                           minHeight: 6,
                           backgroundColor: AppColors.grey200,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            activity.status.color,
+                            activity.deadlineProgressPercentage >= 0.9
+                                ? AppColors.warning
+                                : activity.status.color,
                           ),
                         ),
                       ),

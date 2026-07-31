@@ -339,10 +339,14 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
-            value: activity.progressPercentage,
+            value: activity.deadlineProgressPercentage,
             minHeight: 10,
             backgroundColor: AppColors.grey200,
-            valueColor: AlwaysStoppedAnimation<Color>(activity.status.color),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              activity.deadlineProgressPercentage >= 0.9
+                  ? AppColors.warning
+                  : activity.status.color,
+            ),
           ),
         ),
       ],
@@ -1050,12 +1054,32 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            'NIK Penerima: ${report.recipientNik}',
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                          if (report.recipientKk != null &&
+                              report.recipientKk!.isNotEmpty)
+                            Text(
+                              'KK Penerima: ${report.recipientKk}',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
                             ),
-                          ),
+                          if (report.recipientNik != null &&
+                              report.recipientNik!.isNotEmpty)
+                            Text(
+                              'NIK Penerima: ${report.recipientNik}',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          if ((report.rt != null && report.rt!.isNotEmpty) ||
+                              (report.rw != null && report.rw!.isNotEmpty) ||
+                              (report.houseNumber != null &&
+                                  report.houseNumber!.isNotEmpty))
+                            Text(
+                              'Alamat: RT ${report.rt ?? '-'} / RW ${report.rw ?? '-'} No. ${report.houseNumber ?? '-'}',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                         ],
                         if (report.notes != null) ...[
                           const Divider(height: 16),

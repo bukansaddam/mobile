@@ -27,6 +27,7 @@ class AddReportBottomSheet extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (context) => AddReportBottomSheet(
         activity: activity,
@@ -43,7 +44,11 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _kkController = TextEditingController();
   final TextEditingController _nikController = TextEditingController();
+  final TextEditingController _rtController = TextEditingController();
+  final TextEditingController _rwController = TextEditingController();
+  final TextEditingController _houseNumberController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
   late List<String> _photoUrls;
@@ -62,7 +67,11 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   @override
   void dispose() {
     _nameController.dispose();
+    _kkController.dispose();
     _nikController.dispose();
+    _rtController.dispose();
+    _rwController.dispose();
+    _houseNumberController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -152,7 +161,11 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
           ? _notesController.text.trim()
           : null,
       recipientName: isDoorToDoor ? _nameController.text.trim() : null,
+      recipientKk: isDoorToDoor ? _kkController.text.trim() : null,
       recipientNik: isDoorToDoor ? _nikController.text.trim() : null,
+      rt: isDoorToDoor ? _rtController.text.trim() : null,
+      rw: isDoorToDoor ? _rwController.text.trim() : null,
+      houseNumber: isDoorToDoor ? _houseNumberController.text.trim() : null,
     );
 
     context.read<ActivationProvider>().addReport(widget.activity.id, report);
@@ -460,13 +473,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
 
                 // Category Dependent Fields
                 if (isDoorToDoor) ...[
-                  Text(
-                    'Nama Penerima *',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
+                  // 1. Nama Penerima
+                  _buildMandatoryLabel('Nama Penerima'),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nameController,
@@ -488,13 +496,37 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Text(
-                    'NIK Penerima *',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+
+                  // 2. KK Penerima
+                  _buildMandatoryLabel('KK Penerima'),
+                  const SizedBox(height: 6),
+                  TextFormField(
+                    controller: _kkController,
+                    keyboardType: TextInputType.number,
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Nomor KK penerima wajib diisi';
+                      }
+                      if (val.trim().length < 16) {
+                        return 'Nomor KK harus terdiri dari 16 digit';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Masukkan 16 digit No. KK...',
+                      prefixIcon: const Icon(
+                        Icons.family_restroom_rounded,
+                        color: AppColors.primary,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 14),
+
+                  // 3. NIK Penerima
+                  _buildMandatoryLabel('NIK Penerima'),
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nikController,
@@ -518,6 +550,90 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 4. RT, RW, No Rumah (Sebaris Horizontal - Mandatory)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildMandatoryLabel('RT'),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _rtController,
+                              keyboardType: TextInputType.number,
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return 'Wajib diisi';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: '001',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildMandatoryLabel('RW'),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _rwController,
+                              keyboardType: TextInputType.number,
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return 'Wajib diisi';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: '002',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildMandatoryLabel('No. Rumah'),
+                            const SizedBox(height: 6),
+                            TextFormField(
+                              controller: _houseNumberController,
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return 'Wajib diisi';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                hintText: '12B',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -584,6 +700,27 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildMandatoryLabel(String label) {
+    return RichText(
+      text: TextSpan(
+        text: label,
+        style: AppTextStyles.labelMedium.copyWith(
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        children: const [
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: AppColors.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
