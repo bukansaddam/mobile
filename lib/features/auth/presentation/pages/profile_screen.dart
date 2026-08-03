@@ -636,9 +636,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: OutlinedButton.icon(
                                     onPressed: () =>
                                         context.goNamed('register'),
-                                    icon: const Icon(
-                                      Icons.person_add_outlined,
-                                    ),
+                                    icon: const Icon(Icons.person_add_outlined),
                                     label: const Text('Daftar'),
                                     style: OutlinedButton.styleFrom(
                                       foregroundColor: AppColors.primary,
@@ -711,43 +709,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 14),
 
-              HomeSummaryCard(
-                title: 'Total Daftar Tugas',
-                subtitle: 'Daftar kegiatan aktif',
-                count: '$totalTugasCount',
-                icon: Icons.assignment_outlined,
-                gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
-                onTap: () {
-                  setState(() {
-                    _currentTabIndex = 2;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              HomeSummaryCard(
-                title: 'Total Agenda',
-                subtitle: 'Kegiatan sedang berjalan',
-                count: '$totalAgendaCount',
-                icon: Icons.event_note_rounded,
-                gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
-                onTap: () {
-                  setState(() {
-                    _currentTabIndex = 2;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-              HomeSummaryCard(
-                title: 'Total Laporan',
-                subtitle: 'Kegiatan telah selesai',
-                count: '$totalLaporanCount',
-                icon: Icons.insert_drive_file_outlined,
-                gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
-                onTap: () {
-                  setState(() {
-                    _currentTabIndex = 2;
-                  });
-                },
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: HomeSummaryCard(
+                        title: 'Total Daftar Tugas',
+                        subtitle: 'Kegiatan aktif',
+                        count: '$totalTugasCount',
+                        icon: Icons.assignment_outlined,
+                        gradientColors: const [
+                          Color(0xFF0F9F66),
+                          Color(0xFF0A754B),
+                        ],
+                        isCompact: true,
+                        onTap: () {
+                          setState(() {
+                            _currentTabIndex = 2;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: HomeSummaryCard(
+                        title: 'Total Agenda',
+                        subtitle: 'Sedang berjalan',
+                        count: '$totalAgendaCount',
+                        icon: Icons.event_note_rounded,
+                        gradientColors: const [
+                          Color(0xFF5CB836),
+                          Color(0xFF438A24),
+                        ],
+                        isCompact: true,
+                        onTap: () {
+                          setState(() {
+                            _currentTabIndex = 2;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: HomeSummaryCard(
+                        title: 'Total Laporan',
+                        subtitle: 'Telah selesai',
+                        count: '$totalLaporanCount',
+                        icon: Icons.insert_drive_file_outlined,
+                        gradientColors: const [
+                          Color(0xFFD99B00),
+                          Color(0xFFB37B00),
+                        ],
+                        isCompact: true,
+                        onTap: () {
+                          setState(() {
+                            _currentTabIndex = 2;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
             ],

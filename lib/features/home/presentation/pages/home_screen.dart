@@ -9,6 +9,7 @@ import 'package:akar/features/home/presentation/widgets/home_summary_card.dart';
 import 'package:akar/features/home/presentation/widgets/notification_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -181,35 +182,163 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
 
-                HomeSummaryCard(
-                  title: 'Total Daftar Tugas',
-                  subtitle: 'Daftar kegiatan aktif',
-                  count: '$totalTugasCount',
-                  icon: Icons.assignment_outlined,
-                  gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+                IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: HomeSummaryCard(
+                          title: 'Total Daftar Tugas',
+                          subtitle: 'Kegiatan aktif',
+                          count: '$totalTugasCount',
+                          icon: Icons.assignment_outlined,
+                          gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+                          isCompact: true,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: HomeSummaryCard(
+                          title: 'Total Agenda',
+                          subtitle: 'Sedang berjalan',
+                          count: '$totalAgendaCount',
+                          icon: Icons.event_note_rounded,
+                          gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+                          isCompact: true,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: HomeSummaryCard(
+                          title: 'Total Laporan',
+                          subtitle: 'Telah selesai',
+                          count: '$totalLaporanCount',
+                          icon: Icons.insert_drive_file_outlined,
+                          gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
+                          isCompact: true,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                HomeSummaryCard(
-                  title: 'Total Agenda',
-                  subtitle: 'Kegiatan sedang berjalan',
-                  count: '$totalAgendaCount',
-                  icon: Icons.event_note_rounded,
-                  gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+                const SizedBox(height: 24),
+
+                Text(
+                  'Menu Utama',
+                  style: AppTextStyles.titleLarge.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                HomeSummaryCard(
-                  title: 'Total Laporan',
-                  subtitle: 'Kegiatan telah selesai',
-                  count: '$totalLaporanCount',
-                  icon: Icons.insert_drive_file_outlined,
-                  gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
-                ),
+                const SizedBox(height: 14),
+
+                _buildMenuUtamaSection(context),
                 const SizedBox(height: 24),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildMenuUtamaSection(BuildContext context) {
+    final menuItems = [
+      {
+        'title': 'Aktivasi',
+        'icon': Icons.flash_on_rounded,
+        'color': const Color(0xFF2563EB),
+        'bgColor': const Color(0xFFEFF6FF),
+        'onTap': () {},
+      },
+      {
+        'title': 'Peta Tracking',
+        'icon': Icons.map_rounded,
+        'color': const Color(0xFF0D9488),
+        'bgColor': const Color(0xFFCCFBF1),
+        'onTap': () {
+          context.pushNamed('map_tracking');
+        },
+      },
+      {
+        'title': 'Analisis',
+        'icon': Icons.analytics_rounded,
+        'color': const Color(0xFF7C3AED),
+        'bgColor': const Color(0xFFF3E8FF),
+        'onTap': () {},
+      },
+      {
+        'title': 'Pengaturan',
+        'icon': Icons.settings_rounded,
+        'color': const Color(0xFF4B5563),
+        'bgColor': const Color(0xFFF3F4F6),
+        'onTap': () {
+          context.pushNamed('setting');
+        },
+      },
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: menuItems.map((item) {
+          return Expanded(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: item['onTap'] as VoidCallback?,
+                borderRadius: BorderRadius.circular(14),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: item['bgColor'] as Color,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          color: item['color'] as Color,
+                          size: 26,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['title'] as String,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 }
