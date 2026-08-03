@@ -13,6 +13,11 @@ import 'package:akar/features/panic/domain/repositories/panic_repository.dart';
 import 'package:akar/features/panic/domain/usecases/get_nearby_members_usecase.dart';
 import 'package:akar/features/panic/domain/usecases/send_panic_alert_usecase.dart';
 import 'package:akar/features/panic/presentation/provider/panic_provider.dart';
+import 'package:akar/features/presensi/data/datasources/presensi_remote_datasource.dart';
+import 'package:akar/features/presensi/data/repositories/presensi_repository_impl.dart';
+import 'package:akar/features/presensi/domain/repositories/presensi_repository.dart';
+import 'package:akar/features/presensi/domain/usecases/submit_presensi_usecase.dart';
+import 'package:akar/features/presensi/presentation/provider/presensi_provider.dart';
 import 'package:akar/features/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/tracking/data/repositories/tracking_repository_impl.dart';
 import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
@@ -44,6 +49,9 @@ Future<void> init() async {
   sl.registerLazySingleton<PanicRemoteDatasource>(
     () => PanicRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<PresensiRemoteDatasource>(
+    () => PresensiRemoteDatasourceImpl(),
+  );
 
   // ---------------------- Repositories ----------------------
   sl.registerLazySingleton<AuthRepository>(
@@ -54,6 +62,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<PanicRepository>(
     () => PanicRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<PresensiRepository>(
+    () => PresensiRepositoryImpl(remoteDatasource: sl()),
   );
 
   // ---------------------- Use Cases ----------------------
@@ -67,6 +78,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<SendPanicAlertUsecase>(
     () => SendPanicAlertUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitPresensiUsecase>(
+    () => SubmitPresensiUsecase(sl()),
   );
 
   // ---------------------- Providers ----------------------
@@ -87,5 +101,8 @@ Future<void> init() async {
       getNearbyMembersUsecase: sl(),
       sendPanicAlertUsecase: sl(),
     ),
+  );
+  sl.registerLazySingleton<PresensiProvider>(
+    () => PresensiProvider(submitPresensiUsecase: sl()),
   );
 }
