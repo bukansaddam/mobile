@@ -94,10 +94,12 @@ class BackgroundServiceHelper {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    int currentIntervalSeconds = prefs.getInt('trackingIntervalSeconds') ??
+    int currentIntervalSeconds =
+        prefs.getInt('trackingIntervalSeconds') ??
         prefs.getInt('intervalSeconds') ??
         900;
-    bool isTrackingActive = prefs.getBool('isTrackingActive') ??
+    bool isTrackingActive =
+        prefs.getBool('isTrackingActive') ??
         prefs.getBool('isTrackingEnabled') ??
         true;
 
@@ -110,7 +112,8 @@ class BackgroundServiceHelper {
 
       try {
         final updatedPrefs = await SharedPreferences.getInstance();
-        isTrackingActive = updatedPrefs.getBool('isTrackingActive') ??
+        isTrackingActive =
+            updatedPrefs.getBool('isTrackingActive') ??
             updatedPrefs.getBool('isTrackingEnabled') ??
             true;
         if (!isTrackingActive) return;
@@ -126,8 +129,9 @@ class BackgroundServiceHelper {
           if (lastTimeStr != null) {
             final lastTime = DateTime.tryParse(lastTimeStr);
             if (lastTime != null) {
-              final elapsedMs =
-                  DateTime.now().difference(lastTime).inMilliseconds;
+              final elapsedMs = DateTime.now()
+                  .difference(lastTime)
+                  .inMilliseconds;
               if (elapsedMs < (currentIntervalSeconds * 1000 - 500)) {
                 // Interval belum tercapai, lewati pengiriman API
                 return;

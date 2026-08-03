@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 
-enum ActivationCategory {
-  pemasanganApk,
-  doorToDoor,
-}
+enum ActivationCategory { pemasanganApk, doorToDoor }
 
-enum ActivationStatus {
-  terjadwal,
-  sedangBerjalan,
-  selesai,
-  dibatalkan,
-}
+enum ActivationStatus { terjadwal, sedangBerjalan, selesai, dibatalkan }
 
 extension ActivationCategoryExtension on ActivationCategory {
   String get label {

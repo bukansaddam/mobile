@@ -1,6 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/features/activation/presentation/pages/activation_detail_screen.dart';
 import 'package:akar/features/auth/presentation/pages/login_screen.dart';
+import 'package:akar/features/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/auth/presentation/pages/profile_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
@@ -77,6 +78,11 @@ class AppRouter {
         path: '/map-tracking',
         name: 'map_tracking',
         builder: (context, state) => const MapTrackingScreen(),
+      ),
+      GoRoute(
+        path: '/panic',
+        name: 'panic',
+        builder: (context, state) => const PanicScreen(),
       ),
       GoRoute(
         path: '/activation-detail',

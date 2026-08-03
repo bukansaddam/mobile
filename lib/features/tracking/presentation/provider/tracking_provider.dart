@@ -36,10 +36,12 @@ class TrackingProvider extends ChangeNotifier {
   }
 
   void _init() {
-    _isTrackingActive = sharedPreferences.getBool('isTrackingActive') ??
+    _isTrackingActive =
+        sharedPreferences.getBool('isTrackingActive') ??
         sharedPreferences.getBool('isTrackingEnabled') ??
         true;
-    _intervalSeconds = sharedPreferences.getInt('trackingIntervalSeconds') ??
+    _intervalSeconds =
+        sharedPreferences.getInt('trackingIntervalSeconds') ??
         sharedPreferences.getInt('intervalSeconds') ??
         900;
     _loadBackgroundStatus();
@@ -52,10 +54,12 @@ class TrackingProvider extends ChangeNotifier {
 
   Future<void> _loadBackgroundStatus() async {
     await sharedPreferences.reload();
-    _isTrackingActive = sharedPreferences.getBool('isTrackingActive') ??
+    _isTrackingActive =
+        sharedPreferences.getBool('isTrackingActive') ??
         sharedPreferences.getBool('isTrackingEnabled') ??
         _isTrackingActive;
-    _intervalSeconds = sharedPreferences.getInt('trackingIntervalSeconds') ??
+    _intervalSeconds =
+        sharedPreferences.getInt('trackingIntervalSeconds') ??
         sharedPreferences.getInt('intervalSeconds') ??
         _intervalSeconds;
     _lastLatitude =

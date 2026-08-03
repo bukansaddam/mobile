@@ -220,7 +220,8 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<int>(
-                  value: intervals.any(
+                  value:
+                      intervals.any(
                         (i) => i['value'] == provider.intervalSeconds,
                       )
                       ? provider.intervalSeconds
@@ -240,9 +241,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   onChanged: (newValue) {
                     if (newValue != null) {
                       provider.changeInterval(newValue);
-                      context
-                          .read<TrackingProvider>()
-                          .changeInterval(newValue);
+                      context.read<TrackingProvider>().changeInterval(newValue);
                     }
                   },
                 ),

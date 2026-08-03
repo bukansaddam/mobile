@@ -60,7 +60,8 @@ class DummyActivationData {
       totalSteps: 5,
       description:
           'Pemasangan media peraga kampanye baliho ucapan salam hangat dan pesan edukasi politik santun untuk masyarakat Kelurahan Tebet Barat.',
-      notes: 'Pemasangan telah selesai 100% dan mendapat respons positif dari warga.',
+      notes:
+          'Pemasangan telah selesai 100% dan mendapat respons positif dari warga.',
       reports: [],
     ),
 
@@ -100,7 +101,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Kunjungan bantuan sosial pencegahan stunting yang dialihkan jadwalnya mengikuti penyesuaian agenda kesehatan wilayah.',
-      notes: 'Kegiatan dibatalkan dan digabungkan ke program penyaluran bulan depan.',
+      notes:
+          'Kegiatan dibatalkan dan digabungkan ke program penyaluran bulan depan.',
       reports: [],
     ),
 
@@ -120,7 +122,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Pemasangan baliho APK peraga yang memuat gagasan pembangunan wilayah dan ajakan menjaga kesatuan warga.',
-      notes: 'Gunakan simpul tali yang kuat agar bertahan menghadapi cuaca hujan dan angin.',
+      notes:
+          'Gunakan simpul tali yang kuat agar bertahan menghadapi cuaca hujan dan angin.',
       reports: [],
     ),
 
@@ -180,7 +183,8 @@ class DummyActivationData {
       totalSteps: 3,
       description:
           'Pemasangan baliho APK bertema gotong royong dan kemandirian ekonomi warga Kelurahan Palmerah.',
-      notes: 'Hindari memasang pada pepohonan atau menutupi papan penunjuk jalan.',
+      notes:
+          'Hindari memasang pada pepohonan atau menutupi papan penunjuk jalan.',
       reports: [],
     ),
 
@@ -200,7 +204,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Program penyerahan bantuan tas dan alat tulis sekolah dari rumah ke rumah untuk anak yatim dan kurang mampu.',
-      notes: 'Pastikan paket bantuan terdata rapi sesuai ukuran dan tingkatan sekolah.',
+      notes:
+          'Pastikan paket bantuan terdata rapi sesuai ukuran dan tingkatan sekolah.',
       reports: [],
     ),
 
@@ -229,8 +234,10 @@ class DummyActivationData {
       id: 'act-12',
       title: 'Pemasangan Spanduk Pesan Kebersamaan Kelurahan Cempaka Putih',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
-      address: 'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
+      location:
+          'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
+      address:
+          'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
       ownerName: 'Aris Munandar',
       ownerPhone: '081112345678',
       status: ActivationStatus.sedangBerjalan,
@@ -240,7 +247,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Pemasangan media kain spanduk APK berisi pesan perdamaian dan kerukunan warga di kawasan Cempaka Putih.',
-      notes: 'Tetap utamakan estetika dan kebersihan area sekitar lokasi penempatan.',
+      notes:
+          'Tetap utamakan estetika dan kebersihan area sekitar lokasi penempatan.',
       reports: [],
     ),
 
@@ -280,7 +288,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Rencana kunjungan silaturahmi dan penyerahan bantuan beras serta minyak goreng untuk keluarga nelayan pesisir.',
-      notes: 'Koordinasi dengan ketua rukun nelayan sebelum pelaksanaan kegiatan.',
+      notes:
+          'Koordinasi dengan ketua rukun nelayan sebelum pelaksanaan kegiatan.',
       reports: [],
     ),
 
@@ -320,7 +329,8 @@ class DummyActivationData {
       totalSteps: 5,
       description:
           'Pemasangan baliho APK peraga yang menampilkan komitmen pengembangan potensi kreativitas pemuda lokal.',
-      notes: 'Lokasi titik penempatan sudah dikonfirmasi dengan masyarakat setempat.',
+      notes:
+          'Lokasi titik penempatan sudah dikonfirmasi dengan masyarakat setempat.',
       reports: [],
     ),
 
@@ -360,7 +370,8 @@ class DummyActivationData {
       totalSteps: 4,
       description:
           'Penataan baliho APK gambar pesan ramah dan optimisme pembangunan daerah untuk warga Kebayoran Lama.',
-      notes: 'Lakukan pengecekan rutin pada kawat pengikat baliho secara berkala.',
+      notes:
+          'Lakukan pengecekan rutin pada kawat pengikat baliho secara berkala.',
       reports: [],
     ),
 
@@ -369,8 +380,10 @@ class DummyActivationData {
       id: 'act-19',
       title: 'Aksi Peduli Sembako Murah Kelurahan Kelapa Gading',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
-      address: 'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
+      location:
+          'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
+      address:
+          'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
       ownerName: 'Rina Marlina',
       ownerPhone: '087855556666',
       status: ActivationStatus.terjadwal,
@@ -380,7 +393,8 @@ class DummyActivationData {
       totalSteps: 3,
       description:
           'Rencana pengantaran paket bahan pangan pokok langsung ke pintu rumah keluarga prasejahtera.',
-      notes: 'Tim relawan bergerak membawa armada kendaraan operasional kelurahan.',
+      notes:
+          'Tim relawan bergerak membawa armada kendaraan operasional kelurahan.',
       reports: [],
     ),
 
@@ -409,8 +423,10 @@ class DummyActivationData {
       id: 'act-21',
       title: 'Pemasangan Baliho Kebangsaan Kelurahan Kebayoran Lama',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
-      address: 'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
+      location:
+          'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
+      address:
+          'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
       ownerName: 'Hendra Saputra',
       ownerPhone: '085733334444',
       status: ActivationStatus.dibatalkan,

@@ -83,11 +83,15 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(color: AppColors.grey300),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey300,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
-                          borderSide: const BorderSide(color: AppColors.grey200),
+                          borderSide: const BorderSide(
+                            color: AppColors.grey200,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),

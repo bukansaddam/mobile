@@ -33,10 +33,7 @@ class DioClient {
       ),
     );
 
-    dio.interceptors.addAll([
-      LoggingInterceptor(),
-      AuthInterceptor(),
-    ]);
+    dio.interceptors.addAll([LoggingInterceptor(), AuthInterceptor()]);
 
     return dio;
   }

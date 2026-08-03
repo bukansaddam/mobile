@@ -424,6 +424,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => context.pushNamed('panic'),
+            backgroundColor: AppColors.error,
+            foregroundColor: AppColors.white,
+            elevation: 6,
+            icon: const Icon(Icons.warning_amber_rounded, size: 24),
+            label: const Text(
+              'PANIC',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -540,20 +556,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             unselectedFontSize: 12,
             elevation: 8,
             onTap: (index) {
-              if (index == 0 || index == 2 || index == 3) {
-                setState(() {
-                  _currentTabIndex = index;
-                });
-              } else {
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Menu belum tersedia'),
-                    duration: Duration(milliseconds: 900),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
+              setState(() {
+                _currentTabIndex = index;
+              });
             },
             items: const [
               BottomNavigationBarItem(

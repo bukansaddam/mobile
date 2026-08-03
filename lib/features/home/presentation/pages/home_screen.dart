@@ -55,6 +55,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Scaffold(
           backgroundColor: Colors.transparent,
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () => context.pushNamed('panic'),
+            backgroundColor: AppColors.error,
+            foregroundColor: AppColors.white,
+            elevation: 6,
+            icon: const Icon(Icons.warning_amber_rounded, size: 24),
+            label: const Text(
+              'PANIC',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -192,7 +208,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           subtitle: 'Kegiatan aktif',
                           count: '$totalTugasCount',
                           icon: Icons.assignment_outlined,
-                          gradientColors: const [Color(0xFF0F9F66), Color(0xFF0A754B)],
+                          gradientColors: const [
+                            Color(0xFF0F9F66),
+                            Color(0xFF0A754B),
+                          ],
                           isCompact: true,
                         ),
                       ),
@@ -203,7 +222,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           subtitle: 'Sedang berjalan',
                           count: '$totalAgendaCount',
                           icon: Icons.event_note_rounded,
-                          gradientColors: const [Color(0xFF5CB836), Color(0xFF438A24)],
+                          gradientColors: const [
+                            Color(0xFF5CB836),
+                            Color(0xFF438A24),
+                          ],
                           isCompact: true,
                         ),
                       ),
@@ -214,7 +236,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           subtitle: 'Telah selesai',
                           count: '$totalLaporanCount',
                           icon: Icons.insert_drive_file_outlined,
-                          gradientColors: const [Color(0xFFD99B00), Color(0xFFB37B00)],
+                          gradientColors: const [
+                            Color(0xFFD99B00),
+                            Color(0xFFB37B00),
+                          ],
                           isCompact: true,
                         ),
                       ),
