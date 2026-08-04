@@ -26,10 +26,10 @@ class DummyActivationData {
     // 2. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-02',
-      title: 'Pembagian Paket Sembako Peduli Warga Kelurahan Senayan',
+      title: 'Pembagian Paket Sembako Peduli Warga Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Senayan, Kec. Kebayoran Baru, Kota Jakarta Selatan',
-      address: 'Kel. Senayan, Kec. Kebayoran Baru, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Siti Nurhaliza',
       ownerPhone: '085712345678',
       status: ActivationStatus.sedangBerjalan,
@@ -49,8 +49,8 @@ class DummyActivationData {
       id: 'act-02b',
       title: 'Kerja Bakti Pembersihan Drainase & Penghijauan Taman',
       category: ActivationCategory.lingkungan,
-      location: 'Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat',
-      address: 'Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Budi Santoso',
       ownerPhone: '081288776655',
       status: ActivationStatus.sedangBerjalan,
@@ -69,8 +69,8 @@ class DummyActivationData {
       id: 'act-02c',
       title: 'Patroli Siaga Ronda Malam & Posko Keamanan Warga',
       category: ActivationCategory.keamananDanSosial,
-      location: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
-      address: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Hendra Wijaya',
       ownerPhone: '081377665544',
       status: ActivationStatus.terjadwal,
@@ -89,8 +89,8 @@ class DummyActivationData {
       id: 'act-02d',
       title: 'Penyaluran Bantuan Tanggap Bencana & Dapur Umum',
       category: ActivationCategory.bencanaAlam,
-      location: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
-      address: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Eko Prasetyo',
       ownerPhone: '081566554433',
       status: ActivationStatus.sedangBerjalan,
@@ -107,10 +107,10 @@ class DummyActivationData {
     // 3. Selesai
     ActivationActivity(
       id: 'act-03',
-      title: 'Pemasangan Baliho Silaturahmi Kelurahan Tebet Barat',
+      title: 'Pemasangan Baliho Silaturahmi Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Tebet Barat, Kec. Tebet, Kota Jakarta Selatan',
-      address: 'Kel. Tebet Barat, Kec. Tebet, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Bambang Hermawan',
       ownerPhone: '081398765432',
       status: ActivationStatus.selesai,
@@ -128,10 +128,10 @@ class DummyActivationData {
     // 4. Terjadwal
     ActivationActivity(
       id: 'act-04',
-      title: 'Pemasangan Spanduk Pesan Kebangsaan Kelurahan Kemang',
+      title: 'Pemasangan Spanduk Pesan Kebangsaan Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Bangka, Kec. Mampang Prapatan, Kota Jakarta Selatan',
-      address: 'Kel. Bangka, Kec. Mampang Prapatan, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Dewi Anggraini',
       ownerPhone: '082123456789',
       status: ActivationStatus.terjadwal,
@@ -148,10 +148,10 @@ class DummyActivationData {
     // 5. Dibatalkan
     ActivationActivity(
       id: 'act-05',
-      title: 'Penyaluran Paket Nutrisi Balita Kelurahan Cikini',
+      title: 'Penyaluran Paket Nutrisi Balita Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
-      address: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Hendra Setiawan',
       ownerPhone: '087812345678',
       status: ActivationStatus.dibatalkan,
@@ -169,10 +169,10 @@ class DummyActivationData {
     // 6. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-06',
-      title: 'Pemasangan Baliho Aspirasi Warga Kelurahan Rawamangun',
+      title: 'Pemasangan Baliho Aspirasi Warga Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Rawamangun, Kec. Pulo Gadung, Kota Jakarta Timur',
-      address: 'Kel. Rawamangun, Kec. Pulo Gadung, Kota Jakarta Timur',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Rizal Kurnia',
       ownerPhone: '089612345678',
       status: ActivationStatus.sedangBerjalan,
@@ -190,10 +190,10 @@ class DummyActivationData {
     // 7. Terjadwal
     ActivationActivity(
       id: 'act-07',
-      title: 'Pemasangan Baliho Apresiasi Tokoh Kelurahan Kebon Sirih',
+      title: 'Pemasangan Baliho Apresiasi Tokoh Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Kebon Sirih, Kec. Menteng, Kota Jakarta Pusat',
-      address: 'Kel. Kebon Sirih, Kec. Menteng, Kota Jakarta Pusat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Fitriani Lestari',
       ownerPhone: '081298765432',
       status: ActivationStatus.terjadwal,
@@ -210,10 +210,10 @@ class DummyActivationData {
     // 8. Selesai
     ActivationActivity(
       id: 'act-08',
-      title: 'Penyaluran Bantuan Sembako Berkah Kelurahan Sunter Agung',
+      title: 'Penyaluran Bantuan Sembako Berkah Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Sunter Agung, Kec. Tanjung Priok, Kota Jakarta Utara',
-      address: 'Kel. Sunter Agung, Kec. Tanjung Priok, Kota Jakarta Utara',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Agus Pratama',
       ownerPhone: '085612345678',
       status: ActivationStatus.selesai,
@@ -230,10 +230,10 @@ class DummyActivationData {
     // 9. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-09',
-      title: 'Pemasangan Baliho Peduli Sesama Kelurahan Palmerah',
+      title: 'Pemasangan Baliho Peduli Sesama Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Palmerah, Kec. Palmerah, Kota Jakarta Barat',
-      address: 'Kel. Palmerah, Kec. Palmerah, Kota Jakarta Barat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Eka Wijaya',
       ownerPhone: '083812345678',
       status: ActivationStatus.sedangBerjalan,
@@ -251,10 +251,10 @@ class DummyActivationData {
     // 10. Terjadwal
     ActivationActivity(
       id: 'act-10',
-      title: 'Pembagian Perlengkapan Sekolah Anak Kelurahan Pasar Minggu',
+      title: 'Pembagian Perlengkapan Sekolah Anak Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Pasar Minggu, Kec. Pasar Minggu, Kota Jakarta Selatan',
-      address: 'Kel. Pasar Minggu, Kec. Pasar Minggu, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Deni Ramdani',
       ownerPhone: '081512345678',
       status: ActivationStatus.terjadwal,
@@ -272,10 +272,10 @@ class DummyActivationData {
     // 11. Dibatalkan
     ActivationActivity(
       id: 'act-11',
-      title: 'Pemasangan Baliho Harapan Warga Kelurahan Tomang',
+      title: 'Pemasangan Baliho Harapan Warga Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Tomang, Kec. Grogol Petamburan, Kota Jakarta Barat',
-      address: 'Kel. Tomang, Kec. Grogol Petamburan, Kota Jakarta Barat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Nita Rahmawati',
       ownerPhone: '087712345678',
       status: ActivationStatus.dibatalkan,
@@ -292,12 +292,10 @@ class DummyActivationData {
     // 12. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-12',
-      title: 'Pemasangan Spanduk Pesan Kebersamaan Kelurahan Cempaka Putih',
+      title: 'Pemasangan Spanduk Pesan Kebersamaan Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location:
-          'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
-      address:
-          'Kel. Cempaka Putih Timur, Kec. Cempaka Putih, Kota Jakarta Pusat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Aris Munandar',
       ownerPhone: '081112345678',
       status: ActivationStatus.sedangBerjalan,
@@ -315,10 +313,10 @@ class DummyActivationData {
     // 13. Selesai
     ActivationActivity(
       id: 'act-13',
-      title: 'Pemasangan Baliho Gagasan Masa Depan Kelurahan Duren Sawit',
+      title: 'Pemasangan Baliho Gagasan Masa Depan Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Duren Sawit, Kec. Duren Sawit, Kota Jakarta Timur',
-      address: 'Kel. Duren Sawit, Kec. Duren Sawit, Kota Jakarta Timur',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Irfan Hakim',
       ownerPhone: '081912345678',
       status: ActivationStatus.selesai,
@@ -335,10 +333,10 @@ class DummyActivationData {
     // 14. Terjadwal
     ActivationActivity(
       id: 'act-14',
-      title: 'Penyaluran Bantuan Sembako Maritim Kelurahan Pluit',
+      title: 'Penyaluran Bantuan Sembako Maritim Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Pluit, Kec. Penjaringan, Kota Jakarta Utara',
-      address: 'Kel. Pluit, Kec. Penjaringan, Kota Jakarta Utara',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Maya Kartika',
       ownerPhone: '085212345678',
       status: ActivationStatus.terjadwal,
@@ -356,10 +354,10 @@ class DummyActivationData {
     // 15. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-15',
-      title: 'Pemasangan Baliho Edukasi Politik Kelurahan Jatinegara',
+      title: 'Pemasangan Baliho Edukasi Politik Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
-      address: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Dodi Hermawan',
       ownerPhone: '088112345678',
       status: ActivationStatus.sedangBerjalan,
@@ -376,10 +374,10 @@ class DummyActivationData {
     // 16. Terjadwal
     ActivationActivity(
       id: 'act-16',
-      title: 'Pemasangan Baliho Peduli Pemuda Kelurahan Jagakarsa',
+      title: 'Pemasangan Baliho Peduli Pemuda Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Jagakarsa, Kec. Jagakarsa, Kota Jakarta Selatan',
-      address: 'Kel. Jagakarsa, Kec. Jagakarsa, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Taufik Hidayat',
       ownerPhone: '081288889999',
       status: ActivationStatus.terjadwal,
@@ -397,10 +395,10 @@ class DummyActivationData {
     // 17. Selesai
     ActivationActivity(
       id: 'act-17',
-      title: 'Penyerahan Paket Sembako & Kesehatan Kelurahan Kalideres',
+      title: 'Penyerahan Paket Sembako & Kesehatan Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Kalideres, Kec. Kalideres, Kota Jakarta Barat',
-      address: 'Kel. Kalideres, Kec. Kalideres, Kota Jakarta Barat',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Lia Sundari',
       ownerPhone: '085877778888',
       status: ActivationStatus.selesai,
@@ -417,10 +415,10 @@ class DummyActivationData {
     // 18. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-18',
-      title: 'Pemasangan Baliho Senyum Warga Kelurahan Pondok Indah',
+      title: 'Pemasangan Baliho Senyum Warga Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Pondok Pinang, Kec. Kebayoran Lama, Kota Jakarta Selatan',
-      address: 'Kel. Pondok Pinang, Kec. Kebayoran Lama, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Asep Saepullah',
       ownerPhone: '081366667777',
       status: ActivationStatus.sedangBerjalan,
@@ -438,12 +436,10 @@ class DummyActivationData {
     // 19. Terjadwal
     ActivationActivity(
       id: 'act-19',
-      title: 'Aksi Peduli Sembako Murah Kelurahan Kelapa Gading',
+      title: 'Aksi Peduli Sembako Murah Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location:
-          'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
-      address:
-          'Kel. Kelapa Gading Timur, Kec. Kelapa Gading, Kota Jakarta Utara',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Rina Marlina',
       ownerPhone: '087855556666',
       status: ActivationStatus.terjadwal,
@@ -461,10 +457,10 @@ class DummyActivationData {
     // 20. Selesai
     ActivationActivity(
       id: 'act-20',
-      title: 'Pemasangan Spanduk Peduli Lingkungan Kelurahan Pancoran',
+      title: 'Pemasangan Spanduk Peduli Lingkungan Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Pancoran, Kec. Pancoran, Kota Jakarta Selatan',
-      address: 'Kel. Pancoran, Kec. Pancoran, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Ginanjar Utama',
       ownerPhone: '081244445555',
       status: ActivationStatus.selesai,
@@ -481,12 +477,10 @@ class DummyActivationData {
     // 21. Dibatalkan
     ActivationActivity(
       id: 'act-21',
-      title: 'Pemasangan Baliho Kebangsaan Kelurahan Kebayoran Lama',
+      title: 'Pemasangan Baliho Kebangsaan Kelurahan Menteng',
       category: ActivationCategory.pemasanganApk,
-      location:
-          'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
-      address:
-          'Kel. Kebayoran Lama Utara, Kec. Kebayoran Lama, Kota Jakarta Selatan',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Hendra Saputra',
       ownerPhone: '085733334444',
       status: ActivationStatus.dibatalkan,
@@ -503,10 +497,10 @@ class DummyActivationData {
     // 22. Sedang Berjalan (Report Dikosongkan)
     ActivationActivity(
       id: 'act-22',
-      title: 'Pemasangan Baliho Sahabat Masyarakat Kelurahan Cilincing',
+      title: 'Pemasangan Baliho Sahabat Masyarakat Menteng',
       category: ActivationCategory.pemasanganApk,
-      location: 'Kel. Cilincing, Kec. Cilincing, Kota Jakarta Utara',
-      address: 'Kel. Cilincing, Kec. Cilincing, Kota Jakarta Utara',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Dian Permana',
       ownerPhone: '081322223333',
       status: ActivationStatus.sedangBerjalan,
@@ -523,10 +517,10 @@ class DummyActivationData {
     // 23. Terjadwal
     ActivationActivity(
       id: 'act-23',
-      title: 'Penyaluran Paket Kehangatan Lansia Kelurahan Ciracas',
+      title: 'Penyaluran Paket Kehangatan Lansia Kelurahan Menteng',
       category: ActivationCategory.doorToDoor,
-      location: 'Kel. Ciracas, Kec. Ciracas, Kota Jakarta Timur',
-      address: 'Kel. Ciracas, Kec. Ciracas, Kota Jakarta Timur',
+      location: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Menteng, Kec. Menteng, Kota Jakarta Pusat',
       ownerName: 'Wawan Setiawan',
       ownerPhone: '089611112222',
       status: ActivationStatus.terjadwal,
