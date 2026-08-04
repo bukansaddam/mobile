@@ -130,88 +130,95 @@ class _PanicScreenState extends State<PanicScreen> {
               ),
             ],
           ),
-          body: provider.status == PanicStatus.loading
-              ? const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(color: AppColors.primary),
-                      SizedBox(height: 16),
-                      Text(
-                        'Mendeteksi Posisi & Anggota Terdekat...',
-                        style: TextStyle(color: AppColors.textSecondary),
+          body: Stack(
+            children: [
+              GoogleMap(
+                key: const ValueKey('panic_google_map'),
+                initialCameraPosition: CameraPosition(
+                  target: userLatLng,
+                  zoom: 15,
+                ),
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
+                markers: markers,
+                circles: circles,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+              ),
+              if (provider.status == PanicStatus.loading)
+                Positioned.fill(
+                  child: Container(
+                    color: AppColors.background,
+                    child: const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(color: AppColors.primary),
+                          SizedBox(height: 16),
+                          Text(
+                            'Mendeteksi Posisi & Anggota Terdekat...',
+                            style: TextStyle(color: AppColors.textSecondary),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 )
-              : Stack(
-                  children: [
-                    GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: userLatLng,
-                        zoom: 15,
-                      ),
-                      onMapCreated: (controller) {
-                        _mapController = controller;
-                      },
-                      markers: markers,
-                      circles: circles,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
+              else ...[
+                Positioned(
+                  top: 12,
+                  left: 14,
+                  right: 14,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
                     ),
-
-                    Positioned(
-                      top: 12,
-                      left: 14,
-                      right: 14,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.92),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.15),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.92),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(alpha: 0.15),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.warning_amber_rounded,
+                          color: Colors.white,
+                          size: 24,
                         ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.warning_amber_rounded,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Mode Siaga: ${provider.nearbyMembers.length} Anggota Terdekat Dalam Radius 500m Terdeteksi',
+                            style: const TextStyle(
                               color: Colors.white,
-                              size: 24,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                'Mode Siaga: ${provider.nearbyMembers.length} Anggota Terdekat Dalam Radius 500m Terdeteksi',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: _buildBottomPanel(context, provider),
-                    ),
-                  ],
+                  ),
                 ),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: _buildBottomPanel(context, provider),
+                ),
+              ],
+            ],
+          ),
         );
       },
     );

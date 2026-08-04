@@ -61,6 +61,21 @@ class PresensiProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateKecamatan(String val) {
+    _kecamatan = val;
+    notifyListeners();
+  }
+
+  void updateKelurahan(String val) {
+    _kelurahan = val;
+    notifyListeners();
+  }
+
+  void updateAddress(String val) {
+    _address = val;
+    notifyListeners();
+  }
+
   Future<void> initLocation(String userName) async {
     if (userName.trim().isNotEmpty) {
       _userName = userName;
