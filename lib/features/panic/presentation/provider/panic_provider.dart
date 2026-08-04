@@ -16,6 +16,7 @@ class PanicProvider extends ChangeNotifier {
   double? _userLongitude;
   String? _fullAddress;
   List<NearbyMemberEntity> _nearbyMembers = [];
+  List<NearbyMemberEntity> _localLeaders = [];
   PanicAlertResultEntity? _lastResult;
   String? _errorMessage;
 
@@ -24,6 +25,7 @@ class PanicProvider extends ChangeNotifier {
   double? get userLongitude => _userLongitude;
   String? get fullAddress => _fullAddress;
   List<NearbyMemberEntity> get nearbyMembers => _nearbyMembers;
+  List<NearbyMemberEntity> get localLeaders => _localLeaders;
   PanicAlertResultEntity? get lastResult => _lastResult;
   String? get errorMessage => _errorMessage;
 
@@ -49,7 +51,8 @@ class PanicProvider extends ChangeNotifier {
         }
         if (permission != LocationPermission.denied &&
             permission != LocationPermission.deniedForever) {
-          position = await Geolocator.getCurrentPosition(
+          position = await Geolocator.getLastKnownPosition();
+          position ??= await Geolocator.getCurrentPosition(
             locationSettings: const LocationSettings(
               accuracy: LocationAccuracy.high,
             ),
@@ -104,6 +107,42 @@ class PanicProvider extends ChangeNotifier {
         latitude: _userLatitude!,
         longitude: _userLongitude!,
       );
+
+      final baseLat = _userLatitude!;
+      final baseLng = _userLongitude!;
+
+      _localLeaders = [
+        NearbyMemberEntity(
+          id: 'tokoh_kades',
+          name: 'Bpk. H. Sudirman, S.E.',
+          role: 'Kepala Desa / Lurah',
+          distanceText: '120m',
+          latitude: baseLat + 0.0012,
+          longitude: baseLng + 0.0009,
+          phone: '081298765432',
+          isOnline: true,
+        ),
+        NearbyMemberEntity(
+          id: 'tokoh_babinsa',
+          name: 'Sertu Bambang Wijaya',
+          role: 'Babinsa (TNI AD)',
+          distanceText: '210m',
+          latitude: baseLat - 0.0015,
+          longitude: baseLng + 0.0011,
+          phone: '081388776655',
+          isOnline: true,
+        ),
+        NearbyMemberEntity(
+          id: 'tokoh_babinkamtibmas',
+          name: 'Aiptu Hendra Kurniawan',
+          role: 'Bhabinkamtibmas (Polri)',
+          distanceText: '340m',
+          latitude: baseLat + 0.0021,
+          longitude: baseLng - 0.0018,
+          phone: '081577665544',
+          isOnline: true,
+        ),
+      ];
 
       _status = PanicStatus.loaded;
     } catch (e) {

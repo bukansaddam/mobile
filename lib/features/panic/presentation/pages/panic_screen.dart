@@ -16,6 +16,26 @@ class _PanicScreenState extends State<PanicScreen> {
   GoogleMapController? _mapController;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<PanicProvider>();
+      await provider.initEmergencyLocation();
+      if (mounted &&
+          provider.userLatitude != null &&
+          provider.userLongitude != null) {
+        _recenterMap(provider.userLatitude!, provider.userLongitude!);
+      }
+    });
+  }
+
+  void _recenterMap(double lat, double lng) {
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(LatLng(lat, lng), 16.0),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<PanicProvider>(
       builder: (context, provider, child) {
@@ -50,6 +70,27 @@ class _PanicScreenState extends State<PanicScreen> {
                 _mapController?.animateCamera(
                   CameraUpdate.newLatLngZoom(
                     LatLng(member.latitude, member.longitude),
+                    16,
+                  ),
+                );
+              },
+            );
+          }),
+          ...provider.localLeaders.map((leader) {
+            return Marker(
+              markerId: MarkerId(leader.id),
+              position: LatLng(leader.latitude, leader.longitude),
+              infoWindow: InfoWindow(
+                title: leader.name,
+                snippet: '${leader.role} • ${leader.distanceText}',
+              ),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueOrange,
+              ),
+              onTap: () {
+                _mapController?.animateCamera(
+                  CameraUpdate.newLatLngZoom(
+                    LatLng(leader.latitude, leader.longitude),
                     16,
                   ),
                 );
@@ -132,20 +173,32 @@ class _PanicScreenState extends State<PanicScreen> {
           ),
           body: Stack(
             children: [
-              GoogleMap(
-                key: const ValueKey('panic_google_map'),
-                initialCameraPosition: CameraPosition(
-                  target: userLatLng,
-                  zoom: 15,
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * 0.28,
                 ),
-                onMapCreated: (controller) {
-                  _mapController = controller;
-                },
-                markers: markers,
-                circles: circles,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
+                child: GoogleMap(
+                  key: const ValueKey('panic_google_map'),
+                  initialCameraPosition: CameraPosition(
+                    target: userLatLng,
+                    zoom: 15,
+                  ),
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                    if (provider.userLatitude != null &&
+                        provider.userLongitude != null) {
+                      _recenterMap(
+                        provider.userLatitude!,
+                        provider.userLongitude!,
+                      );
+                    }
+                  },
+                  markers: markers,
+                  circles: circles,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                ),
               ),
               if (provider.status == PanicStatus.loading)
                 Positioned.fill(
@@ -365,6 +418,96 @@ class _PanicScreenState extends State<PanicScreen> {
                                     fontSize: 10,
                                     color: AppColors.textSecondary,
                                   ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+
+            const Text(
+              'Tokoh / Pejabat Wilayah:',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            SizedBox(
+              height: 72,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: provider.localLeaders.length,
+                itemBuilder: (context, index) {
+                  final leader = provider.localLeaders[index];
+
+                  return GestureDetector(
+                    onTap: () {
+                      _mapController?.animateCamera(
+                        CameraUpdate.newLatLngZoom(
+                          LatLng(leader.latitude, leader.longitude),
+                          16,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 200,
+                      margin: const EdgeInsets.only(right: 10),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.accent.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 18,
+                            backgroundColor: AppColors.accent,
+                            child: Icon(
+                              Icons.stars_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  leader.name,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  '${leader.role} • ${leader.distanceText}',
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
