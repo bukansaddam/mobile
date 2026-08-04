@@ -3,6 +3,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/home/presentation/widgets/ad_banner_slider.dart';
 import 'package:akar/features/home/presentation/widgets/home_profile_card.dart';
 import 'package:akar/features/home/presentation/widgets/home_summary_card.dart';
 import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
@@ -361,17 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: HomeProfileCard(user: user),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              Text(
-                'Ringkasan Kegiatan',
-                style: AppTextStyles.titleLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
               IntrinsicHeight(
                 child: Row(
@@ -430,7 +421,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+
+              const SizedBox(height: 16),
+
+              Text(
+                'Informasi Terbaru',
+                style: AppTextStyles.titleLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              const AdBannerSlider(),
+
+              const SizedBox(height: 16),
 
               Text(
                 'Menu Utama',
@@ -440,10 +446,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 18,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
 
               _buildMenuUtamaSection(context),
-              const SizedBox(height: 24),
+              const SizedBox(height: 80),
             ],
           ),
         );
