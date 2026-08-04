@@ -58,6 +58,17 @@ class _PanicScreenState extends State<PanicScreen> {
           }),
         };
 
+        final Set<Circle> circles = {
+          Circle(
+            circleId: const CircleId('user_500m_radius'),
+            center: userLatLng,
+            radius: 500,
+            fillColor: AppColors.primary.withValues(alpha: 0.12),
+            strokeColor: AppColors.primary,
+            strokeWidth: 2,
+          ),
+        };
+
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
@@ -144,6 +155,7 @@ class _PanicScreenState extends State<PanicScreen> {
                         _mapController = controller;
                       },
                       markers: markers,
+                      circles: circles,
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,
