@@ -115,7 +115,8 @@ class _RondaScreenState extends State<RondaScreen> {
                   onChanged: (val) => provider.setPermasalahanSosial(val),
                 ),
                 _buildQuestionRow(
-                  question: 'Apakah Terdapat Kasus Perzinahan di lingkungan anda ?',
+                  question:
+                      'Apakah Terdapat Kasus Perzinahan di lingkungan anda ?',
                   value: provider.kasusPerzinahan,
                   onChanged: (val) => provider.setKasusPerzinahan(val),
                 ),
@@ -421,10 +422,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 ),
                 child: const Text(
                   'KEMBALI KE UTAMA',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),
             ),

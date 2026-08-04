@@ -37,17 +37,17 @@ class RondaLaporanEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        gangguanKamtibmas,
-        aktivitasMencurigakan,
-        kehilanganLingkungan,
-        sampahMenumpuk,
-        jalanBerlubang,
-        lampuMati,
-        permasalahanSosial,
-        kasusPerzinahan,
-        orangTerlantar,
-        keterangan,
-        timestamp,
-      ];
+    id,
+    gangguanKamtibmas,
+    aktivitasMencurigakan,
+    kehilanganLingkungan,
+    sampahMenumpuk,
+    jalanBerlubang,
+    lampuMati,
+    permasalahanSosial,
+    kasusPerzinahan,
+    orangTerlantar,
+    keterangan,
+    timestamp,
+  ];
 }

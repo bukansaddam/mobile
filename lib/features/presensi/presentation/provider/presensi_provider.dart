@@ -4,7 +4,14 @@ import 'package:geolocator/geolocator.dart';
 import '../../domain/entities/presensi_entity.dart';
 import '../../domain/usecases/submit_presensi_usecase.dart';
 
-enum PresensiStatus { initial, loadingLocation, loaded, submitting, success, failure }
+enum PresensiStatus {
+  initial,
+  loadingLocation,
+  loaded,
+  submitting,
+  success,
+  failure,
+}
 
 class PresensiProvider extends ChangeNotifier {
   final SubmitPresensiUsecase submitPresensiUsecase;
@@ -92,22 +99,29 @@ class PresensiProvider extends ChangeNotifier {
         );
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
-          _kecamatan = place.locality ?? place.subAdministrativeArea ?? 'Gambir';
+          _kecamatan =
+              place.locality ?? place.subAdministrativeArea ?? 'Gambir';
           _kelurahan = place.subLocality ?? 'Gambir';
 
-          final parts = [
-            place.street,
-            place.subLocality,
-            place.locality,
-            place.subAdministrativeArea,
-          ].where((p) {
-            final str = p.toString().trim();
-            if (str.isEmpty) return false;
-            if (RegExp(r'-?\d+\.\d{3,}').hasMatch(str) || str.contains('+')) {
-              return false;
-            }
-            return true;
-          }).cast<String>().toSet().toList();
+          final parts =
+              [
+                    place.street,
+                    place.subLocality,
+                    place.locality,
+                    place.subAdministrativeArea,
+                  ]
+                  .where((p) {
+                    final str = p.toString().trim();
+                    if (str.isEmpty) return false;
+                    if (RegExp(r'-?\d+\.\d{3,}').hasMatch(str) ||
+                        str.contains('+')) {
+                      return false;
+                    }
+                    return true;
+                  })
+                  .cast<String>()
+                  .toSet()
+                  .toList();
 
           _address = parts.isNotEmpty
               ? parts.join(', ')

@@ -29,16 +29,16 @@ class PresensiDataEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        userName,
-        address,
-        kecamatan,
-        kelurahan,
-        rt,
-        rw,
-        latitude,
-        longitude,
-        timestamp,
-        isSuccess,
-      ];
+    id,
+    userName,
+    address,
+    kecamatan,
+    kelurahan,
+    rt,
+    rw,
+    latitude,
+    longitude,
+    timestamp,
+    isSuccess,
+  ];
 }

@@ -4,12 +4,9 @@ import 'package:akar/features/auth/presentation/pages/login_screen.dart';
 import 'package:akar/features/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/presensi/presentation/pages/presensi_screen.dart';
 import 'package:akar/features/ronda_malam/presentation/pages/ronda_screen.dart';
-import 'package:akar/features/auth/presentation/pages/profile_screen.dart';
+import 'package:akar/features/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/home/presentation/pages/home_screen.dart';
-import 'package:akar/features/home/presentation/pages/map_tracking_screen.dart';
-import 'package:akar/features/home/presentation/pages/setting_screen.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,7 +17,6 @@ class AppRouter {
     redirect: (context, state) {
       final authProvider = sl<AuthProvider>();
 
-      // Jangan lakukan redirect otomatis saat masih proses checkAuthStatus awal (misal splash)
       if (authProvider.isInitialChecking) {
         return null;
       }
@@ -31,14 +27,12 @@ class AppRouter {
       final isSplash = location == '/';
       final isAuthRoute = location == '/login' || location == '/register';
 
-      // Jika unauthenticated dan mencoba masuk ke route terproteksi (bukan login/register/splash) -> lempar ke login
       if (!isLoggedIn && !isAuthRoute && !isSplash) {
         return '/login';
       }
 
-      // Jika sudah authenticated dan berada di login/register -> redirect ke profile/home
       if (isLoggedIn && isAuthRoute) {
-        return '/profile';
+        return '/main';
       }
 
       return null;
@@ -60,26 +54,14 @@ class AppRouter {
         builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
+        path: '/main',
+        name: 'main',
+        builder: (context, state) => const MainScreen(),
+      ),
+      GoRoute(
         path: '/profile',
         name: 'profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomeScreen(),
-        routes: [
-          GoRoute(
-            path: 'setting',
-            name: 'setting',
-            builder: (context, state) => const SettingScreen(),
-          ),
-        ],
-      ),
-      GoRoute(
-        path: '/map-tracking',
-        name: 'map_tracking',
-        builder: (context, state) => const MapTrackingScreen(),
+        builder: (context, state) => const MainScreen(),
       ),
       GoRoute(
         path: '/panic',

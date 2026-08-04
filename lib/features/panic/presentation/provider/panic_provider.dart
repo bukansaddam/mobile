@@ -74,21 +74,19 @@ class PanicProvider extends ChangeNotifier {
           final subAdmin = place.subAdministrativeArea ?? '';
           final admin = place.administrativeArea ?? '';
 
-          final parts = [
-            street,
-            subLocality,
-            locality,
-            subAdmin,
-            admin,
-          ].where((p) {
-            final trimmed = p.trim();
-            if (trimmed.isEmpty) return false;
-            // Filter out string if it contains raw coordinate patterns (e.g. -6.2088) or plus codes (e.g. 7Q53+2X)
-            if (RegExp(r'-?\d+\.\d{3,}').hasMatch(trimmed) || trimmed.contains('+')) {
-              return false;
-            }
-            return true;
-          }).toSet().toList();
+          final parts = [street, subLocality, locality, subAdmin, admin]
+              .where((p) {
+                final trimmed = p.trim();
+                if (trimmed.isEmpty) return false;
+                // Filter out string if it contains raw coordinate patterns (e.g. -6.2088) or plus codes (e.g. 7Q53+2X)
+                if (RegExp(r'-?\d+\.\d{3,}').hasMatch(trimmed) ||
+                    trimmed.contains('+')) {
+                  return false;
+                }
+                return true;
+              })
+              .toSet()
+              .toList();
 
           _fullAddress = parts.isNotEmpty
               ? parts.join(', ')

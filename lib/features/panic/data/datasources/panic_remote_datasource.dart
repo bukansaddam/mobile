@@ -67,7 +67,12 @@ class PanicRemoteDatasourceImpl implements PanicRemoteDatasource {
     final resultList = membersData.map((data) {
       final mLat = baseLat + (data['latOffset'] as double);
       final mLng = baseLng + (data['lngOffset'] as double);
-      final distanceInMeters = Geolocator.distanceBetween(baseLat, baseLng, mLat, mLng);
+      final distanceInMeters = Geolocator.distanceBetween(
+        baseLat,
+        baseLng,
+        mLat,
+        mLng,
+      );
 
       return NearbyMemberModel(
         id: data['id'] as String,
