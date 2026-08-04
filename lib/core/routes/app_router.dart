@@ -3,6 +3,7 @@ import 'package:akar/features/activation/presentation/pages/activation_detail_sc
 import 'package:akar/features/auth/presentation/pages/login_screen.dart';
 import 'package:akar/features/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/presensi/presentation/pages/presensi_screen.dart';
+import 'package:akar/features/ronda_malam/presentation/pages/ronda_screen.dart';
 import 'package:akar/features/auth/presentation/pages/profile_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
@@ -89,6 +90,11 @@ class AppRouter {
         path: '/presensi',
         name: 'presensi',
         builder: (context, state) => const PresensiScreen(),
+      ),
+      GoRoute(
+        path: '/ronda-malam',
+        name: 'ronda_malam',
+        builder: (context, state) => const RondaScreen(),
       ),
       GoRoute(
         path: '/activation-detail',

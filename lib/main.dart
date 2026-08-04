@@ -1,6 +1,7 @@
 import 'package:akar/features/activation/presentation/provider/activation_provider.dart';
 import 'package:akar/features/panic/presentation/provider/panic_provider.dart';
 import 'package:akar/features/presensi/presentation/provider/presensi_provider.dart';
+import 'package:akar/features/ronda_malam/presentation/provider/ronda_provider.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/theme/app_theme.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<ActivationProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<PanicProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<PresensiProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<RondaProvider>()),
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,

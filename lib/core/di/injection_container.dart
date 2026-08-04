@@ -18,6 +18,11 @@ import 'package:akar/features/presensi/data/repositories/presensi_repository_imp
 import 'package:akar/features/presensi/domain/repositories/presensi_repository.dart';
 import 'package:akar/features/presensi/domain/usecases/submit_presensi_usecase.dart';
 import 'package:akar/features/presensi/presentation/provider/presensi_provider.dart';
+import 'package:akar/features/ronda_malam/data/datasources/ronda_remote_datasource.dart';
+import 'package:akar/features/ronda_malam/data/repositories/ronda_repository_impl.dart';
+import 'package:akar/features/ronda_malam/domain/repositories/ronda_repository.dart';
+import 'package:akar/features/ronda_malam/domain/usecases/submit_ronda_laporan_usecase.dart';
+import 'package:akar/features/ronda_malam/presentation/provider/ronda_provider.dart';
 import 'package:akar/features/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/tracking/data/repositories/tracking_repository_impl.dart';
 import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
@@ -52,6 +57,9 @@ Future<void> init() async {
   sl.registerLazySingleton<PresensiRemoteDatasource>(
     () => PresensiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<RondaRemoteDatasource>(
+    () => RondaRemoteDatasourceImpl(),
+  );
 
   // ---------------------- Repositories ----------------------
   sl.registerLazySingleton<AuthRepository>(
@@ -65,6 +73,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<PresensiRepository>(
     () => PresensiRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<RondaRepository>(
+    () => RondaRepositoryImpl(remoteDatasource: sl()),
   );
 
   // ---------------------- Use Cases ----------------------
@@ -81,6 +92,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<SubmitPresensiUsecase>(
     () => SubmitPresensiUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitRondaLaporanUsecase>(
+    () => SubmitRondaLaporanUsecase(sl()),
   );
 
   // ---------------------- Providers ----------------------
@@ -104,5 +118,8 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<PresensiProvider>(
     () => PresensiProvider(submitPresensiUsecase: sl()),
+  );
+  sl.registerLazySingleton<RondaProvider>(
+    () => RondaProvider(submitRondaLaporanUsecase: sl()),
   );
 }
