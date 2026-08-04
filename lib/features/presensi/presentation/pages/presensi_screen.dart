@@ -337,9 +337,10 @@ class _PresensiScreenState extends State<PresensiScreen> {
                                       const SizedBox(height: 4),
                                       TextField(
                                         controller: _rtController,
-                                        onTapOutside: (event) =>
-                                            FocusManager.instance.primaryFocus
-                                                ?.unfocus(),
+                                        onTapOutside: (event) => FocusManager
+                                            .instance
+                                            .primaryFocus
+                                            ?.unfocus(),
                                         keyboardType: TextInputType.number,
                                         onChanged: (val) =>
                                             provider.updateRt(val),
@@ -394,9 +395,10 @@ class _PresensiScreenState extends State<PresensiScreen> {
                                       const SizedBox(height: 4),
                                       TextField(
                                         controller: _rwController,
-                                        onTapOutside: (event) =>
-                                            FocusManager.instance.primaryFocus
-                                                ?.unfocus(),
+                                        onTapOutside: (event) => FocusManager
+                                            .instance
+                                            .primaryFocus
+                                            ?.unfocus(),
                                         keyboardType: TextInputType.number,
                                         onChanged: (val) =>
                                             provider.updateRw(val),

@@ -2,6 +2,7 @@ import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/activation/presentation/pages/activation_screen.dart';
+import 'package:akar/features/analisis/presentation/pages/analisis_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/home/presentation/widgets/notification_modal.dart';
@@ -270,10 +271,7 @@ class _MainScreenState extends State<MainScreen> {
                             });
                           },
                         ),
-                        _buildPlaceholderPage(
-                          'Analisis',
-                          Icons.analytics_outlined,
-                        ),
+                        const AnalisisScreen(),
                         const ActivationScreen(),
                         const ProfileScreen(),
                       ],
@@ -282,40 +280,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildPlaceholderPage(String title, IconData icon) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 70,
-              color: AppColors.primary.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: AppTextStyles.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Fitur $title dalam tahap pengembangan.',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

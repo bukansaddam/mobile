@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
-enum ActivationCategory { pemasanganApk, doorToDoor }
+enum ActivationCategory {
+  pemasanganApk,
+  doorToDoor,
+  lingkungan,
+  keamananDanSosial,
+  bencanaAlam,
+}
 
 enum ActivationStatus { terjadwal, sedangBerjalan, selesai, dibatalkan }
 
@@ -11,6 +17,12 @@ extension ActivationCategoryExtension on ActivationCategory {
         return 'Pemasangan APK';
       case ActivationCategory.doorToDoor:
         return 'Door to Door';
+      case ActivationCategory.lingkungan:
+        return 'Lingkungan';
+      case ActivationCategory.keamananDanSosial:
+        return 'Keamanan & Sosial';
+      case ActivationCategory.bencanaAlam:
+        return 'Bencana Alam';
     }
   }
 
@@ -20,16 +32,17 @@ extension ActivationCategoryExtension on ActivationCategory {
         return const Color(0xFF00897B);
       case ActivationCategory.doorToDoor:
         return const Color(0xFF8E24AA);
+      case ActivationCategory.lingkungan:
+        return const Color(0xFF20D489);
+      case ActivationCategory.keamananDanSosial:
+        return const Color(0xFF1E6FFF);
+      case ActivationCategory.bencanaAlam:
+        return const Color(0xFFFF5252);
     }
   }
 
   Color get stripColor {
-    switch (this) {
-      case ActivationCategory.pemasanganApk:
-        return const Color(0xFF00897B);
-      case ActivationCategory.doorToDoor:
-        return const Color(0xFF8E24AA);
-    }
+    return color;
   }
 
   IconData get icon {
@@ -38,6 +51,12 @@ extension ActivationCategoryExtension on ActivationCategory {
         return Icons.flag_rounded;
       case ActivationCategory.doorToDoor:
         return Icons.meeting_room_rounded;
+      case ActivationCategory.lingkungan:
+        return Icons.eco_rounded;
+      case ActivationCategory.keamananDanSosial:
+        return Icons.security_rounded;
+      case ActivationCategory.bencanaAlam:
+        return Icons.warning_amber_rounded;
     }
   }
 }

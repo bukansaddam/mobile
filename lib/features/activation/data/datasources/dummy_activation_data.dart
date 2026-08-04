@@ -44,6 +44,66 @@ class DummyActivationData {
       reports: [],
     ),
 
+    // 2b. Lingkungan (Sedang Berjalan)
+    ActivationActivity(
+      id: 'act-02b',
+      title: 'Kerja Bakti Pembersihan Drainase & Penghijauan Taman',
+      category: ActivationCategory.lingkungan,
+      location: 'Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat',
+      address: 'Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat',
+      ownerName: 'Budi Santoso',
+      ownerPhone: '081288776655',
+      status: ActivationStatus.sedangBerjalan,
+      startDate: DateTime(2026, 7, 30),
+      endDate: DateTime(2026, 8, 9),
+      completedSteps: 1,
+      totalSteps: 4,
+      description:
+          'Aksi gotong royong warga dalam pembersihan saluran air dan penanaman pohon pelindung lingkungan.',
+      notes: 'Utamakan titik rawan genangan air di sekitar RT 03 / RW 04.',
+      reports: [],
+    ),
+
+    // 2c. Keamanan & Sosial (Terjadwal)
+    ActivationActivity(
+      id: 'act-02c',
+      title: 'Patroli Siaga Ronda Malam & Posko Keamanan Warga',
+      category: ActivationCategory.keamananDanSosial,
+      location: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
+      address: 'Kel. Cikini, Kec. Menteng, Kota Jakarta Pusat',
+      ownerName: 'Hendra Wijaya',
+      ownerPhone: '081377665544',
+      status: ActivationStatus.terjadwal,
+      startDate: DateTime(2026, 8, 2),
+      endDate: DateTime(2026, 8, 12),
+      completedSteps: 0,
+      totalSteps: 3,
+      description:
+          'Kegiatan ronda malam dan penyuluhan ketertiban warga serta posko aduan keamanan lingkungan.',
+      notes: 'Koordinasi rutin dengan Babinsa dan Bhabinkamtibmas setempat.',
+      reports: [],
+    ),
+
+    // 2d. Bencana Alam (Sedang Berjalan)
+    ActivationActivity(
+      id: 'act-02d',
+      title: 'Penyaluran Bantuan Tanggap Bencana & Dapur Umum',
+      category: ActivationCategory.bencanaAlam,
+      location: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
+      address: 'Kel. Kampung Melayu, Kec. Jatinegara, Kota Jakarta Timur',
+      ownerName: 'Eko Prasetyo',
+      ownerPhone: '081566554433',
+      status: ActivationStatus.sedangBerjalan,
+      startDate: DateTime(2026, 8, 1),
+      endDate: DateTime(2026, 8, 7),
+      completedSteps: 2,
+      totalSteps: 5,
+      description:
+          'Pendistribusian perlengkapan logistik, pakaian bersih, dan bahan pangan untuk warga terdampak genangan.',
+      notes: 'Pastikan paket bantuan tepat sasaran dan tercatat rapi.',
+      reports: [],
+    ),
+
     // 3. Selesai
     ActivationActivity(
       id: 'act-03',

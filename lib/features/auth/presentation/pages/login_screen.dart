@@ -184,8 +184,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 8),
                               TextFormField(
                                 controller: _usernameController,
-                                onTapOutside: (event) =>
-                                    FocusManager.instance.primaryFocus?.unfocus(),
+                                onTapOutside: (event) => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan username',
@@ -234,8 +236,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               const SizedBox(height: 8),
                               TextFormField(
                                 controller: _passwordController,
-                                onTapOutside: (event) =>
-                                    FocusManager.instance.primaryFocus?.unfocus(),
+                                onTapOutside: (event) => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 obscureText: _isPasswordObscured,
                                 decoration: InputDecoration(
                                   hintText: 'Masukkan kata sandi',
