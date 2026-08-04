@@ -478,6 +478,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nameController,
+                    onTapOutside: (event) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
                         return 'Nama penerima wajib diisi';
@@ -502,6 +504,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _kkController,
+                    onTapOutside: (event) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
@@ -530,6 +534,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   const SizedBox(height: 6),
                   TextFormField(
                     controller: _nikController,
+                    onTapOutside: (event) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.number,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
@@ -565,6 +571,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _rtController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.number,
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
@@ -591,6 +599,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _rwController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.number,
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
@@ -617,6 +627,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _houseNumberController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               validator: (val) {
                                 if (val == null || val.trim().isEmpty) {
                                   return 'Wajib diisi';
@@ -649,6 +661,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _notesController,
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
                   maxLines: 2,
                   decoration: InputDecoration(
                     hintText: 'Tambahkan catatan laporan (opsional)...',

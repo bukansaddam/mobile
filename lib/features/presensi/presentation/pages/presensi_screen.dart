@@ -45,6 +45,10 @@ class _PresensiScreenState extends State<PresensiScreen> {
         _addressController.text = updated.address;
         _rtController.text = updated.rt;
         _rwController.text = updated.rw;
+
+        if (updated.userLatitude != null && updated.userLongitude != null) {
+          _recenterMap(updated.userLatitude!, updated.userLongitude!);
+        }
       }
     });
   }
@@ -153,6 +157,13 @@ class _PresensiScreenState extends State<PresensiScreen> {
                   ),
                   onMapCreated: (controller) {
                     _mapController = controller;
+                    if (provider.userLatitude != null &&
+                        provider.userLongitude != null) {
+                      _recenterMap(
+                        provider.userLatitude!,
+                        provider.userLongitude!,
+                      );
+                    }
                   },
                   markers: markers,
                   myLocationEnabled: true,
@@ -326,6 +337,9 @@ class _PresensiScreenState extends State<PresensiScreen> {
                                       const SizedBox(height: 4),
                                       TextField(
                                         controller: _rtController,
+                                        onTapOutside: (event) =>
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus(),
                                         keyboardType: TextInputType.number,
                                         onChanged: (val) =>
                                             provider.updateRt(val),
@@ -380,6 +394,9 @@ class _PresensiScreenState extends State<PresensiScreen> {
                                       const SizedBox(height: 4),
                                       TextField(
                                         controller: _rwController,
+                                        onTapOutside: (event) =>
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus(),
                                         keyboardType: TextInputType.number,
                                         onChanged: (val) =>
                                             provider.updateRw(val),
@@ -456,6 +473,8 @@ class _PresensiScreenState extends State<PresensiScreen> {
         const SizedBox(height: 4),
         TextField(
           controller: controller,
+          onTapOutside: (event) =>
+              FocusManager.instance.primaryFocus?.unfocus(),
           maxLines: maxLines,
           onChanged: onChanged,
           style: AppTextStyles.bodyMedium.copyWith(

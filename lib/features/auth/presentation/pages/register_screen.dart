@@ -205,6 +205,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Nama Lengkap'),
                             TextFormField(
                               controller: _nameController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               textCapitalization: TextCapitalization.words,
                               decoration: _inputDecoration(
                                 'Masukkan nama lengkap',
@@ -221,6 +223,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Nomor Telepon'),
                             TextFormField(
                               controller: _phoneController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.phone,
                               decoration: _inputDecoration(
                                 'Contoh: 08123456789',
@@ -239,6 +243,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             TextFormField(
                               controller: _nikController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.number,
                               decoration: _inputDecoration(
                                 '16 digit NIK',
@@ -260,6 +266,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Username'),
                             TextFormField(
                               controller: _usernameController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: _inputDecoration(
                                 'Masukkan username unik',
                                 Icons.alternate_email,
@@ -275,6 +283,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Email'),
                             TextFormField(
                               controller: _emailController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.emailAddress,
                               decoration: _inputDecoration(
                                 'contoh@email.com',
@@ -296,6 +306,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Kata Sandi'),
                             TextFormField(
                               controller: _passwordController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               obscureText: _isPasswordObscured,
                               decoration:
                                   _inputDecoration(
@@ -333,6 +345,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             _buildTextFieldLabel('Konfirmasi Kata Sandi'),
                             TextFormField(
                               controller: _confirmPasswordController,
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               obscureText: _isConfirmPasswordObscured,
                               decoration:
                                   _inputDecoration(

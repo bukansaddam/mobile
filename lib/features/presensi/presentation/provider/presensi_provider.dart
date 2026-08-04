@@ -94,7 +94,8 @@ class PresensiProvider extends ChangeNotifier {
           }
           if (permission != LocationPermission.denied &&
               permission != LocationPermission.deniedForever) {
-            pos = await Geolocator.getCurrentPosition(
+            pos = await Geolocator.getLastKnownPosition();
+            pos ??= await Geolocator.getCurrentPosition(
               locationSettings: const LocationSettings(
                 accuracy: LocationAccuracy.high,
               ),

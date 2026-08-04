@@ -53,6 +53,8 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     ),
                     child: TextField(
                       controller: _searchController,
+                      onTapOutside: (event) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       onChanged: (val) => provider.setSearchQuery(val),
                       decoration: InputDecoration(
                         hintText: 'Cari kegiatan, lokasi, atau kategori...',
