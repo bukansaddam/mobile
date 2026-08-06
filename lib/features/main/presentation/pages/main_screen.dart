@@ -29,22 +29,20 @@ class _MainScreenState extends State<MainScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => context.pushNamed('panic'),
-            backgroundColor: AppColors.error,
-            foregroundColor: AppColors.white,
-            elevation: 6,
-            icon: const Icon(Icons.warning_amber_rounded, size: 24),
-            label: const Text(
-              'DARURAT',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                letterSpacing: 1.2,
-              ),
+          floatingActionButton: SizedBox(
+            width: 60,
+            height: 60,
+            child: FloatingActionButton(
+              onPressed: () => context.pushNamed('panic'),
+              backgroundColor: AppColors.error,
+              foregroundColor: AppColors.white,
+              elevation: 6,
+              shape: const CircleBorder(),
+              child: const Icon(Icons.warning_amber_rounded, size: 30),
             ),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
           appBar: AppBar(
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -151,38 +149,41 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentTabIndex,
-            type: BottomNavigationBarType.fixed,
-            backgroundColor: AppColors.white,
-            selectedItemColor: AppColors.primary,
-            unselectedItemColor: AppColors.grey500,
-            selectedFontSize: 12,
-            unselectedFontSize: 12,
-            elevation: 8,
-            onTap: (index) {
-              setState(() {
-                _currentTabIndex = index;
-              });
-            },
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
-                label: 'Home',
+          bottomNavigationBar: BottomAppBar(
+            shape: const CircularNotchedRectangle(),
+            notchMargin: 8.0,
+            color: AppColors.white,
+            elevation: 10,
+            clipBehavior: Clip.antiAlias,
+            child: SizedBox(
+              height: 60,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    index: 0,
+                    icon: Icons.home_rounded,
+                    label: 'Home',
+                  ),
+                  _buildNavItem(
+                    index: 1,
+                    icon: Icons.analytics_outlined,
+                    label: 'Analisis',
+                  ),
+                  const SizedBox(width: 48),
+                  _buildNavItem(
+                    index: 2,
+                    icon: Icons.flash_on_outlined,
+                    label: 'Aktivasi',
+                  ),
+                  _buildNavItem(
+                    index: 3,
+                    icon: Icons.person_outline_rounded,
+                    label: 'Profil',
+                  ),
+                ],
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.analytics_outlined),
-                label: 'Analisis',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.flash_on_outlined),
-                label: 'Aktivasi',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline_rounded),
-                label: 'Profil',
-              ),
-            ],
+            ),
           ),
           body: SafeArea(
             child: Container(
@@ -280,6 +281,45 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required String label,
+  }) {
+    final isSelected = _currentTabIndex == index;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _currentTabIndex = index;
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? AppColors.primary : AppColors.grey500,
+              size: 22,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? AppColors.primary : AppColors.grey500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
