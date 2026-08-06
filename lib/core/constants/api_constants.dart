@@ -2,7 +2,7 @@ class ApiConstants {
   ApiConstants._();
 
   //Base URL
-  static const String baseUrl = 'https://akar.axiona.id';
+  static const String baseUrl = 'https://akaraslinmas.id';
 
   //Auth
   static const String login = '/api/login';
@@ -11,4 +11,12 @@ class ApiConstants {
   //Tracking
   static const String position = '/api/positions/me';
   static const String tracking = '/api/positions/me';
+
+  //Google Speech
+  static const List<String> googleCloudScopes = [
+    'https://www.googleapis.com/auth/cloud-platform',
+  ];
+
+  static String googleSpeechRecognizeUrl(String projectId) =>
+      'https://asia-southeast1-speech.googleapis.com/v2/projects/$projectId/locations/asia-southeast1/recognizers/_:recognize';
 }

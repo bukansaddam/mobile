@@ -28,6 +28,8 @@ import 'package:akar/features/tracking/data/repositories/tracking_repository_imp
 import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
 import 'package:akar/features/tracking/domain/usecases/send_location_usecase.dart';
 import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
+import 'package:akar/core/services/audio_recorder_service.dart';
+import 'package:akar/core/services/google_speech_service.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +42,10 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
+  sl.registerLazySingleton<GoogleSpeechService>(
+    () => GoogleSpeechService(dio: sl()),
+  );
+  sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());
 
   // ---------------------- Data Sources ----------------------
   sl.registerLazySingleton<AuthLocalDatasource>(

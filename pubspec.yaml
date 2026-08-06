@@ -20,11 +20,16 @@ dependencies:
   get_it: ^9.2.1
   go_router: ^17.3.0
   google_maps_flutter: ^2.18.0
+  google_speech: ^2.1.1
+  googleapis_auth: ^1.6.0
   image_picker: ^1.1.2
   intl: ^0.20.3
   json_annotation: ^4.12.0
   logger: ^2.7.0
+  path_provider: ^2.1.5
+  permission_handler: ^11.4.0
   provider: ^6.1.5+1
+  record: ^5.2.1
   shared_preferences: ^2.5.5
   url_launcher: ^6.3.1
 
@@ -37,10 +42,14 @@ dev_dependencies:
   freezed: ^3.2.5
   json_serializable: ^6.14.0
 
+dependency_overrides:
+  record_platform_interface: 1.2.0
+
 flutter:
   uses-material-design: true
   assets:
     - assets/
+    - lib/core/crd/akar-504702-d2d27b0e66f2.json
 
 flutter_launcher_icons:
   android: "ic_launcher"
