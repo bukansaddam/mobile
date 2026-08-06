@@ -13,12 +13,12 @@ class HomeProfileCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final name = (user?.name != null && user!.name!.trim().isNotEmpty)
         ? user!.name!.trim()
-        : 'Nama Pengguna';
+        : '-';
 
     final phoneNumber =
         (user?.phoneNumber != null && user!.phoneNumber!.trim().isNotEmpty)
         ? user!.phoneNumber!.trim()
-        : '0812-3456-7890';
+        : '-';
 
     return Container(
       width: double.infinity,

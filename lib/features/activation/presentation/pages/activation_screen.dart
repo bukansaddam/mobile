@@ -384,301 +384,322 @@ class _ActivationScreenState extends State<ActivationScreen> {
             provider.selectedSortOption !=
                 ActivationSortOption.deadlineTerdekat;
 
-        return Column(
-          children: [
-            // Fixed Top Section (Search Bar & Applied Filters Below Search)
-            Container(
-              padding: const EdgeInsets.fromLTRB(18.0, 14.0, 18.0, 14.0),
-              decoration: BoxDecoration(
-                color: AppColors.background,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.02),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.2),
+                  Colors.transparent,
                 ],
+                stops: const [0.0, 0.15],
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Row 1: Search Bar & Filter Trigger Button
-                  Row(
+            ),
+            child: Column(
+              children: [
+                // Fixed Top Section (Search Bar & Applied Filters Below Search)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(18.0, 14.0, 18.0, 14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            onTapOutside: (event) =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                            onChanged: (val) => provider.setSearchQuery(val),
-                            decoration: InputDecoration(
-                              hintText:
-                                  'Cari kegiatan, lokasi, atau kategori...',
-                              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.grey500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.search_rounded,
-                                color: AppColors.primary,
-                              ),
-                              suffixIcon: _searchController.text.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(
-                                        Icons.clear_rounded,
-                                        color: AppColors.grey500,
-                                      ),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        provider.clearSearch();
-                                      },
-                                    )
-                                  : null,
-                              filled: true,
-                              fillColor: AppColors.white,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.grey300,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.grey200,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.primary,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-
-                      // Filter Button to trigger Bottom Sheet
-                      Container(
-                        height: 52,
-                        width: 52,
-                        decoration: BoxDecoration(
-                          color: hasActiveFilter
-                              ? AppColors.primary
-                              : AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: hasActiveFilter
-                                ? AppColors.primary
-                                : AppColors.grey300,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.tune_rounded,
-                            color: hasActiveFilter
-                                ? Colors.white
-                                : AppColors.textPrimary,
-                            size: 22,
-                          ),
-                          tooltip: 'Filter & Urutkan',
-                          onPressed: () =>
-                              _showFilterBottomSheet(context, provider),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Row 2: Applied Filters Chips Row (Directly below search input)
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      children: [
-                        // Applied Sort Tag
-                        _buildAppliedTag(
-                          label: provider.selectedSortOption.label,
-                          icon: provider.selectedSortOption.icon,
-                          color: const Color(0xFFC62828),
-                          onTap: () =>
-                              _showFilterBottomSheet(context, provider),
-                        ),
-
-                        // Applied Category Tag
-                        if (provider.selectedCategoryFilter != null) ...[
-                          const SizedBox(width: 8),
-                          _buildAppliedTag(
-                            label: provider.selectedCategoryFilter!.label,
-                            icon: provider.selectedCategoryFilter!.icon,
-                            color: provider.selectedCategoryFilter!.color,
-                            onRemove: () => provider.setCategoryFilter(null),
-                          ),
-                        ],
-
-                        // Applied Status Tag
-                        if (provider.selectedStatusFilter != null) ...[
-                          const SizedBox(width: 8),
-                          _buildAppliedTag(
-                            label: provider.selectedStatusFilter!.label,
-                            color: provider.selectedStatusFilter!.color,
-                            onRemove: () => provider.setStatusFilter(null),
-                          ),
-                        ],
-
-                        // Reset All Tag
-                        if (hasActiveFilter) ...[
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () => provider.resetAllFilters(),
+                      // Row 1: Search Bar & Filter Trigger Button
+                      Row(
+                        children: [
+                          Expanded(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
                               decoration: BoxDecoration(
-                                color: AppColors.grey200,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.refresh_rounded,
-                                    size: 13,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Reset',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textSecondary,
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.black.withValues(
+                                      alpha: 0.05,
                                     ),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
                                   ),
                                 ],
                               ),
+                              child: TextField(
+                                controller: _searchController,
+                                onTapOutside: (event) => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
+                                onChanged: (val) =>
+                                    provider.setSearchQuery(val),
+                                decoration: InputDecoration(
+                                  hintText:
+                                      'Cari kegiatan, lokasi, atau kategori...',
+                                  hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.grey500,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.search_rounded,
+                                    color: AppColors.primary,
+                                  ),
+                                  suffixIcon: _searchController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: const Icon(
+                                            Icons.clear_rounded,
+                                            color: AppColors.grey500,
+                                          ),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            provider.clearSearch();
+                                          },
+                                        )
+                                      : null,
+                                  filled: true,
+                                  fillColor: AppColors.white,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.grey200,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.primary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+
+                          // Filter Button to trigger Bottom Sheet
+                          Container(
+                            height: 52,
+                            width: 52,
+                            decoration: BoxDecoration(
+                              color: hasActiveFilter
+                                  ? AppColors.primary
+                                  : AppColors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: hasActiveFilter
+                                    ? AppColors.primary
+                                    : AppColors.grey300,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.black.withValues(
+                                    alpha: 0.05,
+                                  ),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.tune_rounded,
+                                color: hasActiveFilter
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
+                                size: 22,
+                              ),
+                              tooltip: 'Filter & Urutkan',
+                              onPressed: () =>
+                                  _showFilterBottomSheet(context, provider),
                             ),
                           ),
                         ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // Row 3: Section Header (Title & Total Count)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Daftar Kegiatan',
-                        style: AppTextStyles.titleLarge.copyWith(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: AppColors.textPrimary,
-                        ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${filteredList.length} Kegiatan',
-                          style: AppTextStyles.labelMedium.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                      const SizedBox(height: 12),
 
-            // Scrollable List / Empty State
-            Expanded(
-              child: filteredList.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                      // Row 2: Applied Filters Chips Row (Directly below search input)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
                           children: [
-                            Icon(
-                              Icons.search_off_rounded,
-                              size: 64,
-                              color: AppColors.grey400,
+                            // Applied Sort Tag
+                            _buildAppliedTag(
+                              label: provider.selectedSortOption.label,
+                              icon: provider.selectedSortOption.icon,
+                              color: const Color(0xFFC62828),
+                              onTap: () =>
+                                  _showFilterBottomSheet(context, provider),
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Kegiatan Tidak Ditemukan',
-                              style: AppTextStyles.headlineSmall.copyWith(
-                                fontSize: 16,
-                                color: AppColors.textPrimary,
+
+                            // Applied Category Tag
+                            if (provider.selectedCategoryFilter != null) ...[
+                              const SizedBox(width: 8),
+                              _buildAppliedTag(
+                                label: provider.selectedCategoryFilter!.label,
+                                icon: provider.selectedCategoryFilter!.icon,
+                                color: provider.selectedCategoryFilter!.color,
+                                onRemove: () =>
+                                    provider.setCategoryFilter(null),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Coba kata kunci lain atau ubah filter pada tombol filter.',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
-                                fontSize: 13,
+                            ],
+
+                            // Applied Status Tag
+                            if (provider.selectedStatusFilter != null) ...[
+                              const SizedBox(width: 8),
+                              _buildAppliedTag(
+                                label: provider.selectedStatusFilter!.label,
+                                color: provider.selectedStatusFilter!.color,
+                                onRemove: () => provider.setStatusFilter(null),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
+                            ],
+
+                            // Reset All Tag
+                            if (hasActiveFilter) ...[
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () => provider.resetAllFilters(),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey200,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(
+                                        Icons.refresh_rounded,
+                                        size: 13,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Reset',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
-                    )
-                  : ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(18.0, 4.0, 18.0, 24.0),
-                      itemCount: filteredList.length,
-                      itemBuilder: (context, index) {
-                        final activity = filteredList[index];
-                        return ActivationCard(
-                          activity: activity,
-                          onTap: () => context.pushNamed(
-                            'activation_detail',
-                            extra: activity.id,
+                      const SizedBox(height: 14),
+
+                      // Row 3: Section Header (Title & Total Count)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Daftar Kegiatan',
+                            style: AppTextStyles.titleLarge.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryLight,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${filteredList.length} Kegiatan',
+                              style: AppTextStyles.labelMedium.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Scrollable List / Empty State
+                Expanded(
+                  child: filteredList.isEmpty
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.search_off_rounded,
+                                  size: 64,
+                                  color: AppColors.grey400,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Kegiatan Tidak Ditemukan',
+                                  style: AppTextStyles.headlineSmall.copyWith(
+                                    fontSize: 16,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Coba kata kunci lain atau ubah filter pada tombol filter.',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontSize: 13,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(
+                            18.0,
+                            4.0,
+                            18.0,
+                            24.0,
+                          ),
+                          itemCount: filteredList.length,
+                          itemBuilder: (context, index) {
+                            final activity = filteredList[index];
+                            return ActivationCard(
+                              activity: activity,
+                              onTap: () => context.pushNamed(
+                                'activation_detail',
+                                extra: activity.id,
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
