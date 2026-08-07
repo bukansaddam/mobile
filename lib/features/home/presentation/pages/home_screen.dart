@@ -425,6 +425,20 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 16),
 
               Text(
+                'Menu Utama',
+                style: AppTextStyles.titleLarge.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              _buildMenuUtamaSection(context),
+
+              const SizedBox(height: 16),
+
+              Text(
                 'Informasi Terbaru',
                 style: AppTextStyles.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
@@ -436,19 +450,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const AdBannerSlider(),
 
-              const SizedBox(height: 16),
-
-              Text(
-                'Menu Utama',
-                style: AppTextStyles.titleLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              _buildMenuUtamaSection(context),
               const SizedBox(height: 80),
             ],
           ),

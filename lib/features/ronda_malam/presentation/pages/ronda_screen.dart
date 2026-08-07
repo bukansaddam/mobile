@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-enum SttMode { none, regular, streaming }
+enum SttMode { none, regular }
 
 class RondaScreen extends StatefulWidget {
   const RondaScreen({super.key});
@@ -25,13 +25,23 @@ class _RondaScreenState extends State<RondaScreen> {
   bool _isTranscribing = false;
   int _recordDurationSeconds = 0;
   Timer? _recordingTimer;
-  StreamSubscription<String>? _speechStreamSubscription;
-  String _baseTextBeforeStreaming = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _keteranganController.addListener(_onKeteranganChanged);
+  }
+
+  void _onKeteranganChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void dispose() {
+    _keteranganController.removeListener(_onKeteranganChanged);
     _recordingTimer?.cancel();
-    _speechStreamSubscription?.cancel();
     _keteranganController.dispose();
     super.dispose();
   }
@@ -122,16 +132,23 @@ class _RondaScreenState extends State<RondaScreen> {
 
       if (mounted) {
         if (transcript.trim().isNotEmpty) {
+          var formattedTranscript = transcript.trim();
+          if (!formattedTranscript.endsWith('.') &&
+              !formattedTranscript.endsWith('?') &&
+              !formattedTranscript.endsWith('!')) {
+            formattedTranscript = '$formattedTranscript.';
+          }
+
           final currentText = _keteranganController.text.trim();
           final newText = currentText.isEmpty
-              ? transcript
-              : '$currentText $transcript';
+              ? formattedTranscript
+              : '$currentText $formattedTranscript';
           _keteranganController.text = newText;
           provider.updateKeterangan(newText);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Mode Biasa: Suara berhasil dikonversi ke teks!'),
+              content: Text('Suara berhasil dikonversi ke teks!'),
               backgroundColor: Colors.green,
             ),
           );
@@ -163,125 +180,6 @@ class _RondaScreenState extends State<RondaScreen> {
           _recordDurationSeconds = 0;
         });
       }
-    }
-  }
-
-  Future<void> _startStreamingRecording(RondaProvider provider) async {
-    final audioRecorder = sl<AudioRecorderService>();
-    final googleSpeech = sl<GoogleSpeechService>();
-    final status = await audioRecorder.requestPermissionStatus();
-
-    if (!status.isGranted) {
-      if (status.isPermanentlyDenied && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Izin mikrofon ditolak permanen.'),
-            action: SnackBarAction(
-              label: 'Pengaturan',
-              textColor: Colors.white,
-              onPressed: () => audioRecorder.openSettings(),
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-      return;
-    }
-
-    try {
-      final audioStream = await audioRecorder.startAudioStream();
-      _baseTextBeforeStreaming = _keteranganController.text.trim();
-
-      setState(() {
-        _sttMode = SttMode.streaming;
-        _recordDurationSeconds = 0;
-      });
-
-      _recordingTimer?.cancel();
-      _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (mounted) {
-          setState(() {
-            _recordDurationSeconds++;
-          });
-        }
-      });
-
-      _speechStreamSubscription?.cancel();
-      _speechStreamSubscription = googleSpeech
-          .transcribeAudioStream(audioStream)
-          .listen(
-            (liveTranscript) {
-              if (mounted && liveTranscript.trim().isNotEmpty) {
-                final newText = _baseTextBeforeStreaming.isEmpty
-                    ? liveTranscript
-                    : '$_baseTextBeforeStreaming $liveTranscript';
-                _keteranganController.text = newText;
-                provider.updateKeterangan(newText);
-              }
-            },
-            onError: (error) {
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Mode Streaming Gagal: $error'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-                _stopStreamingRecording();
-              }
-            },
-            onDone: () {
-              if (mounted && _sttMode == SttMode.streaming) {
-                _stopStreamingRecording();
-              }
-            },
-          );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal memulai streaming audio: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _stopStreamingRecording() async {
-    if (mounted) {
-      setState(() {
-        _sttMode = SttMode.none;
-        _recordDurationSeconds = 0;
-      });
-    }
-
-    _recordingTimer?.cancel();
-    _recordingTimer = null;
-
-    final sub = _speechStreamSubscription;
-    _speechStreamSubscription = null;
-
-    try {
-      final audioRecorder = sl<AudioRecorderService>();
-      await audioRecorder.cancelRecording();
-    } catch (e) {
-      AppLogger.e('Error cancelling audio recorder: $e');
-    }
-
-    try {
-      sub?.cancel();
-    } catch (e) {
-      AppLogger.e('Error cancelling speech stream: $e');
-    }
-
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Mode Streaming Selesai!'),
-          backgroundColor: Colors.green,
-        ),
-      );
     }
   }
 
@@ -558,6 +456,20 @@ class _RondaScreenState extends State<RondaScreen> {
                               width: 1.5,
                             ),
                           ),
+                          suffixIcon: _keteranganController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.cancel_rounded,
+                                    color: AppColors.grey500,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    _keteranganController.clear();
+                                    provider.updateKeterangan('');
+                                  },
+                                  tooltip: 'Bersihkan teks',
+                                )
+                              : null,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -584,7 +496,7 @@ class _RondaScreenState extends State<RondaScreen> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  'Merekam... ${_formatDuration(_recordDurationSeconds)}',
+                                  'Mendengarkan... ${_formatDuration(_recordDurationSeconds)}',
                                   style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
@@ -612,67 +524,7 @@ class _RondaScreenState extends State<RondaScreen> {
                                 ),
                                 icon: const Icon(Icons.check_rounded, size: 16),
                                 label: const Text(
-                                  'Selesai & Konversi',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ] else if (_sttMode == SttMode.streaming) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: AppColors.primary.withValues(alpha: 0.4),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.graphic_eq_rounded,
-                                color: AppColors.primary,
-                                size: 18,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Silahkan bicara... ${_formatDuration(_recordDurationSeconds)}',
-                                  style: const TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ),
-                              ElevatedButton.icon(
-                                onPressed: () => _stopStreamingRecording(),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                icon: const Icon(Icons.stop_rounded, size: 16),
-                                label: const Text(
-                                  'Hentikan',
+                                  'Ketuk untuk berhenti',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -720,71 +572,34 @@ class _RondaScreenState extends State<RondaScreen> {
                           ),
                         ),
                       ] else ...[
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () => _startRegularRecording(),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors.primary,
-                                  side: BorderSide(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.4,
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 10,
-                                  ),
-                                ),
-                                icon: const Icon(Icons.mic_rounded, size: 16),
-                                label: const Text(
-                                  'Mode Biasa',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => _startRegularRecording(),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.primary,
+                              side: BorderSide(
+                                color: AppColors.primary.withValues(alpha: 0.4),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () =>
-                                    _startStreamingRecording(provider),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 10,
-                                  ),
-                                ),
-                                icon: const Icon(
-                                  Icons.stream_rounded,
-                                  size: 16,
-                                ),
-                                label: const Text(
-                                  'Mode Stream',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            icon: const Icon(Icons.mic_rounded, size: 16),
+                            label: const Text(
+                              'Bicara untuk menulis',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ],
