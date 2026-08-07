@@ -28,6 +28,12 @@ import 'package:akar/features/tracking/data/repositories/tracking_repository_imp
 import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
 import 'package:akar/features/tracking/domain/usecases/send_location_usecase.dart';
 import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
+import 'package:akar/features/profiling/data/datasources/profiling_remote_datasource.dart';
+import 'package:akar/features/profiling/data/repositories/profiling_repository_impl.dart';
+import 'package:akar/features/profiling/domain/repositories/profiling_repository.dart';
+import 'package:akar/features/profiling/domain/usecases/add_tokoh_usecase.dart';
+import 'package:akar/features/profiling/domain/usecases/get_tokoh_list_usecase.dart';
+import 'package:akar/features/profiling/presentation/provider/profiling_provider.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
 import 'package:dio/dio.dart';
@@ -66,6 +72,9 @@ Future<void> init() async {
   sl.registerLazySingleton<RondaRemoteDatasource>(
     () => RondaRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<ProfilingRemoteDatasource>(
+    () => ProfilingRemoteDatasourceImpl(),
+  );
 
   // ---------------------- Repositories ----------------------
   sl.registerLazySingleton<AuthRepository>(
@@ -82,6 +91,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<RondaRepository>(
     () => RondaRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<ProfilingRepository>(
+    () => ProfilingRepositoryImpl(remoteDatasource: sl()),
   );
 
   // ---------------------- Use Cases ----------------------
@@ -102,6 +114,10 @@ Future<void> init() async {
   sl.registerLazySingleton<SubmitRondaLaporanUsecase>(
     () => SubmitRondaLaporanUsecase(sl()),
   );
+  sl.registerLazySingleton<GetTokohListUsecase>(
+    () => GetTokohListUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddTokohUsecase>(() => AddTokohUsecase(sl()));
 
   // ---------------------- Providers ----------------------
   sl.registerLazySingleton<AuthProvider>(
@@ -127,5 +143,8 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<RondaProvider>(
     () => RondaProvider(submitRondaLaporanUsecase: sl()),
+  );
+  sl.registerLazySingleton<ProfilingProvider>(
+    () => ProfilingProvider(getTokohListUsecase: sl(), addTokohUsecase: sl()),
   );
 }

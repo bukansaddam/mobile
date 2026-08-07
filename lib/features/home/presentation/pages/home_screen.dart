@@ -474,6 +474,13 @@ class _HomeScreenState extends State<HomeScreen> {
         'color': const Color(0xFF5B4DFF),
         'onTap': () => context.pushNamed('ronda_malam'),
       },
+      {
+        'title': 'Profiling',
+        'subtitle': 'Tokoh Sekitar',
+        'icon': Icons.badge_rounded,
+        'color': const Color(0xFF0F9F66),
+        'onTap': () => context.pushNamed('profiling'),
+      },
     ];
 
     return GridView.builder(

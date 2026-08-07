@@ -4,6 +4,8 @@ import 'package:akar/features/auth/presentation/pages/login_screen.dart';
 import 'package:akar/features/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/presensi/presentation/pages/presensi_screen.dart';
 import 'package:akar/features/ronda_malam/presentation/pages/ronda_screen.dart';
+import 'package:akar/features/profiling/presentation/pages/profiling_list_screen.dart';
+import 'package:akar/features/profiling/presentation/pages/add_tokoh_screen.dart';
 import 'package:akar/features/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
@@ -77,6 +79,16 @@ class AppRouter {
         path: '/ronda-malam',
         name: 'ronda_malam',
         builder: (context, state) => const RondaScreen(),
+      ),
+      GoRoute(
+        path: '/profiling',
+        name: 'profiling',
+        builder: (context, state) => const ProfilingListScreen(),
+      ),
+      GoRoute(
+        path: '/tambah-tokoh',
+        name: 'tambah_tokoh',
+        builder: (context, state) => const AddTokohScreen(),
       ),
       GoRoute(
         path: '/activation-detail',
