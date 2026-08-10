@@ -152,23 +152,22 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                     child: SizedBox(
                       width: double.infinity,
                       height: 52,
-                      child: ElevatedButton.icon(
+                      child: ElevatedButton(
                         onPressed: () =>
                             _startPhotoSubmission(context, activity),
-                        icon: const Icon(Icons.add_a_photo_rounded),
-                        label: Text(
-                          'Kirim Bukti Laporan Foto',
-                          style: AppTextStyles.titleMedium.copyWith(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 2,
+                        ),
+                        child: Text(
+                          'Kirim Bukti Laporan Foto',
+                          style: AppTextStyles.titleMedium.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

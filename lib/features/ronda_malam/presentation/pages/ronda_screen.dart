@@ -522,7 +522,6 @@ class _RondaScreenState extends State<RondaScreen> {
                                   tapTargetSize:
                                       MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                icon: const Icon(Icons.check_rounded, size: 16),
                                 label: const Text(
                                   'Ketuk untuk berhenti',
                                   style: TextStyle(
@@ -602,6 +601,30 @@ class _RondaScreenState extends State<RondaScreen> {
                           ),
                         ),
                       ],
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2, top: 2),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              size: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                            SizedBox(width: 5),
+                            Expanded(
+                              child: Text(
+                                'Catatan: Fitur Speech to Text hanya mendukung Bahasa Indonesia.',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -626,7 +649,7 @@ class _RondaScreenState extends State<RondaScreen> {
               child: SizedBox(
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: provider.status == RondaStatus.submitting
                       ? null
                       : () async {
@@ -643,20 +666,8 @@ class _RondaScreenState extends State<RondaScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  icon: provider.status == RondaStatus.submitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Icon(Icons.send_rounded, size: 18),
-                  label: Text(
-                    provider.status == RondaStatus.submitting
-                        ? 'MEMPROSES LAPORAN...'
-                        : 'KIRIM LAPORAN RONDA',
+                  child: Text(
+                    'KIRIM LAPORAN RONDA',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

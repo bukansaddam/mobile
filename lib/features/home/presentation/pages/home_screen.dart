@@ -370,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Expanded(
                       child: HomeSummaryCard(
-                        title: 'Total Daftar Tugas',
+                        title: 'Total Tugas',
                         subtitle: 'Kegiatan aktif',
                         count: '$totalTugasCount',
                         icon: Icons.assignment_outlined,
@@ -380,6 +380,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                         isCompact: true,
                         onTap: () {
+                          context.read<ActivationProvider>().setStatusFilter(
+                            null,
+                          );
                           widget.onNavigateToTab?.call(2);
                         },
                       ),
@@ -392,11 +395,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         count: '$totalAgendaCount',
                         icon: Icons.event_note_rounded,
                         gradientColors: const [
-                          Color(0xFF5CB836),
-                          Color(0xFF438A24),
+                          Color(0xFFD99B00),
+                          Color(0xFFB37B00),
                         ],
                         isCompact: true,
                         onTap: () {
+                          context.read<ActivationProvider>().setStatusFilter(
+                            ActivationStatus.sedangBerjalan,
+                          );
                           widget.onNavigateToTab?.call(2);
                         },
                       ),
@@ -409,11 +415,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         count: '$totalLaporanCount',
                         icon: Icons.insert_drive_file_outlined,
                         gradientColors: const [
-                          Color(0xFFD99B00),
-                          Color(0xFFB37B00),
+                          Color(0xFF5CB836),
+                          Color(0xFF438A24),
                         ],
                         isCompact: true,
                         onTap: () {
+                          context.read<ActivationProvider>().setStatusFilter(
+                            ActivationStatus.selesai,
+                          );
                           widget.onNavigateToTab?.call(2);
                         },
                       ),
@@ -424,30 +433,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 16),
 
-              Text(
-                'Menu Utama',
-                style: AppTextStyles.titleLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 8),
-
+              // Text(
+              //   'Menu Utama',
+              //   style: AppTextStyles.titleLarge.copyWith(
+              //     fontWeight: FontWeight.bold,
+              //     color: AppColors.textPrimary,
+              //     fontSize: 18,
+              //   ),
+              // ),
+              // const SizedBox(height: 8),
               _buildMenuUtamaSection(context),
 
               const SizedBox(height: 16),
 
-              Text(
-                'Informasi Terbaru',
-                style: AppTextStyles.titleLarge.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 8),
-
+              // Text(
+              //   'Informasi Terbaru',
+              //   style: AppTextStyles.titleLarge.copyWith(
+              //     fontWeight: FontWeight.bold,
+              //     color: AppColors.textPrimary,
+              //     fontSize: 18,
+              //   ),
+              // ),
+              // const SizedBox(height: 8),
               const AdBannerSlider(),
 
               const SizedBox(height: 80),
@@ -475,7 +482,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'onTap': () => context.pushNamed('ronda_malam'),
       },
       {
-        'title': 'Profiling',
+        'title': 'Demografi',
         'subtitle': 'Tokoh Sekitar',
         'icon': Icons.badge_rounded,
         'color': const Color(0xFF0F9F66),

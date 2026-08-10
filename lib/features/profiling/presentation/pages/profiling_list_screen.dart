@@ -66,7 +66,7 @@ class _ProfilingListScreenState extends State<ProfilingListScreen> {
           ),
         ),
         title: const Text(
-          'Profiling Tokoh',
+          'Demografi Tokoh',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

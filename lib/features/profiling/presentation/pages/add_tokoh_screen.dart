@@ -286,28 +286,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
             builder: (context, provider, child) {
               return SizedBox(
                 width: double.infinity,
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: provider.isSubmitting ? null : _submitForm,
-                  icon: provider.isSubmitting
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Icon(Icons.send_rounded, size: 20),
-                  label: Text(
-                    provider.isSubmitting
-                        ? 'MENYIMPAN...'
-                        : 'SIMPAN TOKOH BARU',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0F9F66),
                     foregroundColor: AppColors.white,
@@ -316,6 +296,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 0,
+                  ),
+                  child: const Text(
+                    'SIMPAN TOKOH BARU',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               );

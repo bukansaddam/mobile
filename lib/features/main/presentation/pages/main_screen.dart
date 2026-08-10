@@ -83,14 +83,31 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text(
-                  AppConstants.appName,
-                  style: AppTextStyles.headlineSmall.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    letterSpacing: 1.5,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppConstants.appName,
+                      style: AppTextStyles.headlineSmall.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        letterSpacing: 1.5,
+                        height: 1.1,
+                      ),
+                    ),
+                    Text(
+                      'ASLINMAS',
+                      style: AppTextStyles.labelSmall.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        letterSpacing: 1.5,
+                        height: 1.1,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
