@@ -1,9 +1,9 @@
+import 'dart:async';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_text_styles.dart';
 import '../../../auth/presentation/provider/auth_provider.dart';
 import '../provider/presensi_provider.dart';
 
@@ -14,83 +14,98 @@ class PresensiScreen extends StatefulWidget {
   State<PresensiScreen> createState() => _PresensiScreenState();
 }
 
-class _PresensiScreenState extends State<PresensiScreen> {
-  GoogleMapController? _mapController;
-  late final TextEditingController _kecamatanController;
-  late final TextEditingController _kelurahanController;
-  late final TextEditingController _addressController;
-  late final TextEditingController _rtController;
-  late final TextEditingController _rwController;
-  double _dragPosition = 0.0;
-  bool _isSubmitted = false;
+class _PresensiScreenState extends State<PresensiScreen>
+    with WidgetsBindingObserver {
+  CameraController? _cameraController;
+  List<CameraDescription> _cameras = [];
+  bool _isCameraInitialized = false;
+  bool _isCameraError = false;
+
+  Timer? _timer;
+  DateTime _currentTime = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    final p = context.read<PresensiProvider>();
-    _kecamatanController = TextEditingController(text: p.kecamatan);
-    _kelurahanController = TextEditingController(text: p.kelurahan);
-    _addressController = TextEditingController(text: p.address);
-    _rtController = TextEditingController(text: p.rt);
-    _rwController = TextEditingController(text: p.rw);
+    WidgetsBinding.instance.addObserver(this);
+
+    _startTimer();
+    _initCamera();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authUser = context.read<AuthProvider>().currentUser;
       final userName = authUser?.name ?? 'Pengguna';
       await context.read<PresensiProvider>().initLocation(userName);
-      if (mounted) {
-        final updated = context.read<PresensiProvider>();
-        _kecamatanController.text = updated.kecamatan;
-        _kelurahanController.text = updated.kelurahan;
-        _addressController.text = updated.address;
-        _rtController.text = updated.rt;
-        _rwController.text = updated.rw;
+    });
+  }
 
-        if (updated.userLatitude != null && updated.userLongitude != null) {
-          _recenterMap(updated.userLatitude!, updated.userLongitude!);
-        }
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) {
+        setState(() {
+          _currentTime = DateTime.now();
+        });
       }
     });
   }
 
-  @override
-  void dispose() {
-    _mapController?.dispose();
-    _kecamatanController.dispose();
-    _kelurahanController.dispose();
-    _addressController.dispose();
-    _rtController.dispose();
-    _rwController.dispose();
-    super.dispose();
+  Future<void> _initCamera() async {
+    try {
+      _cameras = await availableCameras();
+      if (_cameras.isNotEmpty) {
+        final frontCam = _cameras.firstWhere(
+          (cam) => cam.lensDirection == CameraLensDirection.front,
+          orElse: () => _cameras.first,
+        );
+
+        _cameraController = CameraController(
+          frontCam,
+          ResolutionPreset.veryHigh,
+          enableAudio: false,
+        );
+
+        await _cameraController!.initialize();
+        if (mounted) {
+          setState(() {
+            _isCameraInitialized = true;
+          });
+        }
+      } else {
+        if (mounted) setState(() => _isCameraError = true);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _isCameraError = true);
+    }
   }
 
-  void _recenterMap(double lat, double lng) {
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(LatLng(lat, lng), 16.5),
-    );
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final CameraController? cameraController = _cameraController;
+    if (cameraController == null || !cameraController.value.isInitialized) {
+      return;
+    }
+
+    if (state == AppLifecycleState.inactive) {
+      cameraController.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      _initCamera();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
+    _cameraController?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<PresensiProvider>(
       builder: (context, provider, child) {
-        final userLat = provider.userLatitude ?? -6.2088;
-        final userLng = provider.userLongitude ?? 106.8456;
-        final userPos = LatLng(userLat, userLng);
-
-        final markers = <Marker>{
-          Marker(
-            markerId: const MarkerId('user_location'),
-            position: userPos,
-            infoWindow: const InfoWindow(title: 'Lokasi Presensi Anda'),
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-              BitmapDescriptor.hueAzure,
-            ),
-          ),
-        };
-
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: AppColors.white,
             elevation: 0,
@@ -122,584 +137,343 @@ class _PresensiScreenState extends State<PresensiScreen> {
                 color: AppColors.textPrimary,
               ),
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.grey300),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.my_location_rounded,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                    onPressed: () => _recenterMap(userLat, userLng),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-            ],
           ),
           body: Stack(
             children: [
               Positioned.fill(
-                bottom: MediaQuery.of(context).size.height * 0.5,
-                child: GoogleMap(
-                  key: const ValueKey('presensi_google_map'),
-                  initialCameraPosition: CameraPosition(
-                    target: userPos,
-                    zoom: 16.5,
-                  ),
-                  onMapCreated: (controller) {
-                    _mapController = controller;
-                    if (provider.userLatitude != null &&
-                        provider.userLongitude != null) {
-                      _recenterMap(
-                        provider.userLatitude!,
-                        provider.userLongitude!,
-                      );
-                    }
-                  },
-                  markers: markers,
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                ),
-              ),
-              if (provider.status == PresensiStatus.loadingLocation)
-                Positioned.fill(
-                  child: Container(
-                    color: AppColors.background,
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircularProgressIndicator(color: AppColors.primary),
-                          SizedBox(height: 16),
-                          Text(
-                            'Mendeteksi Koordinat GPS & Lokasi...',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              else ...[
-                Positioned(
-                  top: 12,
-                  left: 14,
-                  right: 14,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.black.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time_filled_rounded,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            DateFormat(
-                              'EEEE, dd MMMM yyyy - HH:mm WIB',
-                              'id_ID',
-                            ).format(DateTime.now()),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 11,
+                bottom: 90,
+                child:
+                    _isCameraInitialized &&
+                        _cameraController != null &&
+                        _cameraController!.value.isInitialized
+                    ? ClipRect(
+                        child: SizedBox.expand(
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: SizedBox(
+                              width:
+                                  _cameraController!
+                                      .value
+                                      .previewSize
+                                      ?.height ??
+                                  MediaQuery.of(context).size.width,
+                              height:
+                                  _cameraController!.value.previewSize?.width ??
+                                  MediaQuery.of(context).size.height,
+                              child: CameraPreview(_cameraController!),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.black.withValues(alpha: 0.15),
-                          blurRadius: 16,
-                          offset: const Offset(0, -4),
+                      )
+                    : Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF1E2638), Color(0xFF0F141F)],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
                         ),
-                      ],
-                    ),
-                    child: SafeArea(
-                      top: false,
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                width: 40,
-                                height: 5,
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: AppColors.grey300,
-                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.camera_front_rounded,
+                                  color: Colors.white70,
+                                  size: 54,
                                 ),
                               ),
-                            ),
-                            Text(
-                              'Detail & Lokasi Presensi',
-                              style: AppTextStyles.titleMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                                fontSize: 15,
+                              const SizedBox(height: 16),
+                              Text(
+                                _isCameraError
+                                    ? 'Kamera tidak tersedia'
+                                    : 'Membuka kamera...',
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildInfoField(
-                              label: 'Nama Anggota',
-                              value: provider.userName,
-                              icon: Icons.person_rounded,
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildEditableField(
-                                    label: 'Kecamatan',
-                                    controller: _kecamatanController,
-                                    icon: Icons.location_city_rounded,
-                                    onChanged: provider.updateKecamatan,
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: _buildEditableField(
-                                    label: 'Kelurahan',
-                                    controller: _kelurahanController,
-                                    icon: Icons.holiday_village_rounded,
-                                    onChanged: provider.updateKelurahan,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            _buildEditableField(
-                              label: 'Alamat Lengkap',
-                              controller: _addressController,
-                              icon: Icons.location_on_rounded,
-                              onChanged: provider.updateAddress,
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'RT',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      TextField(
-                                        controller: _rtController,
-                                        onTapOutside: (event) => FocusManager
-                                            .instance
-                                            .primaryFocus
-                                            ?.unfocus(),
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (val) =>
-                                            provider.updateRt(val),
-                                        decoration: InputDecoration(
-                                          prefixIcon: const Icon(
-                                            Icons.tag_rounded,
-                                            color: AppColors.primary,
-                                            size: 16,
-                                          ),
-                                          filled: true,
-                                          fillColor: AppColors.grey100,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 8,
-                                              ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.grey300,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.grey300,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'RW',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      TextField(
-                                        controller: _rwController,
-                                        onTapOutside: (event) => FocusManager
-                                            .instance
-                                            .primaryFocus
-                                            ?.unfocus(),
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (val) =>
-                                            provider.updateRw(val),
-                                        decoration: InputDecoration(
-                                          prefixIcon: const Icon(
-                                            Icons.tag_rounded,
-                                            color: AppColors.primary,
-                                            size: 16,
-                                          ),
-                                          filled: true,
-                                          fillColor: AppColors.grey100,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 8,
-                                              ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.grey300,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.grey300,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 14),
-                            _buildSlideToPresensiButton(context, provider),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
+              ),
+
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 100,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.black54, Colors.transparent],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildEditableField({
-    required String label,
-    required TextEditingController controller,
-    required IconData icon,
-    required ValueChanged<String> onChanged,
-    int maxLines = 1,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: controller,
-          onTapOutside: (event) =>
-              FocusManager.instance.primaryFocus?.unfocus(),
-          maxLines: maxLines,
-          onChanged: onChanged,
-          style: AppTextStyles.bodyMedium.copyWith(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-          decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: AppColors.primary, size: 16),
-            filled: true,
-            fillColor: AppColors.grey100,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 8,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                color: AppColors.primary,
-                width: 1.5,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoField({
-    required String label,
-    required String value,
-    required IconData icon,
-  }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: AppColors.primary, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSlideToPresensiButton(
-    BuildContext context,
-    PresensiProvider provider,
-  ) {
-    const double trackHeight = 56.0;
-    const double thumbWidth = 54.0;
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double maxDrag = constraints.maxWidth - thumbWidth;
-
-        return Container(
-          height: trackHeight,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: provider.status == PresensiStatus.submitting
-                ? AppColors.grey200
-                : AppColors.primary.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-              width: 1.5,
-            ),
-          ),
-          child: Stack(
-            alignment: Alignment.centerLeft,
-            children: [
-              Container(
-                width: _dragPosition + (thumbWidth / 2),
-                height: trackHeight,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(28),
-                ),
-              ),
-
-              Center(
-                child: Text(
-                  provider.status == PresensiStatus.submitting
-                      ? 'MEMPROSES PRESENSI...'
-                      : _isSubmitted
-                      ? 'PRESENSI BERHASIL!'
-                      : 'GESER UNTUK PRESENSI ➔',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
-                    color: provider.status == PresensiStatus.submitting
-                        ? AppColors.textSecondary
-                        : AppColors.primary,
                   ),
                 ),
               ),
 
               Positioned(
-                left: _dragPosition,
-                child: GestureDetector(
-                  onHorizontalDragUpdate: (details) {
-                    if (provider.status == PresensiStatus.submitting ||
-                        _isSubmitted) {
-                      return;
-                    }
-                    setState(() {
-                      _dragPosition = (_dragPosition + details.delta.dx).clamp(
-                        0.0,
-                        maxDrag,
-                      );
-                    });
-                  },
-                  onHorizontalDragEnd: (details) async {
-                    if (provider.status == PresensiStatus.submitting ||
-                        _isSubmitted) {
-                      return;
-                    }
-
-                    if (_dragPosition >= maxDrag * 0.85) {
-                      setState(() {
-                        _dragPosition = maxDrag;
-                        _isSubmitted = true;
-                      });
-
-                      final success = await provider.submitPresensi();
-                      if (success && context.mounted) {
-                        _showSuccessPresensiDialog(context, provider);
-                      } else {
-                        setState(() {
-                          _dragPosition = 0.0;
-                          _isSubmitted = false;
-                        });
-                      }
-                    } else {
-                      setState(() {
-                        _dragPosition = 0.0;
-                      });
-                    }
-                  },
-                  child: Container(
-                    width: thumbWidth,
-                    height: trackHeight - 4,
-                    margin: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.4),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+                top: 12,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      color: Colors.white,
+                      size: 20,
                     ),
-                    child: provider.status == PresensiStatus.submitting
-                        ? const Center(
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            ),
-                          )
-                        : const Icon(
-                            Icons.keyboard_double_arrow_right_rounded,
-                            color: Colors.white,
-                            size: 28,
+                    const SizedBox(width: 8),
+                    Text(
+                      DateFormat('HH:mm').format(_currentTime),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 6,
+                            color: Colors.black54,
+                            offset: Offset(0, 1),
                           ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Positioned.fill(
+                child: Align(
+                  alignment: const Alignment(0, -0.55),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CustomPaint(
+                        size: const Size(270, 270),
+                        painter: CornerBracketPainter(
+                          color: AppColors.primary,
+                          strokeWidth: 4.0,
+                          cornerLength: 32.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 18,
+                        offset: Offset(0, -4),
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    20,
+                    20,
+                    MediaQuery.of(context).padding.bottom + 16,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Presensi Title Banner (Automatic Presensi Masuk / Presensi Keluar)
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primaryLight,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              provider.hasCheckedIn
+                                  ? Icons.logout_rounded
+                                  : Icons.login_rounded,
+                              color: AppColors.primary,
+                              size: 22,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            provider.presensiTypeTitle,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+
+                      // 2. Location Info Header Row with Refresh Button
+                      Row(
+                        children: [
+                          Transform.rotate(
+                            angle: 0.4,
+                            child: const Icon(
+                              Icons.navigation_outlined,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Lokasi GPS Terkini',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          const Spacer(),
+                          if (provider.status == PresensiStatus.loadingLocation)
+                            const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary,
+                              ),
+                            )
+                          else
+                            IconButton(
+                              onPressed: () {
+                                final authUser = context
+                                    .read<AuthProvider>()
+                                    .currentUser;
+                                final userName = authUser?.name ?? 'Pengguna';
+                                provider.initLocation(userName);
+                              },
+                              icon: const Icon(
+                                Icons.refresh_rounded,
+                                color: AppColors.textSecondary,
+                                size: 22,
+                              ),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              tooltip: 'Refresh Location',
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+
+                      // Current Location Address Text
+                      if (provider.status == PresensiStatus.loadingLocation)
+                        const Text(
+                          'Mendeteksi Koordinat GPS & Lokasi...',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        )
+                      else
+                        Text(
+                          provider.address,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                            height: 1.35,
+                          ),
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed:
+                              provider.status == PresensiStatus.submitting
+                              ? null
+                              : () async {
+                                  // Freeze camera preview frame immediately
+                                  try {
+                                    if (_cameraController != null &&
+                                        _cameraController!
+                                            .value
+                                            .isInitialized) {
+                                      await _cameraController!.pausePreview();
+                                    }
+                                  } catch (_) {}
+
+                                  final success = await provider
+                                      .submitPresensi();
+
+                                  if (success && context.mounted) {
+                                    _showSuccessPresensiDialog(
+                                      context,
+                                      provider,
+                                    );
+                                  } else {
+                                    // Resume camera preview if submit failed
+                                    try {
+                                      if (_cameraController != null &&
+                                          _cameraController!
+                                              .value
+                                              .isInitialized) {
+                                        await _cameraController!
+                                            .resumePreview();
+                                      }
+                                    } catch (_) {}
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                          child: provider.status == PresensiStatus.submitting
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  provider.presensiTypeTitle,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -729,12 +503,12 @@ class _PresensiScreenState extends State<PresensiScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: const BoxDecoration(
-                  color: AppColors.successLight,
+                  color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.check_circle_rounded,
-                  color: AppColors.success,
+                  color: AppColors.primary,
                   size: 48,
                 ),
               ),
@@ -773,14 +547,9 @@ class _PresensiScreenState extends State<PresensiScreen> {
                   children: [
                     _buildDialogRow('Nama', result?.userName ?? '-'),
                     const SizedBox(height: 6),
-                    _buildDialogRow('Kecamatan', result?.kecamatan ?? '-'),
+                    _buildDialogRow('Tipe', provider.presensiTypeTitle),
                     const SizedBox(height: 6),
-                    _buildDialogRow('Kelurahan', result?.kelurahan ?? '-'),
-                    const SizedBox(height: 6),
-                    _buildDialogRow(
-                      'RT / RW',
-                      'RT ${result?.rt ?? '-'} / RW ${result?.rw ?? '-'}',
-                    ),
+                    _buildDialogRow('Lokasi', provider.address),
                     const SizedBox(height: 6),
                     _buildDialogRow(
                       'Waktu',
@@ -830,15 +599,60 @@ class _PresensiScreenState extends State<PresensiScreen> {
           label,
           style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+        Flexible(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
+            textAlign: TextAlign.end,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
     );
   }
+}
+
+class CornerBracketPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double cornerLength;
+
+  CornerBracketPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.cornerLength,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.square;
+
+    final w = size.width;
+    final h = size.height;
+    final l = cornerLength;
+
+    canvas.drawLine(const Offset(0, 0), Offset(l, 0), paint);
+    canvas.drawLine(const Offset(0, 0), Offset(0, l), paint);
+
+    canvas.drawLine(Offset(w, 0), Offset(w - l, 0), paint);
+    canvas.drawLine(Offset(w, 0), Offset(w, l), paint);
+
+    canvas.drawLine(Offset(0, h), Offset(l, h), paint);
+    canvas.drawLine(Offset(0, h), Offset(0, h - l), paint);
+
+    canvas.drawLine(Offset(w, h), Offset(w - l, h), paint);
+    canvas.drawLine(Offset(w, h), Offset(w - l, h), paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

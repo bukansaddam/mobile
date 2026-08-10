@@ -4,6 +4,8 @@ import 'package:geolocator/geolocator.dart';
 import '../../domain/entities/presensi_entity.dart';
 import '../../domain/usecases/submit_presensi_usecase.dart';
 
+enum PresensiType { masuk, keluar }
+
 enum PresensiStatus {
   initial,
   loadingLocation,
@@ -17,6 +19,15 @@ class PresensiProvider extends ChangeNotifier {
   final SubmitPresensiUsecase submitPresensiUsecase;
 
   PresensiProvider({required this.submitPresensiUsecase});
+
+  bool _hasCheckedIn = false;
+  bool get hasCheckedIn => _hasCheckedIn;
+
+  PresensiType get presensiType =>
+      _hasCheckedIn ? PresensiType.keluar : PresensiType.masuk;
+
+  String get presensiTypeTitle =>
+      _hasCheckedIn ? 'Presensi Keluar' : 'Presensi Masuk';
 
   PresensiStatus _status = PresensiStatus.initial;
   PresensiStatus get status => _status;
@@ -44,6 +55,17 @@ class PresensiProvider extends ChangeNotifier {
 
   String _rw = '002';
   String get rw => _rw;
+
+  String _locationName = 'PT Semesta Mahadata Indonesia';
+  String get locationName => _locationName;
+
+  bool _isInsideWorkingArea = true;
+  bool get isInsideWorkingArea => _isInsideWorkingArea;
+
+  void updateInsideWorkingArea(bool val) {
+    _isInsideWorkingArea = val;
+    notifyListeners();
+  }
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -94,12 +116,16 @@ class PresensiProvider extends ChangeNotifier {
           }
           if (permission != LocationPermission.denied &&
               permission != LocationPermission.deniedForever) {
-            pos = await Geolocator.getLastKnownPosition();
-            pos ??= await Geolocator.getCurrentPosition(
-              locationSettings: const LocationSettings(
-                accuracy: LocationAccuracy.high,
-              ),
-            ).timeout(const Duration(seconds: 5));
+            try {
+              pos = await Geolocator.getCurrentPosition(
+                locationSettings: const LocationSettings(
+                  accuracy: LocationAccuracy.high,
+                  timeLimit: Duration(seconds: 8),
+                ),
+              );
+            } catch (_) {
+              pos = await Geolocator.getLastKnownPosition();
+            }
           }
         }
       } catch (_) {}
@@ -119,29 +145,45 @@ class PresensiProvider extends ChangeNotifier {
               place.locality ?? place.subAdministrativeArea ?? 'Gambir';
           _kelurahan = place.subLocality ?? 'Gambir';
 
-          final parts =
-              [
-                    place.street,
-                    place.subLocality,
-                    place.locality,
-                    place.subAdministrativeArea,
-                  ]
-                  .where((p) {
-                    final str = p.toString().trim();
-                    if (str.isEmpty) return false;
-                    if (RegExp(r'-?\d+\.\d{3,}').hasMatch(str) ||
-                        str.contains('+')) {
-                      return false;
-                    }
-                    return true;
-                  })
-                  .cast<String>()
-                  .toSet()
-                  .toList();
+          final components = <String>[];
 
-          _address = parts.isNotEmpty
-              ? parts.join(', ')
-              : 'Jl. Medan Merdeka Barat No. 12';
+          if (place.street != null && place.street!.trim().isNotEmpty) {
+            final s = place.street!.trim();
+            if (!RegExp(r'-?\d+\.\d{3,}').hasMatch(s) && !s.contains('+')) {
+              components.add(s);
+            }
+          } else if (place.thoroughfare != null &&
+              place.thoroughfare!.trim().isNotEmpty) {
+            components.add(place.thoroughfare!.trim());
+          }
+
+          if (place.subLocality != null &&
+              place.subLocality!.trim().isNotEmpty) {
+            components.add('Kel. ${place.subLocality!.trim()}');
+          }
+
+          if (place.locality != null && place.locality!.trim().isNotEmpty) {
+            components.add('Kec. ${place.locality!.trim()}');
+          }
+
+          if (place.subAdministrativeArea != null &&
+              place.subAdministrativeArea!.trim().isNotEmpty) {
+            components.add(place.subAdministrativeArea!.trim());
+          }
+
+          if (place.administrativeArea != null &&
+              place.administrativeArea!.trim().isNotEmpty) {
+            components.add(place.administrativeArea!.trim());
+          }
+
+          if (place.postalCode != null && place.postalCode!.trim().isNotEmpty) {
+            components.add(place.postalCode!.trim());
+          }
+
+          _address = components.isNotEmpty
+              ? components.join(', ')
+              : 'Jl. Medan Merdeka Barat No. 12, Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat, DKI Jakarta 10110';
+          _locationName = _address;
         }
       } catch (_) {}
 
@@ -182,6 +224,7 @@ class PresensiProvider extends ChangeNotifier {
       },
       (dataResult) {
         _lastResult = dataResult;
+        _hasCheckedIn = !_hasCheckedIn;
         _status = PresensiStatus.success;
         notifyListeners();
         return true;
