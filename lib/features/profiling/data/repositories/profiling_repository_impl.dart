@@ -1,4 +1,5 @@
 import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/error_utils.dart';
 import '../../domain/entities/tokoh_entity.dart';
 import '../../domain/repositories/profiling_repository.dart';
 import '../datasources/profiling_remote_datasource.dart';
@@ -15,7 +16,7 @@ class ProfilingRepositoryImpl implements ProfilingRepository {
       final list = await remoteDatasource.getTokohList();
       return Right(list);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 
@@ -26,7 +27,7 @@ class ProfilingRepositoryImpl implements ProfilingRepository {
       final result = await remoteDatasource.addTokoh(model);
       return Right(result);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 }

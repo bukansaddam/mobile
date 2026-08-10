@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/tracking/domain/entities/tracking_entity.dart';
 import 'package:akar/features/tracking/domain/repositories/tracking_repository.dart';
@@ -22,7 +23,7 @@ class TrackingRepositoryImpl implements TrackingRepository {
         TrackingEntity(success: model.success, message: model.message),
       );
     } catch (e) {
-      return Left(ServerFailure(e.toString().replaceAll('Exception: ', '')));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 }

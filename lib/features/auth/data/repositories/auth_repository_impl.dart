@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -30,8 +31,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(authModel.toEntity());
     } catch (e) {
-      final cleanMessage = e.toString().replaceAll('Exception: ', '');
-      return Left(ServerFailure(cleanMessage));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 
@@ -68,8 +68,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(authModel.toEntity());
     } catch (e) {
-      final cleanMessage = e.toString().replaceAll('Exception: ', '');
-      return Left(ServerFailure(cleanMessage));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 

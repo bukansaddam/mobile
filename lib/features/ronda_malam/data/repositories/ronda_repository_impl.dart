@@ -1,4 +1,5 @@
 import '../../../../core/errors/failures.dart';
+import '../../../../core/utils/error_utils.dart';
 import '../../domain/entities/ronda_laporan_entity.dart';
 import '../../domain/repositories/ronda_repository.dart';
 import '../datasources/ronda_remote_datasource.dart';
@@ -18,7 +19,7 @@ class RondaRepositoryImpl implements RondaRepository {
       final resultModel = await remoteDatasource.submitLaporan(model);
       return Right(resultModel);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
   }
 }

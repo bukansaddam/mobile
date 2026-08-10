@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:akar/core/constants/api_constants.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:dio/dio.dart';
 import '../network/logging_interceptor.dart';
 import 'package:flutter/foundation.dart';
@@ -201,25 +202,7 @@ class BackgroundServiceHelper {
         final updatedPrefs = await SharedPreferences.getInstance();
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
 
-        String errorMessage = e.toString();
-        if (e is DioException) {
-          final serverMsg =
-              e.response?.data?['message'] ??
-              e.response?.data?['meta']?['message'];
-          if (serverMsg != null && serverMsg.toString().trim().isNotEmpty) {
-            errorMessage = serverMsg.toString();
-          } else if (e.response?.statusCode == 422) {
-            errorMessage = 'Format/data lokasi ditolak server (Error 422)';
-          } else if (e.response?.statusCode == 401) {
-            errorMessage =
-                'Sesi telah berakhir, silakan login ulang (Error 401)';
-          } else if (e.response?.statusCode != null) {
-            errorMessage =
-                'Gagal mengirim lokasi (Error ${e.response?.statusCode})';
-          } else {
-            errorMessage = 'Koneksi ke server terputus';
-          }
-        }
+        String errorMessage = ErrorUtils.parseErrorMessage(e);
         await updatedPrefs.setString('LAST_TRACKING_MSG', errorMessage);
       } finally {
         isExecRunning = false;

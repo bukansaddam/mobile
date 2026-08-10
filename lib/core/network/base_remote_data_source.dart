@@ -1,3 +1,4 @@
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 import '../network/dio_client.dart';
@@ -46,31 +47,31 @@ abstract class BaseRemoteDataSource {
   }) async {
     try {
       final response = await request();
-      final data = response.data as Map<String, dynamic>?;
+      final data = response.data;
+      Map<String, dynamic>? dataMap;
+      if (data is Map<String, dynamic>) {
+        dataMap = data;
+      }
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final message =
-            (data?['message'] ?? data?['meta']?['message']) as String?;
+            (dataMap?['message'] ?? dataMap?['meta']?['message']) as String?;
         return ApiResponse<T>(
           success: true,
-          data: data != null && fromJson != null
-              ? fromJson(data['data'] ?? data)
+          data: dataMap != null && fromJson != null
+              ? fromJson(dataMap['data'] ?? dataMap)
               : null,
           message: message,
           statusCode: response.statusCode,
-          // pagination: data?['pagination'] != null
-          //     ? PaginationModel.fromJson(
-          //         data!['pagination'] as Map<String, dynamic>,
-          //       )
-          //     : null,
         );
       }
+
+      final msg =
+          dataMap?['message'] as String? ??
+          dataMap?['meta']?['message'] as String?;
       return ApiResponse<T>(
         success: false,
-        message:
-            data?['message'] as String? ??
-            data?['meta']?['message'] as String? ??
-            'Unknown error',
+        message: msg != null && msg.isNotEmpty ? msg : 'Terjadi Kesalahan',
         statusCode: response.statusCode,
       );
     } on DioException catch (e) {
@@ -82,28 +83,14 @@ abstract class BaseRemoteDataSource {
       );
     } catch (e, s) {
       AppLogger.e('[BASE_DS] Unexpected error', e, s);
-      return ApiResponse<T>(success: false, message: "error");
+      return ApiResponse<T>(
+        success: false,
+        message: ErrorUtils.parseErrorMessage(e),
+      );
     }
   }
 
   String _parseDioError(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return "timeout";
-      case DioExceptionType.connectionError:
-        return "error";
-      case DioExceptionType.badResponse:
-        final msg = e.response?.data?['message'] as String?;
-        if (msg != null && msg.isNotEmpty) return msg;
-        if (e.response?.statusCode == 401) return "unauthorized";
-        if (e.response?.statusCode != null && e.response!.statusCode! >= 500) {
-          return "error";
-        }
-        return "error";
-      default:
-        return "error";
-    }
+    return ErrorUtils.parseErrorMessage(e);
   }
 }
