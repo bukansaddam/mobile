@@ -1,31 +1,15 @@
 import '../models/tokoh_model.dart';
+import 'tokoh_mock_data.dart';
 
-abstract class ProfilingRemoteDatasource {
+abstract class DemografiRemoteDatasource {
   Future<List<TokohModel>> getTokohList();
   Future<TokohModel> addTokoh(TokohModel model);
 }
 
-class ProfilingRemoteDatasourceImpl implements ProfilingRemoteDatasource {
-  final List<TokohModel> _mockData = [
-    TokohModel(
-      id: 'TKH-001',
-      nama: 'H. Ahmad Subardjo',
-      noTelp: '081234567890',
-      wilayah: 'Lokal',
-      afiliasi: 'Agama',
-      namaOrganisasi: 'Majelis Taklim Nurul Iman',
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-    TokohModel(
-      id: 'TKH-002',
-      nama: 'Bambang Sudarsono, S.T.',
-      noTelp: '085712345678',
-      wilayah: 'Nasional',
-      afiliasi: 'Politik',
-      namaOrganisasi: 'DPC Partai Reformasi',
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ];
+class DemografiRemoteDatasourceImpl implements DemografiRemoteDatasource {
+  final List<TokohModel> _mockData = rawTokohJsonList
+      .map((json) => TokohModel.fromJson(json))
+      .toList();
 
   @override
   Future<List<TokohModel>> getTokohList() async {
@@ -41,9 +25,11 @@ class ProfilingRemoteDatasourceImpl implements ProfilingRemoteDatasource {
       id: newId,
       nama: model.nama,
       noTelp: model.noTelp,
+      profesi: model.profesi,
       wilayah: model.wilayah,
       afiliasi: model.afiliasi,
       namaOrganisasi: model.namaOrganisasi,
+      suku: model.suku,
       createdAt: DateTime.now(),
     );
     _mockData.insert(0, newTokoh);

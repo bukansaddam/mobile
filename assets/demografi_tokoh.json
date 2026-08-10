@@ -1,0 +1,46 @@
+[
+  {
+    "id": "TKH-001",
+    "nama": "H. Ahmad Subardjo",
+    "noTelp": "081234567890",
+    "profesi": "Pejabat",
+    "wilayah": "Lokal",
+    "afiliasi": "Agama",
+    "namaOrganisasi": "Majelis Taklim Nurul Iman",
+    "suku": "Jawa",
+    "createdAt": "2026-08-08T10:00:00.000Z"
+  },
+  {
+    "id": "TKH-002",
+    "nama": "Bambang Sudarsono, S.T.",
+    "noTelp": "085712345678",
+    "profesi": "Profesional",
+    "wilayah": "Nasional",
+    "afiliasi": "Politik",
+    "namaOrganisasi": "DPC Partai Reformasi",
+    "suku": "Sunda",
+    "createdAt": "2026-08-09T14:30:00.000Z"
+  },
+  {
+    "id": "TKH-003",
+    "nama": "Dra. Hj. Siti Aminah",
+    "noTelp": "081398765432",
+    "profesi": "Pendidik",
+    "wilayah": "Lokal",
+    "afiliasi": "Ormas",
+    "namaOrganisasi": "Yayasan Pendidikan Nusantara",
+    "suku": "Minang",
+    "createdAt": "2026-08-10T08:15:00.000Z"
+  },
+  {
+    "id": "TKH-004",
+    "nama": "Hendrikus Tan",
+    "noTelp": "082145678901",
+    "profesi": "Pengusaha",
+    "wilayah": "Nasional",
+    "afiliasi": "Pengusaha",
+    "namaOrganisasi": "Kadin Daerah",
+    "suku": "Tionghoa",
+    "createdAt": "2026-08-10T11:45:00.000Z"
+  }
+]

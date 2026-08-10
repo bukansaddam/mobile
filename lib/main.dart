@@ -2,7 +2,7 @@ import 'package:akar/features/activation/presentation/provider/activation_provid
 import 'package:akar/features/panic/presentation/provider/panic_provider.dart';
 import 'package:akar/features/presensi/presentation/provider/presensi_provider.dart';
 import 'package:akar/features/ronda_malam/presentation/provider/ronda_provider.dart';
-import 'package:akar/features/profiling/presentation/provider/profiling_provider.dart';
+import 'package:akar/features/demografi/presentation/provider/demografi_provider.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/theme/app_theme.dart';
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<PanicProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<PresensiProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<RondaProvider>()),
-        ChangeNotifierProvider(create: (_) => di.sl<ProfilingProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<DemografiProvider>()),
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,

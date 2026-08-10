@@ -29,6 +29,13 @@ class PresensiProvider extends ChangeNotifier {
   String get presensiTypeTitle =>
       _hasCheckedIn ? 'Presensi Keluar' : 'Presensi Masuk';
 
+  PresensiType? _lastSubmittedType;
+  PresensiType? get lastSubmittedType => _lastSubmittedType;
+
+  String get lastSubmittedTypeTitle => _lastSubmittedType == PresensiType.keluar
+      ? 'Presensi Keluar'
+      : 'Presensi Masuk';
+
   PresensiStatus _status = PresensiStatus.initial;
   PresensiStatus get status => _status;
 
@@ -223,6 +230,7 @@ class PresensiProvider extends ChangeNotifier {
         return false;
       },
       (dataResult) {
+        _lastSubmittedType = presensiType;
         _lastResult = dataResult;
         _hasCheckedIn = !_hasCheckedIn;
         _status = PresensiStatus.success;

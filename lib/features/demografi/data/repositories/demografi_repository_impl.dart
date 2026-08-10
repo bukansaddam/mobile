@@ -1,14 +1,14 @@
 import '../../../../core/errors/failures.dart';
 import '../../../../core/utils/error_utils.dart';
 import '../../domain/entities/tokoh_entity.dart';
-import '../../domain/repositories/profiling_repository.dart';
-import '../datasources/profiling_remote_datasource.dart';
+import '../../domain/repositories/demografi_repository.dart';
+import '../datasources/demografi_remote_datasource.dart';
 import '../models/tokoh_model.dart';
 
-class ProfilingRepositoryImpl implements ProfilingRepository {
-  final ProfilingRemoteDatasource remoteDatasource;
+class DemografiRepositoryImpl implements DemografiRepository {
+  final DemografiRemoteDatasource remoteDatasource;
 
-  ProfilingRepositoryImpl({required this.remoteDatasource});
+  DemografiRepositoryImpl({required this.remoteDatasource});
 
   @override
   Future<Either<Failure, List<TokohEntity>>> getTokohList() async {

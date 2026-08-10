@@ -486,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'subtitle': 'Tokoh Sekitar',
         'icon': Icons.badge_rounded,
         'color': const Color(0xFF0F9F66),
-        'onTap': () => context.pushNamed('profiling'),
+        'onTap': () => context.pushNamed('demografi'),
       },
     ];
 

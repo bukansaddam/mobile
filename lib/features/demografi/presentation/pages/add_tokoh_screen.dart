@@ -3,7 +3,8 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../provider/profiling_provider.dart';
+import '../../core/constants/demografi_constants.dart';
+import '../provider/demografi_provider.dart';
 
 class AddTokohScreen extends StatefulWidget {
   const AddTokohScreen({super.key});
@@ -19,32 +20,38 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   final TextEditingController _noTelpController = TextEditingController();
   final TextEditingController _namaOrganisasiController =
       TextEditingController();
+  final TextEditingController _sukuController = TextEditingController();
 
-  String _selectedWilayah = 'Lokal';
-  String _selectedAfiliasi = 'Politik';
+  String _selectedProfesi = DemografiConstants.defaultProfesi;
+  String _selectedScope = DemografiConstants.defaultScope;
+  String _selectedAfiliasi = DemografiConstants.defaultAfiliasi;
 
-  final List<String> _wilayahOptions = ['Lokal', 'Nasional'];
-  final List<String> _afiliasiOptions = ['Politik', 'Agama', 'Suku', 'Pemuda'];
+  final List<String> _profesiOptions = DemografiConstants.profesiOptions;
+  final List<String> _scopeOptions = DemografiConstants.scopeOptions;
+  final List<String> _afiliasiOptions = DemografiConstants.afiliasiOptions;
 
   @override
   void dispose() {
     _namaController.dispose();
     _noTelpController.dispose();
     _namaOrganisasiController.dispose();
+    _sukuController.dispose();
     super.dispose();
   }
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final provider = context.read<ProfilingProvider>();
+    final provider = context.read<DemografiProvider>();
 
     final success = await provider.addTokoh(
       nama: _namaController.text.trim(),
       noTelp: _noTelpController.text.trim(),
-      wilayah: _selectedWilayah,
+      profesi: _selectedProfesi,
+      wilayah: _selectedScope,
       afiliasi: _selectedAfiliasi,
       namaOrganisasi: _namaOrganisasiController.text.trim(),
+      suku: _sukuController.text.trim(),
     );
 
     if (!mounted) return;
@@ -147,7 +154,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses profiling akurat.',
+                          'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: const Color(0xFF1E5BB4),
                             fontWeight: FontWeight.w500,
@@ -160,7 +167,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                _buildLabel('Nama Tokoh', isRequired: true),
+                // 1. Nama: *
+                _buildLabel('Nama', isRequired: true),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _namaController,
@@ -169,7 +177,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       FocusManager.instance.primaryFocus?.unfocus(),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Nama tokoh wajib diisi';
+                      return 'Nama wajib diisi';
                     }
                     return null;
                   },
@@ -179,33 +187,26 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('No. Telepon', isRequired: true),
+                // 2. No HP:
+                _buildLabel('No HP', isRequired: false),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _noTelpController,
                   keyboardType: TextInputType.phone,
                   onTapOutside: (event) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Nomor telepon wajib diisi';
-                    }
-                    if (value.trim().length < 8) {
-                      return 'Nomor telepon minimal 8 digit';
-                    }
-                    return null;
-                  },
                   decoration: _buildInputDecoration(
-                    hintText: 'Contoh: 081234567890',
+                    hintText: 'Contoh: 081234567890 (Opsional)',
                   ),
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('Wilayah', isRequired: true),
+                // 3. Profesi: Pejabat/Pengusaha/Pendidik/Profesional/Buruh*
+                _buildLabel('Profesi', isRequired: true),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
-                  initialValue: _selectedWilayah,
-                  items: _wilayahOptions.map((item) {
+                  initialValue: _selectedProfesi,
+                  items: _profesiOptions.map((item) {
                     return DropdownMenuItem<String>(
                       value: item,
                       child: Text(
@@ -219,14 +220,42 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                   onChanged: (val) {
                     if (val != null) {
                       setState(() {
-                        _selectedWilayah = val;
+                        _selectedProfesi = val;
                       });
                     }
                   },
-                  decoration: _buildInputDecoration(hintText: 'Pilih Wilayah'),
+                  decoration: _buildInputDecoration(hintText: 'Pilih Profesi'),
                 ),
                 const SizedBox(height: 18),
 
+                // 4. Scope: Nasional/Lokal *
+                _buildLabel('Scope', isRequired: true),
+                const SizedBox(height: 6),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedScope,
+                  items: _scopeOptions.map((item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(
+                        item,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        _selectedScope = val;
+                      });
+                    }
+                  },
+                  decoration: _buildInputDecoration(hintText: 'Pilih Scope'),
+                ),
+                const SizedBox(height: 18),
+
+                // 5. Afiliasi: Politik/Ormas/Agama/Budaya/Pemuda/Pengusaha*
                 _buildLabel('Afiliasi', isRequired: true),
                 const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
@@ -253,17 +282,39 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                 ),
                 const SizedBox(height: 18),
 
-                _buildLabel('Nama Organisasi (Opsional)', isRequired: false),
+                // 6. Nama Organisasi:
+                _buildLabel('Nama Organisasi', isRequired: false),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _namaOrganisasiController,
                   onTapOutside: (event) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
                   decoration: _buildInputDecoration(
-                    hintText: 'Contoh: Majelis Taklim / DPC Partai X',
+                    hintText:
+                        'Contoh: Majelis Taklim / DPC Partai X (Opsional)',
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
+
+                // 7. Suku:*
+                _buildLabel('Suku', isRequired: true),
+                const SizedBox(height: 6),
+                TextFormField(
+                  controller: _sukuController,
+                  textCapitalization: TextCapitalization.words,
+                  onTapOutside: (event) =>
+                      FocusManager.instance.primaryFocus?.unfocus(),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Suku wajib diisi';
+                    }
+                    return null;
+                  },
+                  decoration: _buildInputDecoration(
+                    hintText: 'Contoh: Jawa, Sunda, Batak, Minang, dll',
+                  ),
+                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -282,7 +333,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
           ],
         ),
         child: SafeArea(
-          child: Consumer<ProfilingProvider>(
+          child: Consumer<DemografiProvider>(
             builder: (context, provider, child) {
               return SizedBox(
                 width: double.infinity,
@@ -297,14 +348,23 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'SIMPAN TOKOH BARU',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+                  child: provider.isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'SIMPAN TOKOH BARU',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                 ),
               );
             },

@@ -4,18 +4,22 @@ class TokohEntity extends Equatable {
   final String? id;
   final String nama;
   final String noTelp;
-  final String wilayah; // Lokal, Nasional
-  final String afiliasi; // Politik, Agama, Suku, Pemuda
+  final String profesi;
+  final String wilayah; // Scope: Nasional, Lokal
+  final String afiliasi; // Politik, Ormas, Agama, Budaya, Pemuda, Pengusaha
   final String namaOrganisasi;
+  final String suku;
   final DateTime? createdAt;
 
   const TokohEntity({
     this.id,
     required this.nama,
-    required this.noTelp,
+    this.noTelp = '',
+    required this.profesi,
     required this.wilayah,
     required this.afiliasi,
-    required this.namaOrganisasi,
+    this.namaOrganisasi = '',
+    required this.suku,
     this.createdAt,
   });
 
@@ -24,9 +28,11 @@ class TokohEntity extends Equatable {
     id,
     nama,
     noTelp,
+    profesi,
     wilayah,
     afiliasi,
     namaOrganisasi,
+    suku,
     createdAt,
   ];
 }
