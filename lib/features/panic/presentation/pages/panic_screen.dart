@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,57 @@ class PanicScreen extends StatefulWidget {
 
 class _PanicScreenState extends State<PanicScreen> {
   GoogleMapController? _mapController;
+  int _tapCount = 0;
+  Timer? _tapResetTimer;
+
+  @override
+  void dispose() {
+    _tapResetTimer?.cancel();
+    super.dispose();
+  }
+
+  void _handleEmergencyButtonTap(PanicProvider provider) async {
+    if (provider.status == PanicStatus.sending) return;
+
+    _tapResetTimer?.cancel();
+
+    setState(() {
+      _tapCount++;
+    });
+
+    if (_tapCount < 3) {
+      final remaining = 3 - _tapCount;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Tekan $remaining x lagi untuk mengirim Bantuan Darurat!',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: AppColors.warning,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      _tapResetTimer = Timer(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _tapCount = 0;
+          });
+        }
+      });
+    } else {
+      _tapResetTimer?.cancel();
+      setState(() {
+        _tapCount = 0;
+      });
+
+      final success = await provider.sendEmergencyRequest();
+      if (success && mounted) {
+        _showSuccessEmergencyDialog(context, provider);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -521,45 +573,75 @@ class _PanicScreenState extends State<PanicScreen> {
             ),
             const SizedBox(height: 16),
 
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: provider.status == PanicStatus.sending
-                    ? null
-                    : () async {
-                        final success = await provider.sendEmergencyRequest();
-                        if (success && context.mounted) {
-                          _showSuccessEmergencyDialog(context, provider);
-                        }
-                      },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.error,
-                  foregroundColor: Colors.white,
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: provider.status == PanicStatus.sending
+                        ? null
+                        : () => _handleEmergencyButtonTap(provider),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.error,
+                      foregroundColor: Colors.white,
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: provider.status == PanicStatus.sending
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            _tapCount == 0
+                                ? 'MINTA BANTUAN DARURAT'
+                                : 'TEKAN ${3 - _tapCount}X LAGI UNTUK MENGIRIM',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
-                child: provider.status == PanicStatus.sending
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Text(
-                        'MINTA BANTUAN DARURAT',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                          color: Colors.white,
-                        ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 13,
+                      color: _tapCount > 0
+                          ? AppColors.error
+                          : AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _tapCount > 0
+                          ? 'Tekan ${3 - _tapCount}x lagi untuk mengonfirmasi sinyal SOS'
+                          : 'Tekan tombol 3x untuk mengirim bantuan darurat',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: _tapCount > 0
+                            ? AppColors.error
+                            : AppColors.textSecondary,
+                        fontWeight: _tapCount > 0
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                       ),
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
