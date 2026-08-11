@@ -20,6 +20,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentTabIndex = 0;
+  bool _hasUnreadNotification = true;
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +122,14 @@ class _MainScreenState extends State<MainScreen> {
                     alignment: Alignment.center,
                     children: [
                       IconButton(
-                        onPressed: () => NotificationModalSheet.show(context),
+                        onPressed: () {
+                          if (_hasUnreadNotification) {
+                            setState(() {
+                              _hasUnreadNotification = false;
+                            });
+                          }
+                          NotificationModalSheet.show(context);
+                        },
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(
                           minWidth: 48,
@@ -134,32 +142,33 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                         tooltip: 'Notifikasi Kegiatan',
                       ),
-                      Positioned(
-                        top: 4,
-                        right: 4,
-                        child: IgnorePointer(
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: AppColors.error,
-                              shape: BoxShape.circle,
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
-                            child: const Text(
-                              '5',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
+                      if (_hasUnreadNotification)
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: IgnorePointer(
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: AppColors.error,
+                                shape: BoxShape.circle,
                               ),
-                              textAlign: TextAlign.center,
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: const Text(
+                                '5',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

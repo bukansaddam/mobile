@@ -1,12 +1,15 @@
+import 'package:akar/features/activation/domain/entities/activation_activity.dart';
 import 'package:flutter/material.dart';
 
 class CategoryData {
   final String label;
+  final int count;
   final double percentage;
   final Color color;
 
   const CategoryData({
     required this.label,
+    required this.count,
     required this.percentage,
     required this.color,
   });
@@ -35,92 +38,92 @@ class ActivityDeadlineItem {
 }
 
 class AnalisisProvider extends ChangeNotifier {
-  final int _totalTasks = 23;
-  final int _totalAgendas = 8;
-  final int _totalReports = 5;
+  List<ActivationActivity> _activities = [];
 
-  int get totalTasks => _totalTasks;
-  int get totalAgendas => _totalAgendas;
-  int get totalReports => _totalReports;
+  AnalisisProvider({List<ActivationActivity>? activities}) {
+    if (activities != null) {
+      _activities = activities;
+    }
+  }
 
-  final List<CategoryData> _categoryDistribution = const [
-    CategoryData(
-      label: 'Pemasangan APK',
-      percentage: 28,
-      color: Color(0xFF00897B),
-    ),
-    CategoryData(
-      label: 'Door to Door',
-      percentage: 25,
-      color: Color(0xFF8E24AA),
-    ),
-    CategoryData(
-      label: 'Keamanan & Sosial',
-      percentage: 22,
-      color: Color(0xFF1E6FFF),
-    ),
-    CategoryData(label: 'Lingkungan', percentage: 15, color: Color(0xFF20D489)),
-    CategoryData(
-      label: 'Bencana Alam',
-      percentage: 10,
-      color: Color(0xFFFF5252),
-    ),
-  ];
+  void updateActivities(List<ActivationActivity> activities) {
+    _activities = activities;
+  }
 
-  List<CategoryData> get categoryDistribution => _categoryDistribution;
+  int get totalTasks => _activities.length;
 
-  final List<ActivityDeadlineItem> _upcomingDeadlines = const [
-    ActivityDeadlineItem(
-      id: 'act_1',
-      title: 'Pemasangan Baliho & Spanduk Utama APK',
-      category: 'Pemasangan APK',
-      location: 'Simpang Jalan Utama RW 03',
-      deadlineText: 'Besok, 17:00 WIB',
-      daysLeftText: 'Sisa 1 Hari',
-      statusColor: Color(0xFFC62828),
-      progress: 0.85,
-    ),
-    ActivityDeadlineItem(
-      id: 'act_2',
-      title: 'Kunjungan Pendataan Warga Door to Door',
-      category: 'Door to Door',
-      location: 'Lingkungan RT 02 / RW 01',
-      deadlineText: '6 Ags 2026, 10:00 WIB',
-      daysLeftText: 'Sisa 2 Hari',
-      statusColor: Color(0xFF8E24AA),
-      progress: 0.70,
-    ),
-    ActivityDeadlineItem(
-      id: 'act_3',
-      title: 'Penyaluran Bantuan Logistik Tanggap Bencana',
-      category: 'Bencana Alam',
-      location: 'Posko Siaga Bencana RW 02',
-      deadlineText: '7 Ags 2026, 16:00 WIB',
-      daysLeftText: 'Sisa 3 Hari',
-      statusColor: Color(0xFFFF5252),
-      progress: 0.55,
-    ),
-    ActivityDeadlineItem(
-      id: 'act_4',
-      title: 'Kerja Bakti Pembersihan Drainase & Penghijauan',
-      category: 'Lingkungan',
-      location: 'Lingkungan RT 03 / RW 04',
-      deadlineText: '9 Ags 2026, 08:00 WIB',
-      daysLeftText: 'Sisa 5 Hari',
-      statusColor: Color(0xFFD49000),
-      progress: 0.35,
-    ),
-    ActivityDeadlineItem(
-      id: 'act_5',
-      title: 'Patroli Ronda Malam & Penyaluran Sembako',
-      category: 'Keamanan & Sosial',
-      location: 'Pos Ronda & Balai Warga Utama',
-      deadlineText: '11 Ags 2026, 21:00 WIB',
-      daysLeftText: 'Sisa 7 Hari',
-      statusColor: Color(0xFF1E6FFF),
-      progress: 0.15,
-    ),
-  ];
+  int get totalAgendas => _activities
+      .where((act) => act.status == ActivationStatus.sedangBerjalan)
+      .length;
 
-  List<ActivityDeadlineItem> get upcomingDeadlines => _upcomingDeadlines;
+  int get totalReports =>
+      _activities
+          .where((act) => act.status == ActivationStatus.selesai)
+          .length +
+      _activities.fold<int>(0, (sum, act) => sum + act.reports.length);
+
+  List<CategoryData> get categoryDistribution {
+    final total = _activities.length;
+    if (total == 0) {
+      return ActivationCategory.values.map((cat) {
+        return CategoryData(
+          label: cat.label,
+          count: 0,
+          percentage: 0,
+          color: cat.color,
+        );
+      }).toList();
+    }
+
+    return ActivationCategory.values.map((cat) {
+      final count = _activities.where((act) => act.category == cat).length;
+      final percentage = (count / total) * 100;
+      return CategoryData(
+        label: cat.label,
+        count: count,
+        percentage: double.parse(percentage.toStringAsFixed(1)),
+        color: cat.color,
+      );
+    }).toList();
+  }
+
+  List<ActivityDeadlineItem> get upcomingDeadlines {
+    if (_activities.isEmpty) return [];
+
+    final sorted = List<ActivationActivity>.from(_activities)
+      ..sort((a, b) => a.endDate.compareTo(b.endDate));
+
+    final now = DateTime.now();
+    return sorted.take(5).map((act) {
+      final diffDays = act.endDate.difference(now).inDays;
+      final String daysText;
+      if (diffDays < 0) {
+        daysText = 'Lewat Deadline';
+      } else if (diffDays == 0) {
+        daysText = 'Hari Ini';
+      } else {
+        daysText = 'Sisa $diffDays Hari';
+      }
+
+      const monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+      ];
+      final monthStr = monthNames[(act.endDate.month - 1).clamp(0, 11)];
+      final deadlineText = '${act.endDate.day} $monthStr ${act.endDate.year}';
+
+      return ActivityDeadlineItem(
+        id: act.id,
+        title: act.title,
+        category: act.category.label,
+        location: act.location,
+        deadlineText: deadlineText,
+        daysLeftText: daysText,
+        statusColor: act.status.color,
+        progress: act.progressPercentage > 0
+            ? act.progressPercentage
+            : act.deadlineProgressPercentage,
+      );
+    }).toList();
+  }
 }

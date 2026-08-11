@@ -10,6 +10,11 @@ class CategoryDistributionChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalItems = categoryData.fold<int>(
+      0,
+      (sum, item) => sum + item.count,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -38,7 +43,7 @@ class CategoryDistributionChartCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'Proporsi pengaduan berdasarkan kategori',
+            'Proporsi kegiatan berdasarkan kategori',
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 24),
@@ -49,7 +54,10 @@ class CategoryDistributionChartCard extends StatelessWidget {
               width: 220,
               height: 220,
               child: CustomPaint(
-                painter: _DonutChartPainter(categoryData: categoryData),
+                painter: _DonutChartPainter(
+                  categoryData: categoryData,
+                  totalItems: totalItems,
+                ),
               ),
             ),
           ),
@@ -61,24 +69,25 @@ class CategoryDistributionChartCard extends StatelessWidget {
             spacing: 16,
             runSpacing: 10,
             children: categoryData.map((item) {
+              final isZero = item.count == 0;
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    width: 12,
-                    height: 12,
+                    width: 10,
+                    height: 10,
                     decoration: BoxDecoration(
-                      color: item.color,
+                      color: isZero ? AppColors.grey400 : item.color,
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    item.label,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                    '${item.label} (${item.count} item • ${item.percentage.toInt()}%)',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isZero ? FontWeight.normal : FontWeight.w600,
+                      color: isZero ? AppColors.textSecondary : AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -93,14 +102,18 @@ class CategoryDistributionChartCard extends StatelessWidget {
 
 class _DonutChartPainter extends CustomPainter {
   final List<CategoryData> categoryData;
+  final int totalItems;
 
-  _DonutChartPainter({required this.categoryData});
+  _DonutChartPainter({
+    required this.categoryData,
+    required this.totalItems,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final outerRadius = size.width / 2;
-    final strokeWidth = 38.0;
+    final strokeWidth = 36.0;
     final chartRadius = outerRadius - (strokeWidth / 2);
 
     final totalValue = categoryData.fold<double>(
@@ -108,9 +121,61 @@ class _DonutChartPainter extends CustomPainter {
       (sum, item) => sum + item.percentage,
     );
 
+    // Draw Center Donut Hole Content (Total Count & Label)
+    final countSpan = TextSpan(
+      text: '$totalItems',
+      style: const TextStyle(
+        color: AppColors.textPrimary,
+        fontSize: 26,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+    final countPainter = TextPainter(
+      text: countSpan,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final labelSpan = const TextSpan(
+      text: 'Kegiatan',
+      style: TextStyle(
+        color: AppColors.textSecondary,
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+    final labelPainter = TextPainter(
+      text: labelSpan,
+      textDirection: TextDirection.ltr,
+    )..layout();
+
+    final totalHeight = countPainter.height + labelPainter.height + 2;
+    final startY = center.dy - (totalHeight / 2);
+
+    countPainter.paint(
+      canvas,
+      Offset(center.dx - (countPainter.width / 2), startY),
+    );
+    labelPainter.paint(
+      canvas,
+      Offset(
+        center.dx - (labelPainter.width / 2),
+        startY + countPainter.height + 2,
+      ),
+    );
+
+    if (totalValue <= 0) {
+      final emptyPaint = Paint()
+        ..color = AppColors.grey200
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawCircle(center, chartRadius, emptyPaint);
+      return;
+    }
+
     double startAngle = -math.pi / 2; // Start from top 12 o'clock
 
     for (final item in categoryData) {
+      if (item.percentage <= 0) continue;
       final sweepAngle = (item.percentage / totalValue) * 2 * math.pi;
 
       final paint = Paint()
@@ -137,8 +202,8 @@ class _DonutChartPainter extends CustomPainter {
       final textSpan = TextSpan(
         text: '${item.percentage.toInt()}%',
         style: const TextStyle(
-          color: Color(0xFF1E293B),
-          fontSize: 12,
+          color: Colors.white,
+          fontSize: 11,
           fontWeight: FontWeight.bold,
         ),
       );
@@ -163,6 +228,7 @@ class _DonutChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DonutChartPainter oldDelegate) {
-    return oldDelegate.categoryData != categoryData;
+    return oldDelegate.categoryData != categoryData ||
+        oldDelegate.totalItems != totalItems;
   }
 }
