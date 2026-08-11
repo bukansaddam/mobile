@@ -41,7 +41,13 @@ class ActivationProvider extends ChangeNotifier {
   ActivationSortOption get selectedSortOption => _selectedSortOption;
 
   final List<ActivationActivity> _activities = List.from(
-    DummyActivationData.activities,
+    DummyActivationData.activities
+        .where(
+          (act) =>
+              act.status == ActivationStatus.sedangBerjalan &&
+              act.reports.isEmpty,
+        )
+        .take(5),
   );
 
   List<ActivationActivity> get activities => _activities;

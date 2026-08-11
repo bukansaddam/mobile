@@ -33,6 +33,10 @@ import 'package:akar/features/demografi/data/repositories/demografi_repository_i
 import 'package:akar/features/demografi/domain/repositories/demografi_repository.dart';
 import 'package:akar/features/demografi/domain/usecases/add_tokoh_usecase.dart';
 import 'package:akar/features/demografi/domain/usecases/get_tokoh_list_usecase.dart';
+import 'package:akar/features/demografi/domain/usecases/add_institusi_usecase.dart';
+import 'package:akar/features/demografi/domain/usecases/get_institusi_list_usecase.dart';
+import 'package:akar/features/demografi/domain/usecases/add_organisasi_usecase.dart';
+import 'package:akar/features/demografi/domain/usecases/get_organisasi_list_usecase.dart';
 import 'package:akar/features/demografi/presentation/provider/demografi_provider.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
@@ -118,6 +122,18 @@ Future<void> init() async {
     () => GetTokohListUsecase(sl()),
   );
   sl.registerLazySingleton<AddTokohUsecase>(() => AddTokohUsecase(sl()));
+  sl.registerLazySingleton<GetInstitusiListUsecase>(
+    () => GetInstitusiListUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddInstitusiUsecase>(
+    () => AddInstitusiUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetOrganisasiListUsecase>(
+    () => GetOrganisasiListUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddOrganisasiUsecase>(
+    () => AddOrganisasiUsecase(sl()),
+  );
 
   // ---------------------- Providers ----------------------
   sl.registerLazySingleton<AuthProvider>(
@@ -145,6 +161,13 @@ Future<void> init() async {
     () => RondaProvider(submitRondaLaporanUsecase: sl()),
   );
   sl.registerLazySingleton<DemografiProvider>(
-    () => DemografiProvider(getTokohListUsecase: sl(), addTokohUsecase: sl()),
+    () => DemografiProvider(
+      getTokohListUsecase: sl(),
+      addTokohUsecase: sl(),
+      getInstitusiListUsecase: sl(),
+      addInstitusiUsecase: sl(),
+      getOrganisasiListUsecase: sl(),
+      addOrganisasiListUsecase: sl(),
+    ),
   );
 }
