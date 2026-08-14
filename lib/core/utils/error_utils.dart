@@ -36,18 +36,18 @@ class ErrorUtils {
         }
       }
 
-      // Exception message atau string representation check
-      final errStr = error.toString();
-      if (_isHtml(errStr) || _isTechnicalError(errStr)) {
-        return "Terjadi Kesalahan";
-      }
-
       if (statusCode == 401) {
         return "Sesi telah berakhir, silakan login ulang";
       }
 
       if (statusCode == 422) {
         return "Format data tidak valid";
+      }
+
+      // Exception message atau string representation check
+      final errStr = error.toString();
+      if (_isHtml(errStr) || _isTechnicalError(errStr)) {
+        return "Terjadi Kesalahan";
       }
 
       return "Terjadi Kesalahan";

@@ -102,7 +102,7 @@ class BackgroundServiceHelper {
     bool isTrackingActive =
         prefs.getBool('isTrackingActive') ??
         prefs.getBool('isTrackingEnabled') ??
-        true;
+        false;
 
     Timer? timer;
     bool isExecRunning = false;
@@ -116,7 +116,7 @@ class BackgroundServiceHelper {
         isTrackingActive =
             updatedPrefs.getBool('isTrackingActive') ??
             updatedPrefs.getBool('isTrackingEnabled') ??
-            true;
+            false;
         if (!isTrackingActive) return;
 
         currentIntervalSeconds =
@@ -222,8 +222,10 @@ class BackgroundServiceHelper {
       debugPrint('Background service timer reset to $seconds seconds');
     }
 
-    // Start initial timer
-    resetTimer(currentIntervalSeconds);
+    // Start initial timer if active
+    if (isTrackingActive) {
+      resetTimer(currentIntervalSeconds);
+    }
 
     // On iOS, active background location stream with allowsBackgroundLocationUpdates is required
     // to prevent iOS from suspending the Dart isolate in background.
@@ -241,7 +243,9 @@ class BackgroundServiceHelper {
                 ),
               ).listen(
                 (Position position) {
-                  sendLocationUpdate();
+                  if (isTrackingActive) {
+                    sendLocationUpdate();
+                  }
                 },
                 onError: (error) {
                   debugPrint('Error listening to iOS location stream: $error');
@@ -270,6 +274,11 @@ class BackgroundServiceHelper {
     service.on('updateStatus').listen((event) {
       if (event != null && event['active'] != null) {
         isTrackingActive = event['active'] as bool;
+        if (isTrackingActive) {
+          resetTimer(currentIntervalSeconds);
+        } else {
+          timer?.cancel();
+        }
       }
     });
   }

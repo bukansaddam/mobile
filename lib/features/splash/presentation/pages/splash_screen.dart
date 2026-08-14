@@ -1,8 +1,9 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
+import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -28,12 +29,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    _initAnimations();
-    _startAnimations();
-    _navigateToNextScreen();
-  }
 
-  void _initAnimations() {
     _logoController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -49,29 +45,14 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
-    _logoScaleAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 0.0,
-          end: 1.2,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 60,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 1.2,
-          end: 1.0,
-        ).chain(CurveTween(curve: Curves.easeInOut)),
-        weight: 40,
-      ),
-    ]).animate(_logoController);
-
-    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
-      ),
+    _logoScaleAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
+
+    _logoFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeIn));
 
     _textFadeAnimation = Tween<double>(
       begin: 0.0,
@@ -82,11 +63,14 @@ class _SplashScreenState extends State<SplashScreen>
         Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
           CurvedAnimation(parent: _textController, curve: Curves.easeOutCubic),
         );
+
+    _logoController.forward();
+    _navigateToNextScreen();
+    _startStaggeredAnimations();
   }
 
-  void _startAnimations() {
-    _logoController.forward();
-    Future.delayed(const Duration(milliseconds: 600), () {
+  void _startStaggeredAnimations() {
+    Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
         _textController.forward();
       }
@@ -114,9 +98,16 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (mounted) {
       if (authProvider.isLoggedIn) {
-        context.read<TrackingProvider>().startTracking();
-        context.goNamed('profile');
+        final isOfficer = authProvider.currentUser?.isOfficer ?? false;
+        if (isOfficer) {
+          context.read<TrackingProvider>().startTracking();
+          context.goNamed('profile');
+        } else {
+          context.read<TrackingProvider>().stopTracking();
+          context.goNamed('masyarakat_main');
+        }
       } else {
+        context.read<TrackingProvider>().stopTracking();
         context.goNamed('login');
       }
     }

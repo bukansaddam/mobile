@@ -298,7 +298,7 @@ $UserEntityCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserEntity {
 
- int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId;
+ int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; String? get role; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -309,16 +309,16 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
 }
 
 
@@ -329,7 +329,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
 });
 
 
@@ -346,7 +346,7 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -354,6 +354,7 @@ as String?,email: freezed == email ? _self.email : email // ignore: cast_nullabl
 as String?,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,nik: freezed == nik ? _self.nik : nik // ignore: cast_nullable_to_non_nullable
+as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
@@ -445,10 +446,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
   return orElse();
 
 }
@@ -466,10 +467,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -486,10 +487,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
   return null;
 
 }
@@ -501,7 +502,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 
 
 class _UserEntity implements UserEntity {
-  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId});
+  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.role, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId});
   
 
 @override final  int id;
@@ -510,6 +511,7 @@ class _UserEntity implements UserEntity {
 @override final  String? username;
 @override final  String? phoneNumber;
 @override final  String? nik;
+@override final  String? role;
 @override final  double? latitude;
 @override final  double? longitude;
 @override final  dynamic emailVerifiedAt;
@@ -527,16 +529,16 @@ _$UserEntityCopyWith<_UserEntity> get copyWith => __$UserEntityCopyWithImpl<_Use
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
 }
 
 
@@ -547,7 +549,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
 });
 
 
@@ -564,7 +566,7 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
   return _then(_UserEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -572,6 +574,7 @@ as String?,email: freezed == email ? _self.email : email // ignore: cast_nullabl
 as String?,username: freezed == username ? _self.username : username // ignore: cast_nullable_to_non_nullable
 as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,nik: freezed == nik ? _self.nik : nik // ignore: cast_nullable_to_non_nullable
+as String?,role: freezed == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt : emailVerifiedAt // ignore: cast_nullable_to_non_nullable

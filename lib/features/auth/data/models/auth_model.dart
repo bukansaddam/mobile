@@ -32,6 +32,26 @@ Object? _readPhone(Map json, String key) {
       (json['public_member'] is Map ? json['public_member']['phone'] : null);
 }
 
+Object? _readRole(Map json, String key) {
+  final username = (json['username'] ?? '').toString().trim().toLowerCase();
+  if (username == 'officer') {
+    return 'officer';
+  }
+  if (username == 'member') {
+    return 'member';
+  }
+
+  if (json['role'] != null) return json['role'].toString();
+  if (json['roles'] is List && (json['roles'] as List).isNotEmpty) {
+    final first = (json['roles'] as List).first;
+    if (first is Map && first['name'] != null) return first['name'].toString();
+    return first.toString();
+  }
+  if (json['public_member'] != null) return 'member';
+  if (json['village_members_id'] != null) return 'officer';
+  return null;
+}
+
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();
@@ -43,6 +63,7 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "username") String? username,
     @JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,
     @JsonKey(name: "nik") String? nik,
+    @JsonKey(name: "role", readValue: _readRole) String? role,
     @JsonKey(name: "latitude") double? latitude,
     @JsonKey(name: "longitude") double? longitude,
     @JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,
@@ -61,6 +82,7 @@ abstract class UserModel with _$UserModel {
     username: username,
     phoneNumber: phoneNumber,
     nik: nik,
+    role: role,
     latitude: latitude,
     longitude: longitude,
     emailVerifiedAt: emailVerifiedAt,
@@ -76,6 +98,7 @@ abstract class UserModel with _$UserModel {
     username: entity.username,
     phoneNumber: entity.phoneNumber,
     nik: entity.nik,
+    role: entity.role,
     latitude: entity.latitude,
     longitude: entity.longitude,
     emailVerifiedAt: entity.emailVerifiedAt,

@@ -10,6 +10,20 @@ class AppColors {
   static const Color accent = Color(0xFF4B2E0E);
   static const Color secondary = Color(0xFF1E293B);
 
+  // GRADIENT HELPER
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [primary, primaryDark],
+  );
+
+  /// Gradien halus bagian AppBar
+  static final LinearGradient topHeaderGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [primary.withValues(alpha: 0.4), Colors.transparent],
+  );
+
   // Status Colors
   static const Color success = Color(0xFF2E7D32);
   static const Color successLight = Color(0xFFE8F5E9);

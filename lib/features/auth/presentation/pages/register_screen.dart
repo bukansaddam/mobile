@@ -1,7 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -148,8 +147,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         );
         if (authProvider.isLoggedIn) {
-          context.read<TrackingProvider>().startTracking();
-          context.goNamed('profile');
+          context.goNamed('masyarakat_main');
         } else {
           context.goNamed('login');
         }

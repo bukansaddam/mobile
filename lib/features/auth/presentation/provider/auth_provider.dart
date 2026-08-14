@@ -1,8 +1,10 @@
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
+import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -54,8 +56,15 @@ class AuthProvider extends ChangeNotifier {
       (savedUser) => _currentUser = savedUser,
     );
 
-    if (_token != null && _token!.isNotEmpty) {
+    if (_token != null && _token!.isNotEmpty && _currentUser != null) {
       DioClient.instance.options.headers['Authorization'] = 'Bearer $_token';
+      if (_currentUser!.isOfficer) {
+        sl<TrackingProvider>().startTracking();
+      } else {
+        sl<TrackingProvider>().stopTracking();
+      }
+    } else {
+      sl<TrackingProvider>().stopTracking();
     }
 
     _isInitialChecking = false;
@@ -84,6 +93,11 @@ class AuthProvider extends ChangeNotifier {
         _token = authEntity.accessToken;
         DioClient.instance.options.headers['Authorization'] = 'Bearer $_token';
         _successMessage = authEntity.message ?? 'Login berhasil';
+        if (_currentUser!.isOfficer) {
+          sl<TrackingProvider>().startTracking();
+        } else {
+          sl<TrackingProvider>().stopTracking();
+        }
         isSuccess = true;
       },
     );
@@ -134,6 +148,7 @@ class AuthProvider extends ChangeNotifier {
           _token = authEntity.accessToken;
           DioClient.instance.options.headers['Authorization'] =
               'Bearer $_token';
+          sl<TrackingProvider>().stopTracking();
         }
         isSuccess = true;
       },
@@ -148,6 +163,7 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
+    await sl<TrackingProvider>().stopTracking();
     await repository.logout();
     _token = null;
     _currentUser = null;
