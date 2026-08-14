@@ -26,6 +26,12 @@ abstract class AuthModel with _$AuthModel {
   );
 }
 
+Object? _readPhone(Map json, String key) {
+  return json['phone'] ??
+      json['phone_number'] ??
+      (json['public_member'] is Map ? json['public_member']['phone'] : null);
+}
+
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();
@@ -35,7 +41,7 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "name") String? name,
     @JsonKey(name: "email") String? email,
     @JsonKey(name: "username") String? username,
-    @JsonKey(name: "phone") String? phoneNumber,
+    @JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,
     @JsonKey(name: "nik") String? nik,
     @JsonKey(name: "latitude") double? latitude,
     @JsonKey(name: "longitude") double? longitude,

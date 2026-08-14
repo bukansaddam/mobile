@@ -305,7 +305,7 @@ $UserModelCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserModel {
 
-@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone_number") String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;
+@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone", readValue: _readPhone) String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -338,7 +338,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone_number") String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
 });
 
 
@@ -454,7 +454,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone_number")  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
 return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
@@ -475,7 +475,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone_number")  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
 return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
@@ -495,7 +495,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone_number")  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
 return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
@@ -510,14 +510,14 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 @JsonSerializable()
 
 class _UserModel extends UserModel {
-  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone_number") this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId}): super._();
+  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone", readValue: _readPhone) this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId}): super._();
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
 @override@JsonKey(name: "name") final  String? name;
 @override@JsonKey(name: "email") final  String? email;
 @override@JsonKey(name: "username") final  String? username;
-@override@JsonKey(name: "phone_number") final  String? phoneNumber;
+@override@JsonKey(name: "phone", readValue: _readPhone) final  String? phoneNumber;
 @override@JsonKey(name: "nik") final  String? nik;
 @override@JsonKey(name: "latitude") final  double? latitude;
 @override@JsonKey(name: "longitude") final  double? longitude;
@@ -559,7 +559,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone_number") String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
 });
 
 
