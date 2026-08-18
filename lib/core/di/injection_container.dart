@@ -52,6 +52,15 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_l
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordinates_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
+import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_local_datasource.dart';
+import 'package:akar/features/linmas/bank_sampah/data/repositories/bank_sampah_repository_impl.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah_location_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah_report_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/usecases/delete_bank_sampah_report_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_locations_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/provider/bank_sampah_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -96,6 +105,9 @@ Future<void> init() async {
   sl.registerLazySingleton<DemografiRemoteDatasource>(
     () => DemografiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<BankSampahLocalDatasource>(
+    () => BankSampahLocalDatasourceImpl(sharedPreferences: sl()),
+  );
   sl.registerLazySingleton<LocationRemoteDataSource>(
     () => LocationRemoteDataSourceImpl(sl<Dio>()),
   );
@@ -121,6 +133,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<DemografiRepository>(
     () => DemografiRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<BankSampahRepository>(
+    () => BankSampahRepositoryImpl(localDatasource: sl()),
   );
   sl.registerLazySingleton<LocationRepository>(
     () => LocationRepositoryImpl(
@@ -162,6 +177,21 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<AddOrganisasiUsecase>(
     () => AddOrganisasiUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetBankSampahReportsUsecase>(
+    () => GetBankSampahReportsUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddBankSampahReportUsecase>(
+    () => AddBankSampahReportUsecase(sl()),
+  );
+  sl.registerLazySingleton<DeleteBankSampahReportUsecase>(
+    () => DeleteBankSampahReportUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetBankSampahLocationsUsecase>(
+    () => GetBankSampahLocationsUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddBankSampahLocationUsecase>(
+    () => AddBankSampahLocationUsecase(sl()),
   );
   sl.registerLazySingleton(
     () => GetLocationSuggestionsUseCase(sl<LocationRepository>()),
@@ -209,6 +239,15 @@ Future<void> init() async {
       addInstitusiUsecase: sl(),
       getOrganisasiListUsecase: sl(),
       addOrganisasiListUsecase: sl(),
+    ),
+  );
+  sl.registerLazySingleton<BankSampahProvider>(
+    () => BankSampahProvider(
+      getReportsUsecase: sl(),
+      addReportUsecase: sl(),
+      deleteReportUsecase: sl(),
+      getLocationsUsecase: sl(),
+      addLocationUsecase: sl(),
     ),
   );
 

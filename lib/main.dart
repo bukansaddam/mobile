@@ -3,6 +3,7 @@ import 'package:akar/features/linmas/panic/presentation/provider/panic_provider.
 import 'package:akar/features/linmas/presensi/presentation/provider/presensi_provider.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/provider/ronda_provider.dart';
 import 'package:akar/features/linmas/demografi/presentation/provider/demografi_provider.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/provider/bank_sampah_provider.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/theme/app_theme.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<PresensiProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<RondaProvider>()),
         ChangeNotifierProvider(create: (_) => di.sl<DemografiProvider>()),
+        ChangeNotifierProvider(create: (_) => di.sl<BankSampahProvider>()),
         BlocProvider<MainCubit>(create: (_) => di.sl<MainCubit>()),
       ],
       child: MaterialApp.router(

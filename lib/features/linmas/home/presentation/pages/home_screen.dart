@@ -488,6 +488,13 @@ class _HomeScreenState extends State<HomeScreen> {
         'color': const Color(0xFF0F9F66),
         'onTap': () => context.pushNamed('demografi'),
       },
+      {
+        'title': 'Bank Sampah',
+        'subtitle': 'Laporan & Setor',
+        'icon': Icons.recycling_rounded,
+        'color': const Color(0xFF0284C7),
+        'onTap': () => context.pushNamed('bank_sampah'),
+      },
     ];
 
     return GridView.builder(

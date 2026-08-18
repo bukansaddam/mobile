@@ -9,6 +9,8 @@ import 'package:akar/features/linmas/demografi/presentation/pages/demografi_list
 import 'package:akar/features/linmas/demografi/presentation/pages/add_tokoh_screen.dart';
 import 'package:akar/features/linmas/demografi/presentation/pages/add_institusi_screen.dart';
 import 'package:akar/features/linmas/demografi/presentation/pages/add_organisasi_screen.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
@@ -37,6 +39,8 @@ class AppRouter {
   static const String tambahTokoh = 'tambah_tokoh';
   static const String tambahInstitusi = 'tambah_institusi';
   static const String tambahOrganisasi = 'tambah_organisasi';
+  static const String bankSampah = 'bank_sampah';
+  static const String tambahBankSampah = 'tambah_bank_sampah';
   static const String activationDetail = 'activation_detail';
 
   // Masyarakat Routes
@@ -58,6 +62,8 @@ class AppRouter {
   static const String tambahTokohPath = '/tambah-tokoh';
   static const String tambahInstitusiPath = '/tambah-institusi';
   static const String tambahOrganisasiPath = '/tambah-organisasi';
+  static const String bankSampahPath = '/bank-sampah';
+  static const String tambahBankSampahPath = '/tambah-bank-sampah';
   static const String activationDetailPath = '/activation-detail';
 
   static const String masyarakatMainPath = '/masyarakat/main';
@@ -102,6 +108,8 @@ class AppRouter {
           '/tambah-tokoh',
           '/tambah-institusi',
           '/tambah-organisasi',
+          '/bank-sampah',
+          '/tambah-bank-sampah',
           '/activation-detail',
         ];
 
@@ -180,6 +188,16 @@ class AppRouter {
         path: tambahOrganisasiPath,
         name: tambahOrganisasi,
         builder: (context, state) => const AddOrganisasiScreen(),
+      ),
+      GoRoute(
+        path: bankSampahPath,
+        name: bankSampah,
+        builder: (context, state) => const BankSampahListScreen(),
+      ),
+      GoRoute(
+        path: tambahBankSampahPath,
+        name: tambahBankSampah,
+        builder: (context, state) => const AddBankSampahReportScreen(),
       ),
       GoRoute(
         path: activationDetailPath,
