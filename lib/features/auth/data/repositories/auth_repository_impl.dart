@@ -2,7 +2,7 @@ import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:akar/features/auth/domain/entities/auth_entity.dart';
+import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -29,7 +29,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDatasource.saveToken(authModel.accessToken);
       await localDatasource.saveUser(authModel.user);
 
-      return Right(authModel.toEntity());
+      return Right(authModel.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -66,7 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await localDatasource.saveUser(authModel.user);
       }
 
-      return Right(authModel.toEntity());
+      return Right(authModel.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -76,7 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity?>> getSavedUser() async {
     try {
       final userModel = await localDatasource.getUser();
-      return Right(userModel?.toEntity());
+      return Right(userModel?.toDomain());
     } catch (e) {
       return Left(CacheFailure("Failed to retrieve cached user data"));
     }

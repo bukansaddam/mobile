@@ -1,4 +1,4 @@
-import '../../domain/entities/panic_entity.dart';
+import '../../domain/entities/panic_mapper.dart';
 import '../../domain/repositories/panic_repository.dart';
 import '../datasources/panic_remote_datasource.dart';
 
@@ -12,7 +12,8 @@ class PanicRepositoryImpl implements PanicRepository {
     required double latitude,
     required double longitude,
   }) async {
-    return await remoteDatasource.fetchNearbyMembers(latitude, longitude);
+    final list = await remoteDatasource.fetchNearbyMembers(latitude, longitude);
+    return list.map((e) => e.toDomain()).toList();
   }
 
   @override
@@ -22,11 +23,12 @@ class PanicRepositoryImpl implements PanicRepository {
     String? selectedMemberId,
     String? note,
   }) async {
-    return await remoteDatasource.postPanicAlert(
+    final result = await remoteDatasource.postPanicAlert(
       lat: latitude,
       lng: longitude,
       selectedMemberId: selectedMemberId,
       note: note,
     );
+    return result.toDomain();
   }
 }

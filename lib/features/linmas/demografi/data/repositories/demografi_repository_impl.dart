@@ -1,13 +1,10 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
-import '../../domain/entities/tokoh_entity.dart';
-import '../../domain/entities/institusi_entity.dart';
-import '../../domain/entities/organisasi_entity.dart';
+import '../../domain/entities/institusi_mapper.dart';
+import '../../domain/entities/organisasi_mapper.dart';
+import '../../domain/entities/tokoh_mapper.dart';
 import '../../domain/repositories/demografi_repository.dart';
 import '../datasources/demografi_remote_datasource.dart';
-import '../models/tokoh_model.dart';
-import '../models/institusi_model.dart';
-import '../models/organisasi_model.dart';
 
 class DemografiRepositoryImpl implements DemografiRepository {
   final DemografiRemoteDatasource remoteDatasource;
@@ -19,7 +16,7 @@ class DemografiRepositoryImpl implements DemografiRepository {
   Future<Either<Failure, List<TokohEntity>>> getTokohList() async {
     try {
       final list = await remoteDatasource.getTokohList();
-      return Right(list);
+      return Right(list.map((m) => m.toDomain()).toList());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -28,9 +25,9 @@ class DemografiRepositoryImpl implements DemografiRepository {
   @override
   Future<Either<Failure, TokohEntity>> addTokoh(TokohEntity entity) async {
     try {
-      final model = TokohModel.fromEntity(entity);
+      final model = entity.toModel();
       final result = await remoteDatasource.addTokoh(model);
-      return Right(result);
+      return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -41,7 +38,7 @@ class DemografiRepositoryImpl implements DemografiRepository {
   Future<Either<Failure, List<InstitusiEntity>>> getInstitusiList() async {
     try {
       final list = await remoteDatasource.getInstitusiList();
-      return Right(list);
+      return Right(list.map((m) => m.toDomain()).toList());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -52,9 +49,9 @@ class DemografiRepositoryImpl implements DemografiRepository {
     InstitusiEntity entity,
   ) async {
     try {
-      final model = InstitusiModel.fromEntity(entity);
+      final model = entity.toModel();
       final result = await remoteDatasource.addInstitusi(model);
-      return Right(result);
+      return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -65,7 +62,7 @@ class DemografiRepositoryImpl implements DemografiRepository {
   Future<Either<Failure, List<OrganisasiEntity>>> getOrganisasiList() async {
     try {
       final list = await remoteDatasource.getOrganisasiList();
-      return Right(list);
+      return Right(list.map((m) => m.toDomain()).toList());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -76,9 +73,9 @@ class DemografiRepositoryImpl implements DemografiRepository {
     OrganisasiEntity entity,
   ) async {
     try {
-      final model = OrganisasiModel.fromEntity(entity);
+      final model = entity.toModel();
       final result = await remoteDatasource.addOrganisasi(model);
-      return Right(result);
+      return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
