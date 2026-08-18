@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_card.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class ActivationScreen extends StatefulWidget {
   const ActivationScreen({super.key});
@@ -23,10 +24,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
     super.dispose();
   }
 
-  void _showFilterBottomSheet(
-    BuildContext context,
-    ActivationProvider provider,
-  ) {
+  void _showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -35,13 +33,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
-        return StatefulBuilder(
-          builder: (context, setBottomSheetState) {
-            final hasActiveFilters =
-                provider.selectedCategoryFilter != null ||
-                provider.selectedStatusFilter != null ||
-                provider.selectedSortOption !=
-                    ActivationSortOption.deadlineTerdekat;
+        return BlocBuilder<ActivationBloc, ActivationState>(
+          builder: (context, state) {
+            final hasActiveFilters = state.hasActiveFilter;
 
             return SafeArea(
               child: Padding(
@@ -86,8 +80,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             if (hasActiveFilters)
                               TextButton(
                                 onPressed: () {
-                                  provider.resetAllFilters();
-                                  setBottomSheetState(() {});
+                                  context.read<ActivationBloc>().add(
+                                    ResetActivationFiltersEvent(),
+                                  );
                                 },
                                 style: TextButton.styleFrom(
                                   foregroundColor: AppColors.error,
@@ -148,14 +143,15 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   sortOpt,
                                 ) {
                                   final isSelected =
-                                      provider.selectedSortOption == sortOpt;
+                                      state.selectedSortOption == sortOpt;
                                   return _buildFilterChip(
                                     label: sortOpt.label,
                                     icon: sortOpt.icon,
                                     isSelected: isSelected,
                                     onTap: () {
-                                      provider.setSortOption(sortOpt);
-                                      setBottomSheetState(() {});
+                                      context.read<ActivationBloc>().add(
+                                        SetActivationSortOptionEvent(sortOpt),
+                                      );
                                     },
                                   );
                                 }).toList(),
@@ -179,23 +175,27 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   _buildFilterChip(
                                     label: 'Semua Kategori',
                                     isSelected:
-                                        provider.selectedCategoryFilter == null,
+                                        state.selectedCategoryFilter == null,
                                     onTap: () {
-                                      provider.setCategoryFilter(null);
-                                      setBottomSheetState(() {});
+                                      context.read<ActivationBloc>().add(
+                                        const SetActivationCategoryFilterEvent(
+                                          null,
+                                        ),
+                                      );
                                     },
                                   ),
                                   ...ActivationCategory.values.map((cat) {
                                     final isSelected =
-                                        provider.selectedCategoryFilter == cat;
+                                        state.selectedCategoryFilter == cat;
                                     return _buildFilterChip(
                                       label: cat.label,
                                       icon: cat.icon,
                                       color: cat.color,
                                       isSelected: isSelected,
                                       onTap: () {
-                                        provider.setCategoryFilter(cat);
-                                        setBottomSheetState(() {});
+                                        context.read<ActivationBloc>().add(
+                                          SetActivationCategoryFilterEvent(cat),
+                                        );
                                       },
                                     );
                                   }),
@@ -220,22 +220,28 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   _buildFilterChip(
                                     label: 'Semua Status',
                                     isSelected:
-                                        provider.selectedStatusFilter == null,
+                                        state.selectedStatusFilter == null,
                                     onTap: () {
-                                      provider.setStatusFilter(null);
-                                      setBottomSheetState(() {});
+                                      context.read<ActivationBloc>().add(
+                                        const SetActivationStatusFilterEvent(
+                                          null,
+                                        ),
+                                      );
                                     },
                                   ),
                                   ...ActivationStatus.values.map((status) {
                                     final isSelected =
-                                        provider.selectedStatusFilter == status;
+                                        state.selectedStatusFilter == status;
                                     return _buildFilterChip(
                                       label: status.label,
                                       color: status.color,
                                       isSelected: isSelected,
                                       onTap: () {
-                                        provider.setStatusFilter(status);
-                                        setBottomSheetState(() {});
+                                        context.read<ActivationBloc>().add(
+                                          SetActivationStatusFilterEvent(
+                                            status,
+                                          ),
+                                        );
                                       },
                                     );
                                   }),
@@ -375,14 +381,10 @@ class _ActivationScreenState extends State<ActivationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ActivationProvider>(
-      builder: (context, provider, child) {
-        final filteredList = provider.filteredActivities;
-        final hasActiveFilter =
-            provider.selectedCategoryFilter != null ||
-            provider.selectedStatusFilter != null ||
-            provider.selectedSortOption !=
-                ActivationSortOption.deadlineTerdekat;
+    return BlocBuilder<ActivationBloc, ActivationState>(
+      builder: (context, state) {
+        final filteredList = state.filteredActivities;
+        final hasActiveFilter = state.hasActiveFilter;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -432,8 +434,11 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                     .instance
                                     .primaryFocus
                                     ?.unfocus(),
-                                onChanged: (val) =>
-                                    provider.setSearchQuery(val),
+                                onChanged: (val) {
+                                  context.read<ActivationBloc>().add(
+                                    SetActivationSearchQueryEvent(val),
+                                  );
+                                },
                                 decoration: InputDecoration(
                                   hintText:
                                       'Cari kegiatan, lokasi, atau kategori...',
@@ -452,7 +457,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                           ),
                                           onPressed: () {
                                             _searchController.clear();
-                                            provider.clearSearch();
+                                            context.read<ActivationBloc>().add(
+                                              ClearActivationSearchEvent(),
+                                            );
                                           },
                                         )
                                       : null,
@@ -520,8 +527,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                 size: 22,
                               ),
                               tooltip: 'Filter & Urutkan',
-                              onPressed: () =>
-                                  _showFilterBottomSheet(context, provider),
+                              onPressed: () => _showFilterBottomSheet(context),
                             ),
                           ),
                         ],
@@ -536,32 +542,40 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           children: [
                             // Applied Sort Tag
                             _buildAppliedTag(
-                              label: provider.selectedSortOption.label,
-                              icon: provider.selectedSortOption.icon,
+                              label: state.selectedSortOption.label,
+                              icon: state.selectedSortOption.icon,
                               color: const Color(0xFFC62828),
-                              onTap: () =>
-                                  _showFilterBottomSheet(context, provider),
+                              onTap: () => _showFilterBottomSheet(context),
                             ),
 
                             // Applied Category Tag
-                            if (provider.selectedCategoryFilter != null) ...[
+                            if (state.selectedCategoryFilter != null) ...[
                               const SizedBox(width: 8),
                               _buildAppliedTag(
-                                label: provider.selectedCategoryFilter!.label,
-                                icon: provider.selectedCategoryFilter!.icon,
-                                color: provider.selectedCategoryFilter!.color,
-                                onRemove: () =>
-                                    provider.setCategoryFilter(null),
+                                label: state.selectedCategoryFilter!.label,
+                                icon: state.selectedCategoryFilter!.icon,
+                                color: state.selectedCategoryFilter!.color,
+                                onRemove: () {
+                                  context.read<ActivationBloc>().add(
+                                    const SetActivationCategoryFilterEvent(
+                                      null,
+                                    ),
+                                  );
+                                },
                               ),
                             ],
 
                             // Applied Status Tag
-                            if (provider.selectedStatusFilter != null) ...[
+                            if (state.selectedStatusFilter != null) ...[
                               const SizedBox(width: 8),
                               _buildAppliedTag(
-                                label: provider.selectedStatusFilter!.label,
-                                color: provider.selectedStatusFilter!.color,
-                                onRemove: () => provider.setStatusFilter(null),
+                                label: state.selectedStatusFilter!.label,
+                                color: state.selectedStatusFilter!.color,
+                                onRemove: () {
+                                  context.read<ActivationBloc>().add(
+                                    const SetActivationStatusFilterEvent(null),
+                                  );
+                                },
                               ),
                             ],
 
@@ -569,7 +583,11 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             if (hasActiveFilter) ...[
                               const SizedBox(width: 8),
                               GestureDetector(
-                                onTap: () => provider.resetAllFilters(),
+                                onTap: () {
+                                  context.read<ActivationBloc>().add(
+                                    ResetActivationFiltersEvent(),
+                                  );
+                                },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,
@@ -650,7 +668,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.search_off_rounded,
                                   size: 64,
                                   color: AppColors.grey400,
@@ -690,7 +708,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             return ActivationCard(
                               activity: activity,
                               onTap: () => context.pushNamed(
-                                'activation_detail',
+                                'activationDetail',
                                 extra: activity.id,
                               ),
                             );

@@ -4,12 +4,12 @@ import 'package:akar/features/linmas/activation/presentation/pages/camera_captur
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_detail_modal.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/add_report_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActivationDetailScreen extends StatefulWidget {
@@ -36,8 +36,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!_infoShown && mounted) {
           _infoShown = true;
-          final provider = context.read<ActivationProvider>();
-          final activity = provider.getActivityById(widget.activityId);
+          final state = context.read<ActivationBloc>().state;
+          final activity = state.getActivityById(widget.activityId);
           if (activity != null) {
             ActivationDetailModal.show(context, activity);
           }
@@ -62,9 +62,9 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ActivationProvider>(
-      builder: (context, provider, child) {
-        final activity = provider.getActivityById(widget.activityId);
+    return BlocBuilder<ActivationBloc, ActivationState>(
+      builder: (context, state) {
+        final activity = state.getActivityById(widget.activityId);
 
         if (activity == null) {
           return Scaffold(

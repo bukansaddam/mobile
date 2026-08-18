@@ -1,16 +1,16 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/ad_banner_slider.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/home_profile_card.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/home_summary_card.dart';
-import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
+import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final ValueChanged<int>? onNavigateToTab;
@@ -72,8 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
-        return Consumer<TrackingProvider>(
-          builder: (context, trackingProvider, child) {
+        return BlocBuilder<TrackingBloc, TrackingState>(
+          builder: (context, trackingState) {
             final intervals = [
               {'value': 5, 'label': '5 Detik'},
               {'value': 10, 'label': '10 Detik'},
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: trackingProvider.isTrackingActive
+                      color: trackingState.isTrackingActive
                           ? AppColors.successLight.withValues(alpha: 0.15)
                           : AppColors.grey200,
                       borderRadius: BorderRadius.circular(16),
@@ -143,11 +143,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              trackingProvider.isTrackingActive
+                              trackingState.isTrackingActive
                                   ? 'Aktif (Mengirim otomatis ke API 24/7)'
                                   : 'Dinonaktifkan',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: trackingProvider.isTrackingActive
+                                color: trackingState.isTrackingActive
                                     ? AppColors.success
                                     : AppColors.textSecondary,
                               ),
@@ -155,13 +155,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         Switch(
-                          value: trackingProvider.isTrackingActive,
+                          value: trackingState.isTrackingActive,
                           activeThumbColor: AppColors.primary,
                           onChanged: (val) {
                             if (val) {
-                              trackingProvider.startTracking();
+                              context.read<TrackingBloc>().add(
+                                StartTrackingEvent(),
+                              );
                             } else {
-                              trackingProvider.stopTracking();
+                              context.read<TrackingBloc>().add(
+                                StopTrackingEvent(),
+                              );
                             }
                           },
                         ),
@@ -189,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
-                        value: trackingProvider.intervalSeconds,
+                        value: trackingState.intervalSeconds,
                         isExpanded: true,
                         items: intervals.map((item) {
                           return DropdownMenuItem<int>(
@@ -202,7 +206,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         }).toList(),
                         onChanged: (val) {
                           if (val != null) {
-                            trackingProvider.changeInterval(val);
+                            context.read<TrackingBloc>().add(
+                              ChangeTrackingIntervalEvent(val),
+                            );
                           }
                         },
                       ),
@@ -232,21 +238,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             Icon(
-                              trackingProvider.lastSuccess
+                              trackingState.lastSuccess
                                   ? Icons.check_circle_rounded
                                   : Icons.error_rounded,
                               size: 16,
-                              color: trackingProvider.lastSuccess
+                              color: trackingState.lastSuccess
                                   ? AppColors.success
                                   : AppColors.error,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                trackingProvider.lastMessage ??
+                                trackingState.lastMessage ??
                                     'Belum ada pengiriman ke API',
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: trackingProvider.lastSuccess
+                                  color: trackingState.lastSuccess
                                       ? AppColors.textPrimary
                                       : AppColors.error,
                                   fontWeight: FontWeight.w600,
@@ -255,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        if (trackingProvider.lastSentTime != null) ...[
+                        if (trackingState.lastSentTime != null) ...[
                           const SizedBox(height: 6),
                           Row(
                             children: [
@@ -267,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  'Waktu Terakhir: ${DateFormat('dd MMM yyyy, HH:mm:ss').format(trackingProvider.lastSentTime!)} WIB',
+                                  'Waktu Terakhir: ${DateFormat('dd MMM yyyy, HH:mm:ss').format(trackingState.lastSentTime!)} WIB',
                                   style: AppTextStyles.bodySmall.copyWith(
                                     color: AppColors.textSecondary,
                                     fontWeight: FontWeight.w600,
@@ -277,11 +283,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ],
-                        if (trackingProvider.lastLatitude != null &&
-                            trackingProvider.lastLongitude != null) ...[
+                        if (trackingState.lastLatitude != null &&
+                            trackingState.lastLongitude != null) ...[
                           const SizedBox(height: 4),
                           Text(
-                            'Koordinat Terakhir: ${trackingProvider.lastLatitude}, ${trackingProvider.lastLongitude}',
+                            'Koordinat Terakhir: ${trackingState.lastLatitude}, ${trackingState.lastLongitude}',
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -295,12 +301,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: trackingProvider.isSending
+                      onPressed: trackingState.isSending
                           ? null
-                          : () async {
-                              await trackingProvider.sendLocationNow();
+                          : () {
+                              context.read<TrackingBloc>().add(
+                                SendLocationNowEvent(),
+                              );
                             },
-                      icon: trackingProvider.isSending
+                      icon: trackingState.isSending
                           ? const SizedBox(
                               width: 16,
                               height: 16,
@@ -311,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           : const Icon(Icons.send_rounded),
                       label: Text(
-                        trackingProvider.isSending
+                        trackingState.isSending
                             ? 'Mengirim...'
                             : 'Kirim Lokasi Ke API Sekarang',
                       ),
@@ -337,129 +345,121 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<AuthProvider, ActivationProvider>(
-      builder: (context, authProvider, activationProvider, child) {
-        final user = authProvider.currentUser;
-        final activities = activationProvider.activities;
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final user = authState is AuthAuthenticated ? authState.user : null;
 
-        final totalTugasCount = activities.length;
-        final totalAgendaCount = activities
-            .where((act) => act.status == ActivationStatus.sedangBerjalan)
-            .length;
-        final totalLaporanCount = activities
-            .where((act) => act.status == ActivationStatus.selesai)
-            .length;
+        return BlocBuilder<ActivationBloc, ActivationState>(
+          builder: (context, activationState) {
+            final activities = activationState.activities;
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _onLogoTap,
-                  child: HomeProfileCard(user: user),
-                ),
+            final totalTugasCount = activities.length;
+            final totalAgendaCount = activities
+                .where((act) => act.status == ActivationStatus.sedangBerjalan)
+                .length;
+            final totalLaporanCount = activities
+                .where((act) => act.status == ActivationStatus.selesai)
+                .length;
+
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 12.0,
               ),
-              const SizedBox(height: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: GestureDetector(
+                      onTap: _onLogoTap,
+                      child: HomeProfileCard(user: user),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      child: HomeSummaryCard(
-                        title: 'Total Tugas',
-                        subtitle: 'Kegiatan aktif',
-                        count: '$totalTugasCount',
-                        icon: Icons.assignment_outlined,
-                        gradientColors: const [
-                          Color(0xFF0F9F66),
-                          Color(0xFF0A754B),
-                        ],
-                        isCompact: true,
-                        onTap: () {
-                          context.read<ActivationProvider>().setStatusFilter(
-                            null,
-                          );
-                          widget.onNavigateToTab?.call(2);
-                        },
-                      ),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: HomeSummaryCard(
+                            title: 'Total Tugas',
+                            subtitle: 'Kegiatan aktif',
+                            count: '$totalTugasCount',
+                            icon: Icons.assignment_outlined,
+                            gradientColors: const [
+                              Color(0xFF0F9F66),
+                              Color(0xFF0A754B),
+                            ],
+                            isCompact: true,
+                            onTap: () {
+                              context.read<ActivationBloc>().add(
+                                const SetActivationStatusFilterEvent(null),
+                              );
+                              widget.onNavigateToTab?.call(2);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: HomeSummaryCard(
+                            title: 'Total Agenda',
+                            subtitle: 'Sedang berjalan',
+                            count: '$totalAgendaCount',
+                            icon: Icons.event_note_rounded,
+                            gradientColors: const [
+                              Color(0xFFD99B00),
+                              Color(0xFFB37B00),
+                            ],
+                            isCompact: true,
+                            onTap: () {
+                              context.read<ActivationBloc>().add(
+                                const SetActivationStatusFilterEvent(
+                                  ActivationStatus.sedangBerjalan,
+                                ),
+                              );
+                              widget.onNavigateToTab?.call(2);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: HomeSummaryCard(
+                            title: 'Total Laporan',
+                            subtitle: 'Telah selesai',
+                            count: '$totalLaporanCount',
+                            icon: Icons.insert_drive_file_outlined,
+                            gradientColors: const [
+                              Color(0xFF5CB836),
+                              Color(0xFF438A24),
+                            ],
+                            isCompact: true,
+                            onTap: () {
+                              context.read<ActivationBloc>().add(
+                                const SetActivationStatusFilterEvent(
+                                  ActivationStatus.selesai,
+                                ),
+                              );
+                              widget.onNavigateToTab?.call(2);
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: HomeSummaryCard(
-                        title: 'Total Agenda',
-                        subtitle: 'Sedang berjalan',
-                        count: '$totalAgendaCount',
-                        icon: Icons.event_note_rounded,
-                        gradientColors: const [
-                          Color(0xFFD99B00),
-                          Color(0xFFB37B00),
-                        ],
-                        isCompact: true,
-                        onTap: () {
-                          context.read<ActivationProvider>().setStatusFilter(
-                            ActivationStatus.sedangBerjalan,
-                          );
-                          widget.onNavigateToTab?.call(2);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: HomeSummaryCard(
-                        title: 'Total Laporan',
-                        subtitle: 'Telah selesai',
-                        count: '$totalLaporanCount',
-                        icon: Icons.insert_drive_file_outlined,
-                        gradientColors: const [
-                          Color(0xFF5CB836),
-                          Color(0xFF438A24),
-                        ],
-                        isCompact: true,
-                        onTap: () {
-                          context.read<ActivationProvider>().setStatusFilter(
-                            ActivationStatus.selesai,
-                          );
-                          widget.onNavigateToTab?.call(2);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  _buildMenuUtamaSection(context),
+
+                  const SizedBox(height: 16),
+                  const AdBannerSlider(),
+
+                  const SizedBox(height: 80),
+                ],
               ),
-
-              const SizedBox(height: 16),
-
-              // Text(
-              //   'Menu Utama',
-              //   style: AppTextStyles.titleLarge.copyWith(
-              //     fontWeight: FontWeight.bold,
-              //     color: AppColors.textPrimary,
-              //     fontSize: 18,
-              //   ),
-              // ),
-              // const SizedBox(height: 8),
-              _buildMenuUtamaSection(context),
-
-              const SizedBox(height: 16),
-
-              // Text(
-              //   'Informasi Terbaru',
-              //   style: AppTextStyles.titleLarge.copyWith(
-              //     fontWeight: FontWeight.bold,
-              //     color: AppColors.textPrimary,
-              //     fontSize: 18,
-              //   ),
-              // ),
-              // const SizedBox(height: 8),
-              const AdBannerSlider(),
-
-              const SizedBox(height: 80),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -479,7 +479,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'subtitle': 'Patroli & Siaga',
         'icon': Icons.nights_stay_rounded,
         'color': const Color(0xFF5B4DFF),
-        'onTap': () => context.pushNamed('ronda_malam'),
+        'onTap': () => context.pushNamed('rondaMalam'),
       },
       {
         'title': 'Demografi',
@@ -493,7 +493,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'subtitle': 'Laporan & Setor',
         'icon': Icons.recycling_rounded,
         'color': const Color(0xFF0284C7),
-        'onTap': () => context.pushNamed('bank_sampah'),
+        'onTap': () => context.pushNamed('bankSampah'),
       },
     ];
 

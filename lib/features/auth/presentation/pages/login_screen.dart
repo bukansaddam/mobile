@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -57,46 +58,12 @@ class _LoginScreenState extends State<LoginScreen> {
     await _requestLocationPermission();
 
     if (!mounted) return;
-    final authProvider = context.read<AuthProvider>();
-
-    final success = await authProvider.login(
-      username: _usernameController.text.trim(),
-      password: _passwordController.text,
+    context.read<AuthBloc>().add(
+      LoginEvent(
+        username: _usernameController.text.trim(),
+        password: _passwordController.text,
+      ),
     );
-
-    if (mounted) {
-      if (success) {
-        final isOfficer = authProvider.currentUser?.isOfficer ?? false;
-        if (isOfficer) {
-          context.read<TrackingProvider>().startTracking();
-        } else {
-          context.read<TrackingProvider>().stopTracking();
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(authProvider.successMessage ?? "Login berhasil!"),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        if (isOfficer) {
-          context.goNamed('profile');
-        } else {
-          context.goNamed('masyarakat_main');
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              authProvider.errorMessage ??
-                  "Login gagal. Periksa kembali akun Anda.",
-            ),
-            backgroundColor: AppColors.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -110,8 +77,42 @@ class _LoginScreenState extends State<LoginScreen> {
               horizontal: 24.0,
               vertical: 32.0,
             ),
-            child: Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
+            child: BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is AuthFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColors.error,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } else if (state is AuthAuthenticated) {
+                  final isOfficer = state.user.isOfficer;
+                  if (isOfficer) {
+                    context.read<TrackingBloc>().add(StartTrackingEvent());
+                  } else {
+                    context.read<TrackingBloc>().add(StopTrackingEvent());
+                  }
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message ?? "Login berhasil!"),
+                      backgroundColor: AppColors.success,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+
+                  if (isOfficer) {
+                    context.goNamed('main');
+                  } else {
+                    context.goNamed('masyarakatMain');
+                  }
+                }
+              },
+              builder: (context, state) {
+                final isLoading = state is AuthLoading;
+
                 return Form(
                   key: _formKey,
                   child: Column(
@@ -307,9 +308,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               // Login Button
                               ElevatedButton(
-                                onPressed: authProvider.isLoading
-                                    ? null
-                                    : _handleLogin,
+                                onPressed: isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primary,
                                   foregroundColor: AppColors.white,
@@ -321,7 +320,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   elevation: 2,
                                 ),
-                                child: authProvider.isLoading
+                                child: isLoading
                                     ? const SizedBox(
                                         height: 22,
                                         width: 22,
@@ -352,7 +351,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {
-                          authProvider.clearMessages();
                           context.pushNamed('register');
                         },
                         child: Padding(

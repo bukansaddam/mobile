@@ -1,11 +1,11 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -457,40 +457,43 @@ class _ProfilePageState extends State<ProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      context
-                                              .watch<AuthProvider>()
-                                              .currentUser
-                                              ?.name ??
-                                          'Warga Masyarakat',
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800,
-                                        color: Color(0xFF0F172A),
-                                        letterSpacing: -0.2,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(
-                                      context
-                                              .watch<AuthProvider>()
-                                              .currentUser
-                                              ?.email ??
-                                          context
-                                              .watch<AuthProvider>()
-                                              .currentUser
-                                              ?.phoneNumber ??
-                                          'Warga Terdaftar',
-                                      style: const TextStyle(
-                                        fontSize: 12.5,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF64748B),
-                                      ),
-                                    ),
-                                  ],
+                                Builder(
+                                  builder: (context) {
+                                    final authState = context
+                                        .watch<AuthBloc>()
+                                        .state;
+                                    final currentUser =
+                                        authState is AuthAuthenticated
+                                        ? authState.user
+                                        : null;
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          currentUser?.name ??
+                                              'Warga Masyarakat',
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFF0F172A),
+                                            letterSpacing: -0.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          currentUser?.email ??
+                                              currentUser?.phoneNumber ??
+                                              'Warga Terdaftar',
+                                          style: const TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF64748B),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
 
                                 Container(
@@ -719,7 +722,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.pop(ctx);
-                                          context.read<AuthProvider>().logout();
+                                          context.read<AuthBloc>().add(
+                                            LogoutEvent(),
+                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: const Color(

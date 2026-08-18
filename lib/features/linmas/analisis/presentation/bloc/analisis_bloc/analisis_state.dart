@@ -1,7 +1,6 @@
-import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:flutter/material.dart';
+part of 'analisis_bloc.dart';
 
-class CategoryData {
+class CategoryData extends Equatable {
   final String label;
   final int count;
   final double percentage;
@@ -13,9 +12,12 @@ class CategoryData {
     required this.percentage,
     required this.color,
   });
+
+  @override
+  List<Object?> get props => [label, count, percentage, color];
 }
 
-class ActivityDeadlineItem {
+class ActivityDeadlineItem extends Equatable {
   final String id;
   final String title;
   final String category;
@@ -35,35 +37,37 @@ class ActivityDeadlineItem {
     required this.statusColor,
     required this.progress,
   });
+
+  @override
+  List<Object?> get props => [
+    id,
+    title,
+    category,
+    location,
+    deadlineText,
+    daysLeftText,
+    statusColor,
+    progress,
+  ];
 }
 
-class AnalisisProvider extends ChangeNotifier {
-  List<ActivationActivity> _activities = [];
+class AnalisisState extends Equatable {
+  final List<ActivationActivity> activities;
 
-  AnalisisProvider({List<ActivationActivity>? activities}) {
-    if (activities != null) {
-      _activities = activities;
-    }
-  }
+  const AnalisisState({this.activities = const []});
 
-  void updateActivities(List<ActivationActivity> activities) {
-    _activities = activities;
-  }
+  int get totalTasks => activities.length;
 
-  int get totalTasks => _activities.length;
-
-  int get totalAgendas => _activities
+  int get totalAgendas => activities
       .where((act) => act.status == ActivationStatus.sedangBerjalan)
       .length;
 
   int get totalReports =>
-      _activities
-          .where((act) => act.status == ActivationStatus.selesai)
-          .length +
-      _activities.fold<int>(0, (sum, act) => sum + act.reports.length);
+      activities.where((act) => act.status == ActivationStatus.selesai).length +
+      activities.fold<int>(0, (sum, act) => sum + act.reports.length);
 
   List<CategoryData> get categoryDistribution {
-    final total = _activities.length;
+    final total = activities.length;
     if (total == 0) {
       return ActivationCategory.values.map((cat) {
         return CategoryData(
@@ -76,7 +80,7 @@ class AnalisisProvider extends ChangeNotifier {
     }
 
     return ActivationCategory.values.map((cat) {
-      final count = _activities.where((act) => act.category == cat).length;
+      final count = activities.where((act) => act.category == cat).length;
       final percentage = (count / total) * 100;
       return CategoryData(
         label: cat.label,
@@ -88,9 +92,9 @@ class AnalisisProvider extends ChangeNotifier {
   }
 
   List<ActivityDeadlineItem> get upcomingDeadlines {
-    if (_activities.isEmpty) return [];
+    if (activities.isEmpty) return [];
 
-    final sorted = List<ActivationActivity>.from(_activities)
+    final sorted = List<ActivationActivity>.from(activities)
       ..sort((a, b) => a.endDate.compareTo(b.endDate));
 
     final now = DateTime.now();
@@ -136,4 +140,11 @@ class AnalisisProvider extends ChangeNotifier {
       );
     }).toList();
   }
+
+  AnalisisState copyWith({List<ActivationActivity>? activities}) {
+    return AnalisisState(activities: activities ?? this.activities);
+  }
+
+  @override
+  List<Object?> get props => [activities];
 }

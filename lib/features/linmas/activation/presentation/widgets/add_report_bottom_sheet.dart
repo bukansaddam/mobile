@@ -4,10 +4,10 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
 
 class AddReportBottomSheet extends StatefulWidget {
   final ActivationActivity activity;
@@ -168,7 +168,9 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
       houseNumber: isDoorToDoor ? _houseNumberController.text.trim() : null,
     );
 
-    context.read<ActivationProvider>().addReport(widget.activity.id, report);
+    context.read<ActivationBloc>().add(
+      AddActivationReportEvent(activityId: widget.activity.id, report: report),
+    );
 
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(

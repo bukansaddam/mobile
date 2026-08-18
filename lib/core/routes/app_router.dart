@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_detail_screen.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -13,7 +14,7 @@ import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
@@ -23,38 +24,53 @@ import 'package:akar/features/masyarakat/main/presentation/pages/main_screen.dar
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+      (dynamic _) => notifyListeners(),
+    );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
 class AppRouter {
   // Common
   static const String splash = 'splash';
   static const String login = 'login';
   static const String register = 'register';
+  static const String main = 'main';
 
   // Linmas Routes
-  static const String main = 'main';
-  static const String profile = 'profile';
+  static const String activationDetail = 'activationDetail';
   static const String panic = 'panic';
   static const String presensi = 'presensi';
-  static const String rondaMalam = 'ronda_malam';
+  static const String rondaMalam = 'rondaMalam';
   static const String demografi = 'demografi';
-  static const String tambahTokoh = 'tambah_tokoh';
-  static const String tambahInstitusi = 'tambah_institusi';
-  static const String tambahOrganisasi = 'tambah_organisasi';
-  static const String bankSampah = 'bank_sampah';
-  static const String tambahBankSampah = 'tambah_bank_sampah';
-  static const String activationDetail = 'activation_detail';
+  static const String tambahTokoh = 'tambahTokoh';
+  static const String tambahInstitusi = 'tambahInstitusi';
+  static const String tambahOrganisasi = 'tambahOrganisasi';
+  static const String bankSampah = 'bankSampah';
+  static const String tambahBankSampah = 'tambahBankSampah';
 
   // Masyarakat Routes
-  static const String masyarakatMain = 'masyarakat_main';
-  static const String complaintDetail = 'complaint_detail';
-  static const String createComplaint = 'create_complaint';
-  static const String myComplaints = 'my_complaints';
+  static const String masyarakatMain = 'masyarakatMain';
+  static const String complaintDetail = 'complaintDetail';
+  static const String createComplaint = 'createComplaint';
+  static const String myComplaints = 'myComplaints';
 
   // Paths
   static const String splashPath = '/';
   static const String loginPath = '/login';
   static const String registerPath = '/register';
   static const String mainPath = '/main';
-  static const String profilePath = '/profile';
   static const String panicPath = '/panic';
   static const String presensiPath = '/presensi';
   static const String rondaMalamPath = '/ronda-malam';
@@ -73,17 +89,20 @@ class AppRouter {
 
   static final GoRouter router = GoRouter(
     initialLocation: splashPath,
-    refreshListenable: sl<AuthProvider>(),
+    refreshListenable: GoRouterRefreshStream(sl<AuthBloc>().stream),
     redirect: (context, state) {
-      final authProvider = sl<AuthProvider>();
+      final authState = sl<AuthBloc>().state;
 
-      if (authProvider.isInitialChecking) {
+      if (authState is AuthInitial || authState is AuthChecking) {
         return null;
       }
 
-      final isLoggedIn = authProvider.isLoggedIn;
+      final isLoggedIn = authState is AuthAuthenticated;
+      final UserEntity? currentUser = authState is AuthAuthenticated
+          ? authState.user
+          : null;
       final location = state.matchedLocation;
-      final isMember = authProvider.currentUser?.isMember ?? false;
+      final isMember = currentUser?.isMember ?? false;
 
       final isSplash = location == splashPath;
       final isAuthRoute = location == loginPath || location == registerPath;
@@ -147,11 +166,6 @@ class AppRouter {
       GoRoute(
         path: mainPath,
         name: main,
-        builder: (context, state) => const MainScreen(),
-      ),
-      GoRoute(
-        path: profilePath,
-        name: profile,
         builder: (context, state) => const MainScreen(),
       ),
       GoRoute(
@@ -331,8 +345,11 @@ class AppRouter {
 
   // Helper Navigation Methods
   static void toHome(BuildContext context) {
-    final authProvider = sl<AuthProvider>();
-    if (authProvider.currentUser?.isMember ?? false) {
+    final authState = sl<AuthBloc>().state;
+    final isMember = authState is AuthAuthenticated
+        ? authState.user.isMember
+        : false;
+    if (isMember) {
       context.goNamed(masyarakatMain);
     } else {
       context.goNamed(main);

@@ -1,12 +1,13 @@
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/activation/data/datasources/dummy_activation_data.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 
 class NotificationModalSheet extends StatelessWidget {
   const NotificationModalSheet({super.key});
@@ -67,8 +68,8 @@ class NotificationModalSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     List<ActivationActivity> activitiesList = [];
     try {
-      final provider = context.read<ActivationProvider>();
-      activitiesList = provider.activities;
+      final blocState = context.read<ActivationBloc>().state;
+      activitiesList = blocState.activities;
     } catch (_) {
       activitiesList = DummyActivationData.activities;
     }

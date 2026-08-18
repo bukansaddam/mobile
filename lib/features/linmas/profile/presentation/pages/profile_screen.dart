@@ -1,15 +1,15 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  void _showLogoutDialog(BuildContext context, AuthProvider authProvider) {
+  void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -17,19 +17,19 @@ class ProfileScreen extends StatelessWidget {
         title: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
                 color: AppColors.errorLight,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.logout_rounded,
                 color: AppColors.error,
                 size: 22,
               ),
             ),
-            SizedBox(width: 12),
-            Text(
+            const SizedBox(width: 12),
+            const Text(
               'Keluar Akun',
               style: TextStyle(
                 fontSize: 18,
@@ -64,22 +64,18 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     Navigator.pop(dialogContext);
-                    if (context.mounted) {
-                      await context.read<TrackingProvider>().stopTracking();
-                    }
-                    await authProvider.logout();
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Berhasil keluar dari akun'),
-                          backgroundColor: AppColors.primary,
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                      context.goNamed('login');
-                    }
+                    context.read<TrackingBloc>().add(StopTrackingEvent());
+                    context.read<AuthBloc>().add(LogoutEvent());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Berhasil keluar dari akun'),
+                        backgroundColor: AppColors.primary,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    context.goNamed('login');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.error,
@@ -102,9 +98,9 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        final user = authProvider.currentUser;
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final user = state is AuthAuthenticated ? state.user : null;
 
         if (user == null) {
           return Scaffold(
@@ -185,7 +181,7 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [AppColors.primary, AppColors.primaryDark],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -208,11 +204,11 @@ class ProfileScreen extends StatelessWidget {
                             shape: BoxShape.circle,
                             color: Colors.white,
                             border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.15),
+                                color: Colors.black12,
                                 blurRadius: 8,
-                                offset: const Offset(0, 3),
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -377,7 +373,7 @@ class ProfileScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton.icon(
-                      onPressed: () => _showLogoutDialog(context, authProvider),
+                      onPressed: () => _showLogoutDialog(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.errorLight,
                         foregroundColor: AppColors.error,
@@ -440,7 +436,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),

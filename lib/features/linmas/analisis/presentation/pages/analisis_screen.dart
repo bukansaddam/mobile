@@ -1,26 +1,26 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/features/linmas/activation/presentation/provider/activation_provider.dart';
-import 'package:akar/features/linmas/analisis/presentation/provider/analisis_provider.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
+import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:akar/features/linmas/analisis/presentation/widgets/analisis_metric_cards.dart';
 import 'package:akar/features/linmas/analisis/presentation/widgets/category_distribution_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AnalisisScreen extends StatelessWidget {
   const AnalisisScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ActivationProvider>(
-      builder: (context, activationProvider, child) {
-        final activities = activationProvider.activities;
-
-        return ChangeNotifierProvider(
-          create: (_) => AnalisisProvider(activities: activities),
-          builder: (context, child) {
-            final provider = context.watch<AnalisisProvider>();
-            provider.updateActivities(activities);
-
+    return BlocConsumer<ActivationBloc, ActivationState>(
+      listener: (context, activationState) {
+        context.read<AnalisisBloc>().add(
+          UpdateAnalisisActivitiesEvent(activationState.activities),
+        );
+      },
+      builder: (context, activationState) {
+        return BlocBuilder<AnalisisBloc, AnalisisState>(
+          builder: (context, analisisState) {
             return Scaffold(
               backgroundColor: AppColors.background,
               body: Container(
@@ -44,14 +44,14 @@ class AnalisisScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AnalisisSummaryChartCard(
-                        totalTasks: provider.totalTasks,
-                        totalAgendas: provider.totalAgendas,
-                        totalReports: provider.totalReports,
+                        totalTasks: analisisState.totalTasks,
+                        totalAgendas: analisisState.totalAgendas,
+                        totalReports: analisisState.totalReports,
                       ),
                       const SizedBox(height: 20),
 
                       CategoryDistributionChartCard(
-                        categoryData: provider.categoryDistribution,
+                        categoryData: analisisState.categoryDistribution,
                       ),
                     ],
                   ),

@@ -1,15 +1,15 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_screen.dart';
 import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
 import 'package:akar/features/linmas/profile/presentation/pages/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,9 +24,9 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        final user = authProvider.currentUser;
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final user = authState.user;
 
         return Scaffold(
           backgroundColor: AppColors.background,

@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import 'package:akar/features/linmas/tracking/presentation/provider/tracking_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -84,10 +85,10 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _navigateToNextScreen() async {
     final startTime = DateTime.now();
-    final authProvider = context.read<AuthProvider>();
+    final authBloc = context.read<AuthBloc>();
 
-    // Periksa status login dari SharedPreferences (token & user)
-    await authProvider.checkAuthStatus();
+    // Trigger check auth
+    authBloc.add(CheckAuthStatusEvent());
 
     // Pastikan splash setidaknya tampil 2.5 detik untuk animasi yang halus
     final elapsedMs = DateTime.now().difference(startTime).inMilliseconds;
@@ -97,17 +98,18 @@ class _SplashScreenState extends State<SplashScreen>
     }
 
     if (mounted) {
-      if (authProvider.isLoggedIn) {
-        final isOfficer = authProvider.currentUser?.isOfficer ?? false;
+      final state = authBloc.state;
+      if (state is AuthAuthenticated) {
+        final isOfficer = state.user.isOfficer;
         if (isOfficer) {
-          context.read<TrackingProvider>().startTracking();
-          context.goNamed('profile');
+          context.read<TrackingBloc>().add(StartTrackingEvent());
+          context.goNamed('main');
         } else {
-          context.read<TrackingProvider>().stopTracking();
-          context.goNamed('masyarakat_main');
+          context.read<TrackingBloc>().add(StopTrackingEvent());
+          context.goNamed('masyarakatMain');
         }
       } else {
-        context.read<TrackingProvider>().stopTracking();
+        context.read<TrackingBloc>().add(StopTrackingEvent());
         context.goNamed('login');
       }
     }

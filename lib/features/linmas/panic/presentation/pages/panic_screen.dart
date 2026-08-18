@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
-import '../provider/panic_provider.dart';
+import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 
 class PanicScreen extends StatefulWidget {
   const PanicScreen({super.key});
@@ -24,8 +25,8 @@ class _PanicScreenState extends State<PanicScreen> {
     super.dispose();
   }
 
-  void _handleEmergencyButtonTap(PanicProvider provider) async {
-    if (provider.status == PanicStatus.sending) return;
+  void _handleEmergencyButtonTap(PanicState state) {
+    if (state.status == PanicStatus.sending) return;
 
     _tapResetTimer?.cancel();
 
@@ -60,24 +61,15 @@ class _PanicScreenState extends State<PanicScreen> {
         _tapCount = 0;
       });
 
-      final success = await provider.sendEmergencyRequest();
-      if (success && mounted) {
-        _showSuccessEmergencyDialog(context, provider);
-      }
+      context.read<PanicBloc>().add(const SendPanicAlertEvent());
     }
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = context.read<PanicProvider>();
-      await provider.initEmergencyLocation();
-      if (mounted &&
-          provider.userLatitude != null &&
-          provider.userLongitude != null) {
-        _recenterMap(provider.userLatitude!, provider.userLongitude!);
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PanicBloc>().add(InitPanicLocationEvent());
     });
   }
 
@@ -89,10 +81,26 @@ class _PanicScreenState extends State<PanicScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PanicProvider>(
-      builder: (context, provider, child) {
-        final userLat = provider.userLatitude ?? -6.2088;
-        final userLng = provider.userLongitude ?? 106.8456;
+    return BlocConsumer<PanicBloc, PanicState>(
+      listener: (context, state) {
+        if (state.status == PanicStatus.success) {
+          _showSuccessEmergencyDialog(context, state);
+        } else if (state.status == PanicStatus.error &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+
+        _recenterMap(state.userLatitude, state.userLongitude);
+      },
+      builder: (context, state) {
+        final userLat = state.userLatitude;
+        final userLng = state.userLongitude;
         final userLatLng = LatLng(userLat, userLng);
 
         final Set<Marker> markers = {
@@ -107,7 +115,7 @@ class _PanicScreenState extends State<PanicScreen> {
               BitmapDescriptor.hueRed,
             ),
           ),
-          ...provider.nearbyMembers.map((member) {
+          ...state.nearbyMembers.map((member) {
             return Marker(
               markerId: MarkerId(member.id),
               position: LatLng(member.latitude, member.longitude),
@@ -128,7 +136,7 @@ class _PanicScreenState extends State<PanicScreen> {
               },
             );
           }),
-          ...provider.localLeaders.map((leader) {
+          ...state.localLeaders.map((leader) {
             return Marker(
               markerId: MarkerId(leader.id),
               position: LatLng(leader.latitude, leader.longitude),
@@ -237,13 +245,7 @@ class _PanicScreenState extends State<PanicScreen> {
                   ),
                   onMapCreated: (controller) {
                     _mapController = controller;
-                    if (provider.userLatitude != null &&
-                        provider.userLongitude != null) {
-                      _recenterMap(
-                        provider.userLatitude!,
-                        provider.userLongitude!,
-                      );
-                    }
+                    _recenterMap(state.userLatitude, state.userLongitude);
                   },
                   markers: markers,
                   circles: circles,
@@ -252,7 +254,7 @@ class _PanicScreenState extends State<PanicScreen> {
                   zoomControlsEnabled: false,
                 ),
               ),
-              if (provider.status == PanicStatus.loading)
+              if (state.status == PanicStatus.loading)
                 Positioned.fill(
                   child: Container(
                     color: AppColors.background,
@@ -302,7 +304,7 @@ class _PanicScreenState extends State<PanicScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'Mode Siaga: ${provider.nearbyMembers.length} Anggota Terdekat Dalam Radius 500m Terdeteksi',
+                            'Mode Siaga: ${state.nearbyMembers.length} Anggota Terdekat Dalam Radius 500m Terdeteksi',
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -319,7 +321,7 @@ class _PanicScreenState extends State<PanicScreen> {
                   bottom: 0,
                   left: 0,
                   right: 0,
-                  child: _buildBottomPanel(context, provider),
+                  child: _buildBottomPanel(context, state),
                 ),
               ],
             ],
@@ -329,7 +331,7 @@ class _PanicScreenState extends State<PanicScreen> {
     );
   }
 
-  Widget _buildBottomPanel(BuildContext context, PanicProvider provider) {
+  Widget _buildBottomPanel(BuildContext context, PanicState state) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
       decoration: BoxDecoration(
@@ -378,8 +380,7 @@ class _PanicScreenState extends State<PanicScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        provider.fullAddress ??
-                            'Jl. Medan Merdeka Barat No. 12, Gambir, Jakarta Pusat, DKI Jakarta',
+                        state.fullAddress,
                         style: AppTextStyles.titleMedium.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
@@ -411,9 +412,9 @@ class _PanicScreenState extends State<PanicScreen> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                itemCount: provider.nearbyMembers.length,
+                itemCount: state.nearbyMembers.length,
                 itemBuilder: (context, index) {
-                  final member = provider.nearbyMembers[index];
+                  final member = state.nearbyMembers[index];
 
                   return GestureDetector(
                     onTap: () {
@@ -498,9 +499,9 @@ class _PanicScreenState extends State<PanicScreen> {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                itemCount: provider.localLeaders.length,
+                itemCount: state.localLeaders.length,
                 itemBuilder: (context, index) {
-                  final leader = provider.localLeaders[index];
+                  final leader = state.localLeaders[index];
 
                   return GestureDetector(
                     onTap: () {
@@ -580,9 +581,9 @@ class _PanicScreenState extends State<PanicScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: provider.status == PanicStatus.sending
+                    onPressed: state.status == PanicStatus.sending
                         ? null
-                        : () => _handleEmergencyButtonTap(provider),
+                        : () => _handleEmergencyButtonTap(state),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.error,
                       foregroundColor: Colors.white,
@@ -591,7 +592,7 @@ class _PanicScreenState extends State<PanicScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: provider.status == PanicStatus.sending
+                    child: state.status == PanicStatus.sending
                         ? const SizedBox(
                             width: 22,
                             height: 22,
@@ -649,10 +650,7 @@ class _PanicScreenState extends State<PanicScreen> {
     );
   }
 
-  void _showSuccessEmergencyDialog(
-    BuildContext context,
-    PanicProvider provider,
-  ) {
+  void _showSuccessEmergencyDialog(BuildContext context, PanicState state) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -717,7 +715,7 @@ class _PanicScreenState extends State<PanicScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${provider.nearbyMembers.length} Anggota Menerima Notifikasi',
+                            '${state.nearbyMembers.length} Anggota Menerima Notifikasi',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,

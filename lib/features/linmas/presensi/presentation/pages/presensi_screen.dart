@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
-import '../provider/presensi_provider.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/linmas/presensi/presentation/bloc/presensi_bloc/presensi_bloc.dart';
 
 class PresensiScreen extends StatefulWidget {
   const PresensiScreen({super.key});
@@ -33,10 +34,14 @@ class _PresensiScreenState extends State<PresensiScreen>
     _startTimer();
     _initCamera();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final authUser = context.read<AuthProvider>().currentUser;
-      final userName = authUser?.name ?? 'Pengguna';
-      await context.read<PresensiProvider>().initLocation(userName);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = context.read<AuthBloc>().state;
+      final userName = authState is AuthAuthenticated
+          ? authState.user.name ?? 'Pengguna'
+          : 'Pengguna';
+      context.read<PresensiBloc>().add(
+        InitPresensiLocationEvent(userName: userName),
+      );
     });
   }
 
@@ -103,8 +108,31 @@ class _PresensiScreenState extends State<PresensiScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PresensiProvider>(
-      builder: (context, provider, child) {
+    return BlocConsumer<PresensiBloc, PresensiState>(
+      listener: (context, state) {
+        if (state.status == PresensiStatus.success) {
+          _showSuccessPresensiDialog(context, state);
+        } else if (state.status == PresensiStatus.failure) {
+          // Resume camera preview if submit failed
+          try {
+            if (_cameraController != null &&
+                _cameraController!.value.isInitialized) {
+              _cameraController!.resumePreview();
+            }
+          } catch (_) {}
+
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        }
+      },
+      builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
@@ -312,7 +340,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              provider.hasCheckedIn
+                              state.hasCheckedIn
                                   ? Icons.logout_rounded
                                   : Icons.login_rounded,
                               color: AppColors.primary,
@@ -321,7 +349,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                           ),
                           const SizedBox(width: 10),
                           Text(
-                            provider.presensiTypeTitle,
+                            state.presensiTypeTitle,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -353,7 +381,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                             ),
                           ),
                           const Spacer(),
-                          if (provider.status == PresensiStatus.loadingLocation)
+                          if (state.status == PresensiStatus.loadingLocation)
                             const SizedBox(
                               width: 18,
                               height: 18,
@@ -365,11 +393,15 @@ class _PresensiScreenState extends State<PresensiScreen>
                           else
                             IconButton(
                               onPressed: () {
-                                final authUser = context
-                                    .read<AuthProvider>()
-                                    .currentUser;
-                                final userName = authUser?.name ?? 'Pengguna';
-                                provider.initLocation(userName);
+                                final authState = context
+                                    .read<AuthBloc>()
+                                    .state;
+                                final userName = authState is AuthAuthenticated
+                                    ? authState.user.name ?? 'Pengguna'
+                                    : 'Pengguna';
+                                context.read<PresensiBloc>().add(
+                                  InitPresensiLocationEvent(userName: userName),
+                                );
                               },
                               icon: const Icon(
                                 Icons.refresh_rounded,
@@ -385,7 +417,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                       const SizedBox(height: 4),
 
                       // Current Location Address Text
-                      if (provider.status == PresensiStatus.loadingLocation)
+                      if (state.status == PresensiStatus.loadingLocation)
                         const Text(
                           'Mendeteksi Koordinat GPS & Lokasi...',
                           style: TextStyle(
@@ -397,7 +429,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                         )
                       else
                         Text(
-                          provider.address,
+                          state.address,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -413,10 +445,11 @@ class _PresensiScreenState extends State<PresensiScreen>
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed:
-                              provider.status == PresensiStatus.submitting
+                          onPressed: state.status == PresensiStatus.submitting
                               ? null
                               : () async {
+                                  final presensiBloc = context
+                                      .read<PresensiBloc>();
                                   // Freeze camera preview frame immediately
                                   try {
                                     if (_cameraController != null &&
@@ -427,26 +460,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                                     }
                                   } catch (_) {}
 
-                                  final success = await provider
-                                      .submitPresensi();
-
-                                  if (success && context.mounted) {
-                                    _showSuccessPresensiDialog(
-                                      context,
-                                      provider,
-                                    );
-                                  } else {
-                                    // Resume camera preview if submit failed
-                                    try {
-                                      if (_cameraController != null &&
-                                          _cameraController!
-                                              .value
-                                              .isInitialized) {
-                                        await _cameraController!
-                                            .resumePreview();
-                                      }
-                                    } catch (_) {}
-                                  }
+                                  presensiBloc.add(SubmitPresensiEvent());
                                 },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
@@ -456,7 +470,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
-                          child: provider.status == PresensiStatus.submitting
+                          child: state.status == PresensiStatus.submitting
                               ? const SizedBox(
                                   width: 22,
                                   height: 22,
@@ -466,7 +480,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                                   ),
                                 )
                               : Text(
-                                  provider.presensiTypeTitle,
+                                  state.presensiTypeTitle,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
@@ -485,11 +499,8 @@ class _PresensiScreenState extends State<PresensiScreen>
     );
   }
 
-  void _showSuccessPresensiDialog(
-    BuildContext context,
-    PresensiProvider provider,
-  ) {
-    final result = provider.lastResult;
+  void _showSuccessPresensiDialog(BuildContext context, PresensiState state) {
+    final result = state.lastResult;
 
     showDialog(
       context: context,
@@ -548,9 +559,9 @@ class _PresensiScreenState extends State<PresensiScreen>
                   children: [
                     _buildDialogRow('Nama', result?.userName ?? '-'),
                     const SizedBox(height: 6),
-                    _buildDialogRow('Tipe', provider.lastSubmittedTypeTitle),
+                    _buildDialogRow('Tipe', state.lastSubmittedTypeTitle),
                     const SizedBox(height: 6),
-                    _buildDialogRow('Lokasi', provider.address),
+                    _buildDialogRow('Lokasi', state.address),
                     const SizedBox(height: 6),
                     _buildDialogRow(
                       'Waktu',
@@ -568,14 +579,14 @@ class _PresensiScreenState extends State<PresensiScreen>
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (provider.lastSubmittedType == PresensiType.keluar) ...[
+                if (state.lastSubmittedType == PresensiType.keluar) ...[
                   SizedBox(
                     width: double.infinity,
                     height: 46,
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.pop(dialogContext);
-                        context.pushReplacementNamed('ronda_malam');
+                        context.pushReplacementNamed('rondaMalam');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -713,7 +724,7 @@ class CornerBracketPainter extends CustomPainter {
     canvas.drawLine(Offset(0, h), Offset(0, h - l), paint);
 
     canvas.drawLine(Offset(w, h), Offset(w - l, h), paint);
-    canvas.drawLine(Offset(w, h), Offset(w - l, h), paint);
+    canvas.drawLine(Offset(w, h), Offset(w, h - l), paint);
   }
 
   @override

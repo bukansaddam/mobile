@@ -1,10 +1,11 @@
-import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/auth/presentation/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
+import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -118,51 +119,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     FocusScope.of(context).unfocus();
-    final authProvider = context.read<AuthProvider>();
 
     final lat = double.tryParse(_latController.text.trim()) ?? 0.0;
     final lng = double.tryParse(_longController.text.trim()) ?? 0.0;
 
-    final success = await authProvider.register(
-      name: _nameController.text.trim(),
-      phoneNumber: _phoneController.text.trim(),
-      nik: _nikController.text.trim(),
-      latitude: lat,
-      longitude: lng,
-      username: _usernameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      passwordConfirmation: _confirmPasswordController.text,
+    context.read<AuthBloc>().add(
+      RegisterEvent(
+        name: _nameController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        nik: _nikController.text.trim(),
+        latitude: lat,
+        longitude: lng,
+        username: _usernameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        passwordConfirmation: _confirmPasswordController.text,
+      ),
     );
-
-    if (mounted) {
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              authProvider.successMessage ?? "Registrasi berhasil!",
-            ),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-        if (authProvider.isLoggedIn) {
-          context.goNamed('masyarakat_main');
-        } else {
-          context.goNamed('login');
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              authProvider.errorMessage ?? "Registrasi gagal. Coba lagi.",
-            ),
-            backgroundColor: AppColors.error,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    }
   }
 
   @override
@@ -181,8 +154,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
-          child: Consumer<AuthProvider>(
-            builder: (context, authProvider, child) {
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.error,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              } else if (state is AuthAuthenticated) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message ?? "Registrasi berhasil!"),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                context.goNamed('masyarakatMain');
+              } else if (state is RegisterSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                context.goNamed('login');
+              }
+            },
+            builder: (context, state) {
+              final isLoading = state is AuthLoading;
+
               return Form(
                 key: _formKey,
                 child: Column(
@@ -380,9 +384,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             // Register Submit Button
                             ElevatedButton(
-                              onPressed: authProvider.isLoading
-                                  ? null
-                                  : _handleRegister,
+                              onPressed: isLoading ? null : _handleRegister,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: AppColors.white,
@@ -394,7 +396,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 elevation: 2,
                               ),
-                              child: authProvider.isLoading
+                              child: isLoading
                                   ? const SizedBox(
                                       height: 22,
                                       width: 22,
@@ -424,7 +426,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        authProvider.clearMessages();
                         if (context.canPop()) {
                           context.pop();
                         } else {

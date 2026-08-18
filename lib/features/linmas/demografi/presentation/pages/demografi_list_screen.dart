@@ -1,14 +1,15 @@
-import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+
+import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
-import '../provider/demografi_provider.dart';
-import '../../domain/entities/tokoh_entity.dart';
-import '../../domain/entities/institusi_entity.dart';
-import '../../domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
 
 class DemografiListScreen extends StatefulWidget {
   const DemografiListScreen({super.key});
@@ -28,8 +29,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
-        final provider = context.read<DemografiProvider>();
-        provider.setActiveTabIndex(_tabController.index);
+        context.read<DemografiBloc>().add(
+          SetDemografiActiveTabEvent(_tabController.index),
+        );
       }
     });
   }
@@ -96,10 +98,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     }
   }
 
-  void _showFilterBottomSheet(
-    BuildContext context,
-    DemografiProvider provider,
-  ) {
+  void _showFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -108,10 +107,10 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
-        return StatefulBuilder(
-          builder: (context, setBottomSheetState) {
-            final hasActiveFilter = provider.hasActiveFilter;
-            final activeTab = provider.activeTabIndex;
+        return BlocBuilder<DemografiBloc, DemografiState>(
+          builder: (context, state) {
+            final hasActiveFilter = state.hasActiveFilter;
+            final activeTab = state.activeTabIndex;
 
             return SafeArea(
               child: Padding(
@@ -158,8 +157,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                             if (hasActiveFilter)
                               TextButton(
                                 onPressed: () {
-                                  provider.resetAllFilters();
-                                  setBottomSheetState(() {});
+                                  context.read<DemografiBloc>().add(
+                                    ResetDemografiFiltersEvent(),
+                                  );
                                 },
                                 style: TextButton.styleFrom(
                                   foregroundColor: AppColors.error,
@@ -224,14 +224,15 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   sortOpt,
                                 ) {
                                   final isSelected =
-                                      provider.selectedSortOption == sortOpt;
+                                      state.selectedSortOption == sortOpt;
                                   return _buildFilterChip(
                                     label: sortOpt.label,
                                     icon: sortOpt.icon,
                                     isSelected: isSelected,
                                     onTap: () {
-                                      provider.setSortOption(sortOpt);
-                                      setBottomSheetState(() {});
+                                      context.read<DemografiBloc>().add(
+                                        SetDemografiSortOptionEvent(sortOpt),
+                                      );
                                     },
                                   );
                                 }).toList(),
@@ -257,26 +258,31 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     _buildFilterChip(
                                       label: 'Semua Profesi',
                                       isSelected:
-                                          provider.selectedProfesiFilter ==
-                                          null,
+                                          state.selectedProfesiFilter == null,
                                       onTap: () {
-                                        provider.setProfesiFilter(null);
-                                        setBottomSheetState(() {});
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiProfesiFilterEvent(
+                                            null,
+                                          ),
+                                        );
                                       },
                                     ),
                                     ...DemografiConstants.profesiOptions.map((
                                       profesi,
                                     ) {
                                       final isSelected =
-                                          provider.selectedProfesiFilter ==
+                                          state.selectedProfesiFilter ==
                                           profesi;
                                       return _buildFilterChip(
                                         label: profesi,
                                         color: const Color(0xFF0284C7),
                                         isSelected: isSelected,
                                         onTap: () {
-                                          provider.setProfesiFilter(profesi);
-                                          setBottomSheetState(() {});
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiProfesiFilterEvent(
+                                              profesi,
+                                            ),
+                                          );
                                         },
                                       );
                                     }),
@@ -301,24 +307,28 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     _buildFilterChip(
                                       label: 'Semua Scope',
                                       isSelected:
-                                          provider.selectedScopeFilter == null,
+                                          state.selectedScopeFilter == null,
                                       onTap: () {
-                                        provider.setScopeFilter(null);
-                                        setBottomSheetState(() {});
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiScopeFilterEvent(
+                                            null,
+                                          ),
+                                        );
                                       },
                                     ),
                                     ...DemografiConstants.scopeOptions.map((
                                       scope,
                                     ) {
                                       final isSelected =
-                                          provider.selectedScopeFilter == scope;
+                                          state.selectedScopeFilter == scope;
                                       return _buildFilterChip(
                                         label: scope,
                                         color: const Color(0xFF0F9F66),
                                         isSelected: isSelected,
                                         onTap: () {
-                                          provider.setScopeFilter(scope);
-                                          setBottomSheetState(() {});
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiScopeFilterEvent(scope),
+                                          );
                                         },
                                       );
                                     }),
@@ -343,18 +353,20 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     _buildFilterChip(
                                       label: 'Semua Afiliasi',
                                       isSelected:
-                                          provider.selectedAfiliasiFilter ==
-                                          null,
+                                          state.selectedAfiliasiFilter == null,
                                       onTap: () {
-                                        provider.setAfiliasiFilter(null);
-                                        setBottomSheetState(() {});
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiAfiliasiFilterEvent(
+                                            null,
+                                          ),
+                                        );
                                       },
                                     ),
                                     ...DemografiConstants.afiliasiOptions.map((
                                       afiliasi,
                                     ) {
                                       final isSelected =
-                                          provider.selectedAfiliasiFilter ==
+                                          state.selectedAfiliasiFilter ==
                                           afiliasi;
                                       final color = _getAfiliasiColor(afiliasi);
                                       return _buildFilterChip(
@@ -362,8 +374,11 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                         color: color,
                                         isSelected: isSelected,
                                         onTap: () {
-                                          provider.setAfiliasiFilter(afiliasi);
-                                          setBottomSheetState(() {});
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiAfiliasiFilterEvent(
+                                              afiliasi,
+                                            ),
+                                          );
                                         },
                                       );
                                     }),
@@ -389,33 +404,36 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     _buildFilterChip(
                                       label: 'Semua Scope',
                                       isSelected:
-                                          provider
-                                              .selectedInstitusiScopeFilter ==
+                                          state.selectedInstitusiScopeFilter ==
                                           null,
                                       onTap: () {
-                                        provider.setInstitusiScopeFilter(null);
-                                        setBottomSheetState(() {});
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiInstitusiScopeFilterEvent(
+                                            null,
+                                          ),
+                                        );
                                       },
                                     ),
-                                    ...DemografiConstants.institusiScopeOptions
-                                        .map((scope) {
-                                          final isSelected =
-                                              provider
-                                                  .selectedInstitusiScopeFilter ==
-                                              scope;
-                                          final color = _getScopeColor(scope);
-                                          return _buildFilterChip(
-                                            label: scope,
-                                            color: color,
-                                            isSelected: isSelected,
-                                            onTap: () {
-                                              provider.setInstitusiScopeFilter(
-                                                scope,
-                                              );
-                                              setBottomSheetState(() {});
-                                            },
+                                    ...DemografiConstants.institusiScopeOptions.map((
+                                      scope,
+                                    ) {
+                                      final isSelected =
+                                          state.selectedInstitusiScopeFilter ==
+                                          scope;
+                                      final color = _getScopeColor(scope);
+                                      return _buildFilterChip(
+                                        label: scope,
+                                        color: color,
+                                        isSelected: isSelected,
+                                        onTap: () {
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiInstitusiScopeFilterEvent(
+                                              scope,
+                                            ),
                                           );
-                                        }),
+                                        },
+                                      );
+                                    }),
                                   ],
                                 ),
                               ],
@@ -438,37 +456,38 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     _buildFilterChip(
                                       label: 'Semua Bidang',
                                       isSelected:
-                                          provider
+                                          state
                                               .selectedOrganisasiBidangFilter ==
                                           null,
                                       onTap: () {
-                                        provider.setOrganisasiBidangFilter(
-                                          null,
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiOrganisasiBidangFilterEvent(
+                                            null,
+                                          ),
                                         );
-                                        setBottomSheetState(() {});
                                       },
                                     ),
-                                    ...DemografiConstants
-                                        .organisasiBidangOptions
-                                        .map((bidang) {
-                                          final isSelected =
-                                              provider
-                                                  .selectedOrganisasiBidangFilter ==
-                                              bidang;
-                                          final color = _getBidangColor(bidang);
-                                          return _buildFilterChip(
-                                            label: bidang,
-                                            color: color,
-                                            isSelected: isSelected,
-                                            onTap: () {
-                                              provider
-                                                  .setOrganisasiBidangFilter(
-                                                    bidang,
-                                                  );
-                                              setBottomSheetState(() {});
-                                            },
+                                    ...DemografiConstants.organisasiBidangOptions.map((
+                                      bidang,
+                                    ) {
+                                      final isSelected =
+                                          state
+                                              .selectedOrganisasiBidangFilter ==
+                                          bidang;
+                                      final color = _getBidangColor(bidang);
+                                      return _buildFilterChip(
+                                        label: bidang,
+                                        color: color,
+                                        isSelected: isSelected,
+                                        onTap: () {
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiOrganisasiBidangFilterEvent(
+                                              bidang,
+                                            ),
                                           );
-                                        }),
+                                        },
+                                      );
+                                    }),
                                   ],
                                 ),
                               ],
@@ -606,414 +625,452 @@ class _DemografiListScreenState extends State<DemografiListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<DemografiProvider>();
-    final activeTab = provider.activeTabIndex;
+    return BlocBuilder<DemografiBloc, DemografiState>(
+      builder: (context, state) {
+        final activeTab = state.activeTabIndex;
 
-    String fabTitle;
-    IconData fabIcon;
-    Color fabColor;
-    String searchHint;
+        String fabTitle;
+        IconData fabIcon;
+        Color fabColor;
+        String searchHint;
 
-    if (activeTab == 0) {
-      fabTitle = 'Tambah Tokoh';
-      fabIcon = Icons.person_add_rounded;
-      fabColor = AppColors.primary;
-      searchHint = 'Cari nama tokoh...';
-    } else if (activeTab == 1) {
-      fabTitle = 'Tambah Institusi';
-      fabIcon = Icons.domain_add_rounded;
-      fabColor = AppColors.primary;
-      searchHint = 'Cari nama institusi...';
-    } else {
-      fabTitle = 'Tambah Organisasi';
-      fabIcon = Icons.group_add_rounded;
-      fabColor = AppColors.primary;
-      searchHint = 'Cari nama organisasi...';
-    }
+        if (activeTab == 0) {
+          fabTitle = 'Tambah Tokoh';
+          fabIcon = Icons.person_add_rounded;
+          fabColor = AppColors.primary;
+          searchHint = 'Cari nama tokoh...';
+        } else if (activeTab == 1) {
+          fabTitle = 'Tambah Institusi';
+          fabIcon = Icons.domain_add_rounded;
+          fabColor = AppColors.primary;
+          searchHint = 'Cari nama institusi...';
+        } else {
+          fabTitle = 'Tambah Organisasi';
+          fabIcon = Icons.group_add_rounded;
+          fabColor = AppColors.primary;
+          searchHint = 'Cari nama organisasi...';
+        }
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.grey300),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.chevron_left_rounded,
-                color: AppColors.textPrimary,
-                size: 22,
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: AppColors.white,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.grey300),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.chevron_left_rounded,
+                    color: AppColors.textPrimary,
+                    size: 22,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  padding: EdgeInsets.zero,
+                ),
               ),
-              onPressed: () => Navigator.pop(context),
-              padding: EdgeInsets.zero,
             ),
-          ),
-        ),
-        title: const Text(
-          'Demografi',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
-          child: Container(
-            color: AppColors.white,
-            child: TabBar(
-              controller: _tabController,
-              dividerColor: Colors.transparent,
-              dividerHeight: 0,
-              indicatorColor: AppColors.primary,
-              indicatorWeight: 3,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textSecondary,
-              labelStyle: const TextStyle(
+            title: const Text(
+              'Demografi',
+              style: TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                fontSize: 14,
+                color: AppColors.textPrimary,
               ),
-              unselectedLabelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(48),
+              child: Container(
+                color: AppColors.white,
+                child: TabBar(
+                  controller: _tabController,
+                  dividerColor: Colors.transparent,
+                  dividerHeight: 0,
+                  indicatorColor: AppColors.primary,
+                  indicatorWeight: 3,
+                  labelColor: AppColors.primary,
+                  unselectedLabelColor: AppColors.textSecondary,
+                  labelStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                  unselectedLabelStyle: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                  tabs: const [
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.people_alt_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Tokoh'),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.account_balance_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Institusi'),
+                        ],
+                      ),
+                    ),
+                    Tab(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.groups_rounded, size: 18),
+                          SizedBox(width: 6),
+                          Text('Organisasi'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              tabs: const [
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              if (activeTab == 0) {
+                context.pushNamed('tambahTokoh');
+              } else if (activeTab == 1) {
+                context.pushNamed('tambahInstitusi');
+              } else {
+                context.pushNamed('tambahOrganisasi');
+              }
+            },
+            backgroundColor: fabColor,
+            foregroundColor: AppColors.white,
+            elevation: 4,
+            icon: Icon(fabIcon),
+            label: Text(
+              fabTitle,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+          ),
+          body: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Column(
+              children: [
+                // Top Search & Filter Bar
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Column(
                     children: [
-                      Icon(Icons.people_alt_rounded, size: 18),
-                      SizedBox(width: 6),
-                      Text('Tokoh'),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.black.withValues(
+                                      alpha: 0.05,
+                                    ),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: _searchController,
+                                onTapOutside: (event) => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
+                                onChanged: (val) => context
+                                    .read<DemografiBloc>()
+                                    .add(SetDemografiSearchQueryEvent(val)),
+                                decoration: InputDecoration(
+                                  hintText: searchHint,
+                                  hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.grey500,
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.search_rounded,
+                                    color: AppColors.primary,
+                                  ),
+                                  suffixIcon: _searchController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: const Icon(
+                                            Icons.clear_rounded,
+                                            color: AppColors.grey500,
+                                          ),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            context.read<DemografiBloc>().add(
+                                              ClearDemografiSearchEvent(),
+                                            );
+                                          },
+                                        )
+                                      : null,
+                                  filled: true,
+                                  fillColor: AppColors.white,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.grey300,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.grey200,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                    borderSide: const BorderSide(
+                                      color: AppColors.primary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+
+                          // Filter Trigger Button
+                          Container(
+                            height: 52,
+                            width: 52,
+                            decoration: BoxDecoration(
+                              color: state.hasActiveFilter
+                                  ? AppColors.primary
+                                  : AppColors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: state.hasActiveFilter
+                                    ? AppColors.primary
+                                    : AppColors.grey300,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.black.withValues(
+                                    alpha: 0.05,
+                                  ),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.tune_rounded,
+                                color: state.hasActiveFilter
+                                    ? Colors.white
+                                    : AppColors.textPrimary,
+                                size: 22,
+                              ),
+                              tooltip: 'Filter & Urutkan',
+                              onPressed: () => _showFilterBottomSheet(context),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Active Filter Chips Row
+                      if (state.hasActiveFilter) ...[
+                        const SizedBox(height: 10),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
+                            children: [
+                              // Sort Tag
+                              _buildAppliedTag(
+                                label: state.selectedSortOption.label,
+                                icon: state.selectedSortOption.icon,
+                                color: const Color(0xFFC62828),
+                                onTap: () => _showFilterBottomSheet(context),
+                              ),
+
+                              // Tokoh Filters
+                              if (activeTab == 0) ...[
+                                if (state.selectedProfesiFilter != null) ...[
+                                  const SizedBox(width: 8),
+                                  _buildAppliedTag(
+                                    label:
+                                        'Profesi: ${state.selectedProfesiFilter}',
+                                    color: const Color(0xFF0284C7),
+                                    onRemove: () =>
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiProfesiFilterEvent(
+                                            null,
+                                          ),
+                                        ),
+                                  ),
+                                ],
+                                if (state.selectedScopeFilter != null) ...[
+                                  const SizedBox(width: 8),
+                                  _buildAppliedTag(
+                                    label:
+                                        'Scope: ${state.selectedScopeFilter}',
+                                    color: const Color(0xFF0F9F66),
+                                    onRemove: () =>
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiScopeFilterEvent(
+                                            null,
+                                          ),
+                                        ),
+                                  ),
+                                ],
+                                if (state.selectedAfiliasiFilter != null) ...[
+                                  const SizedBox(width: 8),
+                                  _buildAppliedTag(
+                                    label:
+                                        'Afiliasi: ${state.selectedAfiliasiFilter}',
+                                    color: _getAfiliasiColor(
+                                      state.selectedAfiliasiFilter!,
+                                    ),
+                                    onRemove: () =>
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiAfiliasiFilterEvent(
+                                            null,
+                                          ),
+                                        ),
+                                  ),
+                                ],
+                              ],
+
+                              // Institusi Filters
+                              if (activeTab == 1 &&
+                                  state.selectedInstitusiScopeFilter !=
+                                      null) ...[
+                                const SizedBox(width: 8),
+                                _buildAppliedTag(
+                                  label:
+                                      'Scope: ${state.selectedInstitusiScopeFilter}',
+                                  color: _getScopeColor(
+                                    state.selectedInstitusiScopeFilter!,
+                                  ),
+                                  onRemove: () => context.read<DemografiBloc>().add(
+                                    const SetDemografiInstitusiScopeFilterEvent(
+                                      null,
+                                    ),
+                                  ),
+                                ),
+                              ],
+
+                              // Organisasi Filters
+                              if (activeTab == 2 &&
+                                  state.selectedOrganisasiBidangFilter !=
+                                      null) ...[
+                                const SizedBox(width: 8),
+                                _buildAppliedTag(
+                                  label:
+                                      'Bidang: ${state.selectedOrganisasiBidangFilter}',
+                                  color: _getBidangColor(
+                                    state.selectedOrganisasiBidangFilter!,
+                                  ),
+                                  onRemove: () => context.read<DemografiBloc>().add(
+                                    const SetDemografiOrganisasiBidangFilterEvent(
+                                      null,
+                                    ),
+                                  ),
+                                ),
+                              ],
+
+                              // Reset Button Tag
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () => context.read<DemografiBloc>().add(
+                                  ResetDemografiFiltersEvent(),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.error.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: AppColors.error.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                    ),
+                                  ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.refresh_rounded,
+                                        size: 14,
+                                        color: AppColors.error,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Reset',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.error,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+
+                // TabBarView Content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
                     children: [
-                      Icon(Icons.account_balance_rounded, size: 18),
-                      SizedBox(width: 6),
-                      Text('Institusi'),
-                    ],
-                  ),
-                ),
-                Tab(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.groups_rounded, size: 18),
-                      SizedBox(width: 6),
-                      Text('Organisasi'),
+                      // TAB 1: Tokoh List
+                      _buildTokohTab(context, state),
+
+                      // TAB 2: Institusi List
+                      _buildInstitusiTab(context, state),
+
+                      // TAB 3: Organisasi List
+                      _buildOrganisasiTab(context, state),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          if (activeTab == 0) {
-            context.pushNamed('tambah_tokoh');
-          } else if (activeTab == 1) {
-            context.pushNamed('tambah_institusi');
-          } else {
-            context.pushNamed('tambah_organisasi');
-          }
-        },
-        backgroundColor: fabColor,
-        foregroundColor: AppColors.white,
-        elevation: 4,
-        icon: Icon(fabIcon),
-        label: Text(
-          fabTitle,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-      ),
-      body: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Column(
-          children: [
-            // Top Search & Filter Bar
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            onTapOutside: (event) =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                            onChanged: (val) => provider.setSearchQuery(val),
-                            decoration: InputDecoration(
-                              hintText: searchHint,
-                              hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.grey500,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.search_rounded,
-                                color: AppColors.primary,
-                              ),
-                              suffixIcon: _searchController.text.isNotEmpty
-                                  ? IconButton(
-                                      icon: const Icon(
-                                        Icons.clear_rounded,
-                                        color: AppColors.grey500,
-                                      ),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        provider.clearSearch();
-                                      },
-                                    )
-                                  : null,
-                              filled: true,
-                              fillColor: AppColors.white,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.grey300,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.grey200,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: const BorderSide(
-                                  color: AppColors.primary,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-
-                      // Filter Trigger Button
-                      Container(
-                        height: 52,
-                        width: 52,
-                        decoration: BoxDecoration(
-                          color: provider.hasActiveFilter
-                              ? AppColors.primary
-                              : AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: provider.hasActiveFilter
-                                ? AppColors.primary
-                                : AppColors.grey300,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(alpha: 0.05),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.tune_rounded,
-                            color: provider.hasActiveFilter
-                                ? Colors.white
-                                : AppColors.textPrimary,
-                            size: 22,
-                          ),
-                          tooltip: 'Filter & Urutkan',
-                          onPressed: () =>
-                              _showFilterBottomSheet(context, provider),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Active Filter Chips Row
-                  if (provider.hasActiveFilter) ...[
-                    const SizedBox(height: 10),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                        children: [
-                          // Sort Tag
-                          _buildAppliedTag(
-                            label: provider.selectedSortOption.label,
-                            icon: provider.selectedSortOption.icon,
-                            color: const Color(0xFFC62828),
-                            onTap: () =>
-                                _showFilterBottomSheet(context, provider),
-                          ),
-
-                          // Tokoh Filters
-                          if (activeTab == 0) ...[
-                            if (provider.selectedProfesiFilter != null) ...[
-                              const SizedBox(width: 8),
-                              _buildAppliedTag(
-                                label:
-                                    'Profesi: ${provider.selectedProfesiFilter}',
-                                color: const Color(0xFF0284C7),
-                                onRemove: () => provider.setProfesiFilter(null),
-                              ),
-                            ],
-                            if (provider.selectedScopeFilter != null) ...[
-                              const SizedBox(width: 8),
-                              _buildAppliedTag(
-                                label: 'Scope: ${provider.selectedScopeFilter}',
-                                color: const Color(0xFF0F9F66),
-                                onRemove: () => provider.setScopeFilter(null),
-                              ),
-                            ],
-                            if (provider.selectedAfiliasiFilter != null) ...[
-                              const SizedBox(width: 8),
-                              _buildAppliedTag(
-                                label:
-                                    'Afiliasi: ${provider.selectedAfiliasiFilter}',
-                                color: _getAfiliasiColor(
-                                  provider.selectedAfiliasiFilter!,
-                                ),
-                                onRemove: () =>
-                                    provider.setAfiliasiFilter(null),
-                              ),
-                            ],
-                          ],
-
-                          // Institusi Filters
-                          if (activeTab == 1 &&
-                              provider.selectedInstitusiScopeFilter !=
-                                  null) ...[
-                            const SizedBox(width: 8),
-                            _buildAppliedTag(
-                              label:
-                                  'Scope: ${provider.selectedInstitusiScopeFilter}',
-                              color: _getScopeColor(
-                                provider.selectedInstitusiScopeFilter!,
-                              ),
-                              onRemove: () =>
-                                  provider.setInstitusiScopeFilter(null),
-                            ),
-                          ],
-
-                          // Organisasi Filters
-                          if (activeTab == 2 &&
-                              provider.selectedOrganisasiBidangFilter !=
-                                  null) ...[
-                            const SizedBox(width: 8),
-                            _buildAppliedTag(
-                              label:
-                                  'Bidang: ${provider.selectedOrganisasiBidangFilter}',
-                              color: _getBidangColor(
-                                provider.selectedOrganisasiBidangFilter!,
-                              ),
-                              onRemove: () =>
-                                  provider.setOrganisasiBidangFilter(null),
-                            ),
-                          ],
-
-                          // Reset Button Tag
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: () => provider.resetAllFilters(),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.error.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                  color: AppColors.error.withValues(alpha: 0.3),
-                                ),
-                              ),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.refresh_rounded,
-                                    size: 14,
-                                    color: AppColors.error,
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Reset',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.error,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-
-            // TabBarView Content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  // TAB 1: Tokoh List
-                  _buildTokohTab(provider),
-
-                  // TAB 2: Institusi List
-                  _buildInstitusiTab(provider),
-
-                  // TAB 3: Organisasi List
-                  _buildOrganisasiTab(provider),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+        );
+      },
     );
   }
 
   // ---------------- Tab 1: Tokoh ----------------
-  Widget _buildTokohTab(DemografiProvider provider) {
-    final list = provider.tokohList;
+  Widget _buildTokohTab(BuildContext context, DemografiState state) {
+    final list = state.tokohList;
 
     return RefreshIndicator(
       onRefresh: () async {
-        await provider.fetchTokohList();
+        context.read<DemografiBloc>().add(FetchDemografiDataEvent());
       },
       child: Column(
         children: [
@@ -1052,7 +1109,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             ),
           ),
           Expanded(
-            child: provider.state == DemografiState.loading && list.isEmpty
+            child: state.status == DemografiStatus.loading && list.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : list.isEmpty
                 ? _buildEmptyState(
@@ -1075,12 +1132,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   // ---------------- Tab 2: Institusi ----------------
-  Widget _buildInstitusiTab(DemografiProvider provider) {
-    final list = provider.institusiList;
+  Widget _buildInstitusiTab(BuildContext context, DemografiState state) {
+    final list = state.institusiList;
 
     return RefreshIndicator(
       onRefresh: () async {
-        await provider.fetchInstitusiList();
+        context.read<DemografiBloc>().add(FetchDemografiDataEvent());
       },
       child: Column(
         children: [
@@ -1119,7 +1176,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             ),
           ),
           Expanded(
-            child: provider.state == DemografiState.loading && list.isEmpty
+            child: state.status == DemografiStatus.loading && list.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : list.isEmpty
                 ? _buildEmptyState(
@@ -1142,12 +1199,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   // ---------------- Tab 3: Organisasi ----------------
-  Widget _buildOrganisasiTab(DemografiProvider provider) {
-    final list = provider.organisasiList;
+  Widget _buildOrganisasiTab(BuildContext context, DemografiState state) {
+    final list = state.organisasiList;
 
     return RefreshIndicator(
       onRefresh: () async {
-        await provider.fetchOrganisasiList();
+        context.read<DemografiBloc>().add(FetchDemografiDataEvent());
       },
       child: Column(
         children: [
@@ -1186,7 +1243,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             ),
           ),
           Expanded(
-            child: provider.state == DemografiState.loading && list.isEmpty
+            child: state.status == DemografiStatus.loading && list.isEmpty
                 ? const Center(child: CircularProgressIndicator())
                 : list.isEmpty
                 ? _buildEmptyState(

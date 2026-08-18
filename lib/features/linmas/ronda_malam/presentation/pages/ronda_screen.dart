@@ -4,11 +4,11 @@ import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/linmas/ronda_malam/presentation/provider/ronda_provider.dart';
+import 'package:akar/features/linmas/ronda_malam/presentation/bloc/ronda_bloc/ronda_bloc.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 enum SttMode { none, regular }
 
@@ -48,7 +48,7 @@ class _RondaScreenState extends State<RondaScreen> {
     _keteranganController.addListener(_onKeteranganChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<RondaProvider>().resetForm();
+        context.read<RondaBloc>().add(ResetRondaFormEvent());
         _keteranganController.clear();
       }
     });
@@ -126,7 +126,7 @@ class _RondaScreenState extends State<RondaScreen> {
     }
   }
 
-  Future<void> _stopRegularRecording(RondaProvider provider) async {
+  Future<void> _stopRegularRecording() async {
     _recordingTimer?.cancel();
     setState(() {
       _sttMode = SttMode.none;
@@ -166,7 +166,9 @@ class _RondaScreenState extends State<RondaScreen> {
               ? formattedTranscript
               : '$currentText $formattedTranscript';
           _keteranganController.text = newText;
-          provider.updateKeterangan(newText);
+          context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(keterangan: newText),
+          );
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -213,9 +215,23 @@ class _RondaScreenState extends State<RondaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RondaProvider>(
-      builder: (context, provider, child) {
-        final currentStep = provider.currentStep;
+    return BlocConsumer<RondaBloc, RondaState>(
+      listener: (context, state) {
+        if (state.status == RondaStatus.success) {
+          _showSuccessDialog(context, state);
+        } else if (state.status == RondaStatus.failure &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final currentStep = state.currentStep;
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -260,7 +276,7 @@ class _RondaScreenState extends State<RondaScreen> {
                   children: [
                     _buildBannerHeader(currentStep),
                     const SizedBox(height: 14),
-                    _buildStepperIndicator(provider, currentStep),
+                    _buildStepperIndicator(state, currentStep),
                   ],
                 ),
               ),
@@ -268,14 +284,14 @@ class _RondaScreenState extends State<RondaScreen> {
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                  child: _buildStepContent(provider, currentStep),
+                  child: _buildStepContent(state, currentStep),
                 ),
               ),
             ],
           ),
           bottomNavigationBar: _buildBottomNavigationBar(
             context,
-            provider,
+            state,
             currentStep,
           ),
         );
@@ -336,7 +352,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 Text(
                   _getStepDescription(currentStep),
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.88),
+                    color: Colors.white,
                     fontSize: 11,
                     height: 1.25,
                   ),
@@ -377,7 +393,7 @@ class _RondaScreenState extends State<RondaScreen> {
     }
   }
 
-  Widget _buildStepperIndicator(RondaProvider provider, int currentStep) {
+  Widget _buildStepperIndicator(RondaState state, int currentStep) {
     final stepTitles = ['Lingkungan', 'Keamanan', 'Sosial', 'Tambahan'];
 
     return Column(
@@ -461,21 +477,21 @@ class _RondaScreenState extends State<RondaScreen> {
     );
   }
 
-  Widget _buildStepContent(RondaProvider provider, int currentStep) {
+  Widget _buildStepContent(RondaState state, int currentStep) {
     switch (currentStep) {
       case 0:
-        return _buildLingkunganStep(provider);
+        return _buildLingkunganStep(state);
       case 1:
-        return _buildKeamananStep(provider);
+        return _buildKeamananStep(state);
       case 2:
-        return _buildSosialStep(provider);
+        return _buildSosialStep(state);
       case 3:
       default:
-        return _buildTambahanStep(provider);
+        return _buildTambahanStep(state);
     }
   }
 
-  Widget _buildLingkunganStep(RondaProvider provider) {
+  Widget _buildLingkunganStep(RondaState state) {
     return _buildSectionCard(
       title: 'Lingkungan',
       icon: Icons.eco_rounded,
@@ -483,38 +499,48 @@ class _RondaScreenState extends State<RondaScreen> {
       questions: [
         _QuestionData(
           question: 'Apakah bapak/ibu melihat sampah menumpuk atau berserakan?',
-          value: provider.sampahMenumpuk,
-          onChanged: (val) => provider.setSampahMenumpuk(val),
+          value: state.sampahMenumpuk,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(sampahMenumpuk: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah Bapak/Ibu melihat selokan mampet, air menggenang, atau jalan yang mulai kebanjiran',
-          value: provider.selokanMampet,
-          onChanged: (val) => provider.setSelokanMampet(val),
+          value: state.selokanMampet,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(selokanMampet: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah Bapak/Ibu melihat jalan, lampu jalan, selokan, atau fasilitas umum yang rusak?',
-          value: provider.fasilitasRusak,
-          onChanged: (val) => provider.setFasilitasRusak(val),
+          value: state.fasilitasRusak,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(fasilitasRusak: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada kegiatan warga atau usaha yang membuat lingkungan kotor atau mengganggu warga sekitar',
-          value: provider.kegiatanMengganggu,
-          onChanged: (val) => provider.setKegiatanMengganggu(val),
+          value: state.kegiatanMengganggu,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(kegiatanMengganggu: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah Bapak/Ibu melihat sesuatu yang bisa membahayakan warga, seperti pohon hampir tumbang, kabel menjuntai, lubang jalan, atau bangunan rusak?',
-          value: provider.potensiBahaya,
-          onChanged: (val) => provider.setPotensiBahaya(val),
+          value: state.potensiBahaya,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(potensiBahaya: val),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildKeamananStep(RondaProvider provider) {
+  Widget _buildKeamananStep(RondaState state) {
     return _buildSectionCard(
       title: 'Keamanan',
       icon: Icons.security_rounded,
@@ -523,38 +549,48 @@ class _RondaScreenState extends State<RondaScreen> {
         _QuestionData(
           question:
               'Saat bertugas hari ini, apakah Bapak/Ibu melihat atau menerima laporan pencurian, perusakan, ancaman, atau kejadian keamanan lainnya?',
-          value: provider.laporanKeamanan,
-          onChanged: (val) => provider.setLaporanKeamanan(val),
+          value: state.laporanKeamanan,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(laporanKeamanan: val),
+          ),
         ),
         _QuestionData(
           question:
               'apakah hari ini ada warga yang bertengkar, ribut, atau berselisih sampai mengganggu warga sekitar?',
-          value: provider.wargaBertengkar,
-          onChanged: (val) => provider.setWargaBertengkar(val),
+          value: state.wargaBertengkar,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(wargaBertengkar: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah Bapak/Ibu menemukan tempat yang gelap, sepi, atau kurang aman saat melakukan pemantauan?',
-          value: provider.tempatKurangAman,
-          onChanged: (val) => provider.setTempatKurangAman(val),
+          value: state.tempatKurangAman,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(tempatKurangAman: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada kerumunan atau kegiatan warga yang membuat keadaan menjadi tidak tertib?',
-          value: provider.kerumunanTidakTertib,
-          onChanged: (val) => provider.setKerumunanTidakTertib(val),
+          value: state.kerumunanTidakTertib,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(kerumunanTidakTertib: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah hari ini ada kejadian yang membuat Bapak/Ibu perlu meminta bantuan petugas lain, kelurahan/desa, Satpol PP, atau Polisi?',
-          value: provider.perluBantuanPetugas,
-          onChanged: (val) => provider.setPerluBantuanPetugas(val),
+          value: state.perluBantuanPetugas,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(perluBantuanPetugas: val),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildSosialStep(RondaProvider provider) {
+  Widget _buildSosialStep(RondaState state) {
     return _buildSectionCard(
       title: 'Sosial',
       icon: Icons.people_alt_rounded,
@@ -563,38 +599,48 @@ class _RondaScreenState extends State<RondaScreen> {
         _QuestionData(
           question:
               'Saat bertugas hari ini, apakah Bapak/Ibu menemukan warga yang terlihat membutuhkan bantuan?',
-          value: provider.wargaButuhBantuan,
-          onChanged: (val) => provider.setWargaButuhBantuan(val),
+          value: state.wargaButuhBantuan,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(wargaButuhBantuan: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada warga atau kelompok warga yang bertengkar atau berselisih hari ini?',
-          value: provider.kelompokBerselisih,
-          onChanged: (val) => provider.setKelompokBerselisih(val),
+          value: state.kelompokBerselisih,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(kelompokBerselisih: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada warga yang menyampaikan keluhan atau meminta bantuan kepada Bapak/Ibu hari ini?',
-          value: provider.keluhanWarga,
-          onChanged: (val) => provider.setKeluhanWarga(val),
+          value: state.keluhanWarga,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(keluhanWarga: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada kegiatan atau kejadian yang membuat warga sekitar merasa terganggu?',
-          value: provider.kejadianMenggangguWarga,
-          onChanged: (val) => provider.setKejadianMenggangguWarga(val),
+          value: state.kejadianMenggangguWarga,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(kejadianMenggangguWarga: val),
+          ),
         ),
         _QuestionData(
           question:
               'Apakah ada masalah warga yang menurut Bapak/Ibu perlu diteruskan ke RT/RW, desa/kelurahan, atau petugas lain?',
-          value: provider.perluTerusanRTRW,
-          onChanged: (val) => provider.setPerluTerusanRTRW(val),
+          value: state.perluTerusanRTRW,
+          onChanged: (val) => context.read<RondaBloc>().add(
+            UpdateRondaFieldEvent(perluTerusanRTRW: val),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildTambahanStep(RondaProvider provider) {
+  Widget _buildTambahanStep(RondaState state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -648,7 +694,9 @@ class _RondaScreenState extends State<RondaScreen> {
                     FocusManager.instance.primaryFocus?.unfocus(),
                 maxLines: 4,
                 minLines: 3,
-                onChanged: (val) => provider.updateKeterangan(val),
+                onChanged: (val) => context.read<RondaBloc>().add(
+                  UpdateRondaFieldEvent(keterangan: val),
+                ),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
                 ),
@@ -686,7 +734,9 @@ class _RondaScreenState extends State<RondaScreen> {
                           ),
                           onPressed: () {
                             _keteranganController.clear();
-                            provider.updateKeterangan('');
+                            context.read<RondaBloc>().add(
+                              const UpdateRondaFieldEvent(keterangan: ''),
+                            );
                           },
                           tooltip: 'Bersihkan teks',
                         )
@@ -726,7 +776,7 @@ class _RondaScreenState extends State<RondaScreen> {
                         ),
                       ),
                       ElevatedButton.icon(
-                        onPressed: () => _stopRegularRecording(provider),
+                        onPressed: () => _stopRegularRecording(),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
@@ -848,38 +898,38 @@ class _RondaScreenState extends State<RondaScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildSummaryCard(provider),
+        _buildSummaryCard(state),
       ],
     );
   }
 
-  Widget _buildSummaryCard(RondaProvider provider) {
+  Widget _buildSummaryCard(RondaState state) {
     int countNeedAttention(List<int> values) {
       return values.where((v) => v > 1).length;
     }
 
     final lingkunganAlerts = countNeedAttention([
-      provider.sampahMenumpuk,
-      provider.selokanMampet,
-      provider.fasilitasRusak,
-      provider.kegiatanMengganggu,
-      provider.potensiBahaya,
+      state.sampahMenumpuk,
+      state.selokanMampet,
+      state.fasilitasRusak,
+      state.kegiatanMengganggu,
+      state.potensiBahaya,
     ]);
 
     final keamananAlerts = countNeedAttention([
-      provider.laporanKeamanan,
-      provider.wargaBertengkar,
-      provider.tempatKurangAman,
-      provider.kerumunanTidakTertib,
-      provider.perluBantuanPetugas,
+      state.laporanKeamanan,
+      state.wargaBertengkar,
+      state.tempatKurangAman,
+      state.kerumunanTidakTertib,
+      state.perluBantuanPetugas,
     ]);
 
     final sosialAlerts = countNeedAttention([
-      provider.wargaButuhBantuan,
-      provider.kelompokBerselisih,
-      provider.keluhanWarga,
-      provider.kejadianMenggangguWarga,
-      provider.perluTerusanRTRW,
+      state.wargaButuhBantuan,
+      state.kelompokBerselisih,
+      state.keluhanWarga,
+      state.kejadianMenggangguWarga,
+      state.perluTerusanRTRW,
     ]);
 
     return Container(
@@ -1100,7 +1150,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
   Widget _buildBottomNavigationBar(
     BuildContext context,
-    RondaProvider provider,
+    RondaState state,
     int currentStep,
   ) {
     final isFinalStep = currentStep == 3;
@@ -1127,7 +1177,8 @@ class _RondaScreenState extends State<RondaScreen> {
                 child: SizedBox(
                   height: 50,
                   child: OutlinedButton(
-                    onPressed: () => provider.previousStep(),
+                    onPressed: () =>
+                        context.read<RondaBloc>().add(PreviousRondaStepEvent()),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.grey300),
@@ -1152,16 +1203,15 @@ class _RondaScreenState extends State<RondaScreen> {
               child: SizedBox(
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: provider.status == RondaStatus.submitting
+                  onPressed: state.status == RondaStatus.submitting
                       ? null
-                      : () async {
+                      : () {
                           if (isFinalStep) {
-                            final success = await provider.submitLaporan();
-                            if (success && context.mounted) {
-                              _showSuccessDialog(context, provider);
-                            }
+                            context.read<RondaBloc>().add(
+                              SubmitRondaLaporanEvent(),
+                            );
                           } else {
-                            provider.nextStep();
+                            context.read<RondaBloc>().add(NextRondaStepEvent());
                           }
                         },
                   style: ElevatedButton.styleFrom(
@@ -1172,7 +1222,7 @@ class _RondaScreenState extends State<RondaScreen> {
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
-                  child: provider.status == RondaStatus.submitting
+                  child: state.status == RondaStatus.submitting
                       ? const SizedBox(
                           width: 22,
                           height: 22,
@@ -1198,8 +1248,8 @@ class _RondaScreenState extends State<RondaScreen> {
     );
   }
 
-  void _showSuccessDialog(BuildContext context, RondaProvider provider) {
-    final result = provider.lastResult;
+  void _showSuccessDialog(BuildContext context, RondaState state) {
+    final result = state.lastResult;
 
     showDialog(
       context: context,
@@ -1255,7 +1305,7 @@ class _RondaScreenState extends State<RondaScreen> {
               height: 46,
               child: ElevatedButton(
                 onPressed: () {
-                  provider.resetForm();
+                  context.read<RondaBloc>().add(ResetRondaFormEvent());
                   Navigator.pop(dialogContext);
                   Navigator.pop(context);
                 },

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/features/linmas/analisis/presentation/provider/analisis_provider.dart';
+import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:flutter/material.dart';
 
 class CategoryDistributionChartCard extends StatelessWidget {
