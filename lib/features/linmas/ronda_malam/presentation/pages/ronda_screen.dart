@@ -5,28 +5,13 @@ import 'package:akar/core/services/google_speech_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/bloc/ronda_bloc/ronda_bloc.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/pages/location_picker_page.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 enum SttMode { none, regular }
-
-class _ScaleOption {
-  final int value;
-  final String label;
-  final Color color;
-
-  const _ScaleOption(this.value, this.label, this.color);
-}
-
-const List<_ScaleOption> _kScaleOptions = [
-  _ScaleOption(1, 'Tidak ada', Color(0xFF9E9E9E)),
-  _ScaleOption(2, 'Ada, tapi belum mengganggu', Color(0xFF8BC34A)),
-  _ScaleOption(3, 'Ada, mulai mengganggu', Color(0xFFFFB300)),
-  _ScaleOption(4, 'Ada, dan sudah mengganggu', Color(0xFFFF8A65)),
-  _ScaleOption(5, 'Ada, dan sudah perlu ditangani', Color(0xFFE53935)),
-];
 
 class RondaScreen extends StatefulWidget {
   const RondaScreen({super.key});
@@ -259,7 +244,7 @@ class _RondaScreenState extends State<RondaScreen> {
               ),
             ),
             title: const Text(
-              'Laporan Ronda Malam',
+              'Laphar (Laporan Harian)',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -341,7 +326,7 @@ class _RondaScreenState extends State<RondaScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Form Pemantauan Ronda (${currentStep + 1}/4)',
+                  'Form Laphar (${currentStep + 1}/4)',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -368,11 +353,11 @@ class _RondaScreenState extends State<RondaScreen> {
   IconData _getStepIcon(int step) {
     switch (step) {
       case 0:
-        return Icons.eco_rounded;
+        return Icons.cleaning_services_rounded;
       case 1:
         return Icons.security_rounded;
       case 2:
-        return Icons.people_alt_rounded;
+        return Icons.eco_rounded;
       case 3:
       default:
         return Icons.edit_note_rounded;
@@ -382,23 +367,22 @@ class _RondaScreenState extends State<RondaScreen> {
   String _getStepDescription(int step) {
     switch (step) {
       case 0:
-        return 'Step 1 dari 4: Evaluasi kondisi kebersihan, fasilitas & lingkungan.';
+        return 'Step 1 dari 4: Evaluasi kebersihan, penumpukan sampah & pengolahan limbah.';
       case 1:
         return 'Step 2 dari 4: Identifikasi situasi ketertiban & potensi ancaman keamanan.';
       case 2:
-        return 'Step 3 dari 4: Pemantauan situasi permasalahan sosial & keharmonisan warga.';
+        return 'Step 3 dari 4: Pemantauan kondisi fasilitas umum, saluran air & lingkungan sekitar.';
       case 3:
       default:
-        return 'Step 4 dari 4: Catatan temuan khusus & pengiriman laporan ronda malam.';
+        return 'Step 4 dari 4: Catatan temuan khusus & pengiriman laporan harian (Laphar).';
     }
   }
 
   Widget _buildStepperIndicator(RondaState state, int currentStep) {
-    final stepTitles = ['Lingkungan', 'Keamanan', 'Sosial', 'Tambahan'];
+    final stepTitles = ['Sampah', 'Keamanan', 'Lingkungan', 'Tambahan'];
 
     return Column(
       children: [
-        // Progress Bar
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
@@ -409,7 +393,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        // Step Pills Row
+
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(4, (index) {
@@ -480,163 +464,641 @@ class _RondaScreenState extends State<RondaScreen> {
   Widget _buildStepContent(RondaState state, int currentStep) {
     switch (currentStep) {
       case 0:
-        return _buildLingkunganStep(state);
+        return _buildSampahStep(state);
       case 1:
         return _buildKeamananStep(state);
       case 2:
-        return _buildSosialStep(state);
+        return _buildLingkunganStep(state);
       case 3:
       default:
         return _buildTambahanStep(state);
     }
   }
 
-  Widget _buildLingkunganStep(RondaState state) {
-    return _buildSectionCard(
-      title: 'Lingkungan',
-      icon: Icons.eco_rounded,
-      accentColor: const Color(0xFF2F855A),
-      questions: [
-        _QuestionData(
-          question: 'Apakah bapak/ibu melihat sampah menumpuk atau berserakan?',
-          value: state.sampahMenumpuk,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(sampahMenumpuk: val),
+  Widget _buildSampahStep(RondaState state) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah Bapak/Ibu melihat selokan mampet, air menggenang, atau jalan yang mulai kebanjiran',
-          value: state.selokanMampet,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(selokanMampet: val),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFD97706).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.cleaning_services_rounded,
+                  color: Color(0xFFD97706),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Sampah',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFD97706),
+                ),
+              ),
+            ],
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah Bapak/Ibu melihat jalan, lampu jalan, selokan, atau fasilitas umum yang rusak?',
-          value: state.fasilitasRusak,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(fasilitasRusak: val),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 16),
+
+          _buildYesNoQuestion(
+            questionNumber: 1,
+            question:
+                'Apakah pada area tugas patroli anda hari ini ditemukan sampah menumpuk?',
+            value: state.adaSampahMenumpuk,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaSampahMenumpuk: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada kegiatan warga atau usaha yang membuat lingkungan kotor atau mengganggu warga sekitar',
-          value: state.kegiatanMengganggu,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(kegiatanMengganggu: val),
+          if (state.adaSampahMenumpuk) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildTimePickerInput(
+                  label: 'Waktu Kejadian',
+                  value: state.waktuSampahMenumpuk,
+                  hintText: 'pilih waktu',
+                  onTimeSelected: (timeStr) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(waktuSampahMenumpuk: timeStr),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Lokasi Kejadian',
+                  value: state.lokasiSampahMenumpuk,
+                  hintText: 'pilih lokasi',
+                  items: const [
+                    'Jalan',
+                    'Fasum',
+                    'Pasar',
+                    'Permukiman',
+                    'Selokan',
+                  ],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiSampahMenumpuk: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Jenis Sampah Dominan',
+                  value: state.jenisSampahDominan,
+                  hintText: 'pilih jenis',
+                  items: const ['Organik', 'Anorganik'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(jenisSampahDominan: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 2,
+            question:
+                'Apakah pengangkutan sampah dilingkungan anda sesuai jadwal yang ditentukan?',
+            value: state.pengangkutanSesuaiJadwal,
+            isNegativeCondition: false,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(pengangkutanSesuaiJadwal: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah Bapak/Ibu melihat sesuatu yang bisa membahayakan warga, seperti pohon hampir tumbang, kabel menjuntai, lubang jalan, atau bangunan rusak?',
-          value: state.potensiBahaya,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(potensiBahaya: val),
+          if (!state.pengangkutanSesuaiJadwal) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildDropdownInput(
+                  label: 'Alasan',
+                  value: state.alasanPengangkutan,
+                  hintText: 'pilih alasan',
+                  items: const [
+                    'Terlambat dari jadwal',
+                    'Tidak Diangkut sama sekali',
+                  ],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(alasanPengangkutan: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 3,
+            question:
+                'Apakah ditemukan aktivitas pembakaran sampah di area patroli?',
+            value: state.adaPembakaranSampah,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaPembakaranSampah: val),
+              );
+            },
           ),
-        ),
-      ],
+          if (state.adaPembakaranSampah) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildTimePickerInput(
+                  label: 'Waktu Kejadian',
+                  value: state.waktuPembakaran,
+                  hintText: 'pilih waktu',
+                  onTimeSelected: (timeStr) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(waktuPembakaran: timeStr),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Lokasi Kejadian',
+                  value: state.lokasiPembakaran,
+                  hintText: 'pilih lokasi',
+                  items: const ['Jalanan', 'Fasum', 'Permukiman'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiPembakaran: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Apakah sudah diberikan tindakan',
+                  value: state.pembakaranDiberiTindakan,
+                  hintText: 'pilih tindakan',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(pembakaranDiberiTindakan: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 
   Widget _buildKeamananStep(RondaState state) {
-    return _buildSectionCard(
-      title: 'Keamanan',
-      icon: Icons.security_rounded,
-      accentColor: const Color(0xFF2B6CB0),
-      questions: [
-        _QuestionData(
-          question:
-              'Saat bertugas hari ini, apakah Bapak/Ibu melihat atau menerima laporan pencurian, perusakan, ancaman, atau kejadian keamanan lainnya?',
-          value: state.laporanKeamanan,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(laporanKeamanan: val),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        _QuestionData(
-          question:
-              'apakah hari ini ada warga yang bertengkar, ribut, atau berselisih sampai mengganggu warga sekitar?',
-          value: state.wargaBertengkar,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(wargaBertengkar: val),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2B6CB0).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.security_rounded,
+                  color: Color(0xFF2B6CB0),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Keamanan',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2B6CB0),
+                ),
+              ),
+            ],
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah Bapak/Ibu menemukan tempat yang gelap, sepi, atau kurang aman saat melakukan pemantauan?',
-          value: state.tempatKurangAman,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(tempatKurangAman: val),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 16),
+
+          _buildYesNoQuestion(
+            questionNumber: 1,
+            question:
+                'Apakah terjadi pencurian atau perampasan barang milik orang lain?',
+            value: state.adaPencurian,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaPencurian: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada kerumunan atau kegiatan warga yang membuat keadaan menjadi tidak tertib?',
-          value: state.kerumunanTidakTertib,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(kerumunanTidakTertib: val),
+          if (state.adaPencurian) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildTimePickerInput(
+                  label: 'Waktu Kejadian',
+                  value: state.waktuPencurian,
+                  hintText: 'pilih waktu',
+                  onTimeSelected: (timeStr) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(waktuPencurian: timeStr),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Lokasi Kejadian',
+                  value: state.lokasiPencurian,
+                  hintText: 'pilih lokasi',
+                  items: const ['Jalanan', 'Fasum', 'Permukiman'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiPencurian: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Pelaku Diketahui',
+                  value: state.pelakuPencurianDiketahui,
+                  hintText: 'pilih opsi',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(pelakuPencurianDiketahui: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Sudah Dilaporkan ke Aparat',
+                  value: state.pencurianDilaporkanAparat,
+                  hintText: 'pilih opsi',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(pencurianDilaporkanAparat: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 2,
+            question:
+                'Apakah terjadi perkelahian kelompok / tawuran di lingkungan anda?',
+            value: state.adaTawuran,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaTawuran: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah hari ini ada kejadian yang membuat Bapak/Ibu perlu meminta bantuan petugas lain, kelurahan/desa, Satpol PP, atau Polisi?',
-          value: state.perluBantuanPetugas,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(perluBantuanPetugas: val),
+          if (state.adaTawuran) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildTimePickerInput(
+                  label: 'Waktu Kejadian',
+                  value: state.waktuTawuran,
+                  hintText: 'pilih waktu',
+                  onTimeSelected: (timeStr) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(waktuTawuran: timeStr),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Lokasi Kejadian',
+                  value: state.lokasiTawuran,
+                  hintText: 'pilih lokasi',
+                  items: const ['Jalanan', 'Fasum', 'Permukiman'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiTawuran: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Pelaku Diketahui',
+                  value: state.pelakuTawuranDiketahui,
+                  hintText: 'pilih opsi',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(pelakuTawuranDiketahui: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Sudah Dilaporkan ke Aparat',
+                  value: state.tawuranDilaporkanAparat,
+                  hintText: 'pilih opsi',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(tawuranDilaporkanAparat: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 3,
+            question:
+                'Apakah terdapat penyalahgunaan narkoba di lingkungan anda?',
+            value: state.adaNarkoba,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaNarkoba: val),
+              );
+            },
           ),
-        ),
-      ],
+          if (state.adaNarkoba) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildDropdownInput(
+                  label: 'Sudah Dilaporkan ke Aparat',
+                  value: state.narkobaDilaporkanAparat,
+                  hintText: 'pilih opsi',
+                  items: const ['Ya', 'Tidak'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(narkobaDilaporkanAparat: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSosialStep(RondaState state) {
-    return _buildSectionCard(
-      title: 'Sosial',
-      icon: Icons.people_alt_rounded,
-      accentColor: const Color(0xFF6B46C1),
-      questions: [
-        _QuestionData(
-          question:
-              'Saat bertugas hari ini, apakah Bapak/Ibu menemukan warga yang terlihat membutuhkan bantuan?',
-          value: state.wargaButuhBantuan,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(wargaButuhBantuan: val),
+  Widget _buildLingkunganStep(RondaState state) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.grey200),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada warga atau kelompok warga yang bertengkar atau berselisih hari ini?',
-          value: state.kelompokBerselisih,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(kelompokBerselisih: val),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2F855A).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.eco_rounded,
+                  color: Color(0xFF2F855A),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Lingkungan',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2F855A),
+                ),
+              ),
+            ],
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada warga yang menyampaikan keluhan atau meminta bantuan kepada Bapak/Ibu hari ini?',
-          value: state.keluhanWarga,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(keluhanWarga: val),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 16),
+
+          _buildYesNoQuestion(
+            questionNumber: 1,
+            question: 'Apakah terdapat selokan tersumbat di lingkungan anda?',
+            value: state.adaSelokanTersumbat,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaSelokanTersumbat: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada kegiatan atau kejadian yang membuat warga sekitar merasa terganggu?',
-          value: state.kejadianMenggangguWarga,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(kejadianMenggangguWarga: val),
+          if (state.adaSelokanTersumbat) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildTimePickerInput(
+                  label: 'Waktu Kejadian',
+                  value: state.waktuSelokanTersumbat,
+                  hintText: 'pilih waktu',
+                  onTimeSelected: (timeStr) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(waktuSelokanTersumbat: timeStr),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Lokasi Kejadian',
+                  value: state.lokasiSelokanTersumbat,
+                  hintText: 'pilih lokasi',
+                  items: const ['Jalanan', 'Fasum', 'Permukiman'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiSelokanTersumbat: val),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Resiko yang Terjadi',
+                  value: state.resikoSelokanTersumbat,
+                  hintText: 'pilih resiko',
+                  items: const ['Banjir', 'Sarang Nyamuk', 'Bau Tidak Sedap'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(resikoSelokanTersumbat: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 2,
+            question: 'Apakah Terdapat Jalan rusak di lingkungan anda?',
+            value: state.adaJalanRusak,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaJalanRusak: val),
+              );
+            },
           ),
-        ),
-        _QuestionData(
-          question:
-              'Apakah ada masalah warga yang menurut Bapak/Ibu perlu diteruskan ke RT/RW, desa/kelurahan, atau petugas lain?',
-          value: state.perluTerusanRTRW,
-          onChanged: (val) => context.read<RondaBloc>().add(
-            UpdateRondaFieldEvent(perluTerusanRTRW: val),
+          if (state.adaJalanRusak) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildGpsInput(
+                  label: 'Lokasi Kejadian (GPS)',
+                  value: state.lokasiJalanRusakGps,
+                  hintText: 'pilih lokasi gps',
+                  onGpsSelected: (gpsCoords) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiJalanRusakGps: gpsCoords),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Resiko yang Terjadi',
+                  value: state.resikoJalanRusak,
+                  hintText: 'pilih resiko',
+                  items: const ['Kecelakaan', 'Macet', 'Berlubang'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(resikoJalanRusak: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 20),
+          const Divider(height: 1, color: AppColors.grey200),
+          const SizedBox(height: 20),
+
+          _buildYesNoQuestion(
+            questionNumber: 3,
+            question:
+                'Apakah terdapat lampu jalan yang tidak menyala di lingkungan anda?',
+            value: state.adaLampuMati,
+            isNegativeCondition: true,
+            onChanged: (val) {
+              context.read<RondaBloc>().add(
+                UpdateRondaFieldEvent(adaLampuMati: val),
+              );
+            },
           ),
-        ),
-      ],
+          if (state.adaLampuMati) ...[
+            const SizedBox(height: 12),
+            _buildNestedContainer(
+              children: [
+                _buildGpsInput(
+                  label: 'Lokasi Kejadian (GPS)',
+                  value: state.lokasiLampuMatiGps,
+                  hintText: 'pilih lokasi gps',
+                  onGpsSelected: (gpsCoords) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(lokasiLampuMatiGps: gpsCoords),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                _buildDropdownInput(
+                  label: 'Resiko yang Terjadi',
+                  value: state.resikoLampuMati,
+                  hintText: 'pilih resiko',
+                  items: const ['Kecelakaan', 'Macet', 'Kriminal'],
+                  onChanged: (val) {
+                    context.read<RondaBloc>().add(
+                      UpdateRondaFieldEvent(resikoLampuMati: val),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -701,8 +1163,7 @@ class _RondaScreenState extends State<RondaScreen> {
                   color: AppColors.textPrimary,
                 ),
                 decoration: InputDecoration(
-                  hintText:
-                      'Tuliskan keterangan detail atau temuan unik di sini...',
+                  hintText: 'tulis keterangan...',
                   hintStyle: const TextStyle(
                     fontSize: 12,
                     color: AppColors.grey500,
@@ -904,33 +1365,20 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildSummaryCard(RondaState state) {
-    int countNeedAttention(List<int> values) {
-      return values.where((v) => v > 1).length;
-    }
+    int sampahAlerts = 0;
+    if (state.adaSampahMenumpuk) sampahAlerts++;
+    if (!state.pengangkutanSesuaiJadwal) sampahAlerts++;
+    if (state.adaPembakaranSampah) sampahAlerts++;
 
-    final lingkunganAlerts = countNeedAttention([
-      state.sampahMenumpuk,
-      state.selokanMampet,
-      state.fasilitasRusak,
-      state.kegiatanMengganggu,
-      state.potensiBahaya,
-    ]);
+    int keamananAlerts = 0;
+    if (state.adaPencurian) keamananAlerts++;
+    if (state.adaTawuran) keamananAlerts++;
+    if (state.adaNarkoba) keamananAlerts++;
 
-    final keamananAlerts = countNeedAttention([
-      state.laporanKeamanan,
-      state.wargaBertengkar,
-      state.tempatKurangAman,
-      state.kerumunanTidakTertib,
-      state.perluBantuanPetugas,
-    ]);
-
-    final sosialAlerts = countNeedAttention([
-      state.wargaButuhBantuan,
-      state.kelompokBerselisih,
-      state.keluhanWarga,
-      state.kejadianMenggangguWarga,
-      state.perluTerusanRTRW,
-    ]);
+    int lingkunganAlerts = 0;
+    if (state.adaSelokanTersumbat) lingkunganAlerts++;
+    if (state.adaJalanRusak) lingkunganAlerts++;
+    if (state.adaLampuMati) lingkunganAlerts++;
 
     return Container(
       width: double.infinity,
@@ -960,9 +1408,9 @@ class _RondaScreenState extends State<RondaScreen> {
           ),
           const SizedBox(height: 10),
           _buildSummaryRow(
-            'Lingkungan',
-            '$lingkunganAlerts temuan terindikasi',
-            lingkunganAlerts > 0 ? Colors.orange : Colors.green,
+            'Sampah',
+            '$sampahAlerts temuan terindikasi',
+            sampahAlerts > 0 ? Colors.orange : Colors.green,
           ),
           const SizedBox(height: 6),
           _buildSummaryRow(
@@ -972,9 +1420,9 @@ class _RondaScreenState extends State<RondaScreen> {
           ),
           const SizedBox(height: 6),
           _buildSummaryRow(
-            'Sosial',
-            '$sosialAlerts temuan terindikasi',
-            sosialAlerts > 0 ? Colors.orange : Colors.green,
+            'Lingkungan',
+            '$lingkunganAlerts temuan terindikasi',
+            lingkunganAlerts > 0 ? Colors.orange : Colors.green,
           ),
         ],
       ),
@@ -1008,143 +1456,407 @@ class _RondaScreenState extends State<RondaScreen> {
     );
   }
 
-  Widget _buildSectionCard({
-    required String title,
-    required IconData icon,
-    required Color accentColor,
-    required List<_QuestionData> questions,
+  Widget _buildYesNoQuestion({
+    required int questionNumber,
+    required String question,
+    required bool value,
+    required bool isNegativeCondition,
+    required ValueChanged<bool> onChanged,
   }) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: accentColor, size: 20),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(6),
               ),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
+              child: Text(
+                '$questionNumber',
+                style: const TextStyle(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: accentColor,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                question,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                  height: 1.35,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildChoiceTile(
+                label: 'Ya',
+                isSelected: value == true,
+                selectedColor: isNegativeCondition
+                    ? Colors.orange
+                    : Colors.green,
+                onTap: () => onChanged(true),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildChoiceTile(
+                label: 'Tidak',
+                isSelected: value == false,
+                selectedColor: isNegativeCondition
+                    ? Colors.green
+                    : Colors.orange,
+                onTap: () => onChanged(false),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChoiceTile({
+    required String label,
+    required bool isSelected,
+    required Color selectedColor,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? selectedColor.withValues(alpha: 0.12)
+                : AppColors.grey100,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? selectedColor : AppColors.grey300,
+              width: isSelected ? 1.8 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked_rounded,
+                size: 18,
+                color: isSelected ? selectedColor : AppColors.grey500,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? selectedColor : AppColors.textSecondary,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey200),
-          const SizedBox(height: 14),
-          ...questions.map((q) => _buildScaleQuestionTile(q)),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildScaleQuestionTile(_QuestionData data) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20.0),
+  Widget _buildNestedContainer({required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.grey100.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.5),
+          width: 1,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            data.question,
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildGpsInput({
+    required String label,
+    required String? value,
+    required Function(String) onGpsSelected,
+    String? hintText,
+  }) {
+    final effectiveHint = hintText ?? 'pilih lokasi gps';
+    final bool hasValue = value != null && value.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: label,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
-              height: 1.35,
             ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          RadioGroup<int>(
-            groupValue: data.value,
-            onChanged: (val) {
-              if (val != null) {
-                data.onChanged(val);
-              }
-            },
-            child: Column(
-              children: _kScaleOptions.map((opt) {
-                final isSelected = data.value == opt.value;
-
-                return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () => data.onChanged(opt.value),
-                    borderRadius: BorderRadius.circular(10),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 4.0,
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Radio<int>(
-                              value: opt.value,
-                              activeColor: AppColors.primary,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            width: 14,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              color: opt.color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              opt.label,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: isSelected
-                                    ? AppColors.textPrimary
-                                    : AppColors.textSecondary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+        ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: () async {
+            final selectedLocation = await LocationPickerPage.show(
+              context,
+              initialAddress: hasValue ? value : null,
+            );
+            if (selectedLocation != null && selectedLocation.isNotEmpty) {
+              onGpsSelected(selectedLocation);
+            }
+          },
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: 42,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.grey300),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    hasValue ? value : effectiveHint,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: hasValue
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                      color: hasValue
+                          ? AppColors.textPrimary
+                          : AppColors.grey500,
                     ),
                   ),
-                );
-              }).toList(),
+                ),
+                const Icon(
+                  Icons.map_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimePickerInput({
+    required String label,
+    required String? value,
+    required Function(String) onTimeSelected,
+    String? hintText,
+  }) {
+    final effectiveHint = hintText ?? 'pilih waktu';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: () async {
+            final now = TimeOfDay.now();
+            final picked = await showTimePicker(
+              context: context,
+              initialTime: now,
+            );
+            if (picked != null) {
+              final formatted =
+                  '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+              onTimeSelected(formatted);
+            }
+          },
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: 42,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.grey300),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  value != null && value.isNotEmpty ? value : effectiveHint,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: value != null && value.isNotEmpty
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                    color: value != null && value.isNotEmpty
+                        ? AppColors.textPrimary
+                        : AppColors.grey500,
+                  ),
+                ),
+                const Icon(
+                  Icons.access_time_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownInput({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+    String? hintText,
+  }) {
+    final effectiveHint = hintText ?? 'pilih ${label.toLowerCase()}';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+            children: const [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        DropdownButtonFormField<String>(
+          initialValue: items.contains(value) ? value : null,
+          hint: Text(
+            effectiveHint,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+              color: AppColors.grey500,
+            ),
+          ),
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            hintText: effectiveHint,
+            hintStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+              color: AppColors.grey500,
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.grey300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.grey300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: AppColors.primary,
+                width: 1.5,
+              ),
+            ),
+          ),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            size: 20,
+            color: AppColors.primary,
+          ),
+          items: items.map((item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 
@@ -1207,11 +1919,9 @@ class _RondaScreenState extends State<RondaScreen> {
                       ? null
                       : () {
                           if (isFinalStep) {
-                            context.read<RondaBloc>().add(
-                              SubmitRondaLaporanEvent(),
-                            );
+                            _onSubmitPressed(context, state);
                           } else {
-                            context.read<RondaBloc>().add(NextRondaStepEvent());
+                            _onNextPressed(context, state, currentStep);
                           }
                         },
                   style: ElevatedButton.styleFrom(
@@ -1248,6 +1958,202 @@ class _RondaScreenState extends State<RondaScreen> {
     );
   }
 
+  String? _validateStep(RondaState state, int step) {
+    if (step == 0) {
+      if (state.adaSampahMenumpuk) {
+        if (state.waktuSampahMenumpuk == null ||
+            state.waktuSampahMenumpuk!.trim().isEmpty) {
+          return 'Waktu kejadian sampah menumpuk wajib diisi';
+        }
+        if (state.lokasiSampahMenumpuk == null ||
+            state.lokasiSampahMenumpuk!.trim().isEmpty) {
+          return 'Lokasi kejadian sampah menumpuk wajib dipilih';
+        }
+        if (state.jenisSampahDominan == null ||
+            state.jenisSampahDominan!.trim().isEmpty) {
+          return 'Jenis sampah dominan wajib dipilih';
+        }
+      }
+      if (!state.pengangkutanSesuaiJadwal) {
+        if (state.alasanPengangkutan == null ||
+            state.alasanPengangkutan!.trim().isEmpty) {
+          return 'Alasan pengangkutan sampah tidak sesuai jadwal wajib dipilih';
+        }
+      }
+      if (state.adaPembakaranSampah) {
+        if (state.waktuPembakaran == null ||
+            state.waktuPembakaran!.trim().isEmpty) {
+          return 'Waktu kejadian pembakaran sampah wajib diisi';
+        }
+        if (state.lokasiPembakaran == null ||
+            state.lokasiPembakaran!.trim().isEmpty) {
+          return 'Lokasi kejadian pembakaran sampah wajib dipilih';
+        }
+        if (state.pembakaranDiberiTindakan == null ||
+            state.pembakaranDiberiTindakan!.trim().isEmpty) {
+          return 'Status tindakan pembakaran sampah wajib dipilih';
+        }
+      }
+    } else if (step == 1) {
+      if (state.adaPencurian) {
+        if (state.waktuPencurian == null ||
+            state.waktuPencurian!.trim().isEmpty) {
+          return 'Waktu kejadian pencurian/perampasan wajib diisi';
+        }
+        if (state.lokasiPencurian == null ||
+            state.lokasiPencurian!.trim().isEmpty) {
+          return 'Lokasi kejadian pencurian/perampasan wajib dipilih';
+        }
+        if (state.pelakuPencurianDiketahui == null ||
+            state.pelakuPencurianDiketahui!.trim().isEmpty) {
+          return 'Status pelaku diketahui pada pencurian/perampasan wajib dipilih';
+        }
+        if (state.pencurianDilaporkanAparat == null ||
+            state.pencurianDilaporkanAparat!.trim().isEmpty) {
+          return 'Status lapor ke aparat pada pencurian/perampasan wajib dipilih';
+        }
+      }
+      if (state.adaTawuran) {
+        if (state.waktuTawuran == null || state.waktuTawuran!.trim().isEmpty) {
+          return 'Waktu kejadian perkelahian/tawuran wajib diisi';
+        }
+        if (state.lokasiTawuran == null ||
+            state.lokasiTawuran!.trim().isEmpty) {
+          return 'Lokasi kejadian perkelahian/tawuran wajib dipilih';
+        }
+        if (state.pelakuTawuranDiketahui == null ||
+            state.pelakuTawuranDiketahui!.trim().isEmpty) {
+          return 'Status pelaku diketahui pada perkelahian/tawuran wajib dipilih';
+        }
+        if (state.tawuranDilaporkanAparat == null ||
+            state.tawuranDilaporkanAparat!.trim().isEmpty) {
+          return 'Status lapor ke aparat pada perkelahian/tawuran wajib dipilih';
+        }
+      }
+      if (state.adaNarkoba) {
+        if (state.narkobaDilaporkanAparat == null ||
+            state.narkobaDilaporkanAparat!.trim().isEmpty) {
+          return 'Status lapor ke aparat pada penyalahgunaan narkoba wajib dipilih';
+        }
+      }
+    } else if (step == 2) {
+      if (state.adaSelokanTersumbat) {
+        if (state.waktuSelokanTersumbat == null ||
+            state.waktuSelokanTersumbat!.trim().isEmpty) {
+          return 'Waktu kejadian selokan tersumbat wajib diisi';
+        }
+        if (state.lokasiSelokanTersumbat == null ||
+            state.lokasiSelokanTersumbat!.trim().isEmpty) {
+          return 'Lokasi kejadian selokan tersumbat wajib dipilih';
+        }
+        if (state.resikoSelokanTersumbat == null ||
+            state.resikoSelokanTersumbat!.trim().isEmpty) {
+          return 'Resiko yang terjadi pada selokan tersumbat wajib dipilih';
+        }
+      }
+      if (state.adaJalanRusak) {
+        if (state.lokasiJalanRusakGps == null ||
+            state.lokasiJalanRusakGps!.trim().isEmpty) {
+          return 'Lokasi GPS jalan rusak wajib ditentukan';
+        }
+        if (state.resikoJalanRusak == null ||
+            state.resikoJalanRusak!.trim().isEmpty) {
+          return 'Resiko yang terjadi pada jalan rusak wajib dipilih';
+        }
+      }
+      if (state.adaLampuMati) {
+        if (state.lokasiLampuMatiGps == null ||
+            state.lokasiLampuMatiGps!.trim().isEmpty) {
+          return 'Lokasi GPS lampu jalan mati wajib ditentukan';
+        }
+        if (state.resikoLampuMati == null ||
+            state.resikoLampuMati!.trim().isEmpty) {
+          return 'Resiko yang terjadi pada lampu jalan mati wajib dipilih';
+        }
+      }
+    }
+    return null;
+  }
+
+  void _onNextPressed(BuildContext context, RondaState state, int currentStep) {
+    final error = _validateStep(state, currentStep);
+    if (error != null) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  error,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: const EdgeInsets.all(12),
+        ),
+      );
+      return;
+    }
+    context.read<RondaBloc>().add(NextRondaStepEvent());
+  }
+
+  void _onSubmitPressed(BuildContext context, RondaState state) {
+    for (int step = 0; step < 3; step++) {
+      final error = _validateStep(state, step);
+      if (error != null) {
+        context.read<RondaBloc>().add(SetRondaStepEvent(step));
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    error,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: const EdgeInsets.all(12),
+          ),
+        );
+        return;
+      }
+    }
+    context.read<RondaBloc>().add(SubmitRondaLaporanEvent());
+  }
+
   void _showSuccessDialog(BuildContext context, RondaState state) {
     final result = state.lastResult;
 
@@ -1275,7 +2181,7 @@ class _RondaScreenState extends State<RondaScreen> {
               ),
               const SizedBox(height: 14),
               const Text(
-                'Laporan Ronda Berhasil Terkirim!',
+                'Laphar Berhasil Terkirim!',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -1289,7 +2195,7 @@ class _RondaScreenState extends State<RondaScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Laporan ronda malam Anda telah tersimpan dengan ID ${result?.id ?? '-'}. Terima kasih atas partisipasi siaga lingkungan.',
+                'Laporan harian (Laphar) Anda telah tersimpan dengan ID ${result?.id ?? '-'}. Terima kasih atas partisipasi siaga lingkungan.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 12,
@@ -1327,16 +2233,4 @@ class _RondaScreenState extends State<RondaScreen> {
       },
     );
   }
-}
-
-class _QuestionData {
-  final String question;
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  _QuestionData({
-    required this.question,
-    required this.value,
-    required this.onChanged,
-  });
 }

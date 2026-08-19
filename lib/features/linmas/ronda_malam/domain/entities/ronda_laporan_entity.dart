@@ -32,6 +32,44 @@ class RondaLaporanEntity extends Equatable {
   final int kasusPerzinahan;
   final int orangTerlantar;
 
+  // Detail Sampah
+  final bool adaSampahMenumpuk;
+  final String? waktuSampahMenumpuk;
+  final String? lokasiSampahMenumpuk;
+  final String? jenisSampahDominan;
+  final bool pengangkutanSesuaiJadwal;
+  final String? alasanPengangkutan;
+  final bool adaPembakaranSampah;
+  final String? waktuPembakaran;
+  final String? lokasiPembakaran;
+  final String? pembakaranDiberiTindakan;
+
+  // Detail Keamanan
+  final bool adaPencurian;
+  final String? waktuPencurian;
+  final String? lokasiPencurian;
+  final String? pelakuPencurianDiketahui;
+  final String? pencurianDilaporkanAparat;
+  final bool adaTawuran;
+  final String? waktuTawuran;
+  final String? lokasiTawuran;
+  final String? pelakuTawuranDiketahui;
+  final String? tawuranDilaporkanAparat;
+  final bool adaNarkoba;
+  final String? narkobaDilaporkanAparat;
+
+  // Detail Lingkungan
+  final bool adaSelokanTersumbat;
+  final String? waktuSelokanTersumbat;
+  final String? lokasiSelokanTersumbat;
+  final String? resikoSelokanTersumbat;
+  final bool adaJalanRusak;
+  final String? lokasiJalanRusakGps;
+  final String? resikoJalanRusak;
+  final bool adaLampuMati;
+  final String? lokasiLampuMatiGps;
+  final String? resikoLampuMati;
+
   final String keterangan;
   final DateTime? timestamp;
 
@@ -60,6 +98,38 @@ class RondaLaporanEntity extends Equatable {
     this.permasalahanSosial = 1,
     this.kasusPerzinahan = 1,
     this.orangTerlantar = 1,
+    this.adaSampahMenumpuk = false,
+    this.waktuSampahMenumpuk,
+    this.lokasiSampahMenumpuk,
+    this.jenisSampahDominan,
+    this.pengangkutanSesuaiJadwal = true,
+    this.alasanPengangkutan,
+    this.adaPembakaranSampah = false,
+    this.waktuPembakaran,
+    this.lokasiPembakaran,
+    this.pembakaranDiberiTindakan,
+    this.adaPencurian = false,
+    this.waktuPencurian,
+    this.lokasiPencurian,
+    this.pelakuPencurianDiketahui,
+    this.pencurianDilaporkanAparat,
+    this.adaTawuran = false,
+    this.waktuTawuran,
+    this.lokasiTawuran,
+    this.pelakuTawuranDiketahui,
+    this.tawuranDilaporkanAparat,
+    this.adaNarkoba = false,
+    this.narkobaDilaporkanAparat,
+    this.adaSelokanTersumbat = false,
+    this.waktuSelokanTersumbat,
+    this.lokasiSelokanTersumbat,
+    this.resikoSelokanTersumbat,
+    this.adaJalanRusak = false,
+    this.lokasiJalanRusakGps,
+    this.resikoJalanRusak,
+    this.adaLampuMati = false,
+    this.lokasiLampuMatiGps,
+    this.resikoLampuMati,
     this.keterangan = '',
     this.timestamp,
   });
@@ -90,6 +160,38 @@ class RondaLaporanEntity extends Equatable {
     permasalahanSosial,
     kasusPerzinahan,
     orangTerlantar,
+    adaSampahMenumpuk,
+    waktuSampahMenumpuk,
+    lokasiSampahMenumpuk,
+    jenisSampahDominan,
+    pengangkutanSesuaiJadwal,
+    alasanPengangkutan,
+    adaPembakaranSampah,
+    waktuPembakaran,
+    lokasiPembakaran,
+    pembakaranDiberiTindakan,
+    adaPencurian,
+    waktuPencurian,
+    lokasiPencurian,
+    pelakuPencurianDiketahui,
+    pencurianDilaporkanAparat,
+    adaTawuran,
+    waktuTawuran,
+    lokasiTawuran,
+    pelakuTawuranDiketahui,
+    tawuranDilaporkanAparat,
+    adaNarkoba,
+    narkobaDilaporkanAparat,
+    adaSelokanTersumbat,
+    waktuSelokanTersumbat,
+    lokasiSelokanTersumbat,
+    resikoSelokanTersumbat,
+    adaJalanRusak,
+    lokasiJalanRusakGps,
+    resikoJalanRusak,
+    adaLampuMati,
+    lokasiLampuMatiGps,
+    resikoLampuMati,
     keterangan,
     timestamp,
   ];

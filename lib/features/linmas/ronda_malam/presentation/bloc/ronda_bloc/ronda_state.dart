@@ -35,6 +35,44 @@ class RondaState extends Equatable {
   final int kasusPerzinahan;
   final int orangTerlantar;
 
+  // Step 1 Sampah Detailed Fields
+  final bool adaSampahMenumpuk;
+  final String? waktuSampahMenumpuk;
+  final String? lokasiSampahMenumpuk;
+  final String? jenisSampahDominan;
+  final bool pengangkutanSesuaiJadwal;
+  final String? alasanPengangkutan;
+  final bool adaPembakaranSampah;
+  final String? waktuPembakaran;
+  final String? lokasiPembakaran;
+  final String? pembakaranDiberiTindakan;
+
+  // Step 2 Keamanan Detailed Fields
+  final bool adaPencurian;
+  final String? waktuPencurian;
+  final String? lokasiPencurian;
+  final String? pelakuPencurianDiketahui;
+  final String? pencurianDilaporkanAparat;
+  final bool adaTawuran;
+  final String? waktuTawuran;
+  final String? lokasiTawuran;
+  final String? pelakuTawuranDiketahui;
+  final String? tawuranDilaporkanAparat;
+  final bool adaNarkoba;
+  final String? narkobaDilaporkanAparat;
+
+  // Step 3 Lingkungan Detailed Fields
+  final bool adaSelokanTersumbat;
+  final String? waktuSelokanTersumbat;
+  final String? lokasiSelokanTersumbat;
+  final String? resikoSelokanTersumbat;
+  final bool adaJalanRusak;
+  final String? lokasiJalanRusakGps;
+  final String? resikoJalanRusak;
+  final bool adaLampuMati;
+  final String? lokasiLampuMatiGps;
+  final String? resikoLampuMati;
+
   // Step 4: Tambahan
   final String keterangan;
   final String? errorMessage;
@@ -66,6 +104,38 @@ class RondaState extends Equatable {
     this.permasalahanSosial = 1,
     this.kasusPerzinahan = 1,
     this.orangTerlantar = 1,
+    this.adaSampahMenumpuk = false,
+    this.waktuSampahMenumpuk,
+    this.lokasiSampahMenumpuk,
+    this.jenisSampahDominan,
+    this.pengangkutanSesuaiJadwal = true,
+    this.alasanPengangkutan,
+    this.adaPembakaranSampah = false,
+    this.waktuPembakaran,
+    this.lokasiPembakaran,
+    this.pembakaranDiberiTindakan,
+    this.adaPencurian = false,
+    this.waktuPencurian,
+    this.lokasiPencurian,
+    this.pelakuPencurianDiketahui,
+    this.pencurianDilaporkanAparat,
+    this.adaTawuran = false,
+    this.waktuTawuran,
+    this.lokasiTawuran,
+    this.pelakuTawuranDiketahui,
+    this.tawuranDilaporkanAparat,
+    this.adaNarkoba = false,
+    this.narkobaDilaporkanAparat,
+    this.adaSelokanTersumbat = false,
+    this.waktuSelokanTersumbat,
+    this.lokasiSelokanTersumbat,
+    this.resikoSelokanTersumbat,
+    this.adaJalanRusak = false,
+    this.lokasiJalanRusakGps,
+    this.resikoJalanRusak,
+    this.adaLampuMati = false,
+    this.lokasiLampuMatiGps,
+    this.resikoLampuMati,
     this.keterangan = '',
     this.errorMessage,
     this.lastResult,
@@ -97,6 +167,38 @@ class RondaState extends Equatable {
     int? permasalahanSosial,
     int? kasusPerzinahan,
     int? orangTerlantar,
+    bool? adaSampahMenumpuk,
+    String? waktuSampahMenumpuk,
+    String? lokasiSampahMenumpuk,
+    String? jenisSampahDominan,
+    bool? pengangkutanSesuaiJadwal,
+    String? alasanPengangkutan,
+    bool? adaPembakaranSampah,
+    String? waktuPembakaran,
+    String? lokasiPembakaran,
+    String? pembakaranDiberiTindakan,
+    bool? adaPencurian,
+    String? waktuPencurian,
+    String? lokasiPencurian,
+    String? pelakuPencurianDiketahui,
+    String? pencurianDilaporkanAparat,
+    bool? adaTawuran,
+    String? waktuTawuran,
+    String? lokasiTawuran,
+    String? pelakuTawuranDiketahui,
+    String? tawuranDilaporkanAparat,
+    bool? adaNarkoba,
+    String? narkobaDilaporkanAparat,
+    bool? adaSelokanTersumbat,
+    String? waktuSelokanTersumbat,
+    String? lokasiSelokanTersumbat,
+    String? resikoSelokanTersumbat,
+    bool? adaJalanRusak,
+    String? lokasiJalanRusakGps,
+    String? resikoJalanRusak,
+    bool? adaLampuMati,
+    String? lokasiLampuMatiGps,
+    String? resikoLampuMati,
     String? keterangan,
     String? errorMessage,
     RondaLaporanEntity? lastResult,
@@ -129,6 +231,48 @@ class RondaState extends Equatable {
       permasalahanSosial: permasalahanSosial ?? this.permasalahanSosial,
       kasusPerzinahan: kasusPerzinahan ?? this.kasusPerzinahan,
       orangTerlantar: orangTerlantar ?? this.orangTerlantar,
+      adaSampahMenumpuk: adaSampahMenumpuk ?? this.adaSampahMenumpuk,
+      waktuSampahMenumpuk: waktuSampahMenumpuk ?? this.waktuSampahMenumpuk,
+      lokasiSampahMenumpuk: lokasiSampahMenumpuk ?? this.lokasiSampahMenumpuk,
+      jenisSampahDominan: jenisSampahDominan ?? this.jenisSampahDominan,
+      pengangkutanSesuaiJadwal:
+          pengangkutanSesuaiJadwal ?? this.pengangkutanSesuaiJadwal,
+      alasanPengangkutan: alasanPengangkutan ?? this.alasanPengangkutan,
+      adaPembakaranSampah: adaPembakaranSampah ?? this.adaPembakaranSampah,
+      waktuPembakaran: waktuPembakaran ?? this.waktuPembakaran,
+      lokasiPembakaran: lokasiPembakaran ?? this.lokasiPembakaran,
+      pembakaranDiberiTindakan:
+          pembakaranDiberiTindakan ?? this.pembakaranDiberiTindakan,
+      adaPencurian: adaPencurian ?? this.adaPencurian,
+      waktuPencurian: waktuPencurian ?? this.waktuPencurian,
+      lokasiPencurian: lokasiPencurian ?? this.lokasiPencurian,
+      pelakuPencurianDiketahui:
+          pelakuPencurianDiketahui ?? this.pelakuPencurianDiketahui,
+      pencurianDilaporkanAparat:
+          pencurianDilaporkanAparat ?? this.pencurianDilaporkanAparat,
+      adaTawuran: adaTawuran ?? this.adaTawuran,
+      waktuTawuran: waktuTawuran ?? this.waktuTawuran,
+      lokasiTawuran: lokasiTawuran ?? this.lokasiTawuran,
+      pelakuTawuranDiketahui:
+          pelakuTawuranDiketahui ?? this.pelakuTawuranDiketahui,
+      tawuranDilaporkanAparat:
+          tawuranDilaporkanAparat ?? this.tawuranDilaporkanAparat,
+      adaNarkoba: adaNarkoba ?? this.adaNarkoba,
+      narkobaDilaporkanAparat:
+          narkobaDilaporkanAparat ?? this.narkobaDilaporkanAparat,
+      adaSelokanTersumbat: adaSelokanTersumbat ?? this.adaSelokanTersumbat,
+      waktuSelokanTersumbat:
+          waktuSelokanTersumbat ?? this.waktuSelokanTersumbat,
+      lokasiSelokanTersumbat:
+          lokasiSelokanTersumbat ?? this.lokasiSelokanTersumbat,
+      resikoSelokanTersumbat:
+          resikoSelokanTersumbat ?? this.resikoSelokanTersumbat,
+      adaJalanRusak: adaJalanRusak ?? this.adaJalanRusak,
+      lokasiJalanRusakGps: lokasiJalanRusakGps ?? this.lokasiJalanRusakGps,
+      resikoJalanRusak: resikoJalanRusak ?? this.resikoJalanRusak,
+      adaLampuMati: adaLampuMati ?? this.adaLampuMati,
+      lokasiLampuMatiGps: lokasiLampuMatiGps ?? this.lokasiLampuMatiGps,
+      resikoLampuMati: resikoLampuMati ?? this.resikoLampuMati,
       keterangan: keterangan ?? this.keterangan,
       errorMessage: errorMessage,
       lastResult: lastResult ?? this.lastResult,
@@ -162,6 +306,38 @@ class RondaState extends Equatable {
     permasalahanSosial,
     kasusPerzinahan,
     orangTerlantar,
+    adaSampahMenumpuk,
+    waktuSampahMenumpuk,
+    lokasiSampahMenumpuk,
+    jenisSampahDominan,
+    pengangkutanSesuaiJadwal,
+    alasanPengangkutan,
+    adaPembakaranSampah,
+    waktuPembakaran,
+    lokasiPembakaran,
+    pembakaranDiberiTindakan,
+    adaPencurian,
+    waktuPencurian,
+    lokasiPencurian,
+    pelakuPencurianDiketahui,
+    pencurianDilaporkanAparat,
+    adaTawuran,
+    waktuTawuran,
+    lokasiTawuran,
+    pelakuTawuranDiketahui,
+    tawuranDilaporkanAparat,
+    adaNarkoba,
+    narkobaDilaporkanAparat,
+    adaSelokanTersumbat,
+    waktuSelokanTersumbat,
+    lokasiSelokanTersumbat,
+    resikoSelokanTersumbat,
+    adaJalanRusak,
+    lokasiJalanRusakGps,
+    resikoJalanRusak,
+    adaLampuMati,
+    lokasiLampuMatiGps,
+    resikoLampuMati,
     keterangan,
     errorMessage,
     lastResult,

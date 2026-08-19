@@ -113,7 +113,6 @@ class _PresensiScreenState extends State<PresensiScreen>
         if (state.status == PresensiStatus.success) {
           _showSuccessPresensiDialog(context, state);
         } else if (state.status == PresensiStatus.failure) {
-          // Resume camera preview if submit failed
           try {
             if (_cameraController != null &&
                 _cameraController!.value.isInitialized) {
@@ -330,7 +329,6 @@ class _PresensiScreenState extends State<PresensiScreen>
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 1. Presensi Title Banner (Automatic Presensi Masuk / Presensi Keluar)
                       Row(
                         children: [
                           Container(
@@ -360,7 +358,6 @@ class _PresensiScreenState extends State<PresensiScreen>
                       ),
                       const SizedBox(height: 14),
 
-                      // 2. Location Info Header Row with Refresh Button
                       Row(
                         children: [
                           Transform.rotate(
@@ -416,7 +413,6 @@ class _PresensiScreenState extends State<PresensiScreen>
                       ),
                       const SizedBox(height: 4),
 
-                      // Current Location Address Text
                       if (state.status == PresensiStatus.loadingLocation)
                         const Text(
                           'Mendeteksi Koordinat GPS & Lokasi...',
@@ -450,7 +446,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                               : () async {
                                   final presensiBloc = context
                                       .read<PresensiBloc>();
-                                  // Freeze camera preview frame immediately
+
                                   try {
                                     if (_cameraController != null &&
                                         _cameraController!
@@ -598,7 +594,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                       ),
                       icon: const Icon(Icons.assignment_outlined, size: 20),
                       label: const Text(
-                        'ISI LAPORAN RONDA MALAM',
+                        'ISI LAPHAR (LAPORAN HARIAN)',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,

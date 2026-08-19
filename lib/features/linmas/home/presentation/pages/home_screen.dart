@@ -475,9 +475,9 @@ class _HomeScreenState extends State<HomeScreen> {
         'onTap': () => context.pushNamed('presensi'),
       },
       {
-        'title': 'Ronda Malam',
-        'subtitle': 'Patroli & Siaga',
-        'icon': Icons.nights_stay_rounded,
+        'title': 'Laphar',
+        'subtitle': 'Laporan Harian',
+        'icon': Icons.assignment_rounded,
         'color': const Color(0xFF5B4DFF),
         'onTap': () => context.pushNamed('rondaMalam'),
       },

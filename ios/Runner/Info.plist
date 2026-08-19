@@ -84,7 +84,7 @@
 		<key>NSCameraUsageDescription</key>
 		<string>Aplikasi membutuhkan akses kamera untuk mengunggah foto laporan aktivitas AKAR.</string>
 		<key>NSMicrophoneUsageDescription</key>
-		<string>Aplikasi membutuhkan akses mikrofon untuk perekaman dikte suara laporan ronda malam.</string>
+		<string>Aplikasi membutuhkan akses mikrofon untuk perekaman dikte suara laporan harian (Laphar).</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Aplikasi membutuhkan akses galeri foto untuk memilih foto laporan AKAR.</string>
 		<key>BGTaskSchedulerPermittedIdentifiers</key>
