@@ -244,7 +244,7 @@ class _RondaScreenState extends State<RondaScreen> {
               ),
             ),
             title: const Text(
-              'Laphar (Laporan Harian)',
+              'Laporan Harian',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -326,7 +326,7 @@ class _RondaScreenState extends State<RondaScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Form Laphar (${currentStep + 1}/4)',
+                  'Form Laporan Harian (${currentStep + 1}/4)',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -374,7 +374,7 @@ class _RondaScreenState extends State<RondaScreen> {
         return 'Step 3 dari 4: Pemantauan kondisi fasilitas umum, saluran air & lingkungan sekitar.';
       case 3:
       default:
-        return 'Step 4 dari 4: Catatan temuan khusus & pengiriman laporan harian (Laphar).';
+        return 'Step 4 dari 4: Catatan temuan khusus & pengiriman laporan harian.';
     }
   }
 
@@ -2181,7 +2181,7 @@ class _RondaScreenState extends State<RondaScreen> {
               ),
               const SizedBox(height: 14),
               const Text(
-                'Laphar Berhasil Terkirim!',
+                'Laporan Harian Berhasil Terkirim!',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -2195,7 +2195,7 @@ class _RondaScreenState extends State<RondaScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Laporan harian (Laphar) Anda telah tersimpan dengan ID ${result?.id ?? '-'}. Terima kasih atas partisipasi siaga lingkungan.',
+                'Laporan harian Anda telah tersimpan dengan ID ${result?.id ?? '-'}. Terima kasih atas partisipasi siaga lingkungan.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 12,

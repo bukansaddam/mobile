@@ -534,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildMenuUtamaSection(BuildContext context) {
     final menuItems = [
       {
-        'title': 'Presensi',
+        'title': 'Perbarui Posisi',
         'subtitle': 'Swafoto & Lokasi',
         'icon': Icons.co_present_rounded,
         'color': AppColors.primary,
@@ -544,8 +544,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       },
       {
-        'title': 'Laphar',
-        'subtitle': 'Laporan Harian',
+        'title': 'Laporan Harian',
+        'subtitle': 'Catatan & Kegiatan',
         'icon': Icons.assignment_rounded,
         'color': const Color(0xFF5B4DFF),
         'onTap': () {
@@ -587,7 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 2.3,
+        childAspectRatio: 1.85,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
@@ -615,48 +615,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      item['icon'] as IconData,
-                      color: color,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          item['icon'] as IconData,
+                          color: color,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
                           item['title'] as String,
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          item['subtitle'] as String,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: AppColors.textSecondary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item['subtitle'] as String,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textSecondary,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

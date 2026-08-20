@@ -50,11 +50,11 @@ class PresensiState extends Equatable {
       hasCheckedIn ? PresensiType.keluar : PresensiType.masuk;
 
   String get presensiTypeTitle =>
-      hasCheckedIn ? 'Presensi Keluar' : 'Presensi Masuk';
+      hasCheckedIn ? 'Perbarui Posisi Keluar' : 'Perbarui Posisi Masuk';
 
   String get lastSubmittedTypeTitle => lastSubmittedType == PresensiType.keluar
-      ? 'Presensi Keluar'
-      : 'Presensi Masuk';
+      ? 'Perbarui Posisi Keluar'
+      : 'Perbarui Posisi Masuk';
 
   PresensiState copyWith({
     bool? hasCheckedIn,

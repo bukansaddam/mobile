@@ -215,8 +215,8 @@ class _MainScreenState extends State<MainScreen> {
                   const SizedBox(width: 48),
                   _buildNavItem(
                     index: 2,
-                    icon: Icons.flash_on_outlined,
-                    label: 'Aktivasi',
+                    icon: Icons.assignment_outlined,
+                    label: 'Penugasan',
                   ),
                   _buildNavItem(
                     index: 3,

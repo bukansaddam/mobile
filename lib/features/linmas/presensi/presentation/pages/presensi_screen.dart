@@ -158,7 +158,7 @@ class _PresensiScreenState extends State<PresensiScreen>
               ),
             ),
             title: const Text(
-              'Presensi Kehadiran',
+              'Perbarui Posisi',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -522,7 +522,7 @@ class _PresensiScreenState extends State<PresensiScreen>
               ),
               const SizedBox(height: 14),
               const Text(
-                'Presensi Berhasil Dicatat!',
+                'Posisi Berhasil Diperbarui!',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -536,7 +536,7 @@ class _PresensiScreenState extends State<PresensiScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Bukti presensi Anda telah tercatat dengan ID ${result?.id ?? '-'} pada sistem.',
+                'Bukti pembaharuan posisi Anda telah tercatat dengan ID ${result?.id ?? '-'} pada sistem.',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 12,
@@ -594,7 +594,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                       ),
                       icon: const Icon(Icons.assignment_outlined, size: 20),
                       label: const Text(
-                        'ISI LAPHAR (LAPORAN HARIAN)',
+                        'ISI LAPORAN HARIAN',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
