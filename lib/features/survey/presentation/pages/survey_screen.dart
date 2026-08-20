@@ -17,93 +17,53 @@ class SurveyScreen extends StatefulWidget {
 }
 
 class _SurveyScreenState extends State<SurveyScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _jumlahAslinmasController = TextEditingController();
-
-  bool? _isMemilahSampah;
-  String? _tujuanSampahOrganik;
-  bool? _hasBankSampah;
-  bool? _hasMesinPengolahOrganik;
-  bool? _hasAslinmas;
-  bool? _hasRonda;
+  final Map<String, dynamic> _answers = {};
+  final Map<String, TextEditingController> _textControllers = {};
 
   @override
-  void reassemble() {
-    super.reassemble();
-    _resetAnswers();
-  }
-
-  void _resetAnswers() {
-    setState(() {
-      _isMemilahSampah = null;
-      _tujuanSampahOrganik = null;
-      _hasBankSampah = null;
-      _hasMesinPengolahOrganik = null;
-      _hasAslinmas = null;
-      _hasRonda = null;
-      _jumlahAslinmasController.clear();
-    });
+  void initState() {
+    super.initState();
+    context.read<SurveyBloc>().add(const LoadDynamicMonthlyFormEvent());
   }
 
   @override
   void dispose() {
-    _jumlahAslinmasController.dispose();
+    for (final controller in _textControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_isMemilahSampah == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 1 (Memilah sampah)');
-      return;
-    }
-    if (_tujuanSampahOrganik == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 2 (Tujuan sampah organik)');
-      return;
-    }
-    if (_hasBankSampah == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 3 (Bank sampah)');
-      return;
-    }
-    if (_hasMesinPengolahOrganik == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 4 (Mesin pengolah organik)');
-      return;
-    }
-    if (_hasAslinmas == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 5 (Anggota ASLINMAS)');
-      return;
-    }
-    if (_hasAslinmas == true) {
-      if (_jumlahAslinmasController.text.trim().isEmpty) {
-        _showWarningSnackBar('Mohon isi jumlah anggota ASLINMAS di RT Anda');
-        return;
+  void _submitDynamicForm(MonthlySurveyFormEntity form) {
+    for (final q in form.questions) {
+      if (q.isRequired) {
+        final answer = _answers[q.id];
+        if (answer == null ||
+            (answer is String && answer.trim().isEmpty) ||
+            (answer is List && answer.isEmpty)) {
+          _showWarningSnackBar('Mohon jawab pertanyaan wajib: "${q.question}"');
+          return;
+        }
       }
     }
-    if (_hasRonda == null) {
-      _showWarningSnackBar('Mohon jawab pertanyaan 6 (Ronda malam)');
-      return;
-    }
 
-    final periodKey = SurveyEntity.getCurrentPeriodKey();
-    final periodLabel = SurveyEntity.getCurrentPeriodLabel();
-    final int? jumlahAnggota = _hasAslinmas == true
-        ? int.tryParse(_jumlahAslinmasController.text.trim())
-        : 0;
+    final responses = form.questions.map((q) {
+      return DynamicSurveyResponseItem(
+        questionId: q.id,
+        questionText: q.question,
+        answer: _answers[q.id],
+      );
+    }).toList();
 
-    final survey = SurveyEntity(
+    final survey = DynamicMonthlySurveyEntity(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      period: periodKey,
-      periodLabel: periodLabel,
-      isMemilahSampah: _isMemilahSampah!,
-      tujuanSampahOrganik: _tujuanSampahOrganik!,
-      hasBankSampah: _hasBankSampah!,
-      hasMesinPengolahOrganik: _hasMesinPengolahOrganik!,
-      hasAslinmas: _hasAslinmas!,
-      jumlahAnggotaAslinmas: jumlahAnggota,
-      hasRonda: _hasRonda!,
+      period: form.period,
+      periodLabel: form.periodLabel,
+      responses: responses,
       submittedAt: DateTime.now(),
     );
 
-    context.read<SurveyBloc>().add(SubmitSurveyEvent(survey));
+    context.read<SurveyBloc>().add(SubmitDynamicMonthlySurveyEvent(survey));
   }
 
   void _showWarningSnackBar(String message) {
@@ -123,10 +83,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
   }
 
+  TextEditingController _getTextController(String questionId) {
+    if (!_textControllers.containsKey(questionId)) {
+      _textControllers[questionId] = TextEditingController();
+    }
+    return _textControllers[questionId]!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final currentPeriodLabel = SurveyEntity.getCurrentPeriodLabel();
-
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -142,16 +107,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Survey Bulanan',
+          'Survey Bulanan Admin',
           style: AppTextStyles.titleMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
         ),
       ),
-      body: BlocListener<SurveyBloc, SurveyState>(
+      body: BlocConsumer<SurveyBloc, SurveyState>(
         listener: (context, state) {
-          if (state is SurveySuccessState) {
+          if (state is DynamicSurveySuccessState) {
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -164,9 +129,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   color: AppColors.success,
                   size: 54,
                 ),
-                title: const Text('Survey Berhasil Dikirim'),
+                title: const Text('Survey Bulanan Berhasil Dikirim'),
                 content: Text(
-                  'Terima kasih telah mengisi survey bulanan lingkungan & keamanan RT periode $currentPeriodLabel.',
+                  state.message,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.bodyMedium,
                 ),
@@ -193,312 +158,179 @@ class _SurveyScreenState extends State<SurveyScreen> {
             _showWarningSnackBar(state.errorMessage);
           }
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        builder: (context, state) {
+          if (state is SurveyLoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is DynamicFormLoadedState) {
+            final form = state.form;
+            final isSubmitted = state.isSubmitted;
+
+            return Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Banner Informasi Header
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.admin_panel_settings_rounded,
+                                color: AppColors.primary,
+                                size: 30,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${form.title} (${form.periodLabel})',
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      form.description,
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        if (isSubmitted) ...[
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFECFDF5),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.success),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.check_circle_outline_rounded,
+                                  color: AppColors.success,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    'Anda telah mengisi survey bulanan dinamis untuk periode ${form.periodLabel}.',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: AppColors.success,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        // Render Pertanyaan Dinamis
+                        ...form.questions.asMap().entries.map((entry) {
+                          final index = entry.key + 1;
+                          final question = entry.value;
+                          return _buildDynamicQuestionCard(
+                            number: index,
+                            question: question,
+                            isEnabled: !isSubmitted,
+                          );
+                        }),
+                        const SizedBox(height: 24),
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.info_outline_rounded,
-                        color: AppColors.primary,
-                        size: 28,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Periode $currentPeriodLabel',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDark,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'Survey ini diisi 1x setiap bulan untuk memantau pengelolaan sampah & keamanan di lingkungan RT Anda.',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-                const SizedBox(height: 20),
-
-                _buildQuestionCard(
-                  number: 1,
-                  question:
-                      'Apakah di lingkungan Anda sudah memilah sampah dengan baik?',
-                  child: Column(
-                    children: [
-                      _buildRadioOption<bool>(
-                        label: 'A. Sudah',
-                        value: true,
-                        groupValue: _isMemilahSampah,
-                        onChanged: (val) =>
-                            setState(() => _isMemilahSampah = val),
-                      ),
-                      _buildRadioOption<bool>(
-                        label: 'B. Belum',
-                        value: false,
-                        groupValue: _isMemilahSampah,
-                        onChanged: (val) =>
-                            setState(() => _isMemilahSampah = val),
-                      ),
-                    ],
-                  ),
-                ),
-
-                _buildQuestionCard(
-                  number: 2,
-                  question: 'Jika ada sampah organik, dibawa ke mana?',
-                  child: Column(
-                    children: [
-                      _buildRadioOption<String>(
-                        label: 'A. TPS',
-                        value: 'TPS',
-                        groupValue: _tujuanSampahOrganik,
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _tujuanSampahOrganik = val);
-                          }
-                        },
-                      ),
-                      _buildRadioOption<String>(
-                        label: 'B. TPA',
-                        value: 'TPA',
-                        groupValue: _tujuanSampahOrganik,
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _tujuanSampahOrganik = val);
-                          }
-                        },
-                      ),
-                      _buildRadioOption<String>(
-                        label: 'C. Di lokasi Sendiri',
-                        value: 'Di lokasi Sendiri',
-                        groupValue: _tujuanSampahOrganik,
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() => _tujuanSampahOrganik = val);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-
-                _buildQuestionCard(
-                  number: 3,
-                  question:
-                      'Apakah di wilayah Anda sudah memiliki bank sampah?',
-                  child: Column(
-                    children: [
-                      _buildRadioOption<bool>(
-                        label: 'A. Sudah',
-                        value: true,
-                        groupValue: _hasBankSampah,
-                        onChanged: (val) =>
-                            setState(() => _hasBankSampah = val),
-                      ),
-                      _buildRadioOption<bool>(
-                        label: 'B. Belum',
-                        value: false,
-                        groupValue: _hasBankSampah,
-                        onChanged: (val) =>
-                            setState(() => _hasBankSampah = val),
-                      ),
-                    ],
-                  ),
-                ),
-
-                _buildQuestionCard(
-                  number: 4,
-                  question:
-                      'Apakah di wilayah Anda sudah memiliki mesin pengolahan sampah organik?',
-                  child: Column(
-                    children: [
-                      _buildRadioOption<bool>(
-                        label: 'A. Sudah',
-                        value: true,
-                        groupValue: _hasMesinPengolahOrganik,
-                        onChanged: (val) =>
-                            setState(() => _hasMesinPengolahOrganik = val),
-                      ),
-                      _buildRadioOption<bool>(
-                        label: 'B. Belum',
-                        value: false,
-                        groupValue: _hasMesinPengolahOrganik,
-                        onChanged: (val) =>
-                            setState(() => _hasMesinPengolahOrganik = val),
-                      ),
-                    ],
-                  ),
-                ),
-
-                _buildQuestionCard(
-                  number: 5,
-                  question: 'Ada berapa anggota ASLINMAS di RT Anda?',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildRadioOption<bool>(
-                        label: 'A. Ada',
-                        value: true,
-                        groupValue: _hasAslinmas,
-                        onChanged: (val) => setState(() => _hasAslinmas = val),
-                      ),
-                      if (_hasAslinmas == true) ...[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 36,
-                            top: 4,
-                            bottom: 8,
-                          ),
-                          child: TextFormField(
-                            controller: _jumlahAslinmasController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            decoration: InputDecoration(
-                              labelText: 'Masukkan Jumlah Anggota ASLINMAS',
-                              hintText: 'Contoh: 5',
-                              prefixIcon: const Icon(
-                                Icons.people_outline_rounded,
-                              ),
-                              filled: true,
-                              fillColor: AppColors.grey50,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: AppColors.grey300,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: const BorderSide(
-                                  color: AppColors.primary,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                          ),
+                if (!isSubmitted)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, -4),
                         ),
                       ],
-                      _buildRadioOption<bool>(
-                        label: 'B. Tidak Ada',
-                        value: false,
-                        groupValue: _hasAslinmas,
-                        onChanged: (val) {
-                          setState(() {
-                            _hasAslinmas = val;
-                            _jumlahAslinmasController.clear();
-                          });
+                    ),
+                    child: SafeArea(
+                      child: BlocBuilder<SurveyBloc, SurveyState>(
+                        builder: (context, blocState) {
+                          final isSubmitting =
+                              blocState is SurveySubmittingState;
+
+                          return SizedBox(
+                            height: 48,
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: isSubmitting
+                                  ? null
+                                  : () => _submitDynamicForm(form),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: AppColors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                isSubmitting
+                                    ? 'Mengirim...'
+                                    : 'Kirim Survey Bulanan',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ),
+                          );
                         },
                       ),
-                    ],
+                    ),
                   ),
-                ),
-
-                _buildQuestionCard(
-                  number: 6,
-                  question: 'Apakah di lingkungan Anda masih ada ronda?',
-                  child: Column(
-                    children: [
-                      _buildRadioOption<bool>(
-                        label: 'A. Ada',
-                        value: true,
-                        groupValue: _hasRonda,
-                        onChanged: (val) => setState(() => _hasRonda = val),
-                      ),
-                      _buildRadioOption<bool>(
-                        label: 'B. Tidak',
-                        value: false,
-                        groupValue: _hasRonda,
-                        onChanged: (val) => setState(() => _hasRonda = val),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
               ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: BlocBuilder<SurveyBloc, SurveyState>(
-            builder: (context, state) {
-              final isSubmitting = state is SurveySubmittingState;
+            );
+          }
 
-              return SizedBox(
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: isSubmitting ? null : _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    isSubmitting ? 'Mengirim...' : 'Kirim Hasil Survey',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
+          return const Center(child: Text('Gagal memuat survey bulanan'));
+        },
       ),
     );
   }
 
-  Widget _buildQuestionCard({
+  Widget _buildDynamicQuestionCard({
     required int number,
-    required String question,
-    required Widget child,
+    required DynamicQuestionEntity question,
+    required bool isEnabled,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -539,12 +371,21 @@ class _SurveyScreenState extends State<SurveyScreen> {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  question,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    height: 1.3,
+                child: Text.rich(
+                  TextSpan(
+                    text: question.question,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      height: 1.3,
+                    ),
+                    children: [
+                      if (question.isRequired)
+                        const TextSpan(
+                          text: ' *',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -553,22 +394,154 @@ class _SurveyScreenState extends State<SurveyScreen> {
           const SizedBox(height: 12),
           const Divider(height: 1),
           const SizedBox(height: 8),
-          child,
+          _buildQuestionInputWidget(question, isEnabled),
         ],
       ),
     );
   }
 
-  Widget _buildRadioOption<T>({
+  Widget _buildQuestionInputWidget(
+    DynamicQuestionEntity question,
+    bool isEnabled,
+  ) {
+    switch (question.type) {
+      case DynamicQuestionType.singleChoice:
+        return Column(
+          children: question.options.map((opt) {
+            final isSelected = _answers[question.id] == opt;
+            return InkWell(
+              onTap: isEnabled
+                  ? () {
+                      setState(() {
+                        _answers[question.id] = opt;
+                      });
+                    }
+                  : null,
+              borderRadius: BorderRadius.circular(10),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.grey400,
+                          width: isSelected ? 6 : 2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        opt,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? AppColors.primaryDark
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        );
+
+      case DynamicQuestionType.booleanChoice:
+        return Column(
+          children: [
+            _buildRadioBooleanOption(
+              label: 'Ya',
+              value: true,
+              questionId: question.id,
+              isEnabled: isEnabled,
+            ),
+            _buildRadioBooleanOption(
+              label: 'Tidak',
+              value: false,
+              questionId: question.id,
+              isEnabled: isEnabled,
+            ),
+          ],
+        );
+
+      case DynamicQuestionType.numberInput:
+        final controller = _getTextController(question.id);
+        return TextFormField(
+          controller: controller,
+          enabled: isEnabled,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          onChanged: (val) {
+            _answers[question.id] = val;
+          },
+          decoration: InputDecoration(
+            hintText: 'Masukkan angka',
+            filled: true,
+            fillColor: AppColors.grey50,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.grey300),
+            ),
+          ),
+        );
+
+      case DynamicQuestionType.textInput:
+      default:
+        final controller = _getTextController(question.id);
+        return TextFormField(
+          controller: controller,
+          enabled: isEnabled,
+          maxLines: 3,
+          onChanged: (val) {
+            _answers[question.id] = val;
+          },
+          decoration: InputDecoration(
+            hintText: 'Tuliskan jawaban Anda...',
+            filled: true,
+            fillColor: AppColors.grey50,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.grey300),
+            ),
+          ),
+        );
+    }
+  }
+
+  Widget _buildRadioBooleanOption({
     required String label,
-    required T value,
-    required T? groupValue,
-    required ValueChanged<T?> onChanged,
+    required bool value,
+    required String questionId,
+    required bool isEnabled,
   }) {
-    final isSelected = value == groupValue;
+    final isSelected = _answers[questionId] == value;
 
     return InkWell(
-      onTap: () => onChanged(value),
+      onTap: isEnabled
+          ? () {
+              setState(() {
+                _answers[questionId] = value;
+              });
+            }
+          : null,
       borderRadius: BorderRadius.circular(10),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),

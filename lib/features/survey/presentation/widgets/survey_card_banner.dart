@@ -47,6 +47,11 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
           periodLabel = state.periodLabel;
           isSubmitted = state.isSubmitted;
           isDismissed = state.isDismissed;
+        } else if (state is DynamicFormLoadedState) {
+          periodLabel = state.form.periodLabel;
+          isSubmitted = state.isSubmitted;
+        } else if (state is DynamicSurveySuccessState) {
+          isSubmitted = true;
         }
 
         _isSubmitted = isSubmitted;
@@ -185,7 +190,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                       Text(
                         isSubmitted
                             ? 'Terima kasih atas partisipasi Anda dalam memantau lingkungan & keamanan RT.'
-                            : 'Isi 6 pertanyaan singkat seputar pemilahan sampah, bank sampah, dan keamanan RT.',
+                            : 'Isi pertanyaan survey bulanan berkala dari Admin untuk evaluasi lingkungan RT Anda.',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.white.withValues(alpha: 0.9),
                           height: 1.3,

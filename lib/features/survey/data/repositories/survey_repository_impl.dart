@@ -8,6 +8,38 @@ class SurveyRepositoryImpl implements SurveyRepository {
   SurveyRepositoryImpl({required this.localDatasource});
 
   @override
+  bool isInitialSurveyCompletedSync(int userId) {
+    return localDatasource.isInitialSurveyCompletedSync(userId);
+  }
+
+  @override
+  Future<void> saveInitialSurvey(int userId, InitialSurveyEntity survey) {
+    return localDatasource.saveInitialSurvey(userId, survey);
+  }
+
+  @override
+  Future<InitialSurveyEntity?> getInitialSurvey(int userId) {
+    return localDatasource.getInitialSurvey(userId);
+  }
+
+  @override
+  Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(String periodKey) {
+    return localDatasource.getActiveMonthlySurveyForm(periodKey);
+  }
+
+  @override
+  Future<void> submitDynamicMonthlySurvey(DynamicMonthlySurveyEntity survey) {
+    return localDatasource.saveDynamicMonthlySurvey(survey);
+  }
+
+  @override
+  Future<DynamicMonthlySurveyEntity?> getLatestDynamicSurveyForPeriod(
+    String periodKey,
+  ) {
+    return localDatasource.getLatestDynamicSurveyForPeriod(periodKey);
+  }
+
+  @override
   Future<List<SurveyEntity>> getAllSurveyHistory() {
     return localDatasource.getAllSurveyHistory();
   }

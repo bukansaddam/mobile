@@ -347,6 +347,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Pengujian Status Survey (Mode Eksklusif)',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
@@ -359,15 +368,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              'Status survey berhasil di-reset untuk pengujian.',
+                              'Seluruh status survey (Baseline & Bulanan) berhasil di-reset untuk pengujian.',
                             ),
                             behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 2),
+                            duration: Duration(seconds: 3),
                           ),
                         );
                       },
                       icon: const Icon(Icons.restart_alt_rounded),
-                      label: const Text('Reset Status Survey Bulanan (Pengujian)'),
+                      label: const Text(
+                        'Reset Status Survey (Baseline & Bulanan)',
+                      ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.error,
                         side: const BorderSide(color: AppColors.error),

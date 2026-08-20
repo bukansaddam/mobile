@@ -22,6 +22,8 @@ import 'package:akar/features/masyarakat/complaint/presentation/pages/create_com
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
 import 'package:akar/features/masyarakat/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/survey/presentation/pages/survey_screen.dart';
+import 'package:akar/features/survey/presentation/pages/initial_survey_screen.dart';
+import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,6 +51,7 @@ class AppRouter {
   static const String register = 'register';
   static const String main = 'main';
   static const String survey = 'survey';
+  static const String initialSurvey = 'initialSurvey';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -89,6 +92,7 @@ class AppRouter {
   static const String createComplaintPath = '/masyarakat/create-complaint';
   static const String myComplaintsPath = '/masyarakat/my-complaints';
   static const String surveyPath = '/survey';
+  static const String initialSurveyPath = '/initial-survey';
 
   static final GoRouter router = GoRouter(
     initialLocation: splashPath,
@@ -115,6 +119,20 @@ class AppRouter {
       }
 
       if (isLoggedIn) {
+        // Checking initial onboarding baseline survey for Linmas
+        if (!isMember && currentUser != null) {
+          final isInitialDone = sl<SurveyLocalDatasource>()
+              .isInitialSurveyCompletedSync(currentUser.id);
+          if (!isInitialDone) {
+            if (location != initialSurveyPath) {
+              return initialSurveyPath;
+            }
+            return null;
+          } else if (location == initialSurveyPath) {
+            return mainPath;
+          }
+        }
+
         final defaultHome = isMember ? masyarakatMainPath : mainPath;
 
         if (isAuthRoute || isSplash) {
@@ -134,6 +152,7 @@ class AppRouter {
           '/tambah-bank-sampah',
           '/activation-detail',
           '/survey',
+          '/initial-survey',
         ];
 
         if (isMember && linmasOnlyPrefixes.contains(location)) {
@@ -169,6 +188,11 @@ class AppRouter {
         path: surveyPath,
         name: survey,
         builder: (context, state) => const SurveyScreen(),
+      ),
+      GoRoute(
+        path: initialSurveyPath,
+        name: initialSurvey,
+        builder: (context, state) => const InitialSurveyScreen(),
       ),
 
       // ----------------- Linmas (Officer) -----------------

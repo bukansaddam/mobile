@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 import 'package:akar/features/survey/domain/usecases/get_monthly_survey_status_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/get_survey_history_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/submit_monthly_survey_usecase.dart';
@@ -17,9 +18,95 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   }) : super(SurveyInitialState()) {
     on<CheckSurveyStatusEvent>(_onCheckSurveyStatus);
     on<SubmitSurveyEvent>(_onSubmitSurvey);
+    on<SubmitInitialSurveyEvent>(_onSubmitInitialSurvey);
+    on<LoadDynamicMonthlyFormEvent>(_onLoadDynamicMonthlyForm);
+    on<SubmitDynamicMonthlySurveyEvent>(_onSubmitDynamicMonthlySurvey);
     on<LoadSurveyHistoryEvent>(_onLoadSurveyHistory);
     on<DismissSurveyCardEvent>(_onDismissSurveyCard);
     on<ResetSurveyStatusEvent>(_onResetSurveyStatus);
+  }
+
+  Future<void> _onSubmitInitialSurvey(
+    SubmitInitialSurveyEvent event,
+    Emitter<SurveyState> emit,
+  ) async {
+    emit(SurveySubmittingState());
+    try {
+      await getMonthlySurveyStatusUsecase.repository.saveInitialSurvey(
+        event.userId,
+        event.survey,
+      );
+      emit(
+        const InitialSurveySuccessState(
+          message: 'Survey Baseline Profil berhasil disimpan!',
+        ),
+      );
+    } catch (e) {
+      emit(
+        SurveyFailureState('Gagal menyimpan survey profil: ${e.toString()}'),
+      );
+    }
+  }
+
+  Future<void> _onLoadDynamicMonthlyForm(
+    LoadDynamicMonthlyFormEvent event,
+    Emitter<SurveyState> emit,
+  ) async {
+    emit(SurveyLoadingState());
+    try {
+      final periodKey = event.periodKey ?? SurveyEntity.getCurrentPeriodKey();
+      final repository = getMonthlySurveyStatusUsecase.repository;
+      final form = await repository.getActiveMonthlySurveyForm(periodKey);
+      final latestSubmitted = await repository.getLatestDynamicSurveyForPeriod(
+        periodKey,
+      );
+
+      emit(
+        DynamicFormLoadedState(
+          form: form,
+          isSubmitted: latestSubmitted != null,
+        ),
+      );
+    } catch (e) {
+      emit(
+        SurveyFailureState(
+          'Gagal memuat survey bulanan dinamis: ${e.toString()}',
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSubmitDynamicMonthlySurvey(
+    SubmitDynamicMonthlySurveyEvent event,
+    Emitter<SurveyState> emit,
+  ) async {
+    emit(SurveySubmittingState());
+    try {
+      final repository = getMonthlySurveyStatusUsecase.repository;
+      await repository.submitDynamicMonthlySurvey(event.survey);
+      emit(
+        const DynamicSurveySuccessState(
+          message: 'Terima kasih, survey bulanan berhasil dikirim!',
+        ),
+      );
+      final statusResult = await getMonthlySurveyStatusUsecase(
+        event.survey.period,
+      );
+      final history = await getSurveyHistoryUsecase();
+      emit(
+        SurveyStatusLoadedState(
+          periodKey: statusResult.periodKey,
+          periodLabel: statusResult.periodLabel,
+          isSubmitted: true,
+          isDismissed: statusResult.isDismissed,
+          history: history,
+        ),
+      );
+    } catch (e) {
+      emit(
+        SurveyFailureState('Gagal mengirim survey bulanan: ${e.toString()}'),
+      );
+    }
   }
 
   Future<void> _onCheckSurveyStatus(
@@ -28,9 +115,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   ) async {
     emit(SurveyLoadingState());
     try {
-      final statusResult = await getMonthlySurveyStatusUsecase(
-        event.periodKey,
-      );
+      final statusResult = await getMonthlySurveyStatusUsecase(event.periodKey);
       final history = await getSurveyHistoryUsecase();
       emit(
         SurveyStatusLoadedState(
@@ -109,9 +194,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     Emitter<SurveyState> emit,
   ) async {
     try {
-      final statusResult = await getMonthlySurveyStatusUsecase(
-        event.periodKey,
-      );
+      final statusResult = await getMonthlySurveyStatusUsecase(event.periodKey);
       await getMonthlySurveyStatusUsecase.repository
           .setSurveyDismissedForPeriod(statusResult.periodKey);
       final updatedStatus = await getMonthlySurveyStatusUsecase(

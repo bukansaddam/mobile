@@ -16,6 +16,25 @@ class SubmitSurveyEvent extends SurveyEvent {
   const SubmitSurveyEvent(this.survey);
 }
 
+class SubmitInitialSurveyEvent extends SurveyEvent {
+  final int userId;
+  final InitialSurveyEntity survey;
+
+  const SubmitInitialSurveyEvent({required this.userId, required this.survey});
+}
+
+class LoadDynamicMonthlyFormEvent extends SurveyEvent {
+  final String? periodKey;
+
+  const LoadDynamicMonthlyFormEvent({this.periodKey});
+}
+
+class SubmitDynamicMonthlySurveyEvent extends SurveyEvent {
+  final DynamicMonthlySurveyEntity survey;
+
+  const SubmitDynamicMonthlySurveyEvent(this.survey);
+}
+
 class LoadSurveyHistoryEvent extends SurveyEvent {
   const LoadSurveyHistoryEvent();
 }
