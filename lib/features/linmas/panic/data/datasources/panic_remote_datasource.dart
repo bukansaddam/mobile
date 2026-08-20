@@ -22,45 +22,73 @@ class PanicRemoteDatasourceImpl implements PanicRemoteDatasource {
     final baseLng = lng != 0.0 ? lng : 106.8456;
 
     final membersData = [
+      // Radius 500m (2 Anggota)
       {
         'id': 'member_1',
-        'name': 'Budi Santoso (Tim Tanggap 1)',
+        'name': 'Budi Santoso',
         'role': 'Petugas Respon Cepat',
         'latOffset': 0.0012,
-        'lngOffset': 0.0015,
+        'lngOffset': 0.0012,
         'phone': '081234567891',
       },
       {
         'id': 'member_2',
-        'name': 'Ahmad Hidayat (Tim Tanggap 2)',
+        'name': 'Ahmad Hidayat',
         'role': 'Koordinator Lapangan',
         'latOffset': -0.0018,
-        'lngOffset': 0.0012,
+        'lngOffset': 0.0015,
         'phone': '081298765432',
       },
+      // Radius 1km (+2 Anggota)
       {
         'id': 'member_3',
-        'name': 'Siti Rahma (Tim Medis)',
+        'name': 'Siti Rahma',
         'role': 'Petugas Pertolongan Pertama',
-        'latOffset': 0.0025,
-        'lngOffset': -0.0020,
+        'latOffset': 0.0055,
+        'lngOffset': -0.0050,
         'phone': '081311223344',
       },
       {
         'id': 'member_4',
-        'name': 'Rian Pratama (Patroli Teritorial)',
-        'role': 'Anggota Patroli',
-        'latOffset': -0.0028,
-        'lngOffset': -0.0026,
+        'name': 'Rian Pratama',
+        'role': 'Anggota Patroli Teritorial',
+        'latOffset': -0.0062,
+        'lngOffset': -0.0058,
         'phone': '081566778899',
       },
+      // Radius 3km (+2 Anggota)
       {
         'id': 'member_5',
-        'name': 'Dedi Kurniawan (Reaksi Cepat)',
-        'role': 'Petugas Lapangan',
-        'latOffset': 0.0008,
-        'lngOffset': -0.0032,
-        'phone': '081788990011',
+        'name': 'Eko Susilo',
+        'role': 'Tim Keamanan Sektor',
+        'latOffset': 0.0140,
+        'lngOffset': 0.0120,
+        'phone': '081899001122',
+      },
+      {
+        'id': 'member_6',
+        'name': 'Fajar Nugroho',
+        'role': 'Petugas Patroli Motor',
+        'latOffset': -0.0180,
+        'lngOffset': 0.0150,
+        'phone': '081900112233',
+      },
+      // Radius 5km (+2 Anggota)
+      {
+        'id': 'member_7',
+        'name': 'Hendra Wijaya',
+        'role': 'Petugas Sub-Sektor Polsek',
+        'latOffset': 0.0300,
+        'lngOffset': -0.0260,
+        'phone': '082111223344',
+      },
+      {
+        'id': 'member_8',
+        'name': 'Bambang Tri',
+        'role': 'Komandan Satgas Kabupaten',
+        'latOffset': -0.0330,
+        'lngOffset': -0.0290,
+        'phone': '082222334455',
       },
     ];
 
@@ -74,11 +102,15 @@ class PanicRemoteDatasourceImpl implements PanicRemoteDatasource {
         mLng,
       );
 
+      final distanceStr = distanceInMeters >= 1000
+          ? '${(distanceInMeters / 1000).toStringAsFixed(1)} km dari lokasi Anda'
+          : '${distanceInMeters.round()} m dari lokasi Anda';
+
       return NearbyMemberModel(
         id: data['id'] as String,
         name: data['name'] as String,
         role: data['role'] as String,
-        distanceText: '${distanceInMeters.round()} m dari lokasi Anda',
+        distanceText: distanceStr,
         latitude: mLat,
         longitude: mLng,
         phone: data['phone'] as String,
