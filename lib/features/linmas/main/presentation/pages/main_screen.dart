@@ -7,6 +7,9 @@ import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen
 import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
 import 'package:akar/features/linmas/profile/presentation/pages/profile_screen.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +25,16 @@ class _MainScreenState extends State<MainScreen> {
   int _currentTabIndex = 0;
   bool _hasUnreadNotification = true;
 
+  void _dismissSurveyIfSubmitted(BuildContext context) {
+    final surveyBloc = context.read<SurveyBloc>();
+    final state = surveyBloc.state;
+    if (state is SurveyStatusLoadedState &&
+        state.isSubmitted &&
+        !state.isDismissed) {
+      surveyBloc.add(const DismissSurveyCardEvent());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -34,7 +47,10 @@ class _MainScreenState extends State<MainScreen> {
             width: 60,
             height: 60,
             child: FloatingActionButton(
-              onPressed: () => context.pushNamed('panic'),
+              onPressed: () {
+                _dismissSurveyIfSubmitted(context);
+                context.pushNamed('panic');
+              },
               backgroundColor: AppColors.error,
               foregroundColor: AppColors.white,
               elevation: 6,
@@ -293,6 +309,7 @@ class _MainScreenState extends State<MainScreen> {
                       children: [
                         HomeScreen(
                           onNavigateToTab: (index) {
+                            _dismissSurveyIfSubmitted(context);
                             setState(() {
                               _currentTabIndex = index;
                             });
@@ -318,6 +335,9 @@ class _MainScreenState extends State<MainScreen> {
     final isSelected = _currentTabIndex == index;
     return InkWell(
       onTap: () {
+        if (_currentTabIndex == 0 && index != 0) {
+          _dismissSurveyIfSubmitted(context);
+        }
         setState(() {
           _currentTabIndex = index;
         });

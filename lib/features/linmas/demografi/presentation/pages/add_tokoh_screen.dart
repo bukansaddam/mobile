@@ -356,15 +356,17 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEBF3FE),
+                        color: AppColors.primaryLight,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: const Color(0xFFD6E4FB)),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.3),
+                        ),
                       ),
                       child: Row(
                         children: [
                           const Icon(
                             Icons.info_outline_rounded,
-                            color: Color(0xFF2F80ED),
+                            color: AppColors.primary,
                             size: 22,
                           ),
                           const SizedBox(width: 12),
@@ -372,7 +374,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             child: Text(
                               'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: const Color(0xFF1E5BB4),
+                                color: AppColors.primaryDark,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),

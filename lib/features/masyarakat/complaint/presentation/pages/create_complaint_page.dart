@@ -400,15 +400,18 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF6FF),
+                  color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFDBEAFE), width: 1),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
                 ),
                 child: const Row(
                   children: [
                     Icon(
                       Icons.info_outline_rounded,
-                      color: Color(0xFF2563EB),
+                      color: AppColors.primary,
                       size: 22,
                     ),
                     SizedBox(width: 10),
@@ -417,7 +420,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         'Isi formulir pengaduan dengan data yang jujur & jelas agar petugas dapat menindaklanjuti secara cepat.',
                         style: TextStyle(
                           fontSize: 12.5,
-                          color: Color(0xFF1E40AF),
+                          color: AppColors.primaryDark,
                           height: 1.35,
                         ),
                       ),

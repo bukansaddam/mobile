@@ -21,6 +21,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
 import 'package:akar/features/masyarakat/main/presentation/pages/main_screen.dart';
+import 'package:akar/features/survey/presentation/pages/survey_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -47,6 +48,7 @@ class AppRouter {
   static const String login = 'login';
   static const String register = 'register';
   static const String main = 'main';
+  static const String survey = 'survey';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -86,6 +88,7 @@ class AppRouter {
   static const String complaintDetailPath = '/masyarakat/complaint-detail';
   static const String createComplaintPath = '/masyarakat/create-complaint';
   static const String myComplaintsPath = '/masyarakat/my-complaints';
+  static const String surveyPath = '/survey';
 
   static final GoRouter router = GoRouter(
     initialLocation: splashPath,
@@ -130,6 +133,7 @@ class AppRouter {
           '/bank-sampah',
           '/tambah-bank-sampah',
           '/activation-detail',
+          '/survey',
         ];
 
         if (isMember && linmasOnlyPrefixes.contains(location)) {
@@ -160,6 +164,11 @@ class AppRouter {
         path: registerPath,
         name: register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: surveyPath,
+        name: survey,
+        builder: (context, state) => const SurveyScreen(),
       ),
 
       // ----------------- Linmas (Officer) -----------------

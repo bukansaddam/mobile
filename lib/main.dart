@@ -19,6 +19,7 @@ import 'package:akar/features/linmas/ronda_malam/presentation/bloc/ronda_bloc/ro
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<DemografiBloc>(create: (_) => di.sl<DemografiBloc>()),
         BlocProvider<BankSampahBloc>(create: (_) => di.sl<BankSampahBloc>()),
         BlocProvider<MainCubit>(create: (_) => di.sl<MainCubit>()),
+        BlocProvider<SurveyBloc>(create: (_) => di.sl<SurveyBloc>()),
       ],
       child: MaterialApp.router(
         title: AppConstants.appName,

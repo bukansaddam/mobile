@@ -7,6 +7,10 @@ import 'package:akar/features/linmas/home/presentation/widgets/ad_banner_slider.
 import 'package:akar/features/linmas/home/presentation/widgets/home_profile_card.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/home_summary_card.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
+import 'package:akar/features/survey/presentation/widgets/survey_card_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +28,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
+
+  void _dismissSurveyIfSubmitted(BuildContext context) {
+    final surveyBloc = context.read<SurveyBloc>();
+    final state = surveyBloc.state;
+    if (state is SurveyStatusLoadedState &&
+        state.isSubmitted &&
+        !state.isDismissed) {
+      surveyBloc.add(const DismissSurveyCardEvent());
+    }
+  }
 
   void _onLogoTap() {
     final now = DateTime.now();
@@ -333,6 +347,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        context.read<SurveyBloc>().add(
+                          const ResetSurveyStatusEvent(),
+                        );
+                        Navigator.pop(modalContext);
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Status survey berhasil di-reset untuk pengujian.',
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.restart_alt_rounded),
+                      label: const Text('Reset Status Survey Bulanan (Pengujian)'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                        side: const BorderSide(color: AppColors.error),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
                 ],
               ),
@@ -394,6 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                             isCompact: true,
                             onTap: () {
+                              _dismissSurveyIfSubmitted(context);
                               context.read<ActivationBloc>().add(
                                 const SetActivationStatusFilterEvent(null),
                               );
@@ -414,6 +460,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                             isCompact: true,
                             onTap: () {
+                              _dismissSurveyIfSubmitted(context);
                               context.read<ActivationBloc>().add(
                                 const SetActivationStatusFilterEvent(
                                   ActivationStatus.sedangBerjalan,
@@ -436,6 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                             isCompact: true,
                             onTap: () {
+                              _dismissSurveyIfSubmitted(context);
                               context.read<ActivationBloc>().add(
                                 const SetActivationStatusFilterEvent(
                                   ActivationStatus.selesai,
@@ -450,6 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   const SizedBox(height: 16),
+                  const SurveyCardBanner(),
                   _buildMenuUtamaSection(context),
 
                   const SizedBox(height: 16),
@@ -472,29 +521,48 @@ class _HomeScreenState extends State<HomeScreen> {
         'subtitle': 'Swafoto & Lokasi',
         'icon': Icons.co_present_rounded,
         'color': AppColors.primary,
-        'onTap': () => context.pushNamed('presensi'),
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('presensi');
+        },
       },
       {
         'title': 'Laphar',
         'subtitle': 'Laporan Harian',
         'icon': Icons.assignment_rounded,
         'color': const Color(0xFF5B4DFF),
-        'onTap': () => context.pushNamed('rondaMalam'),
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('rondaMalam');
+        },
       },
       {
         'title': 'Demografi',
         'subtitle': 'Tokoh Sekitar',
         'icon': Icons.badge_rounded,
         'color': const Color(0xFF0F9F66),
-        'onTap': () => context.pushNamed('demografi'),
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('demografi');
+        },
       },
       {
         'title': 'Bank Sampah',
         'subtitle': 'Laporan & Setor',
         'icon': Icons.recycling_rounded,
         'color': const Color(0xFF0284C7),
-        'onTap': () => context.pushNamed('bankSampah'),
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('bankSampah');
+        },
       },
+      // {
+      //   'title': 'Survey Bulanan',
+      //   'subtitle': 'Lingkungan & RT',
+      //   'icon': Icons.assignment_turned_in_rounded,
+      //   'color': AppColors.accent,
+      //   'onTap': () => context.pushNamed('survey'),
+      // },
     ];
 
     return GridView.builder(

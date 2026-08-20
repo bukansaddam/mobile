@@ -74,6 +74,15 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordi
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 
+// Survey
+import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
+import 'package:akar/features/survey/data/repositories/survey_repository_impl.dart';
+import 'package:akar/features/survey/domain/repositories/survey_repository.dart';
+import 'package:akar/features/survey/domain/usecases/get_monthly_survey_status_usecase.dart';
+import 'package:akar/features/survey/domain/usecases/get_survey_history_usecase.dart';
+import 'package:akar/features/survey/domain/usecases/submit_monthly_survey_usecase.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -261,6 +270,30 @@ Future<void> init() async {
       getAddressFromLatLngUseCase: sl<GetAddressFromLatLngUseCase>(),
       searchCoordinatesUseCase: sl<SearchCoordinatesUseCase>(),
       getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
+    ),
+  );
+
+  // ---------------------- Survey ----------------------
+  sl.registerLazySingleton<SurveyLocalDatasource>(
+    () => SurveyLocalDatasourceImpl(sharedPreferences: sl()),
+  );
+  sl.registerLazySingleton<SurveyRepository>(
+    () => SurveyRepositoryImpl(localDatasource: sl()),
+  );
+  sl.registerLazySingleton<GetMonthlySurveyStatusUsecase>(
+    () => GetMonthlySurveyStatusUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitMonthlySurveyUsecase>(
+    () => SubmitMonthlySurveyUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetSurveyHistoryUsecase>(
+    () => GetSurveyHistoryUsecase(sl()),
+  );
+  sl.registerLazySingleton<SurveyBloc>(
+    () => SurveyBloc(
+      getMonthlySurveyStatusUsecase: sl(),
+      submitMonthlySurveyUsecase: sl(),
+      getSurveyHistoryUsecase: sl(),
     ),
   );
 }
