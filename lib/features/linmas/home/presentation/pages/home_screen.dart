@@ -1,11 +1,10 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/ad_banner_slider.dart';
-import 'package:akar/features/linmas/home/presentation/widgets/home_profile_card.dart';
-import 'package:akar/features/linmas/home/presentation/widgets/home_summary_card.dart';
+import 'package:akar/features/linmas/home/presentation/widgets/bank_sampah_summary_card.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -407,15 +406,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return BlocBuilder<ActivationBloc, ActivationState>(
           builder: (context, activationState) {
-            final activities = activationState.activities;
+            // final activities = activationState.activities;
 
-            final totalTugasCount = activities.length;
-            final totalAgendaCount = activities
-                .where((act) => act.status == ActivationStatus.sedangBerjalan)
-                .length;
-            final totalLaporanCount = activities
-                .where((act) => act.status == ActivationStatus.selesai)
-                .length;
+            // final totalTugasCount = activities.length;
+            // final totalAgendaCount = activities
+            //     .where((act) => act.status == ActivationStatus.sedangBerjalan)
+            //     .length;
+            // final totalLaporanCount = activities
+            //     .where((act) => act.status == ActivationStatus.selesai)
+            //     .length;
 
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -426,88 +425,95 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: GestureDetector(
-                      onTap: _onLogoTap,
-                      child: HomeProfileCard(user: user),
-                    ),
+                  BlocBuilder<BankSampahBloc, BankSampahState>(
+                    builder: (context, bankState) {
+                      return BankSampahSummaryCard(
+                        user: user,
+                        totalBeratKg: bankState.totalBeratKg,
+                        totalNilaiRupiah: bankState.totalNilaiRupiah,
+                        onAvatarTap: _onLogoTap,
+                        onTap: () {
+                          _dismissSurveyIfSubmitted(context);
+                          context.pushNamed('bankSampah');
+                        },
+                      );
+                    },
                   ),
-                  const SizedBox(height: 16),
+                  // const SizedBox(height: 16),
 
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: HomeSummaryCard(
-                            title: 'Total Tugas',
-                            subtitle: 'Kegiatan aktif',
-                            count: '$totalTugasCount',
-                            icon: Icons.assignment_outlined,
-                            gradientColors: const [
-                              Color(0xFF0F9F66),
-                              Color(0xFF0A754B),
-                            ],
-                            isCompact: true,
-                            onTap: () {
-                              _dismissSurveyIfSubmitted(context);
-                              context.read<ActivationBloc>().add(
-                                const SetActivationStatusFilterEvent(null),
-                              );
-                              widget.onNavigateToTab?.call(2);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: HomeSummaryCard(
-                            title: 'Total Agenda',
-                            subtitle: 'Sedang berjalan',
-                            count: '$totalAgendaCount',
-                            icon: Icons.event_note_rounded,
-                            gradientColors: const [
-                              Color(0xFFD99B00),
-                              Color(0xFFB37B00),
-                            ],
-                            isCompact: true,
-                            onTap: () {
-                              _dismissSurveyIfSubmitted(context);
-                              context.read<ActivationBloc>().add(
-                                const SetActivationStatusFilterEvent(
-                                  ActivationStatus.sedangBerjalan,
-                                ),
-                              );
-                              widget.onNavigateToTab?.call(2);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: HomeSummaryCard(
-                            title: 'Total Laporan',
-                            subtitle: 'Telah selesai',
-                            count: '$totalLaporanCount',
-                            icon: Icons.insert_drive_file_outlined,
-                            gradientColors: const [
-                              Color(0xFF5CB836),
-                              Color(0xFF438A24),
-                            ],
-                            isCompact: true,
-                            onTap: () {
-                              _dismissSurveyIfSubmitted(context);
-                              context.read<ActivationBloc>().add(
-                                const SetActivationStatusFilterEvent(
-                                  ActivationStatus.selesai,
-                                ),
-                              );
-                              widget.onNavigateToTab?.call(2);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  // IntrinsicHeight(
+                  //   child: Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //     children: [
+                  //       Expanded(
+                  //         child: HomeSummaryCard(
+                  //           title: 'Total Tugas',
+                  //           subtitle: 'Kegiatan aktif',
+                  //           count: '$totalTugasCount',
+                  //           icon: Icons.assignment_outlined,
+                  //           gradientColors: const [
+                  //             Color(0xFF0F9F66),
+                  //             Color(0xFF0A754B),
+                  //           ],
+                  //           isCompact: true,
+                  //           onTap: () {
+                  //             _dismissSurveyIfSubmitted(context);
+                  //             context.read<ActivationBloc>().add(
+                  //               const SetActivationStatusFilterEvent(null),
+                  //             );
+                  //             widget.onNavigateToTab?.call(2);
+                  //           },
+                  //         ),
+                  //       ),
+                  //       const SizedBox(width: 8),
+                  //       Expanded(
+                  //         child: HomeSummaryCard(
+                  //           title: 'Total Agenda',
+                  //           subtitle: 'Sedang berjalan',
+                  //           count: '$totalAgendaCount',
+                  //           icon: Icons.event_note_rounded,
+                  //           gradientColors: const [
+                  //             Color(0xFFD99B00),
+                  //             Color(0xFFB37B00),
+                  //           ],
+                  //           isCompact: true,
+                  //           onTap: () {
+                  //             _dismissSurveyIfSubmitted(context);
+                  //             context.read<ActivationBloc>().add(
+                  //               const SetActivationStatusFilterEvent(
+                  //                 ActivationStatus.sedangBerjalan,
+                  //               ),
+                  //             );
+                  //             widget.onNavigateToTab?.call(2);
+                  //           },
+                  //         ),
+                  //       ),
+                  //       const SizedBox(width: 8),
+                  //       Expanded(
+                  //         child: HomeSummaryCard(
+                  //           title: 'Total Laporan',
+                  //           subtitle: 'Telah selesai',
+                  //           count: '$totalLaporanCount',
+                  //           icon: Icons.insert_drive_file_outlined,
+                  //           gradientColors: const [
+                  //             Color(0xFF5CB836),
+                  //             Color(0xFF438A24),
+                  //           ],
+                  //           isCompact: true,
+                  //           onTap: () {
+                  //             _dismissSurveyIfSubmitted(context);
+                  //             context.read<ActivationBloc>().add(
+                  //               const SetActivationStatusFilterEvent(
+                  //                 ActivationStatus.selesai,
+                  //               ),
+                  //             );
+                  //             widget.onNavigateToTab?.call(2);
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(height: 16),
                   const SurveyCardBanner(),
                   _buildMenuUtamaSection(context),

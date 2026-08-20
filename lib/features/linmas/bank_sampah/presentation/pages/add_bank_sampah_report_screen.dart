@@ -417,12 +417,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: _selectedLocation != null
-                                ? AppColors.primary
-                                : AppColors.grey300,
-                            width: _selectedLocation != null ? 1.5 : 1.0,
-                          ),
+                          border: Border.all(color: AppColors.grey300),
                         ),
                         child: Row(
                           children: [

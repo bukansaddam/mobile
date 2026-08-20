@@ -21,7 +21,7 @@ class _PanicScreenState extends State<PanicScreen> {
   int _tapCount = 0;
   Timer? _tapResetTimer;
   bool _isExpanded = false;
-  int _selectedRadius = 500;
+  final int _selectedRadius = 500;
   // final List<int> _radiusOptions = const [500, 1000, 3000, 5000];
 
   // void _updateRadius(int radius, double userLat, double userLng) {

@@ -1,3 +1,5 @@
+import 'package:akar/features/linmas/analisis/presentation/widgets/bank_sampah_analisis_card.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,6 +54,15 @@ class AnalisisScreen extends StatelessWidget {
 
                       CategoryDistributionChartCard(
                         categoryData: analisisState.categoryDistribution,
+                      ),
+                      const SizedBox(height: 20),
+
+                      BlocBuilder<BankSampahBloc, BankSampahState>(
+                        builder: (context, bankState) {
+                          return BankSampahAnalisisCard(
+                            reports: bankState.reports,
+                          );
+                        },
                       ),
                     ],
                   ),
