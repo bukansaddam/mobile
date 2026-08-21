@@ -435,6 +435,8 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _titleController,
+                onTapOutside: (event) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 style: const TextStyle(fontSize: 14, color: Color(0xFF0F172A)),
                 decoration: InputDecoration(
                   hintText: 'Contoh: Jalan Berlubang di Depan Sekolah',
@@ -481,6 +483,8 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _descriptionController,
+                onTapOutside: (event) =>
+                    FocusManager.instance.primaryFocus?.unfocus(),
                 maxLines: 4,
                 style: const TextStyle(fontSize: 14, color: Color(0xFF0F172A)),
                 decoration: InputDecoration(

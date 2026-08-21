@@ -604,6 +604,8 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _beratController,
+                      onTapOutside: (event) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -881,6 +883,8 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _catatanController,
+                      onTapOutside: (event) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText:

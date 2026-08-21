@@ -331,6 +331,10 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                           ),
                           child: TextField(
                             controller: _searchController,
+                            onTapOutside: (event) => FocusManager
+                                .instance
+                                .primaryFocus
+                                ?.unfocus(),
                             onChanged: (value) {
                               setState(() {
                                 _searchQuery = value.trim();

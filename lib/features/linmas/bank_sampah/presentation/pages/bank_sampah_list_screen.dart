@@ -121,6 +121,10 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                 ),
                                 child: TextField(
                                   controller: _searchController,
+                                  onTapOutside: (event) => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   onChanged: (val) {
                                     context.read<BankSampahBloc>().add(
                                       SetBankSampahSearchQueryEvent(val),

@@ -355,6 +355,10 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                             ),
                             child: TextFormField(
                               controller: _jumlahAslinmasController,
+                              onTapOutside: (event) => FocusManager
+                                  .instance
+                                  .primaryFocus
+                                  ?.unfocus(),
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,
@@ -429,46 +433,55 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
             ),
           ),
         ),
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.06),
-                blurRadius: 10,
-                offset: const Offset(0, -4),
-              ),
-            ],
+        bottomNavigationBar: AnimatedPadding(
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.decelerate,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: SafeArea(
-            child: BlocBuilder<SurveyBloc, SurveyState>(
-              builder: (context, state) {
-                final isSubmitting = state is SurveySubmittingState;
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.black.withValues(alpha: 0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              bottom: MediaQuery.of(context).viewInsets.bottom == 0,
+              child: BlocBuilder<SurveyBloc, SurveyState>(
+                builder: (context, state) {
+                  final isSubmitting = state is SurveySubmittingState;
 
-                return SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: isSubmitting ? null : _submitForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  return SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: isSubmitting ? null : _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      isSubmitting ? 'Simpan...' : 'Simpan Profil Baseline',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.white,
+                      child: Text(
+                        isSubmitting ? 'Simpan...' : 'Simpan Profil Baseline',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

@@ -113,6 +113,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: namaController,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           textCapitalization: TextCapitalization.words,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -160,6 +162,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: alamatController,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           maxLines: 2,
                           decoration: _buildInputDecoration(
                             hintText: 'Contoh: Jl. Merdeka No. 45 (Opsional)',
@@ -286,6 +290,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: namaController,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           textCapitalization: TextCapitalization.words,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -304,6 +310,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: jumlahAnggotaController,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
@@ -353,6 +361,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: alamatController,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           maxLines: 2,
                           decoration: _buildInputDecoration(
                             hintText: 'Contoh: Balai Warga RW 03 (Opsional)',

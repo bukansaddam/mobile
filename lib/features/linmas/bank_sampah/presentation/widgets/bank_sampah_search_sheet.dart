@@ -141,6 +141,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                     ),
                     child: TextField(
                       controller: _searchController,
+                      onTapOutside: (event) =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
                       onChanged: (val) {
                         setState(() {
                           _searchQuery = val.trim();
