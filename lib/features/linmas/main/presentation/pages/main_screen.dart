@@ -6,6 +6,7 @@ import 'package:akar/features/linmas/activation/presentation/pages/activation_sc
 import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen.dart';
 import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
+import 'package:akar/features/linmas/home/presentation/widgets/tracking_config_modal.dart';
 import 'package:akar/features/linmas/profile/presentation/pages/profile_screen.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -24,6 +25,49 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentTabIndex = 0;
   bool _hasUnreadNotification = true;
+  int _logoTapCount = 0;
+  DateTime? _lastLogoTapTime;
+
+  void _onLogoTap() {
+    final now = DateTime.now();
+    if (_lastLogoTapTime != null &&
+        now.difference(_lastLogoTapTime!).inSeconds > 3) {
+      _logoTapCount = 0;
+    }
+    _lastLogoTapTime = now;
+    _logoTapCount++;
+
+    if (_logoTapCount >= 10) {
+      _logoTapCount = 0;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.stars_rounded, color: AppColors.white),
+              SizedBox(width: 8),
+              Text('Mode Eksklusif: Membuka Pengaturan Tracking...'),
+            ],
+          ),
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      TrackingConfigModal.show(context);
+    } else if (_logoTapCount >= 3) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Mode Eksklusif: Tekan logo ASLINMAS $_logoTapCount/10 kali',
+          ),
+          duration: const Duration(milliseconds: 700),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   void _dismissSurveyIfSubmitted(BuildContext context) {
     final surveyBloc = context.read<SurveyBloc>();
@@ -67,66 +111,70 @@ class _MainScreenState extends State<MainScreen> {
             foregroundColor: AppColors.textPrimary,
             centerTitle: false,
             automaticallyImplyLeading: false,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.08),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+            title: GestureDetector(
+              onTap: _onLogoTap,
+              behavior: HitTestBehavior.opaque,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withValues(alpha: 0.08),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/logo.webp',
+                        width: 32,
+                        height: 32,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => const Icon(
+                          Icons.location_on_rounded,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        AppConstants.appName,
+                        style: AppTextStyles.headlineSmall.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          letterSpacing: 1.5,
+                          height: 1.1,
+                        ),
+                      ),
+                      Text(
+                        'ASLINMAS',
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          letterSpacing: 1.5,
+                          height: 1.1,
+                        ),
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'assets/logo.webp',
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.location_on_rounded,
-                        size: 20,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      AppConstants.appName,
-                      style: AppTextStyles.headlineSmall.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        letterSpacing: 1.5,
-                        height: 1.1,
-                      ),
-                    ),
-                    Text(
-                      'ASLINMAS',
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 10,
-                        letterSpacing: 1.5,
-                        height: 1.1,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
             actions: [
               Padding(

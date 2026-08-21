@@ -12,11 +12,14 @@ class BankSampahAnalisisCard extends StatefulWidget {
   const BankSampahAnalisisCard({super.key, required this.reports});
 
   @override
-  State<BankSampahAnalisisCard> createState() => _BankSampahAnalisisCardState();
+  State<BankSampahAnalisisCard> createState() =>
+      _BankSampahAnalisisCardState();
 }
 
 class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
   BankSampahTimeframe _selectedTimeframe = BankSampahTimeframe.mingguan;
+  DateTimeRange? _selectedWeekRange;
+  DateTime? _selectedMonth;
 
   String _formatBerat(double kg) {
     if (kg % 1 == 0) {
@@ -34,16 +37,207 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
     return formatter.format(rupiah);
   }
 
+  Future<void> _showMonthYearPicker() async {
+    final now = DateTime.now();
+    int tempYear = (_selectedMonth ?? now).year;
+    int tempMonth = (_selectedMonth ?? now).month;
+
+    final months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+
+    final result = await showDialog<DateTime>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left_rounded),
+                    onPressed: tempYear > 2020
+                        ? () {
+                            setDialogState(() {
+                              tempYear--;
+                            });
+                          }
+                        : null,
+                  ),
+                  Text(
+                    '$tempYear',
+                    style: AppTextStyles.titleMedium.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right_rounded),
+                    onPressed: tempYear < now.year + 5
+                        ? () {
+                            setDialogState(() {
+                              tempYear++;
+                            });
+                          }
+                        : null,
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: 280,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    childAspectRatio: 2.2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: 12,
+                  itemBuilder: (context, index) {
+                    final monthNumber = index + 1;
+                    final isSelected = (monthNumber == tempMonth &&
+                        tempYear == (_selectedMonth ?? now).year);
+                    final isFuture = (tempYear > now.year ||
+                        (tempYear == now.year && monthNumber > now.month));
+
+                    return InkWell(
+                      onTap: isFuture
+                          ? null
+                          : () {
+                              Navigator.pop(
+                                context,
+                                DateTime(tempYear, monthNumber),
+                              );
+                            },
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primary
+                              : (isFuture
+                                  ? AppColors.grey100
+                                  : AppColors.grey50),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.grey200,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          months[index],
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight:
+                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected
+                                ? Colors.white
+                                : (isFuture
+                                    ? AppColors.grey400
+                                    : AppColors.textPrimary),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('BATAL'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedMonth = result;
+        _selectedTimeframe = BankSampahTimeframe.bulanan;
+      });
+    }
+  }
+
+  Future<void> _selectWeekRange() async {
+    final now = DateTime.now();
+    final initialRange = _selectedWeekRange ??
+        DateTimeRange(
+          start: now.subtract(const Duration(days: 6)),
+          end: now,
+        );
+
+    final DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      initialDateRange: initialRange,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(now.year + 5),
+      helpText: 'Pilih Rentang Mingguan',
+      cancelText: 'BATAL',
+      confirmText: 'TERAPKAN',
+      saveText: 'SIMPAN',
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              surface: AppColors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedWeekRange = picked;
+        _selectedTimeframe = BankSampahTimeframe.mingguan;
+      });
+    }
+  }
+
   String _getTimeframeSubtitle(BankSampahTimeframe timeframe) {
     final now = DateTime.now();
     switch (timeframe) {
       case BankSampahTimeframe.mingguan:
+        if (_selectedWeekRange != null) {
+          final startStr =
+              DateFormat('d MMM', 'id_ID').format(_selectedWeekRange!.start);
+          final endStr =
+              DateFormat('d MMM yyyy', 'id_ID').format(_selectedWeekRange!.end);
+          return 'Periode: $startStr - $endStr';
+        }
         final sevenDaysAgo = now.subtract(const Duration(days: 6));
         final startStr = DateFormat('d MMM', 'id_ID').format(sevenDaysAgo);
         final endStr = DateFormat('d MMM yyyy', 'id_ID').format(now);
         return 'Periode: $startStr - $endStr';
       case BankSampahTimeframe.bulanan:
-        final monthStr = DateFormat('MMMM yyyy', 'id_ID').format(now);
+        final targetMonth = _selectedMonth ?? now;
+        final monthStr = DateFormat('MMMM yyyy', 'id_ID').format(targetMonth);
         return 'Periode: $monthStr';
       case BankSampahTimeframe.total:
         return 'Periode: Semua Waktu';
@@ -56,16 +250,44 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
     final now = DateTime.now();
     switch (timeframe) {
       case BankSampahTimeframe.mingguan:
-        final sevenDaysAgo = now.subtract(const Duration(days: 7));
+        if (_selectedWeekRange != null) {
+          final start = DateTime(
+            _selectedWeekRange!.start.year,
+            _selectedWeekRange!.start.month,
+            _selectedWeekRange!.start.day,
+          );
+          final end = DateTime(
+            _selectedWeekRange!.end.year,
+            _selectedWeekRange!.end.month,
+            _selectedWeekRange!.end.day,
+            23,
+            59,
+            59,
+          );
+          return widget.reports
+              .where(
+                (r) =>
+                    !r.createdAt.isBefore(start) &&
+                    !r.createdAt.isAfter(end),
+              )
+              .toList();
+        }
+        final sevenDaysAgo = DateTime(now.year, now.month, now.day)
+            .subtract(const Duration(days: 6));
         return widget.reports
-            .where((r) => r.createdAt.isAfter(sevenDaysAgo))
+            .where(
+              (r) => r.createdAt.isAfter(
+                sevenDaysAgo.subtract(const Duration(seconds: 1)),
+              ),
+            )
             .toList();
       case BankSampahTimeframe.bulanan:
+        final targetMonth = _selectedMonth ?? now;
         return widget.reports
             .where(
               (r) =>
-                  r.createdAt.year == now.year &&
-                  r.createdAt.month == now.month,
+                  r.createdAt.year == targetMonth.year &&
+                  r.createdAt.month == targetMonth.month,
             )
             .toList();
       case BankSampahTimeframe.total:
@@ -154,21 +376,67 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
 
           // Date / Period Range Text
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(
-                Icons.calendar_today_rounded,
-                size: 13,
-                color: AppColors.textSecondary,
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_today_rounded,
+                    size: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    _getTimeframeSubtitle(_selectedTimeframe),
+                    style: AppTextStyles.bodySmall.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 4),
-              Text(
-                _getTimeframeSubtitle(_selectedTimeframe),
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
+              if (_selectedTimeframe != BankSampahTimeframe.total)
+                InkWell(
+                  onTap: () {
+                    if (_selectedTimeframe == BankSampahTimeframe.bulanan) {
+                      _showMonthYearPicker();
+                    } else if (_selectedTimeframe ==
+                        BankSampahTimeframe.mingguan) {
+                      _selectWeekRange();
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(6),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Ubah',
+                          style: AppTextStyles.caption.copyWith(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(width: 3),
+                        const Icon(
+                          Icons.edit_calendar_rounded,
+                          size: 12,
+                          color: AppColors.primary,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
             ],
           ),
 
@@ -242,7 +510,8 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               label,
               style: AppTextStyles.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                color:
+                    isSelected ? AppColors.primary : AppColors.textSecondary,
                 fontSize: 12,
               ),
             ),

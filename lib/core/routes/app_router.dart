@@ -114,7 +114,11 @@ class AppRouter {
       final isSplash = location == splashPath;
       final isAuthRoute = location == loginPath || location == registerPath;
 
-      if (!isLoggedIn && !isAuthRoute && !isSplash) {
+      if (isSplash) {
+        return null;
+      }
+
+      if (!isLoggedIn && !isAuthRoute) {
         return loginPath;
       }
 
@@ -135,7 +139,7 @@ class AppRouter {
 
         final defaultHome = isMember ? masyarakatMainPath : mainPath;
 
-        if (isAuthRoute || isSplash) {
+        if (isAuthRoute) {
           return defaultHome;
         }
 

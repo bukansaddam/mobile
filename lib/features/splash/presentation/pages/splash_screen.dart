@@ -84,18 +84,30 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
-    final startTime = DateTime.now();
     final authBloc = context.read<AuthBloc>();
 
     // Trigger check auth
-    authBloc.add(CheckAuthStatusEvent());
+    if (authBloc.state is AuthInitial) {
+      authBloc.add(CheckAuthStatusEvent());
+    }
 
     // Pastikan splash setidaknya tampil 2.5 detik untuk animasi yang halus
-    final elapsedMs = DateTime.now().difference(startTime).inMilliseconds;
-    final remainingMs = 2500 - elapsedMs;
-    if (remainingMs > 0) {
-      await Future.delayed(Duration(milliseconds: remainingMs));
+    final minSplashDelay = Future.delayed(const Duration(milliseconds: 2500));
+
+    // Tunggu hingga pengecekan AuthBloc selesai
+    if (authBloc.state is AuthInitial || authBloc.state is AuthChecking) {
+      try {
+        await authBloc.stream
+            .firstWhere(
+              (state) => state is! AuthInitial && state is! AuthChecking,
+            )
+            .timeout(const Duration(seconds: 5));
+      } catch (_) {
+        // Fallback jika timeout
+      }
     }
+
+    await minSplashDelay;
 
     if (mounted) {
       final state = authBloc.state;
