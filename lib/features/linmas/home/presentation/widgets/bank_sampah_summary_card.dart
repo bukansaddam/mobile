@@ -73,171 +73,174 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.onTap,
-            borderRadius: BorderRadius.circular(24),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: widget.onAvatarTap,
-                        child: Container(
-                          width: 42,
-                          height: 42,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            border: Border.all(
-                              color: AppColors.primary.withValues(alpha: 0.2),
-                            ),
-                          ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/indonesian_headshot_portrait.jpg',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.person_rounded,
-                                  size: 24,
-                                  color: AppColors.primary,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: widget.onAvatarTap,
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.2),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: AppTextStyles.titleMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: AppColors.textPrimary,
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/indonesian_headshot_portrait.jpg',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            Icons.person_rounded,
+                            size: 24,
+                            color: AppColors.primary,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.phone_android_rounded,
+                            size: 13,
+                            color: AppColors.primary,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              phoneNumber,
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.primary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 2),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.phone_android_rounded,
-                                  size: 13,
-                                  color: AppColors.primary,
-                                ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: Text(
-                                    phoneNumber,
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      color: AppColors.primary,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                ),
+              ],
+            ),
 
-                  const SizedBox(height: 18),
+            const SizedBox(height: 18),
 
-                  Text(
-                    'Total Pendapatan Bank Sampah',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+            Text(
+              'Total Pendapatan Bank Sampah',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  _formatRupiah(widget.totalNilaiRupiah),
+                  style: AppTextStyles.headlineMedium.copyWith(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isBalanceHidden = !_isBalanceHidden;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      _isBalanceHidden
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      size: 20,
+                      color: AppColors.grey500,
                     ),
                   ),
+                ),
+              ],
+            ),
 
-                  const SizedBox(height: 4),
+            const SizedBox(height: 6),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        _formatRupiah(widget.totalNilaiRupiah),
-                        style: AppTextStyles.headlineMedium.copyWith(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isBalanceHidden = !_isBalanceHidden;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Icon(
-                            _isBalanceHidden
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            size: 20,
-                            color: AppColors.grey500,
-                          ),
-                        ),
-                      ),
-                    ],
+            Row(
+              children: [
+                const Icon(
+                  Icons.recycling_rounded,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Total Sampah Disetor: ',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
                   ),
-
-                  const SizedBox(height: 6),
-
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.recycling_rounded,
-                        size: 14,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Total Sampah Disetor: ',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      Text(
-                        _formatBerat(widget.totalBeratKg),
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryDark,
-                        ),
-                      ),
-                    ],
+                ),
+                Text(
+                  _formatBerat(widget.totalBeratKg),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryDark,
                   ),
+                ),
+              ],
+            ),
 
-                  const SizedBox(height: 16),
-                  const Divider(height: 1, color: AppColors.grey200),
-                  const SizedBox(height: 12),
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: AppColors.grey200),
+            const SizedBox(height: 8),
 
-                  Row(
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: widget.onTap,
+                borderRadius: BorderRadius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 6,
+                  ),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -255,10 +258,10 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
