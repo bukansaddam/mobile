@@ -363,7 +363,14 @@ class _MainScreenState extends State<MainScreen> {
                             });
                           },
                         ),
-                        const AnalisisScreen(),
+                        AnalisisScreen(
+                          onNavigateToTab: (index) {
+                            _dismissSurveyIfSubmitted(context);
+                            setState(() {
+                              _currentTabIndex = index;
+                            });
+                          },
+                        ),
                         const ActivationScreen(),
                         const ProfileScreen(),
                       ],

@@ -1,12 +1,14 @@
 part of 'analisis_bloc.dart';
 
 class CategoryData extends Equatable {
+  final ActivationCategory category;
   final String label;
   final int count;
   final double percentage;
   final Color color;
 
   const CategoryData({
+    required this.category,
     required this.label,
     required this.count,
     required this.percentage,
@@ -14,7 +16,7 @@ class CategoryData extends Equatable {
   });
 
   @override
-  List<Object?> get props => [label, count, percentage, color];
+  List<Object?> get props => [category, label, count, percentage, color];
 }
 
 class ActivityDeadlineItem extends Equatable {
@@ -71,6 +73,7 @@ class AnalisisState extends Equatable {
     if (total == 0) {
       return ActivationCategory.values.map((cat) {
         return CategoryData(
+          category: cat,
           label: cat.label,
           count: 0,
           percentage: 0,
@@ -83,6 +86,7 @@ class AnalisisState extends Equatable {
       final count = activities.where((act) => act.category == cat).length;
       final percentage = (count / total) * 100;
       return CategoryData(
+        category: cat,
         label: cat.label,
         count: count,
         percentage: double.parse(percentage.toStringAsFixed(1)),

@@ -10,7 +10,9 @@ import 'package:akar/features/linmas/analisis/presentation/widgets/analisis_metr
 import 'package:akar/features/linmas/analisis/presentation/widgets/category_distribution_chart.dart';
 
 class AnalisisScreen extends StatelessWidget {
-  const AnalisisScreen({super.key});
+  final ValueChanged<int>? onNavigateToTab;
+
+  const AnalisisScreen({super.key, this.onNavigateToTab});
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +51,23 @@ class AnalisisScreen extends StatelessWidget {
                         totalTasks: analisisState.totalTasks,
                         totalAgendas: analisisState.totalAgendas,
                         totalReports: analisisState.totalReports,
+                        onStatusCardTap: (status) {
+                          context.read<ActivationBloc>().add(
+                            SetActivationStatusFilterEvent(status),
+                          );
+                          onNavigateToTab?.call(2);
+                        },
                       ),
                       const SizedBox(height: 20),
 
                       CategoryDistributionChartCard(
                         categoryData: analisisState.categoryDistribution,
+                        onCategoryTap: (category) {
+                          context.read<ActivationBloc>().add(
+                            SetActivationCategoryFilterEvent(category),
+                          );
+                          onNavigateToTab?.call(2);
+                        },
                       ),
                       const SizedBox(height: 20),
 

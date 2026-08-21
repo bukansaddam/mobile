@@ -1,12 +1,18 @@
 import 'dart:math' as math;
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:flutter/material.dart';
 
 class CategoryDistributionChartCard extends StatelessWidget {
   final List<CategoryData> categoryData;
+  final ValueChanged<ActivationCategory>? onCategoryTap;
 
-  const CategoryDistributionChartCard({super.key, required this.categoryData});
+  const CategoryDistributionChartCard({
+    super.key,
+    required this.categoryData,
+    this.onCategoryTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -70,29 +76,40 @@ class CategoryDistributionChartCard extends StatelessWidget {
             runSpacing: 10,
             children: categoryData.map((item) {
               final isZero = item.count == 0;
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: isZero ? AppColors.grey400 : item.color,
-                      shape: BoxShape.circle,
-                    ),
+              return InkWell(
+                onTap: () => onCategoryTap?.call(item.category),
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 4,
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${item.label} (${item.count} item • ${item.percentage.toInt()}%)',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: isZero ? FontWeight.normal : FontWeight.w600,
-                      color: isZero
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: isZero ? AppColors.grey400 : item.color,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '${item.label} (${item.count} item • ${item.percentage.toInt()}%)',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight:
+                              isZero ? FontWeight.normal : FontWeight.w600,
+                          color: isZero
+                              ? AppColors.textSecondary
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               );
             }).toList(),
           ),
