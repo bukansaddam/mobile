@@ -60,6 +60,12 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
   }
 
   Widget _buildSingleImage(String imagePathOrUrl) {
+    if (imagePathOrUrl.isEmpty) {
+      return const Center(
+        child: Icon(Icons.broken_image_rounded, color: Colors.white54, size: 64),
+      );
+    }
+
     if (imagePathOrUrl.startsWith('http://') ||
         imagePathOrUrl.startsWith('https://')) {
       return Image.network(
@@ -79,6 +85,18 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
           ),
         ),
       );
+    } else if (imagePathOrUrl.startsWith('assets/')) {
+      return Image.asset(
+        imagePathOrUrl,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const Center(
+          child: Icon(
+            Icons.broken_image_rounded,
+            color: Colors.white54,
+            size: 64,
+          ),
+        ),
+      );
     } else {
       final file = File(imagePathOrUrl);
       if (file.existsSync()) {
@@ -94,16 +112,22 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
           ),
         );
       } else {
-        return Image.network(
+        return Image.asset(
           imagePathOrUrl,
           fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) => const Center(
-            child: Icon(
-              Icons.broken_image_rounded,
-              color: Colors.white54,
-              size: 64,
-            ),
-          ),
+          errorBuilder: (context, error, stackTrace) {
+            return Image.network(
+              imagePathOrUrl,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) => const Center(
+                child: Icon(
+                  Icons.broken_image_rounded,
+                  color: Colors.white54,
+                  size: 64,
+                ),
+              ),
+            );
+          },
         );
       }
     }

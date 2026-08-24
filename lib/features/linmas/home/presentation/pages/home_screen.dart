@@ -1,8 +1,12 @@
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
+import 'package:akar/features/linmas/announcement/domain/entities/announcement_item.dart';
+import 'package:akar/features/linmas/announcement/presentation/pages/announcement_list_page.dart';
+import 'package:akar/features/linmas/announcement/presentation/widgets/announcement_detail_modal.dart';
+import 'package:akar/features/linmas/announcement/presentation/widgets/pengumuman_banner_slider.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
-import 'package:akar/features/linmas/home/presentation/widgets/ad_banner_slider.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/bank_sampah_summary_card.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -62,87 +66,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-                  // const SizedBox(height: 16),
-
-                  // IntrinsicHeight(
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.stretch,
-                  //     children: [
-                  //       Expanded(
-                  //         child: HomeSummaryCard(
-                  //           title: 'Total Tugas',
-                  //           subtitle: 'Kegiatan aktif',
-                  //           count: '$totalTugasCount',
-                  //           icon: Icons.assignment_outlined,
-                  //           gradientColors: const [
-                  //             Color(0xFF0F9F66),
-                  //             Color(0xFF0A754B),
-                  //           ],
-                  //           isCompact: true,
-                  //           onTap: () {
-                  //             _dismissSurveyIfSubmitted(context);
-                  //             context.read<ActivationBloc>().add(
-                  //               const SetActivationStatusFilterEvent(null),
-                  //             );
-                  //             widget.onNavigateToTab?.call(2);
-                  //           },
-                  //         ),
-                  //       ),
-                  //       const SizedBox(width: 8),
-                  //       Expanded(
-                  //         child: HomeSummaryCard(
-                  //           title: 'Total Agenda',
-                  //           subtitle: 'Sedang berjalan',
-                  //           count: '$totalAgendaCount',
-                  //           icon: Icons.event_note_rounded,
-                  //           gradientColors: const [
-                  //             Color(0xFFD99B00),
-                  //             Color(0xFFB37B00),
-                  //           ],
-                  //           isCompact: true,
-                  //           onTap: () {
-                  //             _dismissSurveyIfSubmitted(context);
-                  //             context.read<ActivationBloc>().add(
-                  //               const SetActivationStatusFilterEvent(
-                  //                 ActivationStatus.sedangBerjalan,
-                  //               ),
-                  //             );
-                  //             widget.onNavigateToTab?.call(2);
-                  //           },
-                  //         ),
-                  //       ),
-                  //       const SizedBox(width: 8),
-                  //       Expanded(
-                  //         child: HomeSummaryCard(
-                  //           title: 'Total Laporan',
-                  //           subtitle: 'Telah selesai',
-                  //           count: '$totalLaporanCount',
-                  //           icon: Icons.insert_drive_file_outlined,
-                  //           gradientColors: const [
-                  //             Color(0xFF5CB836),
-                  //             Color(0xFF438A24),
-                  //           ],
-                  //           isCompact: true,
-                  //           onTap: () {
-                  //             _dismissSurveyIfSubmitted(context);
-                  //             context.read<ActivationBloc>().add(
-                  //               const SetActivationStatusFilterEvent(
-                  //                 ActivationStatus.selesai,
-                  //               ),
-                  //             );
-                  //             widget.onNavigateToTab?.call(2);
-                  //           },
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   const SizedBox(height: 16),
                   const SurveyCardBanner(),
                   _buildMenuUtamaSection(context),
 
-                  const SizedBox(height: 16),
-                  const AdBannerSlider(),
+                  const SizedBox(height: 20),
+                  const PengumumanBannerSlider(),
+
+                  const SizedBox(height: 20),
+                  _buildPengumumanHeader(context),
+                  const SizedBox(height: 12),
+                  _buildPengumumanListTileSection(context),
 
                   const SizedBox(height: 80),
                 ],
@@ -151,6 +85,34 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildPengumumanHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Pengumuman',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0F172A),
+            letterSpacing: 0.2,
+          ),
+        ),
+        GestureDetector(
+          onTap: () => AnnouncementListPage.show(context),
+          child: Text(
+            'Lihat Semua',
+            style: AppTextStyles.labelMedium.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -196,13 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
           context.pushNamed('bankSampah');
         },
       },
-      // {
-      //   'title': 'Survey Bulanan',
-      //   'subtitle': 'Lingkungan & RT',
-      //   'icon': Icons.assignment_turned_in_rounded,
-      //   'color': AppColors.accent,
-      //   'onTap': () => context.pushNamed('survey'),
-      // },
     ];
 
     return GridView.builder(
@@ -282,6 +237,150 @@ class _HomeScreenState extends State<HomeScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPengumumanListTileSection(BuildContext context) {
+    final announcements = [
+      dummyLinmasAnnouncements[0],
+      dummyLinmasAnnouncements[1],
+      dummyLinmasAnnouncements[4],
+    ];
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: announcements.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        final item = announcements[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.grey200),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 6,
+              ),
+              onTap: () => AnnouncementDetailModal.show(context, item),
+              leading: item.hasImage
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        item.allImages.first,
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 52,
+                          height: 52,
+                          color: item.categoryColor.withValues(alpha: 0.12),
+                          child: Icon(
+                            Icons.campaign_rounded,
+                            color: item.categoryColor,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: item.categoryColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.campaign_rounded,
+                        color: item.categoryColor,
+                        size: 24,
+                      ),
+                    ),
+              title: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: item.categoryColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      item.badge,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: item.categoryColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      item.date,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      item.subtitle,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                        height: 1.2,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              trailing: const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.grey400,
+                size: 20,
               ),
             ),
           ),
