@@ -269,6 +269,25 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: '/activation_detail',
+        name: 'activation_detail',
+        builder: (context, state) {
+          String activityId = '';
+          bool autoShowInfo = false;
+          if (state.extra is Map<String, dynamic>) {
+            final map = state.extra as Map<String, dynamic>;
+            activityId = map['activityId'] as String? ?? '';
+            autoShowInfo = map['autoShowInfo'] as bool? ?? false;
+          } else if (state.extra is String) {
+            activityId = state.extra as String;
+          }
+          return ActivationDetailScreen(
+            activityId: activityId,
+            autoShowInfo: autoShowInfo,
+          );
+        },
+      ),
 
       // ----------------- Masyarakat (Member / Dumas) -----------------
       GoRoute(

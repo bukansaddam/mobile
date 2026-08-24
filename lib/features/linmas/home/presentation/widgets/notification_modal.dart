@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -174,7 +175,7 @@ class NotificationModalSheet extends StatelessWidget {
                     onTap: () {
                       Navigator.pop(context);
                       context.pushNamed(
-                        'activation_detail',
+                        AppRouter.activationDetail,
                         extra: {
                           'activityId': activity.id,
                           'autoShowInfo': true,
