@@ -69,12 +69,10 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
           ),
           const SizedBox(height: 12),
 
-          
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -123,7 +121,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
           const Divider(height: 1),
 
-          
           Flexible(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -131,7 +128,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   if (images.isNotEmpty) ...[
                     Stack(
                       children: [
@@ -180,7 +176,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                           ),
                         ),
 
-                        
                         if (images.length > 1)
                           Positioned(
                             top: 10,
@@ -205,7 +200,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                             ),
                           ),
 
-                        
                         Positioned(
                           right: 8,
                           bottom: 8,
@@ -235,7 +229,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                       ],
                     ),
 
-                    
                     if (images.length > 1) ...[
                       const SizedBox(height: 8),
                       Row(
@@ -261,7 +254,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                     const SizedBox(height: 16),
                   ],
 
-                  
                   Text(
                     item.title,
                     style: AppTextStyles.headlineSmall.copyWith(
@@ -274,7 +266,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
                   const SizedBox(height: 10),
 
-                  
                   Row(
                     children: [
                       const Icon(
@@ -296,7 +287,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
                   const SizedBox(height: 16),
 
-                  
                   Text(
                     item.content,
                     style: const TextStyle(
@@ -308,7 +298,6 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
                   const SizedBox(height: 24),
 
-                  
                   SizedBox(
                     width: double.infinity,
                     height: 48,
@@ -344,10 +333,7 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 class AnnouncementListModal extends StatelessWidget {
   final List<AnnouncementItem>? announcements;
 
-  const AnnouncementListModal({
-    super.key,
-    this.announcements,
-  });
+  const AnnouncementListModal({super.key, this.announcements});
 
   static void show(
     BuildContext context, {
@@ -357,9 +343,7 @@ class AnnouncementListModal extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => AnnouncementListModal(
-        announcements: announcements,
-      ),
+      builder: (context) => AnnouncementListModal(announcements: announcements),
     );
   }
 
@@ -525,7 +509,9 @@ class AnnouncementListModal extends StatelessWidget {
                                           color: item.categoryColor.withValues(
                                             alpha: 0.1,
                                           ),
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                         child: Text(
                                           item.badge,

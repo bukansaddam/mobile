@@ -100,8 +100,9 @@ class CategoryDistributionChartCard extends StatelessWidget {
                         '${item.label} (${item.count} item • ${item.percentage.toInt()}%)',
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight:
-                              isZero ? FontWeight.normal : FontWeight.w600,
+                          fontWeight: isZero
+                              ? FontWeight.normal
+                              : FontWeight.w600,
                           color: isZero
                               ? AppColors.textSecondary
                               : AppColors.textPrimary,

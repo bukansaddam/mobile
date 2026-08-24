@@ -389,6 +389,57 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                               // Tab 1 specific filters (Institusi)
                               if (activeTab == 1) ...[
                                 const Text(
+                                  'Kategori Institusi',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    _buildFilterChip(
+                                      label: 'Semua Kategori',
+                                      isSelected:
+                                          state
+                                              .selectedInstitusiKategoriFilter ==
+                                          null,
+                                      onTap: () {
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiInstitusiKategoriFilterEvent(
+                                            null,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    ...DemografiConstants.institusiKategoriOptions.map((
+                                      kat,
+                                    ) {
+                                      final isSelected =
+                                          state
+                                              .selectedInstitusiKategoriFilter ==
+                                          kat;
+                                      return _buildFilterChip(
+                                        label: kat,
+                                        icon: Icons.local_offer_outlined,
+                                        color: const Color(0xFF0284C7),
+                                        isSelected: isSelected,
+                                        onTap: () {
+                                          context.read<DemografiBloc>().add(
+                                            SetDemografiInstitusiKategoriFilterEvent(
+                                              kat,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
                                   'Scope Institusi',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -952,22 +1003,40 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                               ],
 
                               // Institusi Filters
-                              if (activeTab == 1 &&
-                                  state.selectedInstitusiScopeFilter !=
-                                      null) ...[
-                                const SizedBox(width: 8),
-                                _buildAppliedTag(
-                                  label:
-                                      'Scope: ${state.selectedInstitusiScopeFilter}',
-                                  color: _getScopeColor(
-                                    state.selectedInstitusiScopeFilter!,
+                              if (activeTab == 1) ...[
+                                if (state.selectedInstitusiKategoriFilter !=
+                                    null) ...[
+                                  const SizedBox(width: 8),
+                                  _buildAppliedTag(
+                                    label:
+                                        'Kategori: ${state.selectedInstitusiKategoriFilter}',
+                                    icon: Icons.local_offer_outlined,
+                                    color: const Color(0xFF0284C7),
+                                    onRemove: () =>
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiInstitusiKategoriFilterEvent(
+                                            null,
+                                          ),
+                                        ),
                                   ),
-                                  onRemove: () => context.read<DemografiBloc>().add(
-                                    const SetDemografiInstitusiScopeFilterEvent(
-                                      null,
+                                ],
+                                if (state.selectedInstitusiScopeFilter !=
+                                    null) ...[
+                                  const SizedBox(width: 8),
+                                  _buildAppliedTag(
+                                    label:
+                                        'Scope: ${state.selectedInstitusiScopeFilter}',
+                                    color: _getScopeColor(
+                                      state.selectedInstitusiScopeFilter!,
                                     ),
+                                    onRemove: () =>
+                                        context.read<DemografiBloc>().add(
+                                          const SetDemografiInstitusiScopeFilterEvent(
+                                            null,
+                                          ),
+                                        ),
                                   ),
-                                ),
+                                ],
                               ],
 
                               // Organisasi Filters
@@ -1543,6 +1612,42 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Kategori Badge at Top Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(
+                              0xFF0284C7,
+                            ).withValues(alpha: 0.25),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.local_offer_outlined,
+                              size: 11,
+                              color: Color(0xFF0284C7),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              institusi.kategori,
+                              style: AppTextStyles.bodySmall.copyWith(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF0284C7),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Text(
                         institusi.nama,
                         style: AppTextStyles.titleMedium.copyWith(

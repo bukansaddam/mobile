@@ -138,11 +138,12 @@ class _MainScreenState extends State<MainScreen> {
                         width: 32,
                         height: 32,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.location_on_rounded,
-                          size: 20,
-                          color: AppColors.primary,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.location_on_rounded,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
                       ),
                     ),
                   ),

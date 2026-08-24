@@ -478,7 +478,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
-          onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+          onTapOutside: (event) =>
+              FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -505,7 +506,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
-          onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+          onTapOutside: (event) =>
+              FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
           maxLines: 3,
           onChanged: (val) {

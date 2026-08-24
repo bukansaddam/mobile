@@ -37,6 +37,7 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
     on<SetDemografiProfesiFilterEvent>(_onSetProfesiFilter);
     on<SetDemografiScopeFilterEvent>(_onSetScopeFilter);
     on<SetDemografiAfiliasiFilterEvent>(_onSetAfiliasiFilter);
+    on<SetDemografiInstitusiKategoriFilterEvent>(_onSetInstitusiKategoriFilter);
     on<SetDemografiInstitusiScopeFilterEvent>(_onSetInstitusiScopeFilter);
     on<SetDemografiOrganisasiBidangFilterEvent>(_onSetOrganisasiBidangFilter);
     on<SetDemografiSortOptionEvent>(_onSetSortOption);
@@ -151,6 +152,18 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
     );
   }
 
+  void _onSetInstitusiKategoriFilter(
+    SetDemografiInstitusiKategoriFilterEvent event,
+    Emitter<DemografiState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        selectedInstitusiKategoriFilter: event.kategori,
+        clearInstitusiKategori: event.kategori == null,
+      ),
+    );
+  }
+
   void _onSetInstitusiScopeFilter(
     SetDemografiInstitusiScopeFilterEvent event,
     Emitter<DemografiState> emit,
@@ -191,6 +204,7 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
         clearProfesi: true,
         clearScope: true,
         clearAfiliasi: true,
+        clearInstitusiKategori: true,
         clearInstitusiScope: true,
         clearOrganisasiBidang: true,
         selectedSortOption: DemografiSortOption.terbaru,
@@ -261,6 +275,7 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
 
     final entity = InstitusiEntity(
       nama: event.nama,
+      kategori: event.kategori,
       scope: event.scope,
       alamat: event.alamat,
       createdAt: DateTime.now(),

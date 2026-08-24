@@ -46,7 +46,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     super.dispose();
   }
 
-  void _showAddInstitusiDialog(BuildContext parentContext, {String? initialName}) {
+  void _showAddInstitusiDialog(
+    BuildContext parentContext, {
+    String? initialName,
+  }) {
     final formKey = GlobalKey<FormState>();
     final namaController = TextEditingController(text: initialName ?? '');
     final alamatController = TextEditingController();
@@ -101,7 +104,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.close_rounded, color: AppColors.grey600),
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.grey600,
+                              ),
                               onPressed: () => Navigator.pop(modalContext),
                             ),
                           ],
@@ -222,7 +228,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     );
   }
 
-  void _showAddOrganisasiDialog(BuildContext parentContext, {String? initialName}) {
+  void _showAddOrganisasiDialog(
+    BuildContext parentContext, {
+    String? initialName,
+  }) {
     final formKey = GlobalKey<FormState>();
     final namaController = TextEditingController(text: initialName ?? '');
     final jumlahAnggotaController = TextEditingController(text: '0');
@@ -278,7 +287,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.close_rounded, color: AppColors.grey600),
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.grey600,
+                              ),
                               onPressed: () => Navigator.pop(modalContext),
                             ),
                           ],
@@ -306,7 +318,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 14),
 
                         // Perkiraan Jumlah Anggota *
-                        _buildLabel('Perkiraan Jumlah Anggota', isRequired: true),
+                        _buildLabel(
+                          'Perkiraan Jumlah Anggota',
+                          isRequired: true,
+                        ),
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: jumlahAnggotaController,
@@ -323,7 +338,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             }
                             return null;
                           },
-                          decoration: _buildInputDecoration(hintText: 'Contoh: 50'),
+                          decoration: _buildInputDecoration(
+                            hintText: 'Contoh: 50',
+                          ),
                         ),
                         const SizedBox(height: 14),
 
@@ -376,13 +393,18 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             onPressed: () {
                               if (!formKey.currentState!.validate()) return;
                               final newNama = namaController.text.trim();
-                              final jumlah = int.tryParse(jumlahAnggotaController.text.trim()) ?? 0;
+                              final jumlah =
+                                  int.tryParse(
+                                    jumlahAnggotaController.text.trim(),
+                                  ) ??
+                                  0;
                               parentContext.read<DemografiBloc>().add(
                                 AddOrganisasiEvent(
                                   nama: newNama,
                                   jumlahAnggota: jumlah,
                                   bidang: selectedBidang,
-                                  alamatSekretariat: alamatController.text.trim().isEmpty
+                                  alamatSekretariat:
+                                      alamatController.text.trim().isEmpty
                                       ? null
                                       : alamatController.text.trim(),
                                 ),
@@ -450,7 +472,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
             final exactMatch = options.any(
               (o) => o.toLowerCase() == searchText.toLowerCase(),
             );
-            final showAddOptionAtTop = onAddNew != null && hasSearch && !exactMatch;
+            final showAddOptionAtTop =
+                onAddNew != null && hasSearch && !exactMatch;
 
             return SafeArea(
               child: Padding(
@@ -613,7 +636,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                             Navigator.pop(bottomSheetContext);
                                             onAddNew(searchText);
                                           },
-                                          icon: const Icon(Icons.add_rounded, size: 18),
+                                          icon: const Icon(
+                                            Icons.add_rounded,
+                                            size: 18,
+                                          ),
                                           label: Text(
                                             hasSearch
                                                 ? 'Tambah "$searchText" Baru'
@@ -623,7 +649,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                             backgroundColor: AppColors.primary,
                                             foregroundColor: Colors.white,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 16,
@@ -638,7 +665,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                 ),
                               )
                             : ListView.builder(
-                                itemCount: filteredList.length +
+                                itemCount:
+                                    filteredList.length +
                                     (showAddOptionAtTop ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (showAddOptionAtTop && index == 0) {
@@ -661,8 +689,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                     );
                                   }
 
-                                  final actualIndex =
-                                      showAddOptionAtTop ? index - 1 : index;
+                                  final actualIndex = showAddOptionAtTop
+                                      ? index - 1
+                                      : index;
 
                                   if (actualIndex < 0 ||
                                       actualIndex >= filteredList.length) {
@@ -756,7 +785,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<DemografiBloc, DemografiState>(
       listener: (context, state) {
-        if (state.actionSuccessMessage == 'Tokoh masyarakat berhasil ditambahkan') {
+        if (state.actionSuccessMessage ==
+            'Tokoh masyarakat berhasil ditambahkan') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -786,9 +816,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                 children: [
                   const Icon(Icons.check_circle_rounded, color: Colors.white),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(state.actionSuccessMessage!),
-                  ),
+                  Expanded(child: Text(state.actionSuccessMessage!)),
                 ],
               ),
               backgroundColor: AppColors.success,
@@ -1009,7 +1037,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           });
                         },
                         onAddNew: (searchQuery) {
-                          _showAddInstitusiDialog(context, initialName: searchQuery);
+                          _showAddInstitusiDialog(
+                            context,
+                            initialName: searchQuery,
+                          );
                         },
                       ),
                       borderRadius: BorderRadius.circular(14),
@@ -1021,9 +1052,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: const Color(0xFFE2E8F0),
-                          ),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1111,7 +1140,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           });
                         },
                         onAddNew: (searchQuery) {
-                          _showAddOrganisasiDialog(context, initialName: searchQuery);
+                          _showAddOrganisasiDialog(
+                            context,
+                            initialName: searchQuery,
+                          );
                         },
                       ),
                       borderRadius: BorderRadius.circular(14),
@@ -1123,9 +1155,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: const Color(0xFFE2E8F0),
-                          ),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1193,9 +1223,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.white,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: const Color(0xFFE2E8F0),
-                          ),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

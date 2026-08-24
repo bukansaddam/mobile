@@ -355,10 +355,8 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                             ),
                             child: TextFormField(
                               controller: _jumlahAslinmasController,
-                              onTapOutside: (event) => FocusManager
-                                  .instance
-                                  .primaryFocus
-                                  ?.unfocus(),
+                              onTapOutside: (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
                               keyboardType: TextInputType.number,
                               inputFormatters: [
                                 FilteringTextInputFormatter.digitsOnly,

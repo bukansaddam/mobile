@@ -32,8 +32,9 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
     super.initState();
     final sourceItems = widget.items ?? dummyLinmasAnnouncements;
     final important = sourceItems.where((item) => item.isPenting).toList();
-    _announcementItems =
-        important.isNotEmpty ? important : sourceItems.take(2).toList();
+    _announcementItems = important.isNotEmpty
+        ? important
+        : sourceItems.take(2).toList();
     _pageController = PageController(initialPage: 0);
     _startAutoPlay();
   }
@@ -160,7 +161,6 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                             ),
                           ),
 
-                          
                           Positioned(
                             top: 10,
                             right: 10,
@@ -170,7 +170,9 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: item.categoryColor.withValues(alpha: 0.9),
+                                color: item.categoryColor.withValues(
+                                  alpha: 0.9,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
@@ -202,7 +204,6 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                             ),
                           ),
 
-                          
                           Positioned(
                             bottom: 12,
                             left: 14,

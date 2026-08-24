@@ -114,7 +114,8 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                       Color(0xFFD99B00),
                       Color(0xFFB37B00),
                     ],
-                    onTap: () => onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
+                    onTap: () =>
+                        onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -129,7 +130,8 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                       Color(0xFF5CB836),
                       Color(0xFF438A24),
                     ],
-                    onTap: () => onStatusCardTap?.call(ActivationStatus.selesai),
+                    onTap: () =>
+                        onStatusCardTap?.call(ActivationStatus.selesai),
                   ),
                 ),
               ],
@@ -161,7 +163,8 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                   percentage: totalAgendas / safeMax,
                   color: const Color(0xFFD99B00),
                   icon: Icons.event_note_rounded,
-                  onTap: () => onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
+                  onTap: () =>
+                      onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
                 ),
                 const SizedBox(height: 14),
                 _buildBarItem(
@@ -305,7 +308,10 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),

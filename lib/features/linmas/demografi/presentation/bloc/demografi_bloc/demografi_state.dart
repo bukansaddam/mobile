@@ -28,6 +28,7 @@ class DemografiState extends Equatable {
   final String? selectedProfesiFilter;
   final String? selectedScopeFilter;
   final String? selectedAfiliasiFilter;
+  final String? selectedInstitusiKategoriFilter;
   final String? selectedInstitusiScopeFilter;
   final String? selectedOrganisasiBidangFilter;
   final DemografiSortOption selectedSortOption;
@@ -45,6 +46,7 @@ class DemografiState extends Equatable {
     this.selectedProfesiFilter,
     this.selectedScopeFilter,
     this.selectedAfiliasiFilter,
+    this.selectedInstitusiKategoriFilter,
     this.selectedInstitusiScopeFilter,
     this.selectedOrganisasiBidangFilter,
     this.selectedSortOption = DemografiSortOption.terbaru,
@@ -57,7 +59,8 @@ class DemografiState extends Equatable {
           selectedAfiliasiFilter != null ||
           selectedSortOption != DemografiSortOption.terbaru;
     } else if (activeTabIndex == 1) {
-      return selectedInstitusiScopeFilter != null ||
+      return selectedInstitusiKategoriFilter != null ||
+          selectedInstitusiScopeFilter != null ||
           selectedSortOption != DemografiSortOption.terbaru;
     } else {
       return selectedOrganisasiBidangFilter != null ||
@@ -118,6 +121,11 @@ class DemografiState extends Equatable {
       }).toList();
     }
 
+    if (selectedInstitusiKategoriFilter != null) {
+      list = list
+          .where((i) => i.kategori == selectedInstitusiKategoriFilter)
+          .toList();
+    }
     if (selectedInstitusiScopeFilter != null) {
       list = list
           .where((i) => i.scope == selectedInstitusiScopeFilter)
@@ -202,6 +210,8 @@ class DemografiState extends Equatable {
     bool clearScope = false,
     String? selectedAfiliasiFilter,
     bool clearAfiliasi = false,
+    String? selectedInstitusiKategoriFilter,
+    bool clearInstitusiKategori = false,
     String? selectedInstitusiScopeFilter,
     bool clearInstitusiScope = false,
     String? selectedOrganisasiBidangFilter,
@@ -227,6 +237,10 @@ class DemografiState extends Equatable {
       selectedAfiliasiFilter: clearAfiliasi
           ? null
           : (selectedAfiliasiFilter ?? this.selectedAfiliasiFilter),
+      selectedInstitusiKategoriFilter: clearInstitusiKategori
+          ? null
+          : (selectedInstitusiKategoriFilter ??
+                this.selectedInstitusiKategoriFilter),
       selectedInstitusiScopeFilter: clearInstitusiScope
           ? null
           : (selectedInstitusiScopeFilter ?? this.selectedInstitusiScopeFilter),
@@ -252,6 +266,7 @@ class DemografiState extends Equatable {
     selectedProfesiFilter,
     selectedScopeFilter,
     selectedAfiliasiFilter,
+    selectedInstitusiKategoriFilter,
     selectedInstitusiScopeFilter,
     selectedOrganisasiBidangFilter,
     selectedSortOption,

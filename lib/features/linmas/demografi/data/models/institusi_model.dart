@@ -4,6 +4,7 @@ class InstitusiModel extends InstitusiEntity {
   const InstitusiModel({
     super.id,
     required super.nama,
+    super.kategori = 'Pemerintahan & Birokrasi',
     required super.scope,
     super.alamat,
     super.createdAt,
@@ -13,6 +14,7 @@ class InstitusiModel extends InstitusiEntity {
     return InstitusiModel(
       id: json['id'] as String?,
       nama: json['nama'] as String? ?? '',
+      kategori: json['kategori'] as String? ?? 'Pemerintahan & Birokrasi',
       scope: json['scope'] as String? ?? 'Kelurahan',
       alamat: json['alamat'] as String?,
       createdAt: json['createdAt'] != null
@@ -25,6 +27,7 @@ class InstitusiModel extends InstitusiEntity {
     return {
       if (id != null) 'id': id,
       'nama': nama,
+      'kategori': kategori,
       'scope': scope,
       if (alamat != null) 'alamat': alamat,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
@@ -35,6 +38,7 @@ class InstitusiModel extends InstitusiEntity {
     return InstitusiModel(
       id: entity.id,
       nama: entity.nama,
+      kategori: entity.kategori,
       scope: entity.scope,
       alamat: entity.alamat,
       createdAt: entity.createdAt,

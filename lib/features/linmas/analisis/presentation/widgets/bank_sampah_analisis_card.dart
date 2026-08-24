@@ -12,8 +12,7 @@ class BankSampahAnalisisCard extends StatefulWidget {
   const BankSampahAnalisisCard({super.key, required this.reports});
 
   @override
-  State<BankSampahAnalisisCard> createState() =>
-      _BankSampahAnalisisCardState();
+  State<BankSampahAnalisisCard> createState() => _BankSampahAnalisisCardState();
 }
 
 class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
@@ -112,9 +111,11 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   itemCount: 12,
                   itemBuilder: (context, index) {
                     final monthNumber = index + 1;
-                    final isSelected = (monthNumber == tempMonth &&
+                    final isSelected =
+                        (monthNumber == tempMonth &&
                         tempYear == (_selectedMonth ?? now).year);
-                    final isFuture = (tempYear > now.year ||
+                    final isFuture =
+                        (tempYear > now.year ||
                         (tempYear == now.year && monthNumber > now.month));
 
                     return InkWell(
@@ -132,8 +133,8 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                           color: isSelected
                               ? AppColors.primary
                               : (isFuture
-                                  ? AppColors.grey100
-                                  : AppColors.grey50),
+                                    ? AppColors.grey100
+                                    : AppColors.grey50),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                             color: isSelected
@@ -146,13 +147,14 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                           months[index],
                           style: TextStyle(
                             fontSize: 12,
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w500,
                             color: isSelected
                                 ? Colors.white
                                 : (isFuture
-                                    ? AppColors.grey400
-                                    : AppColors.textPrimary),
+                                      ? AppColors.grey400
+                                      : AppColors.textPrimary),
                           ),
                         ),
                       ),
@@ -182,11 +184,9 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
 
   Future<void> _selectWeekRange() async {
     final now = DateTime.now();
-    final initialRange = _selectedWeekRange ??
-        DateTimeRange(
-          start: now.subtract(const Duration(days: 6)),
-          end: now,
-        );
+    final initialRange =
+        _selectedWeekRange ??
+        DateTimeRange(start: now.subtract(const Duration(days: 6)), end: now);
 
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
@@ -225,10 +225,14 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
     switch (timeframe) {
       case BankSampahTimeframe.mingguan:
         if (_selectedWeekRange != null) {
-          final startStr =
-              DateFormat('d MMM', 'id_ID').format(_selectedWeekRange!.start);
-          final endStr =
-              DateFormat('d MMM yyyy', 'id_ID').format(_selectedWeekRange!.end);
+          final startStr = DateFormat(
+            'd MMM',
+            'id_ID',
+          ).format(_selectedWeekRange!.start);
+          final endStr = DateFormat(
+            'd MMM yyyy',
+            'id_ID',
+          ).format(_selectedWeekRange!.end);
           return 'Periode: $startStr - $endStr';
         }
         final sevenDaysAgo = now.subtract(const Duration(days: 6));
@@ -267,13 +271,15 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
           return widget.reports
               .where(
                 (r) =>
-                    !r.createdAt.isBefore(start) &&
-                    !r.createdAt.isAfter(end),
+                    !r.createdAt.isBefore(start) && !r.createdAt.isAfter(end),
               )
               .toList();
         }
-        final sevenDaysAgo = DateTime(now.year, now.month, now.day)
-            .subtract(const Duration(days: 6));
+        final sevenDaysAgo = DateTime(
+          now.year,
+          now.month,
+          now.day,
+        ).subtract(const Duration(days: 6));
         return widget.reports
             .where(
               (r) => r.createdAt.isAfter(
@@ -510,8 +516,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               label,
               style: AppTextStyles.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color:
-                    isSelected ? AppColors.primary : AppColors.textSecondary,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
                 fontSize: 12,
               ),
             ),

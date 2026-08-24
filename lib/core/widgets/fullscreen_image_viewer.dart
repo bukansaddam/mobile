@@ -62,7 +62,11 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
   Widget _buildSingleImage(String imagePathOrUrl) {
     if (imagePathOrUrl.isEmpty) {
       return const Center(
-        child: Icon(Icons.broken_image_rounded, color: Colors.white54, size: 64),
+        child: Icon(
+          Icons.broken_image_rounded,
+          color: Colors.white54,
+          size: 64,
+        ),
       );
     }
 

@@ -97,6 +97,16 @@ class DemografiConstants {
   ];
 
   // Institusi Constants
+  static const List<String> institusiKategoriOptions = [
+    'Pemerintahan & Birokrasi',
+    'Keamanan & Ketertiban',
+    'Kesehatan & Medis',
+    'Pendidikan & Akademik',
+    'Kebencanaan & Mitigasi',
+  ];
+
+  static const String defaultInstitusiKategori = 'Pemerintahan & Birokrasi';
+
   static const List<String> institusiScopeOptions = [
     'Kelurahan',
     'Kecamatan',

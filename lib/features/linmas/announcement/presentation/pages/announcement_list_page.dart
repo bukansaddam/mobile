@@ -98,7 +98,6 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
       ),
       body: Column(
         children: [
-          
           Container(
             color: AppColors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -119,7 +118,6 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           ),
           const Divider(height: 1),
 
-          
           Expanded(
             child: filteredList.isEmpty
                 ? const Center(
@@ -189,7 +187,8 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                               horizontal: 14,
                               vertical: 6,
                             ),
-                            onTap: () => AnnouncementDetailModal.show(context, item),
+                            onTap: () =>
+                                AnnouncementDetailModal.show(context, item),
                             leading: item.hasImage
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
@@ -199,18 +198,18 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                                       height: 52,
                                       fit: BoxFit.cover,
                                       errorBuilder:
-                                          (context, error, stackTrace) => Container(
-                                            width: 52,
-                                            height: 52,
-                                            color: item.categoryColor.withValues(
-                                              alpha: 0.12,
-                                            ),
-                                            child: Icon(
-                                              Icons.campaign_rounded,
-                                              color: item.categoryColor,
-                                              size: 24,
-                                            ),
-                                          ),
+                                          (context, error, stackTrace) =>
+                                              Container(
+                                                width: 52,
+                                                height: 52,
+                                                color: item.categoryColor
+                                                    .withValues(alpha: 0.12),
+                                                child: Icon(
+                                                  Icons.campaign_rounded,
+                                                  color: item.categoryColor,
+                                                  size: 24,
+                                                ),
+                                              ),
                                     ),
                                   )
                                 : Container(

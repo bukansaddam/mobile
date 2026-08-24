@@ -128,19 +128,30 @@ class AddTokohEvent extends DemografiEvent {
   ];
 }
 
+class SetDemografiInstitusiKategoriFilterEvent extends DemografiEvent {
+  final String? kategori;
+
+  const SetDemografiInstitusiKategoriFilterEvent(this.kategori);
+
+  @override
+  List<Object?> get props => [kategori];
+}
+
 class AddInstitusiEvent extends DemografiEvent {
   final String nama;
+  final String kategori;
   final String scope;
   final String? alamat;
 
   const AddInstitusiEvent({
     required this.nama,
+    this.kategori = 'Pemerintahan & Birokrasi',
     required this.scope,
     this.alamat,
   });
 
   @override
-  List<Object?> get props => [nama, scope, alamat];
+  List<Object?> get props => [nama, kategori, scope, alamat];
 }
 
 class AddOrganisasiEvent extends DemografiEvent {

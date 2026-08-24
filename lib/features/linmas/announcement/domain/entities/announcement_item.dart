@@ -10,7 +10,7 @@ class AnnouncementItem extends Equatable {
   final String author;
   final String? imagePath;
   final List<String> images;
-  final String badge; 
+  final String badge;
   final bool isPinned;
 
   const AnnouncementItem({
@@ -39,28 +39,28 @@ class AnnouncementItem extends Equatable {
   Color get categoryColor {
     switch (badge.toUpperCase()) {
       case 'PENTING':
-        return const Color(0xFFDC2626); 
+        return const Color(0xFFDC2626);
       case 'SIAGA':
-        return const Color(0xFFD97706); 
+        return const Color(0xFFD97706);
       case 'INFORMASI':
       default:
-        return const Color(0xFF0F9F66); 
+        return const Color(0xFF0F9F66);
     }
   }
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        subtitle,
-        content,
-        date,
-        author,
-        imagePath,
-        images,
-        badge,
-        isPinned,
-      ];
+    id,
+    title,
+    subtitle,
+    content,
+    date,
+    author,
+    imagePath,
+    images,
+    badge,
+    isPinned,
+  ];
 }
 
 final List<AnnouncementItem> dummyLinmasAnnouncements = [
