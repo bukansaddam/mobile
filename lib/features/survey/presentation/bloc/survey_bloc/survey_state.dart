@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 
 abstract class SurveyState {
@@ -31,6 +32,16 @@ class DynamicFormLoadedState extends SurveyState {
   final bool isSubmitted;
 
   const DynamicFormLoadedState({required this.form, required this.isSubmitted});
+}
+
+class ApiSurveyLoadedState extends SurveyState {
+  final SurveyItemEntity survey;
+  final bool isSubmitted;
+
+  const ApiSurveyLoadedState({
+    required this.survey,
+    required this.isSubmitted,
+  });
 }
 
 class SurveySubmittingState extends SurveyState {}

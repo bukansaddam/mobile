@@ -1,11 +1,17 @@
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
+import 'package:akar/features/survey/data/datasources/survey_remote_datasource.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
+import 'package:akar/features/survey/domain/entities/survey_mapper.dart';
 import 'package:akar/features/survey/domain/repositories/survey_repository.dart';
 
 class SurveyRepositoryImpl implements SurveyRepository {
   final SurveyLocalDatasource localDatasource;
+  final SurveyRemoteDatasource? remoteDatasource;
 
-  SurveyRepositoryImpl({required this.localDatasource});
+  SurveyRepositoryImpl({
+    required this.localDatasource,
+    this.remoteDatasource,
+  });
 
   @override
   bool isInitialSurveyCompletedSync(int userId) {
@@ -25,6 +31,42 @@ class SurveyRepositoryImpl implements SurveyRepository {
   @override
   Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(String periodKey) {
     return localDatasource.getActiveMonthlySurveyForm(periodKey);
+  }
+
+  @override
+  Future<SurveyItemEntity?> getActiveMonthlySurveyFromApi(String periodKey) async {
+    if (remoteDatasource == null) return null;
+    try {
+      final responseModel = await remoteDatasource!.getSurveys(period: periodKey);
+      final domainItems = responseModel.data.map((m) => m.toDomain()).toList();
+
+      // Ambil data yang periodnya sama seperti bulan ini saja
+      for (final item in domainItems) {
+        if (item.period == periodKey) {
+          return item;
+        }
+      }
+
+      if (domainItems.isNotEmpty) {
+        return domainItems.first;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Future<void> submitApiSurveyAnswers({
+    required int surveyId,
+    required SurveySubmitRequestEntity request,
+  }) async {
+    if (remoteDatasource != null) {
+      await remoteDatasource!.submitSurveyAnswers(
+        surveyId: surveyId,
+        request: request.toModel(),
+      );
+    }
   }
 
   @override

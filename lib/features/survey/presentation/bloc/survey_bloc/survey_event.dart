@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 
 abstract class SurveyEvent {
@@ -33,6 +34,18 @@ class SubmitDynamicMonthlySurveyEvent extends SurveyEvent {
   final DynamicMonthlySurveyEntity survey;
 
   const SubmitDynamicMonthlySurveyEvent(this.survey);
+}
+
+class SubmitApiSurveyAnswersEvent extends SurveyEvent {
+  final int surveyId;
+  final String periodKey;
+  final SurveySubmitRequestEntity request;
+
+  const SubmitApiSurveyAnswersEvent({
+    required this.surveyId,
+    required this.periodKey,
+    required this.request,
+  });
 }
 
 class LoadSurveyHistoryEvent extends SurveyEvent {

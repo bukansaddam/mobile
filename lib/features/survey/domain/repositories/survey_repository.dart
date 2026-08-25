@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 
 abstract class SurveyRepository {
@@ -6,6 +7,13 @@ abstract class SurveyRepository {
   Future<InitialSurveyEntity?> getInitialSurvey(int userId);
 
   Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(String periodKey);
+  Future<SurveyItemEntity?> getActiveMonthlySurveyFromApi(String periodKey);
+
+  Future<void> submitApiSurveyAnswers({
+    required int surveyId,
+    required SurveySubmitRequestEntity request,
+  });
+
   Future<void> submitDynamicMonthlySurvey(DynamicMonthlySurveyEntity survey);
   Future<DynamicMonthlySurveyEntity?> getLatestDynamicSurveyForPeriod(
     String periodKey,

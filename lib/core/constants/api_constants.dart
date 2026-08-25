@@ -11,6 +11,9 @@ class ApiConstants {
   //News / Announcement
   static const String news = '/api/news';
 
+  //Surveys
+  static const String surveys = '/api/surveys';
+
   //Tracking
   static const String position = '/api/positions/me';
   static const String tracking = '/api/positions/me';
