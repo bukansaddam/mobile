@@ -1,15 +1,62 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
-import 'package:akar/features/linmas/announcement/domain/entities/announcement_item.dart';
+import 'package:akar/features/linmas/announcement/domain/entities/announcement_entity.dart';
 import 'package:flutter/material.dart';
 
+Widget _buildImageWidget(
+  String imgPath, {
+  double? width,
+  double? height,
+  BoxFit fit = BoxFit.cover,
+  double iconSize = 28,
+}) {
+  if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) {
+    return Image.network(
+      imgPath,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: width,
+        height: height,
+        color: AppColors.primaryLight,
+        child: Center(
+          child: Icon(
+            Icons.campaign_outlined,
+            size: iconSize,
+            color: AppColors.primary,
+          ),
+        ),
+      ),
+    );
+  }
+  return Image.asset(
+    imgPath,
+    width: width,
+    height: height,
+    fit: fit,
+    errorBuilder: (context, error, stackTrace) => Container(
+      width: width,
+      height: height,
+      color: AppColors.primaryLight,
+      child: Center(
+        child: Icon(
+          Icons.campaign_outlined,
+          size: iconSize,
+          color: AppColors.primary,
+        ),
+      ),
+    ),
+  );
+}
+
 class AnnouncementDetailModal extends StatefulWidget {
-  final AnnouncementItem item;
+  final AnnouncementEntity item;
 
   const AnnouncementDetailModal({super.key, required this.item});
 
-  static void show(BuildContext context, AnnouncementItem item) {
+  static void show(BuildContext context, AnnouncementEntity item) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -116,21 +163,10 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                                       initialIndex: idx,
                                     );
                                   },
-                                  child: Image.asset(
+                                  child: _buildImageWidget(
                                     imgPath,
                                     fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                              color: AppColors.primaryLight,
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.campaign_outlined,
-                                                  size: 48,
-                                                  color: AppColors.primary,
-                                                ),
-                                              ),
-                                            ),
+                                    iconSize: 48,
                                   ),
                                 );
                               },
@@ -244,13 +280,34 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      if (item.author.isNotEmpty) ...[
+                        const SizedBox(width: 12),
+                        const Icon(
+                          Icons.person_outline_rounded,
+                          size: 15,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            item.author,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
 
                   const SizedBox(height: 16),
 
                   Text(
-                    item.content,
+                    item.content ?? item.subtitle,
                     style: const TextStyle(
                       fontSize: 14,
                       height: 1.6,
@@ -293,13 +350,13 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 }
 
 class AnnouncementListModal extends StatelessWidget {
-  final List<AnnouncementItem>? announcements;
+  final List<AnnouncementEntity>? announcements;
 
   const AnnouncementListModal({super.key, this.announcements});
 
   static void show(
     BuildContext context, {
-    List<AnnouncementItem>? announcements,
+    List<AnnouncementEntity>? announcements,
   }) {
     showModalBottomSheet(
       context: context,
@@ -311,7 +368,7 @@ class AnnouncementListModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final list = announcements ?? dummyLinmasAnnouncements;
+    final list = announcements ?? const [];
 
     return Container(
       constraints: BoxConstraints(
@@ -419,24 +476,11 @@ class AnnouncementListModal extends StatelessWidget {
                             item.hasImage
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
+                                    child: _buildImageWidget(
                                       item.allImages.first,
                                       width: 70,
                                       height: 70,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Container(
-                                              width: 70,
-                                              height: 70,
-                                              color: AppColors.primaryLight,
-                                              child: const Icon(
-                                                Icons.campaign_outlined,
-                                                color: AppColors.primary,
-                                                size: 28,
-                                              ),
-                                            );
-                                          },
                                     ),
                                   )
                                 : Container(

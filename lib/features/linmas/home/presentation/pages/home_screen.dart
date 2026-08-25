@@ -1,8 +1,11 @@
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
-import 'package:akar/features/linmas/announcement/domain/entities/announcement_item.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_state.dart';
 import 'package:akar/features/linmas/announcement/presentation/pages/announcement_list_page.dart';
 import 'package:akar/features/linmas/announcement/presentation/widgets/announcement_detail_modal.dart';
 import 'package:akar/features/linmas/announcement/presentation/widgets/pengumuman_banner_slider.dart';
@@ -15,6 +18,43 @@ import 'package:akar/features/survey/presentation/widgets/survey_card_banner.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+Widget _buildHomeListImage(String path) {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return Image.network(
+      path,
+      width: 52,
+      height: 52,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: 52,
+        height: 52,
+        color: AppColors.primaryLight,
+        child: const Icon(
+          Icons.campaign_outlined,
+          color: AppColors.primary,
+          size: 24,
+        ),
+      ),
+    );
+  }
+  return Image.asset(
+    path,
+    width: 52,
+    height: 52,
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      width: 52,
+      height: 52,
+      color: AppColors.primaryLight,
+      child: const Icon(
+        Icons.campaign_outlined,
+        color: AppColors.primary,
+        size: 24,
+      ),
+    ),
+  );
+}
 
 class HomeScreen extends StatefulWidget {
   final ValueChanged<int>? onNavigateToTab;
@@ -38,53 +78,58 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        final user = authState is AuthAuthenticated ? authState.user : null;
+    return BlocProvider(
+      create: (context) => sl<AnnouncementBloc>()
+        ..add(const FetchAnnouncements())
+        ..add(const FetchBannerAnnouncements()),
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, authState) {
+          final user = authState is AuthAuthenticated ? authState.user : null;
 
-        return BlocBuilder<ActivationBloc, ActivationState>(
-          builder: (context, activationState) {
-            return SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 12.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  BlocBuilder<BankSampahBloc, BankSampahState>(
-                    builder: (context, bankState) {
-                      return BankSampahSummaryCard(
-                        user: user,
-                        totalBeratKg: bankState.totalBeratKg,
-                        totalNilaiRupiah: bankState.totalNilaiRupiah,
-                        onTap: () {
-                          _dismissSurveyIfSubmitted(context);
-                          context.pushNamed('bankSampah');
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  const SurveyCardBanner(),
-                  _buildMenuUtamaSection(context),
+          return BlocBuilder<ActivationBloc, ActivationState>(
+            builder: (context, activationState) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 12.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    BlocBuilder<BankSampahBloc, BankSampahState>(
+                      builder: (context, bankState) {
+                        return BankSampahSummaryCard(
+                          user: user,
+                          totalBeratKg: bankState.totalBeratKg,
+                          totalNilaiRupiah: bankState.totalNilaiRupiah,
+                          onTap: () {
+                            _dismissSurveyIfSubmitted(context);
+                            context.pushNamed('bankSampah');
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const SurveyCardBanner(),
+                    _buildMenuUtamaSection(context),
 
-                  const SizedBox(height: 20),
-                  const PengumumanBannerSlider(),
+                    const SizedBox(height: 20),
+                    const PengumumanBannerSlider(),
 
-                  const SizedBox(height: 20),
-                  _buildPengumumanHeader(context),
-                  const SizedBox(height: 12),
-                  _buildPengumumanListTileSection(context),
+                    const SizedBox(height: 20),
+                    _buildPengumumanHeader(context),
+                    const SizedBox(height: 12),
+                    _buildPengumumanListTileSection(context),
 
-                  const SizedBox(height: 80),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                    const SizedBox(height: 80),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -220,8 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -246,129 +289,153 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPengumumanListTileSection(BuildContext context) {
-    final announcements = [
-      dummyLinmasAnnouncements[0],
-      dummyLinmasAnnouncements[1],
-      dummyLinmasAnnouncements[4],
-    ];
-
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: announcements.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 10),
-      itemBuilder: (context, index) {
-        final item = announcements[index];
-
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.grey200),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.03),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
+    return BlocBuilder<AnnouncementBloc, AnnouncementState>(
+      builder: (context, state) {
+        if (state.status == AnnouncementStatus.loading &&
+            state.announcements.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.primary,
+                ),
               ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
+            ),
+          );
+        }
+
+        final announcements = state.announcements.take(3).toList();
+
+        if (announcements.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.grey200),
+            ),
+            child: const Center(
+              child: Text(
+                'Belum ada pengumuman',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
-              onTap: () => AnnouncementDetailModal.show(context, item),
-              leading: item.hasImage
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        item.allImages.first,
-                        width: 52,
-                        height: 52,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+            ),
+          );
+        }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: announcements.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final item = announcements[index];
+
+            return Container(
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.grey200),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withValues(alpha: 0.03),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
+                  onTap: () => AnnouncementDetailModal.show(context, item),
+                  leading: item.hasImage
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: _buildHomeListImage(item.allImages.first),
+                        )
+                      : Container(
                           width: 52,
                           height: 52,
-                          color: AppColors.primaryLight,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryLight,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: const Icon(
                             Icons.campaign_outlined,
                             color: AppColors.primary,
                             size: 24,
                           ),
                         ),
-                      ),
-                    )
-                  : Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.campaign_outlined,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
+                  title: Text(
+                    item.title,
+                    style: const TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
                     ),
-              title: Text(
-                item.title,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.subtitle,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textSecondary,
-                        height: 1.2,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.access_time_rounded,
-                          size: 11,
-                          color: AppColors.grey500,
-                        ),
-                        const SizedBox(width: 4),
                         Text(
-                          item.date,
+                          item.subtitle,
                           style: const TextStyle(
-                            fontSize: 10.5,
-                            color: AppColors.grey500,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                            height: 1.2,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            if (item.date.isNotEmpty) ...[
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 11,
+                                color: AppColors.grey500,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.date,
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  color: AppColors.grey500,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.grey400,
+                    size: 20,
+                  ),
                 ),
               ),
-              trailing: const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.grey400,
-                size: 20,
-              ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

@@ -62,6 +62,13 @@ import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 
+// Announcement
+import 'package:akar/features/linmas/announcement/data/datasources/announcement_remote_datasource.dart';
+import 'package:akar/features/linmas/announcement/data/repositories/announcement_repository_impl.dart';
+import 'package:akar/features/linmas/announcement/domain/repositories/announcement_repository.dart';
+import 'package:akar/features/linmas/announcement/domain/usecases/get_announcements_usecase.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
+
 // Masyarakat
 import 'package:akar/features/masyarakat/complaint/data/datasources/location_native_datasource.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/location_remote_datasource.dart';
@@ -122,6 +129,9 @@ Future<void> init() async {
   sl.registerLazySingleton<DemografiRemoteDatasource>(
     () => DemografiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<AnnouncementRemoteDatasource>(
+    () => AnnouncementRemoteDatasourceImpl(),
+  );
   sl.registerLazySingleton<BankSampahLocalDatasource>(
     () => BankSampahLocalDatasourceImpl(sharedPreferences: sl()),
   );
@@ -150,6 +160,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<DemografiRepository>(
     () => DemografiRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<AnnouncementRepository>(
+    () => AnnouncementRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<BankSampahRepository>(
     () => BankSampahRepositoryImpl(localDatasource: sl()),
@@ -210,6 +223,9 @@ Future<void> init() async {
   sl.registerLazySingleton<AddBankSampahLocationUsecase>(
     () => AddBankSampahLocationUsecase(sl()),
   );
+  sl.registerLazySingleton<GetAnnouncementsUsecase>(
+    () => GetAnnouncementsUsecase(sl()),
+  );
   sl.registerLazySingleton(
     () => GetLocationSuggestionsUseCase(sl<LocationRepository>()),
   );
@@ -260,6 +276,9 @@ Future<void> init() async {
       getLocationsUsecase: sl(),
       addLocationUsecase: sl(),
     ),
+  );
+  sl.registerFactory<AnnouncementBloc>(
+    () => AnnouncementBloc(getAnnouncementsUsecase: sl()),
   );
 
   // Dumas Cubits (Factory)

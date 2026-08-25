@@ -1,10 +1,51 @@
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/linmas/announcement/domain/entities/announcement_item.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
+import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_state.dart';
 import 'package:akar/features/linmas/announcement/presentation/widgets/announcement_detail_modal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AnnouncementListPage extends StatefulWidget {
+Widget _buildListImage(String path) {
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return Image.network(
+      path,
+      width: 52,
+      height: 52,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: 52,
+        height: 52,
+        color: AppColors.primaryLight,
+        child: const Icon(
+          Icons.campaign_outlined,
+          color: AppColors.primary,
+          size: 24,
+        ),
+      ),
+    );
+  }
+  return Image.asset(
+    path,
+    width: 52,
+    height: 52,
+    fit: BoxFit.cover,
+    errorBuilder: (context, error, stackTrace) => Container(
+      width: 52,
+      height: 52,
+      color: AppColors.primaryLight,
+      child: const Icon(
+        Icons.campaign_outlined,
+        color: AppColors.primary,
+        size: 24,
+      ),
+    ),
+  );
+}
+
+class AnnouncementListPage extends StatelessWidget {
   const AnnouncementListPage({super.key});
 
   static Future<void> show(BuildContext context) {
@@ -15,18 +56,28 @@ class AnnouncementListPage extends StatefulWidget {
   }
 
   @override
-  State<AnnouncementListPage> createState() => _AnnouncementListPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => sl<AnnouncementBloc>()
+        ..add(const FetchAnnouncements()),
+      child: const AnnouncementListView(),
+    );
+  }
 }
 
-class _AnnouncementListPageState extends State<AnnouncementListPage> {
-  late List<AnnouncementItem> _announcements;
-  bool _isLoadingMore = false;
+class AnnouncementListView extends StatefulWidget {
+  const AnnouncementListView({super.key});
+
+  @override
+  State<AnnouncementListView> createState() => _AnnouncementListViewState();
+}
+
+class _AnnouncementListViewState extends State<AnnouncementListView> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _announcements = dummyLinmasAnnouncements;
     _scrollController.addListener(_onScroll);
   }
 
@@ -38,19 +89,13 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 100 &&
-        !_isLoadingMore) {
-      setState(() {
-        _isLoadingMore = true;
-      });
-      Future.delayed(const Duration(milliseconds: 800), () {
-        if (mounted) {
-          setState(() {
-            _isLoadingMore = false;
-          });
-        }
-      });
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<AnnouncementBloc>().add(const LoadMoreAnnouncements());
     }
+  }
+
+  Future<void> _onRefresh() async {
+    context.read<AnnouncementBloc>().add(const FetchAnnouncements(isRefresh: true));
   }
 
   @override
@@ -84,35 +129,110 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           ),
         ),
       ),
-      body: _announcements.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.campaign_outlined,
-                    size: 48,
-                    color: AppColors.grey400,
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Tidak ada pengumuman',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
+      body: BlocBuilder<AnnouncementBloc, AnnouncementState>(
+        builder: (context, state) {
+          if (state.status == AnnouncementStatus.loading &&
+              state.announcements.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ),
+            );
+          }
+
+          if (state.status == AnnouncementStatus.error &&
+              state.announcements.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      size: 48,
+                      color: AppColors.error,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      state.errorMessage ?? 'Gagal memuat pengumuman',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        context
+                            .read<AnnouncementBloc>()
+                            .add(const FetchAnnouncements());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text('Coba Lagi'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (state.announcements.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              color: AppColors.primary,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 120),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.campaign_outlined,
+                          size: 48,
+                          color: AppColors.grey400,
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          'Tidak ada pengumuman',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            color: AppColors.primary,
+            child: ListView.builder(
               controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
               padding: const EdgeInsets.all(16),
-              itemCount: _announcements.length + (_isLoadingMore ? 1 : 0),
+              itemCount:
+                  state.announcements.length + (state.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
-                if (index == _announcements.length) {
+                if (index == state.announcements.length) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(
@@ -128,7 +248,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                   );
                 }
 
-                final item = _announcements[index];
+                final item = state.announcements[index];
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -156,23 +276,7 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                       leading: item.hasImage
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                item.allImages.first,
-                                width: 52,
-                                height: 52,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      width: 52,
-                                      height: 52,
-                                      color: AppColors.primaryLight,
-                                      child: const Icon(
-                                        Icons.campaign_outlined,
-                                        color: AppColors.primary,
-                                        size: 24,
-                                      ),
-                                    ),
-                              ),
+                              child: _buildListImage(item.allImages.first),
                             )
                           : Container(
                               width: 52,
@@ -215,20 +319,22 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                const Icon(
-                                  Icons.access_time_rounded,
-                                  size: 11,
-                                  color: AppColors.grey500,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  item.date,
-                                  style: const TextStyle(
-                                    fontSize: 10.5,
+                                if (item.date.isNotEmpty) ...[
+                                  const Icon(
+                                    Icons.access_time_rounded,
+                                    size: 11,
                                     color: AppColors.grey500,
-                                    fontWeight: FontWeight.w500,
                                   ),
-                                ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item.date,
+                                    style: const TextStyle(
+                                      fontSize: 10.5,
+                                      color: AppColors.grey500,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ],
@@ -244,6 +350,9 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
                 );
               },
             ),
+          );
+        },
+      ),
     );
   }
 }
