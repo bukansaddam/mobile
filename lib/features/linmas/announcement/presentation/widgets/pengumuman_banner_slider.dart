@@ -115,13 +115,11 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                   },
                                 )
                               : Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        item.categoryColor,
-                                        item.categoryColor.withValues(
-                                          alpha: 0.75,
-                                        ),
+                                        AppColors.primary,
+                                        AppColors.primaryDark,
                                       ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
@@ -157,49 +155,6 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                   ],
                                   stops: const [0.0, 0.4, 1.0],
                                 ),
-                              ),
-                            ),
-                          ),
-
-                          Positioned(
-                            top: 10,
-                            right: 10,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: item.categoryColor.withValues(
-                                  alpha: 0.9,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.2),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.campaign_rounded,
-                                    size: 13,
-                                    color: Colors.white,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    item.badge,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ),

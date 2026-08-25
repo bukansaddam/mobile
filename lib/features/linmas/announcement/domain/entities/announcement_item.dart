@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 class AnnouncementItem extends Equatable {
   final String id;
@@ -10,7 +9,6 @@ class AnnouncementItem extends Equatable {
   final String author;
   final String? imagePath;
   final List<String> images;
-  final String badge;
   final bool isPinned;
 
   const AnnouncementItem({
@@ -22,7 +20,6 @@ class AnnouncementItem extends Equatable {
     required this.author,
     this.imagePath,
     this.images = const [],
-    this.badge = 'INFORMASI',
     this.isPinned = false,
   });
 
@@ -34,19 +31,7 @@ class AnnouncementItem extends Equatable {
 
   bool get hasImage => allImages.isNotEmpty;
 
-  bool get isPenting => isPinned || badge.toUpperCase() == 'PENTING';
-
-  Color get categoryColor {
-    switch (badge.toUpperCase()) {
-      case 'PENTING':
-        return const Color(0xFFDC2626);
-      case 'SIAGA':
-        return const Color(0xFFD97706);
-      case 'INFORMASI':
-      default:
-        return const Color(0xFF0F9F66);
-    }
-  }
+  bool get isPenting => isPinned;
 
   @override
   List<Object?> get props => [
@@ -58,7 +43,6 @@ class AnnouncementItem extends Equatable {
     author,
     imagePath,
     images,
-    badge,
     isPinned,
   ];
 }
@@ -75,7 +59,6 @@ final List<AnnouncementItem> dummyLinmasAnnouncements = [
     author: 'Kasat Pol PP & Linmas',
     imagePath: 'assets/banner_1.jpg',
     images: ['assets/banner_1.jpg', 'assets/banner_2.jpg'],
-    badge: 'PENTING',
     isPinned: true,
   ),
   const AnnouncementItem(
@@ -89,7 +72,7 @@ final List<AnnouncementItem> dummyLinmasAnnouncements = [
     author: 'Admin Linmas Pusat',
     imagePath: 'assets/banner_2.jpg',
     images: ['assets/banner_2.jpg', 'assets/banner_illustration.jpg'],
-    badge: 'SIAGA',
+    isPinned: true,
   ),
   const AnnouncementItem(
     id: 'ANN-003',
@@ -105,7 +88,6 @@ final List<AnnouncementItem> dummyLinmasAnnouncements = [
       'assets/banner_illustration.jpg',
       'assets/home_hero_illustration.jpg',
     ],
-    badge: 'INFORMASI',
   ),
   const AnnouncementItem(
     id: 'ANN-004',
@@ -118,7 +100,6 @@ final List<AnnouncementItem> dummyLinmasAnnouncements = [
     author: 'Dinas Kesehatan & Linmas',
     imagePath: 'assets/indonesian_headshot_portrait.jpg',
     images: ['assets/indonesian_headshot_portrait.jpg'],
-    badge: 'INFORMASI',
   ),
   const AnnouncementItem(
     id: 'ANN-005',
@@ -131,6 +112,5 @@ final List<AnnouncementItem> dummyLinmasAnnouncements = [
     author: 'Pengurus Posko Linmas',
     imagePath: null,
     images: [],
-    badge: 'INFORMASI',
   ),
 ];

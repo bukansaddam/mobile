@@ -70,52 +70,14 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
           const SizedBox(height: 12),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: item.categoryColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: item.categoryColor.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.campaign_rounded,
-                        size: 14,
-                        color: item.categoryColor,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        item.badge,
-                        style: TextStyle(
-                          color: item.categoryColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.close_rounded,
-                    color: AppColors.grey600,
-                  ),
-                  tooltip: 'Tutup',
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.close_rounded, color: AppColors.grey600),
+                tooltip: 'Tutup',
+              ),
             ),
           ),
 
@@ -467,11 +429,10 @@ class AnnouncementListModal extends StatelessWidget {
                                             return Container(
                                               width: 70,
                                               height: 70,
-                                              color: item.categoryColor
-                                                  .withValues(alpha: 0.12),
-                                              child: Icon(
-                                                Icons.campaign_rounded,
-                                                color: item.categoryColor,
+                                              color: AppColors.primaryLight,
+                                              child: const Icon(
+                                                Icons.campaign_outlined,
+                                                color: AppColors.primary,
                                                 size: 28,
                                               ),
                                             );
@@ -482,14 +443,12 @@ class AnnouncementListModal extends StatelessWidget {
                                     width: 70,
                                     height: 70,
                                     decoration: BoxDecoration(
-                                      color: item.categoryColor.withValues(
-                                        alpha: 0.12,
-                                      ),
+                                      color: AppColors.primaryLight,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Icon(
-                                      Icons.campaign_rounded,
-                                      color: item.categoryColor,
+                                    child: const Icon(
+                                      Icons.campaign_outlined,
+                                      color: AppColors.primary,
                                       size: 32,
                                     ),
                                   ),
@@ -500,29 +459,12 @@ class AnnouncementListModal extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 6,
-                                          vertical: 2,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: item.categoryColor.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            6,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          item.badge,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: item.categoryColor,
-                                          ),
-                                        ),
+                                      const Icon(
+                                        Icons.access_time_rounded,
+                                        size: 11,
+                                        color: AppColors.textSecondary,
                                       ),
-                                      const Spacer(),
+                                      const SizedBox(width: 4),
                                       Text(
                                         item.date,
                                         style: const TextStyle(

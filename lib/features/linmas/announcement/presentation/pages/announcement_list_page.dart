@@ -19,15 +19,14 @@ class AnnouncementListPage extends StatefulWidget {
 }
 
 class _AnnouncementListPageState extends State<AnnouncementListPage> {
-  String _selectedCategory = 'SEMUA';
-  late List<AnnouncementItem> _allAnnouncements;
+  late List<AnnouncementItem> _announcements;
   bool _isLoadingMore = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _allAnnouncements = dummyLinmasAnnouncements;
+    _announcements = dummyLinmasAnnouncements;
     _scrollController.addListener(_onScroll);
   }
 
@@ -54,19 +53,8 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
     }
   }
 
-  List<AnnouncementItem> get _filteredAnnouncements {
-    if (_selectedCategory == 'SEMUA') {
-      return _allAnnouncements;
-    }
-    return _allAnnouncements
-        .where((item) => item.badge.toUpperCase() == _selectedCategory)
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final filteredList = _filteredAnnouncements;
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: PreferredSize(
@@ -96,242 +84,166 @@ class _AnnouncementListPageState extends State<AnnouncementListPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            color: AppColors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+      body: _announcements.isEmpty
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildFilterChip('SEMUA', 'Semua'),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('PENTING', 'Penting'),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('SIAGA', 'Siaga'),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('INFORMASI', 'Informasi'),
+                  Icon(
+                    Icons.campaign_outlined,
+                    size: 48,
+                    color: AppColors.grey400,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Tidak ada pengumuman',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ),
-          const Divider(height: 1),
-
-          Expanded(
-            child: filteredList.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.campaign_outlined,
-                          size: 48,
-                          color: AppColors.grey400,
+            )
+          : ListView.builder(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              itemCount: _announcements.length + (_isLoadingMore ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index == _announcements.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: AppColors.primary,
                         ),
-                        SizedBox(height: 12),
-                        Text(
-                          'Tidak ada pengumuman',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  )
-                : ListView.builder(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredList.length + (_isLoadingMore ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == filteredList.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
+                  );
+                }
 
-                      final item = filteredList[index];
+                final item = _announcements[index];
 
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.grey200),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.black.withValues(alpha: 0.03),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(16),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 6,
-                            ),
-                            onTap: () =>
-                                AnnouncementDetailModal.show(context, item),
-                            leading: item.hasImage
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset(
-                                      item.allImages.first,
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.grey200),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withValues(alpha: 0.03),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 6,
+                      ),
+                      onTap: () => AnnouncementDetailModal.show(context, item),
+                      leading: item.hasImage
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.asset(
+                                item.allImages.first,
+                                width: 52,
+                                height: 52,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
                                       width: 52,
                                       height: 52,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Container(
-                                                width: 52,
-                                                height: 52,
-                                                color: item.categoryColor
-                                                    .withValues(alpha: 0.12),
-                                                child: Icon(
-                                                  Icons.campaign_rounded,
-                                                  color: item.categoryColor,
-                                                  size: 24,
-                                                ),
-                                              ),
-                                    ),
-                                  )
-                                : Container(
-                                    width: 52,
-                                    height: 52,
-                                    decoration: BoxDecoration(
-                                      color: item.categoryColor.withValues(
-                                        alpha: 0.12,
+                                      color: AppColors.primaryLight,
+                                      child: const Icon(
+                                        Icons.campaign_outlined,
+                                        color: AppColors.primary,
+                                        size: 24,
                                       ),
-                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Icon(
-                                      Icons.campaign_rounded,
-                                      color: item.categoryColor,
-                                      size: 24,
-                                    ),
-                                  ),
-                            title: Row(
+                              ),
+                            )
+                          : Container(
+                              width: 52,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.campaign_outlined,
+                                color: AppColors.primary,
+                                size: 24,
+                              ),
+                            ),
+                      title: Text(
+                        item.title,
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.subtitle,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary,
+                                height: 1.2,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: item.categoryColor.withValues(
-                                      alpha: 0.12,
-                                    ),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    item.badge,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                      color: item.categoryColor,
-                                    ),
-                                  ),
+                                const Icon(
+                                  Icons.access_time_rounded,
+                                  size: 11,
+                                  color: AppColors.grey500,
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    item.date,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                    textAlign: TextAlign.end,
+                                const SizedBox(width: 4),
+                                Text(
+                                  item.date,
+                                  style: const TextStyle(
+                                    fontSize: 10.5,
+                                    color: AppColors.grey500,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 4.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    item.subtitle,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.textSecondary,
-                                      height: 1.2,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.chevron_right_rounded,
-                              color: AppColors.grey400,
-                              size: 20,
-                            ),
-                          ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right_rounded,
+                        color: AppColors.grey400,
+                        size: 20,
+                      ),
+                    ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String categoryKey, String label) {
-    final isSelected = _selectedCategory == categoryKey;
-
-    return FilterChip(
-      selected: isSelected,
-      label: Text(label),
-      labelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-        color: isSelected ? Colors.white : AppColors.textPrimary,
-      ),
-      backgroundColor: AppColors.grey100,
-      selectedColor: AppColors.primary,
-      showCheckmark: false,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: isSelected ? AppColors.primary : AppColors.grey300,
-        ),
-      ),
-      onSelected: (_) {
-        setState(() {
-          _selectedCategory = categoryKey;
-        });
-      },
+                );
+              },
+            ),
     );
   }
 }

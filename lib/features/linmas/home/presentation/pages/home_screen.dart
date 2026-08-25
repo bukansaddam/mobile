@@ -293,10 +293,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         errorBuilder: (context, error, stackTrace) => Container(
                           width: 52,
                           height: 52,
-                          color: item.categoryColor.withValues(alpha: 0.12),
-                          child: Icon(
-                            Icons.campaign_rounded,
-                            color: item.categoryColor,
+                          color: AppColors.primaryLight,
+                          child: const Icon(
+                            Icons.campaign_outlined,
+                            color: AppColors.primary,
                             size: 24,
                           ),
                         ),
@@ -306,64 +306,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: item.categoryColor.withValues(alpha: 0.12),
+                        color: AppColors.primaryLight,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(
-                        Icons.campaign_rounded,
-                        color: item.categoryColor,
+                      child: const Icon(
+                        Icons.campaign_outlined,
+                        color: AppColors.primary,
                         size: 24,
                       ),
                     ),
-              title: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: item.categoryColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      item.badge,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: item.categoryColor,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      item.date,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textSecondary,
-                      ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
+              title: Text(
+                item.title,
+                style: const TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
                     Text(
                       item.subtitle,
                       style: const TextStyle(
@@ -373,6 +339,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time_rounded,
+                          size: 11,
+                          color: AppColors.grey500,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.date,
+                          style: const TextStyle(
+                            fontSize: 10.5,
+                            color: AppColors.grey500,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
