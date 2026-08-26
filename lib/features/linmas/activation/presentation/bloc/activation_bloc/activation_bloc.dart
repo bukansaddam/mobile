@@ -1,15 +1,25 @@
+import 'dart:io';
+import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
+import 'package:akar/features/linmas/activation/domain/entities/activation_run_mapper.dart';
+import 'package:akar/features/linmas/activation/domain/usecases/get_activation_runs_usecase.dart';
+import 'package:akar/features/linmas/activation/domain/usecases/submit_activation_report_usecase.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:akar/features/linmas/activation/data/datasources/dummy_activation_data.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 
 part 'activation_event.dart';
 part 'activation_state.dart';
 
 class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
-  ActivationBloc() : super(const ActivationState()) {
+  final GetActivationRunsUsecase? getActivationRunsUsecase;
+  final SubmitActivationReportUsecase? submitActivationReportUsecase;
+
+  ActivationBloc({
+    this.getActivationRunsUsecase,
+    this.submitActivationReportUsecase,
+  }) : super(const ActivationState()) {
     on<LoadActivationActivitiesEvent>(_onLoadActivities);
+    on<LoadMoreActivationActivitiesEvent>(_onLoadMoreActivities);
     on<SetActivationSearchQueryEvent>(_onSetSearchQuery);
     on<SetActivationCategoryFilterEvent>(_onSetCategoryFilter);
     on<SetActivationStatusFilterEvent>(_onSetStatusFilter);
@@ -17,25 +27,130 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
     on<ClearActivationSearchEvent>(_onClearSearch);
     on<ResetActivationFiltersEvent>(_onResetFilters);
     on<AddActivationReportEvent>(_onAddReport);
+    on<SubmitActivationReportApiEvent>(_onSubmitApiReport);
 
-    add(LoadActivationActivitiesEvent());
+    add(const LoadActivationActivitiesEvent());
   }
 
-  void _onLoadActivities(
+  Future<void> _onLoadActivities(
     LoadActivationActivitiesEvent event,
     Emitter<ActivationState> emit,
-  ) {
-    final initialList = List<ActivationActivity>.from(
-      DummyActivationData.activities
-          .where(
-            (act) =>
-                act.status == ActivationStatus.sedangBerjalan &&
-                act.reports.isEmpty,
-          )
-          .take(5),
-    );
+  ) async {
+    emit(state.copyWith(isLoading: true, currentPage: 1, hasMore: true));
 
-    emit(state.copyWith(activities: initialList));
+    if (getActivationRunsUsecase != null) {
+      try {
+        final runs = await getActivationRunsUsecase!(page: 1, perPage: 10);
+        final apiActivities = runs.map((run) => run.toActivity()).toList();
+        final hasMore = runs.length >= 10;
+        emit(
+          state.copyWith(
+            activities: apiActivities,
+            isLoading: false,
+            currentPage: 1,
+            hasMore: hasMore,
+          ),
+        );
+        return;
+      } catch (_) {}
+    }
+
+    emit(state.copyWith(activities: const [], isLoading: false, hasMore: false));
+  }
+
+  Future<void> _onLoadMoreActivities(
+    LoadMoreActivationActivitiesEvent event,
+    Emitter<ActivationState> emit,
+  ) async {
+    if (state.isLoading || state.isLoadingMore || !state.hasMore) return;
+    if (getActivationRunsUsecase == null) return;
+
+    emit(state.copyWith(isLoadingMore: true));
+
+    try {
+      final nextPage = state.currentPage + 1;
+      final runs = await getActivationRunsUsecase!(page: nextPage, perPage: 10);
+      final newActivities = runs.map((run) => run.toActivity()).toList();
+      final hasMore = runs.length >= 10;
+
+      final updatedList = List<ActivationActivity>.from(state.activities)
+        ..addAll(newActivities);
+
+      emit(
+        state.copyWith(
+          activities: updatedList,
+          currentPage: nextPage,
+          hasMore: hasMore,
+          isLoadingMore: false,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(isLoadingMore: false));
+    }
+  }
+
+  Future<void> _onSubmitApiReport(
+    SubmitActivationReportApiEvent event,
+    Emitter<ActivationState> emit,
+  ) async {
+    if (submitActivationReportUsecase != null) {
+      try {
+        final result = await submitActivationReportUsecase!(
+          participantId: event.participantId,
+          file: event.file,
+          notes: event.notes,
+          receiverNik: event.receiverNik,
+          receiverName: event.receiverName,
+        );
+
+        // Update local activity progress & reports
+        final activities = List<ActivationActivity>.from(state.activities);
+        final index =
+            activities.indexWhere((act) => act.id == event.participantId);
+        if (index != -1) {
+          final old = activities[index];
+          final newCompleted =
+              result.targetDone ?? (old.completedSteps + 1).clamp(0, old.totalSteps);
+          final newTotal = result.totalTarget ?? old.totalSteps;
+          final newStatus = (newCompleted >= newTotal)
+              ? ActivationStatus.selesai
+              : old.status;
+
+          final newReport = ActivationReport(
+            id: result.id.toString(),
+            photoUrls: result.attachments
+                .map((a) => a.fileUrl ?? a.filePath ?? '')
+                .where((u) => u.isNotEmpty)
+                .toList(),
+            submittedAt: DateTime.now(),
+            latitude: 0.0,
+            longitude: 0.0,
+            notes: result.notes,
+            recipientName: result.receiverName,
+            recipientNik: result.receiverNik,
+          );
+
+          final updatedReports = List<ActivationReport>.from(old.reports)
+            ..add(newReport);
+
+          activities[index] = old.copyWith(
+            reports: updatedReports,
+            completedSteps: newCompleted,
+            totalSteps: newTotal,
+            status: newStatus,
+          );
+
+          emit(state.copyWith(activities: activities));
+        }
+
+        event.onSuccess?.call();
+        return;
+      } catch (e) {
+        event.onError?.call(e.toString().replaceAll('Exception: ', ''));
+      }
+    } else {
+      event.onSuccess?.call();
+    }
   }
 
   void _onSetSearchQuery(

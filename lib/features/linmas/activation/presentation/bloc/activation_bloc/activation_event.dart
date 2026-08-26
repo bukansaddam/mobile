@@ -7,7 +7,16 @@ abstract class ActivationEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadActivationActivitiesEvent extends ActivationEvent {}
+class LoadActivationActivitiesEvent extends ActivationEvent {
+  final bool isRefresh;
+
+  const LoadActivationActivitiesEvent({this.isRefresh = false});
+
+  @override
+  List<Object?> get props => [isRefresh];
+}
+
+class LoadMoreActivationActivitiesEvent extends ActivationEvent {}
 
 class SetActivationSearchQueryEvent extends ActivationEvent {
   final String query;
@@ -60,4 +69,33 @@ class AddActivationReportEvent extends ActivationEvent {
 
   @override
   List<Object?> get props => [activityId, report];
+}
+
+class SubmitActivationReportApiEvent extends ActivationEvent {
+  final String participantId;
+  final File file;
+  final String? notes;
+  final String? receiverNik;
+  final String? receiverName;
+  final VoidCallback? onSuccess;
+  final Function(String message)? onError;
+
+  const SubmitActivationReportApiEvent({
+    required this.participantId,
+    required this.file,
+    this.notes,
+    this.receiverNik,
+    this.receiverName,
+    this.onSuccess,
+    this.onError,
+  });
+
+  @override
+  List<Object?> get props => [
+        participantId,
+        file.path,
+        notes,
+        receiverNik,
+        receiverName,
+      ];
 }

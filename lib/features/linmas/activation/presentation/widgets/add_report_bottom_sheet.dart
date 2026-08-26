@@ -3,11 +3,10 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
+import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AddReportBottomSheet extends StatefulWidget {
   final ActivationActivity activity;
@@ -44,67 +43,24 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _kkController = TextEditingController();
   final TextEditingController _nikController = TextEditingController();
-  final TextEditingController _rtController = TextEditingController();
-  final TextEditingController _rwController = TextEditingController();
-  final TextEditingController _houseNumberController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
   late List<String> _photoUrls;
-  double _latitude = -6.8915;
-  double _longitude = 107.6107;
-  bool _isLoadingGps = false;
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
     _photoUrls = [widget.capturedPhotoUrl];
-    _fetchLocation();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _kkController.dispose();
     _nikController.dispose();
-    _rtController.dispose();
-    _rwController.dispose();
-    _houseNumberController.dispose();
     _notesController.dispose();
     super.dispose();
-  }
-
-  Future<void> _fetchLocation() async {
-    setState(() => _isLoadingGps = true);
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (serviceEnabled) {
-        LocationPermission permission = await Geolocator.checkPermission();
-        if (permission == LocationPermission.denied) {
-          permission = await Geolocator.requestPermission();
-        }
-        if (permission == LocationPermission.whileInUse ||
-            permission == LocationPermission.always) {
-          final pos = await Geolocator.getCurrentPosition(
-            locationSettings: const LocationSettings(
-              timeLimit: Duration(seconds: 5),
-            ),
-          );
-          setState(() {
-            _latitude = pos.latitude;
-            _longitude = pos.longitude;
-          });
-        }
-      }
-    } catch (_) {
-      // Keep fallback coordinates
-    } finally {
-      if (mounted) {
-        setState(() => _isLoadingGps = false);
-      }
-    }
   }
 
   Future<void> _addNewPhoto() async {
@@ -151,35 +107,40 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     final isDoorToDoor =
         widget.activity.category == ActivationCategory.doorToDoor;
 
-    final report = ActivationReport(
-      id: 'rep-${DateTime.now().millisecondsSinceEpoch}',
-      photoUrls: List.from(_photoUrls),
-      submittedAt: DateTime.now(),
-      latitude: _latitude,
-      longitude: _longitude,
-      notes: _notesController.text.trim().isNotEmpty
-          ? _notesController.text.trim()
-          : null,
-      recipientName: isDoorToDoor ? _nameController.text.trim() : null,
-      recipientKk: isDoorToDoor ? _kkController.text.trim() : null,
-      recipientNik: isDoorToDoor ? _nikController.text.trim() : null,
-      rt: isDoorToDoor ? _rtController.text.trim() : null,
-      rw: isDoorToDoor ? _rwController.text.trim() : null,
-      houseNumber: isDoorToDoor ? _houseNumberController.text.trim() : null,
-    );
-
     context.read<ActivationBloc>().add(
-      AddActivationReportEvent(activityId: widget.activity.id, report: report),
-    );
-
-    Navigator.pop(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Bukti foto laporan (${_photoUrls.length} foto) berhasil dikirim!',
-        ),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
+      SubmitActivationReportApiEvent(
+        participantId: widget.activity.id,
+        file: File(_photoUrls.first),
+        notes: _notesController.text.trim().isNotEmpty
+            ? _notesController.text.trim()
+            : null,
+        receiverNik: isDoorToDoor ? _nikController.text.trim() : null,
+        receiverName: isDoorToDoor ? _nameController.text.trim() : null,
+        onSuccess: () {
+          if (mounted) {
+            setState(() => _isSubmitting = false);
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Penyerahan laporan berhasil disimpan!'),
+                backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        onError: (message) {
+          if (mounted) {
+            setState(() => _isSubmitting = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: AppColors.error,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -238,7 +199,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
               child: imageWidget,
             ),
           ),
-          // Delete photo button
           if (_photoUrls.length > 1)
             Positioned(
               top: -6,
@@ -304,7 +264,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Laporan Bukti Foto',
+                      'Laporan Bukti Penyerahan',
                       style: AppTextStyles.titleLarge.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -366,7 +326,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                       if (idx < _photoUrls.length) {
                         return _buildPhotoTile(_photoUrls[idx], idx);
                       } else {
-                        // Add photo button card
                         return GestureDetector(
                           onTap: _addNewPhoto,
                           child: Container(
@@ -407,73 +366,9 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                 ),
                 const SizedBox(height: 16),
 
-                // Refreshable GPS Location Card
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.my_location_rounded,
-                        color: AppColors.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Koordinat GPS Terdeteksi',
-                              style: AppTextStyles.labelSmall.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            _isLoadingGps
-                                ? const Text(
-                                    'Mengambil lokasi GPS...',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  )
-                                : Text(
-                                    'Lat: ${_latitude.toStringAsFixed(5)}, Long: ${_longitude.toStringAsFixed(5)}',
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textPrimary,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: _fetchLocation,
-                        icon: const Icon(
-                          Icons.refresh_rounded,
-                          size: 20,
-                          color: AppColors.primary,
-                        ),
-                        tooltip: 'Refresh Lokasi GPS',
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 16),
 
-                // Category Dependent Fields
+                // Door to Door Conditional Fields (Nama & NIK Penerima)
                 if (isDoorToDoor) ...[
                   // 1. Nama Penerima
                   _buildMandatoryLabel('Nama Penerima'),
@@ -501,37 +396,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ),
                   const SizedBox(height: 14),
 
-                  // 2. KK Penerima
-                  _buildMandatoryLabel('KK Penerima'),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _kkController,
-                    onTapOutside: (event) =>
-                        FocusManager.instance.primaryFocus?.unfocus(),
-                    keyboardType: TextInputType.number,
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Nomor KK penerima wajib diisi';
-                      }
-                      if (val.trim().length < 16) {
-                        return 'Nomor KK harus terdiri dari 16 digit';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Masukkan 16 digit No. KK...',
-                      prefixIcon: const Icon(
-                        Icons.family_restroom_rounded,
-                        color: AppColors.primary,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // 3. NIK Penerima
+                  // 2. NIK Penerima
                   _buildMandatoryLabel('NIK Penerima'),
                   const SizedBox(height: 6),
                   TextFormField(
@@ -558,96 +423,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 14),
-
-                  // 4. RT, RW, No Rumah (Sebaris Horizontal - Mandatory)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildMandatoryLabel('RT'),
-                            const SizedBox(height: 6),
-                            TextFormField(
-                              controller: _rtController,
-                              onTapOutside: (event) =>
-                                  FocusManager.instance.primaryFocus?.unfocus(),
-                              keyboardType: TextInputType.number,
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return 'Wajib diisi';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                hintText: '001',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildMandatoryLabel('RW'),
-                            const SizedBox(height: 6),
-                            TextFormField(
-                              controller: _rwController,
-                              onTapOutside: (event) =>
-                                  FocusManager.instance.primaryFocus?.unfocus(),
-                              keyboardType: TextInputType.number,
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return 'Wajib diisi';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                hintText: '002',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildMandatoryLabel('No. Rumah'),
-                            const SizedBox(height: 6),
-                            TextFormField(
-                              controller: _houseNumberController,
-                              onTapOutside: (event) =>
-                                  FocusManager.instance.primaryFocus?.unfocus(),
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return 'Wajib diisi';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                hintText: '12B',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
                   ),
                   const SizedBox(height: 14),
                 ],
@@ -694,7 +469,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                               strokeWidth: 2,
                             ),
                           )
-                        : const Icon(Icons.send_rounded),
+                        : null,
                     label: Text(
                       _isSubmitting
                           ? 'Mengirim...'

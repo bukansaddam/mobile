@@ -62,6 +62,13 @@ import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 
+// Activation / Penugasan
+import 'package:akar/features/linmas/activation/data/datasources/activation_remote_datasource.dart';
+import 'package:akar/features/linmas/activation/data/repositories/activation_repository_impl.dart';
+import 'package:akar/features/linmas/activation/domain/repositories/activation_repository.dart';
+import 'package:akar/features/linmas/activation/domain/usecases/get_activation_runs_usecase.dart';
+import 'package:akar/features/linmas/activation/domain/usecases/submit_activation_report_usecase.dart';
+
 // Announcement
 import 'package:akar/features/linmas/announcement/data/datasources/announcement_remote_datasource.dart';
 import 'package:akar/features/linmas/announcement/data/repositories/announcement_repository_impl.dart';
@@ -249,8 +256,26 @@ Future<void> init() async {
   sl.registerLazySingleton<TrackingBloc>(
     () => TrackingBloc(sendLocationUsecase: sl(), sharedPreferences: sl()),
   );
+  sl.registerLazySingleton<ActivationRemoteDatasource>(
+    () => ActivationRemoteDatasourceImpl(),
+  );
+  sl.registerLazySingleton<ActivationRepository>(
+    () => ActivationRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<GetActivationRunsUsecase>(
+    () => GetActivationRunsUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitActivationReportUsecase>(
+    () => SubmitActivationReportUsecase(sl()),
+  );
+
   sl.registerLazySingleton<HomeBloc>(() => HomeBloc());
-  sl.registerLazySingleton<ActivationBloc>(() => ActivationBloc());
+  sl.registerLazySingleton<ActivationBloc>(
+    () => ActivationBloc(
+      getActivationRunsUsecase: sl(),
+      submitActivationReportUsecase: sl(),
+    ),
+  );
   sl.registerFactory<AnalisisBloc>(() => AnalisisBloc());
   sl.registerFactory<PanicBloc>(
     () => PanicBloc(getNearbyMembersUsecase: sl(), sendPanicAlertUsecase: sl()),

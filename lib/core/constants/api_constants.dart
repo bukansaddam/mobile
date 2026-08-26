@@ -14,6 +14,11 @@ class ApiConstants {
   //Surveys
   static const String surveys = '/api/surveys';
 
+  //Activations / Penugasan
+  static const String activationRuns = '/api/activations/runs';
+  static String participantSubmissions(dynamic id) =>
+      '/api/activations/participants/$id/submissions';
+
   //Tracking
   static const String position = '/api/positions/me';
   static const String tracking = '/api/positions/me';

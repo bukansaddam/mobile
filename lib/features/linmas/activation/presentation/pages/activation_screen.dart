@@ -17,9 +17,25 @@ class ActivationScreen extends StatefulWidget {
 
 class _ActivationScreenState extends State<ActivationScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<ActivationBloc>().add(LoadMoreActivationActivitiesEvent());
+    }
+  }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -661,58 +677,88 @@ class _ActivationScreenState extends State<ActivationScreen> {
 
                 // Scrollable List / Empty State
                 Expanded(
-                  child: filteredList.isEmpty
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.search_off_rounded,
-                                  size: 64,
-                                  color: AppColors.grey400,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Kegiatan Tidak Ditemukan',
-                                  style: AppTextStyles.headlineSmall.copyWith(
-                                    fontSize: 16,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Coba kata kunci lain atau ubah filter pada tombol filter.',
-                                  style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 13,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(
-                            18.0,
-                            4.0,
-                            18.0,
-                            24.0,
-                          ),
-                          itemCount: filteredList.length,
-                          itemBuilder: (context, index) {
-                            final activity = filteredList[index];
-                            return ActivationCard(
-                              activity: activity,
-                              onTap: () => context.pushNamed(
-                                'activationDetail',
-                                extra: activity.id,
-                              ),
-                            );
+                  child: state.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            context
+                                .read<ActivationBloc>()
+                                .add(LoadActivationActivitiesEvent());
                           },
+                          child: filteredList.isEmpty
+                              ? SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: Container(
+                                    height: 400,
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(24.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.search_off_rounded,
+                                          size: 64,
+                                          color: AppColors.grey400,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'Kegiatan Tidak Ditemukan',
+                                          style: AppTextStyles.headlineSmall
+                                              .copyWith(
+                                            fontSize: 16,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          'Coba kata kunci lain atau ubah filter pada tombol filter.',
+                                          style: AppTextStyles.bodyMedium
+                                              .copyWith(
+                                            color: AppColors.textSecondary,
+                                            fontSize: 13,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  controller: _scrollController,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    18.0,
+                                    4.0,
+                                    18.0,
+                                    24.0,
+                                  ),
+                                  itemCount: filteredList.length +
+                                      (state.isLoadingMore ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index == filteredList.length) {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 16.0,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+
+                                    final activity = filteredList[index];
+                                    return ActivationCard(
+                                      activity: activity,
+                                      onTap: () => context.pushNamed(
+                                        'activationDetail',
+                                        extra: activity.id,
+                                      ),
+                                    );
+                                  },
+                                ),
                         ),
                 ),
               ],

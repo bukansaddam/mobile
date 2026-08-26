@@ -33,6 +33,9 @@ class ActivationState extends Equatable {
   final ActivationStatus? selectedStatusFilter;
   final ActivationSortOption selectedSortOption;
   final bool isLoading;
+  final bool isLoadingMore;
+  final int currentPage;
+  final bool hasMore;
 
   const ActivationState({
     this.activities = const [],
@@ -41,6 +44,9 @@ class ActivationState extends Equatable {
     this.selectedStatusFilter,
     this.selectedSortOption = ActivationSortOption.deadlineTerdekat,
     this.isLoading = false,
+    this.isLoadingMore = false,
+    this.currentPage = 1,
+    this.hasMore = true,
   });
 
   bool get hasActiveFilter =>
@@ -105,6 +111,9 @@ class ActivationState extends Equatable {
     bool clearStatus = false,
     ActivationSortOption? selectedSortOption,
     bool? isLoading,
+    bool? isLoadingMore,
+    int? currentPage,
+    bool? hasMore,
   }) {
     return ActivationState(
       activities: activities ?? this.activities,
@@ -117,16 +126,22 @@ class ActivationState extends Equatable {
           : (selectedStatusFilter ?? this.selectedStatusFilter),
       selectedSortOption: selectedSortOption ?? this.selectedSortOption,
       isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      currentPage: currentPage ?? this.currentPage,
+      hasMore: hasMore ?? this.hasMore,
     );
   }
 
   @override
   List<Object?> get props => [
-    activities,
-    searchQuery,
-    selectedCategoryFilter,
-    selectedStatusFilter,
-    selectedSortOption,
-    isLoading,
-  ];
+        activities,
+        searchQuery,
+        selectedCategoryFilter,
+        selectedStatusFilter,
+        selectedSortOption,
+        isLoading,
+        isLoadingMore,
+        currentPage,
+        hasMore,
+      ];
 }
