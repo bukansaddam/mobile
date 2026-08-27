@@ -261,9 +261,7 @@ class TrackingConfigModal {
                             )
                           : const Icon(Icons.send_rounded),
                       label: Text(
-                        trackingState.isSending
-                            ? 'Mengirim...'
-                            : 'Kirim Lokasi Ke API Sekarang',
+                        trackingState.isSending ? 'Mengirim...' : 'Kirim',
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

@@ -445,7 +445,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               ],
                             )
                           : Text(
-                              'Kirim Survey Bulanan',
+                              'Kirim',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -617,7 +617,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               ],
                             )
                           : Text(
-                              'Kirim Survey Bulanan',
+                              'Kirim',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

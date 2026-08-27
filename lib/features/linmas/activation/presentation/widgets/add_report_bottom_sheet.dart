@@ -471,9 +471,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                           )
                         : null,
                     label: Text(
-                      _isSubmitting
-                          ? 'Mengirim...'
-                          : 'Kirim ${_photoUrls.length} Foto Laporan',
+                      _isSubmitting ? 'Mengirim...' : 'Kirim',
                       style: AppTextStyles.titleMedium.copyWith(
                         color: AppColors.white,
                         fontWeight: FontWeight.bold,

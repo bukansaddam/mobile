@@ -163,7 +163,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           elevation: 2,
                         ),
                         child: Text(
-                          'Kirim Bukti Laporan Foto',
+                          'Kirim',
                           style: AppTextStyles.titleMedium.copyWith(
                             color: AppColors.white,
                             fontWeight: FontWeight.bold,

@@ -794,7 +794,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                       ),
                     )
                   : Text(
-                      'KIRIM PENGADUAN',
+                      'KIRIM',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15,

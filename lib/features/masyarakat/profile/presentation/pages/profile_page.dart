@@ -188,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       child: const Text(
-                        'Kirim Survey',
+                        'Kirim',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

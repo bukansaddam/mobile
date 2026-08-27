@@ -1942,7 +1942,7 @@ class _RondaScreenState extends State<RondaScreen> {
                           ),
                         )
                       : Text(
-                          isFinalStep ? 'Kirim Laporan' : 'Lanjut',
+                          isFinalStep ? 'Kirim' : 'Lanjut',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -2223,7 +2223,7 @@ class _RondaScreenState extends State<RondaScreen> {
                   ),
                 ),
                 child: const Text(
-                  'KEMBALI KE UTAMA',
+                  'KEMBALI KE HALAMAN UTAMA',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                 ),
               ),

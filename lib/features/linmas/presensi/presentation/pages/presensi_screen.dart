@@ -619,7 +619,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                         ),
                       ),
                       child: const Text(
-                        'KEMBALI KE UTAMA',
+                        'KEMBALI KE HALAMAN UTAMA',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
@@ -644,7 +644,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                         ),
                       ),
                       child: const Text(
-                        'KEMBALI KE UTAMA',
+                        'KEMBALI KE HALAMAN UTAMA',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
