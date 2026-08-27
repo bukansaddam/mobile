@@ -1,6 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/kta_card_dialog.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -670,6 +671,27 @@ class _ProfilePageState extends State<ProfilePage> {
                               icon: Icons.person_outline_rounded,
                               title: 'Edit Profil Saya',
                               onTap: () {},
+                            ),
+                            const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                            _buildMenuItem(
+                              icon: Icons.badge_outlined,
+                              title: 'Kartu Tanda Anggota (KTA) Digital',
+                              onTap: () {
+                                final authState = context
+                                    .read<AuthBloc>()
+                                    .state;
+                                if (authState is AuthAuthenticated) {
+                                  showKtaCardDialog(context, authState.user);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'Sesi pengguna tidak ditemukan',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                             const Divider(height: 1, color: Color(0xFFF1F5F9)),
                             _buildMenuItem(
