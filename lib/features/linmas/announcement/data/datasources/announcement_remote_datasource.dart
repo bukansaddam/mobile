@@ -35,10 +35,7 @@ class AnnouncementRemoteDatasourceImpl extends BaseRemoteDataSource
     }
 
     final response = await handleRequest<AnnouncementResponseModel>(
-      () => dio.get(
-        ApiConstants.news,
-        queryParameters: queryParams,
-      ),
+      () => dio.get(ApiConstants.news, queryParameters: queryParams),
       fromJson: (json) {
         if (json is Map<String, dynamic>) {
           return AnnouncementResponseModel.fromJson(json);
@@ -47,7 +44,11 @@ class AnnouncementRemoteDatasourceImpl extends BaseRemoteDataSource
           return AnnouncementResponseModel(
             success: true,
             data: json
-                .map((e) => AnnouncementModel.fromJson(Map<String, dynamic>.from(e as Map)))
+                .map(
+                  (e) => AnnouncementModel.fromJson(
+                    Map<String, dynamic>.from(e as Map),
+                  ),
+                )
                 .toList(),
           );
         }

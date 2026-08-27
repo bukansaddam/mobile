@@ -26,7 +26,9 @@ abstract class AnnouncementModel with _$AnnouncementModel {
     @JsonKey(name: "images") List<String>? images,
     @JsonKey(name: "author_name") String? authorName,
     @JsonKey(name: "status") String? status,
-    @JsonKey(name: "is_pinned", readValue: _readBool) @Default(false) bool isPinned,
+    @JsonKey(name: "is_pinned", readValue: _readBool)
+    @Default(false)
+    bool isPinned,
     @JsonKey(name: "views_count") int? viewsCount,
     @JsonKey(name: "published_at") String? publishedAt,
     @JsonKey(name: "created_at") String? createdAt,

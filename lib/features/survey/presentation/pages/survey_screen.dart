@@ -109,10 +109,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           final condVal = _answers[condKey]?.toString() ?? cond.value ?? '';
           if (condVal.isNotEmpty) {
             fieldAnswerEntities.add(
-              SurveyFieldAnswerEntity(
-                fieldId: cond.id,
-                value: condVal,
-              ),
+              SurveyFieldAnswerEntity(fieldId: cond.id, value: condVal),
             );
           }
         }
@@ -132,12 +129,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
 
     context.read<SurveyBloc>().add(
-          SubmitApiSurveyAnswersEvent(
-            surveyId: survey.id,
-            periodKey: survey.period ?? SurveyEntity.getCurrentPeriodKey(),
-            request: requestEntity,
-          ),
-        );
+      SubmitApiSurveyAnswersEvent(
+        surveyId: survey.id,
+        periodKey: survey.period ?? SurveyEntity.getCurrentPeriodKey(),
+        request: requestEntity,
+      ),
+    );
   }
 
   void _submitDynamicForm(MonthlySurveyFormEntity form) {
@@ -229,9 +226,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 actions: [
                   ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<SurveyBloc>()
-                          .add(const CheckSurveyStatusEvent());
+                      context.read<SurveyBloc>().add(
+                        const CheckSurveyStatusEvent(),
+                      );
                       Navigator.pop(dialogContext);
                       context.pop();
                     },
@@ -388,10 +385,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         ),
         if (!isSubmitted)
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: AppColors.white,
               boxShadow: [
@@ -411,8 +405,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     height: 48,
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed:
-                          isSubmitting ? null : () => _submitApiForm(survey),
+                      onPressed: isSubmitting
+                          ? null
+                          : () => _submitApiForm(survey),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.white,
@@ -560,10 +555,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         ),
         if (!isSubmitted)
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: AppColors.white,
               boxShadow: [
@@ -583,8 +575,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     height: 48,
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed:
-                          isSubmitting ? null : () => _submitDynamicForm(form),
+                      onPressed: isSubmitting
+                          ? null
+                          : () => _submitDynamicForm(form),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.white,
@@ -750,10 +743,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
   }
 
-  Widget _buildApiQuestionInput(
-    SurveyQuestionEntity question,
-    bool isEnabled,
-  ) {
+  Widget _buildApiQuestionInput(SurveyQuestionEntity question, bool isEnabled) {
     final key = question.id.toString();
 
     if (question.isPilihanGanda) {
@@ -779,7 +769,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.grey400,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.grey400,
                         width: isSelected ? 6 : 2,
                       ),
                     ),
@@ -789,7 +781,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     child: Text(
                       opt,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         color: isSelected
                             ? AppColors.primaryDark
                             : AppColors.textPrimary,
@@ -838,7 +832,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.grey400,
+                        color: isSelected
+                            ? AppColors.primary
+                            : AppColors.grey400,
                         width: isSelected ? 6 : 2,
                       ),
                     ),
@@ -848,7 +844,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     child: Text(
                       opt,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         color: isSelected
                             ? AppColors.primaryDark
                             : AppColors.textPrimary,
@@ -993,10 +991,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         initialTime: TimeOfDay.now(),
                       );
                       if (pickedTime != null) {
-                        final formattedHour =
-                            pickedTime.hour.toString().padLeft(2, '0');
-                        final formattedMinute =
-                            pickedTime.minute.toString().padLeft(2, '0');
+                        final formattedHour = pickedTime.hour
+                            .toString()
+                            .padLeft(2, '0');
+                        final formattedMinute = pickedTime.minute
+                            .toString()
+                            .padLeft(2, '0');
                         final timeStr = '$formattedHour:$formattedMinute';
                         setState(() {
                           _answers[condKey] = timeStr;

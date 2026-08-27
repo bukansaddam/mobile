@@ -65,7 +65,9 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
         periodKey,
       );
 
-      final apiSurvey = await repository.getActiveMonthlySurveyFromApi(periodKey);
+      final apiSurvey = await repository.getActiveMonthlySurveyFromApi(
+        periodKey,
+      );
       if (apiSurvey != null) {
         emit(
           ApiSurveyLoadedState(
@@ -116,8 +118,9 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       );
       await repository.submitDynamicMonthlySurvey(localSurvey);
 
-      final apiSurvey =
-          await repository.getActiveMonthlySurveyFromApi(event.periodKey);
+      final apiSurvey = await repository.getActiveMonthlySurveyFromApi(
+        event.periodKey,
+      );
 
       emit(
         const DynamicSurveySuccessState(
@@ -126,12 +129,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       );
 
       if (apiSurvey != null) {
-        emit(
-          ApiSurveyLoadedState(
-            survey: apiSurvey,
-            isSubmitted: true,
-          ),
-        );
+        emit(ApiSurveyLoadedState(survey: apiSurvey, isSubmitted: true));
       }
     } catch (e) {
       emit(
@@ -149,8 +147,9 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       final repository = getMonthlySurveyStatusUsecase.repository;
       await repository.submitDynamicMonthlySurvey(event.survey);
 
-      final form =
-          await repository.getActiveMonthlySurveyForm(event.survey.period);
+      final form = await repository.getActiveMonthlySurveyForm(
+        event.survey.period,
+      );
 
       emit(
         const DynamicSurveySuccessState(
@@ -158,12 +157,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
         ),
       );
 
-      emit(
-        DynamicFormLoadedState(
-          form: form,
-          isSubmitted: true,
-        ),
-      );
+      emit(DynamicFormLoadedState(form: form, isSubmitted: true));
     } catch (e) {
       emit(
         SurveyFailureState('Gagal mengirim survey bulanan: ${e.toString()}'),

@@ -24,7 +24,8 @@ abstract class ActivationAttachmentModel with _$ActivationAttachmentModel {
 }
 
 @freezed
-abstract class ActivationSubmissionDataModel with _$ActivationSubmissionDataModel {
+abstract class ActivationSubmissionDataModel
+    with _$ActivationSubmissionDataModel {
   const ActivationSubmissionDataModel._();
 
   const factory ActivationSubmissionDataModel({
@@ -34,7 +35,9 @@ abstract class ActivationSubmissionDataModel with _$ActivationSubmissionDataMode
     @JsonKey(name: "notes") String? notes,
     @JsonKey(name: "creator") dynamic creator,
     @JsonKey(name: "created_at") String? createdAt,
-    @JsonKey(name: "attachments") @Default([]) List<ActivationAttachmentModel> attachments,
+    @JsonKey(name: "attachments")
+    @Default([])
+    List<ActivationAttachmentModel> attachments,
   }) = _ActivationSubmissionDataModel;
 
   factory ActivationSubmissionDataModel.fromJson(Map<String, dynamic> json) =>
@@ -42,7 +45,8 @@ abstract class ActivationSubmissionDataModel with _$ActivationSubmissionDataMode
 }
 
 @freezed
-abstract class ActivationSubmissionMetaModel with _$ActivationSubmissionMetaModel {
+abstract class ActivationSubmissionMetaModel
+    with _$ActivationSubmissionMetaModel {
   const ActivationSubmissionMetaModel._();
 
   const factory ActivationSubmissionMetaModel({
@@ -55,7 +59,8 @@ abstract class ActivationSubmissionMetaModel with _$ActivationSubmissionMetaMode
 }
 
 @freezed
-abstract class ActivationSubmissionResponseModel with _$ActivationSubmissionResponseModel {
+abstract class ActivationSubmissionResponseModel
+    with _$ActivationSubmissionResponseModel {
   const ActivationSubmissionResponseModel._();
 
   const factory ActivationSubmissionResponseModel({
@@ -65,6 +70,7 @@ abstract class ActivationSubmissionResponseModel with _$ActivationSubmissionResp
     @JsonKey(name: "message") String? message,
   }) = _ActivationSubmissionResponseModel;
 
-  factory ActivationSubmissionResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$ActivationSubmissionResponseModelFromJson(json);
+  factory ActivationSubmissionResponseModel.fromJson(
+    Map<String, dynamic> json,
+  ) => _$ActivationSubmissionResponseModelFromJson(json);
 }

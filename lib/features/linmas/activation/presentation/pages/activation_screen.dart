@@ -681,9 +681,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                       ? const Center(child: CircularProgressIndicator())
                       : RefreshIndicator(
                           onRefresh: () async {
-                            context
-                                .read<ActivationBloc>()
-                                .add(LoadActivationActivitiesEvent());
+                            context.read<ActivationBloc>().add(
+                              LoadActivationActivitiesEvent(),
+                            );
                           },
                           child: filteredList.isEmpty
                               ? SingleChildScrollView(
@@ -707,18 +707,18 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                           'Kegiatan Tidak Ditemukan',
                                           style: AppTextStyles.headlineSmall
                                               .copyWith(
-                                            fontSize: 16,
-                                            color: AppColors.textPrimary,
-                                          ),
+                                                fontSize: 16,
+                                                color: AppColors.textPrimary,
+                                              ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           'Coba kata kunci lain atau ubah filter pada tombol filter.',
                                           style: AppTextStyles.bodyMedium
                                               .copyWith(
-                                            color: AppColors.textSecondary,
-                                            fontSize: 13,
-                                          ),
+                                                color: AppColors.textSecondary,
+                                                fontSize: 13,
+                                              ),
                                           textAlign: TextAlign.center,
                                         ),
                                       ],
@@ -735,7 +735,8 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                     18.0,
                                     24.0,
                                   ),
-                                  itemCount: filteredList.length +
+                                  itemCount:
+                                      filteredList.length +
                                       (state.isLoadingMore ? 1 : 0),
                                   itemBuilder: (context, index) {
                                     if (index == filteredList.length) {

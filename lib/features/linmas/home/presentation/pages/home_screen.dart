@@ -321,10 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: const Center(
               child: Text(
                 'Belum ada pengumuman',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
             ),
           );

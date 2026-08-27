@@ -38,10 +38,7 @@ class ApiSurveyLoadedState extends SurveyState {
   final SurveyItemEntity survey;
   final bool isSubmitted;
 
-  const ApiSurveyLoadedState({
-    required this.survey,
-    required this.isSubmitted,
-  });
+  const ApiSurveyLoadedState({required this.survey, required this.isSubmitted});
 }
 
 class SurveySubmittingState extends SurveyState {}

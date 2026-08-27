@@ -3,7 +3,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'survey_api_entity.freezed.dart';
 
 @freezed
-abstract class SurveyConditionalFieldEntity with _$SurveyConditionalFieldEntity {
+abstract class SurveyConditionalFieldEntity
+    with _$SurveyConditionalFieldEntity {
   const SurveyConditionalFieldEntity._();
 
   const factory SurveyConditionalFieldEntity({

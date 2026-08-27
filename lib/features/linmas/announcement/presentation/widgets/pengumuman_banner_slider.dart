@@ -13,17 +13,15 @@ Widget _buildBannerImage(String path) {
     return Image.network(
       path,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Container(
-        color: AppColors.primaryDark,
-      ),
+      errorBuilder: (context, error, stackTrace) =>
+          Container(color: AppColors.primaryDark),
     );
   }
   return Image.asset(
     path,
     fit: BoxFit.cover,
-    errorBuilder: (context, error, stackTrace) => Container(
-      color: AppColors.primaryDark,
-    ),
+    errorBuilder: (context, error, stackTrace) =>
+        Container(color: AppColors.primaryDark),
   );
 }
 
@@ -263,7 +261,9 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(alpha: 0.9),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
                                       fontSize: 11.5,
                                       shadows: const [
                                         Shadow(

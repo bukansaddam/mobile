@@ -38,10 +38,7 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     if (status != null && status.isNotEmpty) queryParams['status'] = status;
 
     final response = await handleRequest<ActivationRunResponseModel>(
-      () => dio.get(
-        ApiConstants.activationRuns,
-        queryParameters: queryParams,
-      ),
+      () => dio.get(ApiConstants.activationRuns, queryParameters: queryParams),
       fromJson: (json) {
         AppLogger.i('[RAW RESPONSE getActivationRuns]: $json');
         if (json is Map<String, dynamic>) {
@@ -51,8 +48,11 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
           return ActivationRunResponseModel(
             success: true,
             data: json
-                .map((e) =>
-                    ActivationRunModel.fromJson(Map<String, dynamic>.from(e as Map)))
+                .map(
+                  (e) => ActivationRunModel.fromJson(
+                    Map<String, dynamic>.from(e as Map),
+                  ),
+                )
                 .toList(),
           );
         }
@@ -75,10 +75,7 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     String? receiverName,
   }) async {
     final map = <String, dynamic>{
-      'file': await MultipartFile.fromFile(
-        webpFile.path,
-        filename: webpName,
-      ),
+      'file': await MultipartFile.fromFile(webpFile.path, filename: webpName),
     };
 
     if (notes != null && notes.trim().isNotEmpty) {
@@ -105,8 +102,9 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     // Compress any image format (HEIC, PNG, JPG, BMP, etc.) to WebP
     final webpFile = await ImageCompressHelper.compressToWebp(file);
     final rawName = webpFile.path.split('/').last;
-    final webpName =
-        rawName.endsWith('.webp') ? rawName : '${rawName.split('.').first}.webp';
+    final webpName = rawName.endsWith('.webp')
+        ? rawName
+        : '${rawName.split('.').first}.webp';
 
     debugPrint('════════════════════════════════════════════════════════════');
     debugPrint('🚀 [SUBMISSION REQUEST START]');
@@ -142,7 +140,9 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
 
     // 2. Fallback Endpoint if 404 (e.g. using run ID): /api/activations/runs/{id}/submissions
     if (!response.success && response.statusCode == 404) {
-      debugPrint('⚠️ Primary endpoint 404. Attempting Fallback to /api/activations/runs/$participantId/submissions');
+      debugPrint(
+        '⚠️ Primary endpoint 404. Attempting Fallback to /api/activations/runs/$participantId/submissions',
+      );
 
       response = await handleRequest<ActivationSubmissionResponseModel>(
         () async => dio.post(

@@ -35,8 +35,9 @@ extension SurveyQuestionModelMapper on SurveyQuestionModel {
       type: type,
       options: options,
       showFieldsWhen: showFieldsWhen,
-      conditionalFields:
-          conditionalFields.map((field) => field.toDomain()).toList(),
+      conditionalFields: conditionalFields
+          .map((field) => field.toDomain())
+          .toList(),
     );
   }
 }
@@ -49,8 +50,9 @@ extension SurveyQuestionEntityMapper on SurveyQuestionEntity {
       type: type,
       options: options,
       showFieldsWhen: showFieldsWhen,
-      conditionalFields:
-          conditionalFields.map((field) => field.toModel()).toList(),
+      conditionalFields: conditionalFields
+          .map((field) => field.toModel())
+          .toList(),
     );
   }
 }
@@ -99,10 +101,7 @@ extension SurveyItemEntityMapper on SurveyItemEntity {
 
 extension SurveyFieldAnswerEntityMapper on SurveyFieldAnswerEntity {
   SurveyFieldAnswerModel toModel() {
-    return SurveyFieldAnswerModel(
-      fieldId: fieldId,
-      value: value,
-    );
+    return SurveyFieldAnswerModel(fieldId: fieldId, value: value);
   }
 }
 

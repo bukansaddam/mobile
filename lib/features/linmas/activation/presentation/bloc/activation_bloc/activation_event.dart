@@ -92,10 +92,10 @@ class SubmitActivationReportApiEvent extends ActivationEvent {
 
   @override
   List<Object?> get props => [
-        participantId,
-        file.path,
-        notes,
-        receiverNik,
-        receiverName,
-      ];
+    participantId,
+    file.path,
+    notes,
+    receiverNik,
+    receiverName,
+  ];
 }

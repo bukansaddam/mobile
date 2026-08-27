@@ -17,7 +17,8 @@ extension ActivationAttachmentModelMapper on ActivationAttachmentModel {
   }
 }
 
-extension ActivationSubmissionResponseModelMapper on ActivationSubmissionResponseModel {
+extension ActivationSubmissionResponseModelMapper
+    on ActivationSubmissionResponseModel {
   ActivationSubmissionEntity toDomain() {
     final subData = data;
     return ActivationSubmissionEntity(

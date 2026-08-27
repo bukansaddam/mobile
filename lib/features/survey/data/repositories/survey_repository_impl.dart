@@ -8,10 +8,7 @@ class SurveyRepositoryImpl implements SurveyRepository {
   final SurveyLocalDatasource localDatasource;
   final SurveyRemoteDatasource? remoteDatasource;
 
-  SurveyRepositoryImpl({
-    required this.localDatasource,
-    this.remoteDatasource,
-  });
+  SurveyRepositoryImpl({required this.localDatasource, this.remoteDatasource});
 
   @override
   bool isInitialSurveyCompletedSync(int userId) {
@@ -34,10 +31,14 @@ class SurveyRepositoryImpl implements SurveyRepository {
   }
 
   @override
-  Future<SurveyItemEntity?> getActiveMonthlySurveyFromApi(String periodKey) async {
+  Future<SurveyItemEntity?> getActiveMonthlySurveyFromApi(
+    String periodKey,
+  ) async {
     if (remoteDatasource == null) return null;
     try {
-      final responseModel = await remoteDatasource!.getSurveys(period: periodKey);
+      final responseModel = await remoteDatasource!.getSurveys(
+        period: periodKey,
+      );
       final domainItems = responseModel.data.map((m) => m.toDomain()).toList();
 
       // Ambil data yang periodnya sama seperti bulan ini saja

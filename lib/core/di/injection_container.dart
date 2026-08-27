@@ -328,10 +328,7 @@ Future<void> init() async {
     () => SurveyRemoteDatasourceImpl(),
   );
   sl.registerLazySingleton<SurveyRepository>(
-    () => SurveyRepositoryImpl(
-      localDatasource: sl(),
-      remoteDatasource: sl(),
-    ),
+    () => SurveyRepositoryImpl(localDatasource: sl(), remoteDatasource: sl()),
   );
   sl.registerLazySingleton<GetMonthlySurveyStatusUsecase>(
     () => GetMonthlySurveyStatusUsecase(sl()),

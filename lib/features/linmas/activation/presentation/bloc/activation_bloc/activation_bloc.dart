@@ -55,7 +55,9 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
       } catch (_) {}
     }
 
-    emit(state.copyWith(activities: const [], isLoading: false, hasMore: false));
+    emit(
+      state.copyWith(activities: const [], isLoading: false, hasMore: false),
+    );
   }
 
   Future<void> _onLoadMoreActivities(
@@ -105,12 +107,14 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
 
         // Update local activity progress & reports
         final activities = List<ActivationActivity>.from(state.activities);
-        final index =
-            activities.indexWhere((act) => act.id == event.participantId);
+        final index = activities.indexWhere(
+          (act) => act.id == event.participantId,
+        );
         if (index != -1) {
           final old = activities[index];
           final newCompleted =
-              result.targetDone ?? (old.completedSteps + 1).clamp(0, old.totalSteps);
+              result.targetDone ??
+              (old.completedSteps + 1).clamp(0, old.totalSteps);
           final newTotal = result.totalTarget ?? old.totalSteps;
           final newStatus = (newCompleted >= newTotal)
               ? ActivationStatus.selesai

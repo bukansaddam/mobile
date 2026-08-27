@@ -134,14 +134,14 @@ class ActivationState extends Equatable {
 
   @override
   List<Object?> get props => [
-        activities,
-        searchQuery,
-        selectedCategoryFilter,
-        selectedStatusFilter,
-        selectedSortOption,
-        isLoading,
-        isLoadingMore,
-        currentPage,
-        hasMore,
-      ];
+    activities,
+    searchQuery,
+    selectedCategoryFilter,
+    selectedStatusFilter,
+    selectedSortOption,
+    isLoading,
+    isLoadingMore,
+    currentPage,
+    hasMore,
+  ];
 }

@@ -7,7 +7,7 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
   final GetAnnouncementsUsecase getAnnouncementsUsecase;
 
   AnnouncementBloc({required this.getAnnouncementsUsecase})
-      : super(const AnnouncementState()) {
+    : super(const AnnouncementState()) {
     on<FetchAnnouncements>(_onFetchAnnouncements);
     on<FetchBannerAnnouncements>(_onFetchBannerAnnouncements);
     on<LoadMoreAnnouncements>(_onLoadMoreAnnouncements);
@@ -18,11 +18,13 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     Emitter<AnnouncementState> emit,
   ) async {
     if (!event.isRefresh) {
-      emit(state.copyWith(
-        status: AnnouncementStatus.loading,
-        selectedCategory: event.category,
-        isPinnedFilter: event.isPinned,
-      ));
+      emit(
+        state.copyWith(
+          status: AnnouncementStatus.loading,
+          selectedCategory: event.category,
+          isPinnedFilter: event.isPinned,
+        ),
+      );
     }
 
     final result = await getAnnouncementsUsecase(
@@ -33,18 +35,22 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: AnnouncementStatus.error,
-        errorMessage: failure.message,
-      )),
-      (paginated) => emit(state.copyWith(
-        status: AnnouncementStatus.loaded,
-        announcements: paginated.data,
-        currentPage: paginated.currentPage,
-        lastPage: paginated.lastPage,
-        hasReachedMax: paginated.currentPage >= paginated.lastPage,
-        isLoadingMore: false,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: AnnouncementStatus.error,
+          errorMessage: failure.message,
+        ),
+      ),
+      (paginated) => emit(
+        state.copyWith(
+          status: AnnouncementStatus.loaded,
+          announcements: paginated.data,
+          currentPage: paginated.currentPage,
+          lastPage: paginated.lastPage,
+          hasReachedMax: paginated.currentPage >= paginated.lastPage,
+          isLoadingMore: false,
+        ),
+      ),
     );
   }
 
@@ -62,13 +68,13 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        bannerStatus: AnnouncementStatus.error,
-      )),
-      (paginated) => emit(state.copyWith(
-        bannerStatus: AnnouncementStatus.loaded,
-        bannerAnnouncements: paginated.data,
-      )),
+      (failure) => emit(state.copyWith(bannerStatus: AnnouncementStatus.error)),
+      (paginated) => emit(
+        state.copyWith(
+          bannerStatus: AnnouncementStatus.loaded,
+          bannerAnnouncements: paginated.data,
+        ),
+      ),
     );
   }
 
@@ -89,17 +95,17 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     );
 
     result.fold(
-      (failure) => emit(state.copyWith(
-        isLoadingMore: false,
-      )),
-      (paginated) => emit(state.copyWith(
-        status: AnnouncementStatus.loaded,
-        announcements: List.of(state.announcements)..addAll(paginated.data),
-        currentPage: paginated.currentPage,
-        lastPage: paginated.lastPage,
-        hasReachedMax: paginated.currentPage >= paginated.lastPage,
-        isLoadingMore: false,
-      )),
+      (failure) => emit(state.copyWith(isLoadingMore: false)),
+      (paginated) => emit(
+        state.copyWith(
+          status: AnnouncementStatus.loaded,
+          announcements: List.of(state.announcements)..addAll(paginated.data),
+          currentPage: paginated.currentPage,
+          lastPage: paginated.lastPage,
+          hasReachedMax: paginated.currentPage >= paginated.lastPage,
+          isLoadingMore: false,
+        ),
+      ),
     );
   }
 }

@@ -58,8 +58,8 @@ class AnnouncementListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<AnnouncementBloc>()
-        ..add(const FetchAnnouncements()),
+      create: (context) =>
+          sl<AnnouncementBloc>()..add(const FetchAnnouncements()),
       child: const AnnouncementListView(),
     );
   }
@@ -95,7 +95,9 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
   }
 
   Future<void> _onRefresh() async {
-    context.read<AnnouncementBloc>().add(const FetchAnnouncements(isRefresh: true));
+    context.read<AnnouncementBloc>().add(
+      const FetchAnnouncements(isRefresh: true),
+    );
   }
 
   @override
@@ -134,9 +136,7 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
           if (state.status == AnnouncementStatus.loading &&
               state.announcements.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
+              child: CircularProgressIndicator(color: AppColors.primary),
             );
           }
 
@@ -166,9 +166,9 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: () {
-                        context
-                            .read<AnnouncementBloc>()
-                            .add(const FetchAnnouncements());
+                        context.read<AnnouncementBloc>().add(
+                          const FetchAnnouncements(),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

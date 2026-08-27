@@ -20,10 +20,7 @@ class SurveyRemoteDatasourceImpl extends BaseRemoteDataSource
     }
 
     final response = await handleRequest<SurveyListResponseModel>(
-      () => dio.get(
-        ApiConstants.surveys,
-        queryParameters: queryParams,
-      ),
+      () => dio.get(ApiConstants.surveys, queryParameters: queryParams),
       fromJson: (json) {
         if (json is Map<String, dynamic>) {
           return SurveyListResponseModel.fromJson(json);
@@ -32,7 +29,11 @@ class SurveyRemoteDatasourceImpl extends BaseRemoteDataSource
           return SurveyListResponseModel(
             success: true,
             data: json
-                .map((e) => SurveyItemModel.fromJson(Map<String, dynamic>.from(e as Map)))
+                .map(
+                  (e) => SurveyItemModel.fromJson(
+                    Map<String, dynamic>.from(e as Map),
+                  ),
+                )
                 .toList(),
           );
         }
@@ -55,10 +56,7 @@ class SurveyRemoteDatasourceImpl extends BaseRemoteDataSource
     final endpoint = '${ApiConstants.surveys}/$surveyId/answers';
 
     final response = await handleRequest<Map<String, dynamic>>(
-      () => dio.post(
-        endpoint,
-        data: request.toJson(),
-      ),
+      () => dio.post(endpoint, data: request.toJson()),
       fromJson: (json) {
         if (json is Map<String, dynamic>) {
           return json;

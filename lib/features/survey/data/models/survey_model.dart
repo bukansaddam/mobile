@@ -49,13 +49,17 @@ abstract class SurveyItemModel with _$SurveyItemModel {
     @JsonKey(name: "period") String? period,
     @JsonKey(name: "deadline") String? deadline,
     @JsonKey(name: "status") String? status,
-    @JsonKey(name: "requireAllQuestions") @Default(true) bool requireAllQuestions,
+    @JsonKey(name: "requireAllQuestions")
+    @Default(true)
+    bool requireAllQuestions,
     @JsonKey(name: "estimatedMinutes") int? estimatedMinutes,
     @JsonKey(name: "questionsCount") int? questionsCount,
     @JsonKey(name: "respondentsCount") int? respondentsCount,
     @JsonKey(name: "createdAt") String? createdAt,
     @JsonKey(name: "publishedAt") String? publishedAt,
-    @JsonKey(name: "questions") @Default([]) List<SurveyQuestionModel> questions,
+    @JsonKey(name: "questions")
+    @Default([])
+    List<SurveyQuestionModel> questions,
   }) = _SurveyItemModel;
 
   factory SurveyItemModel.fromJson(Map<String, dynamic> json) =>
@@ -110,7 +114,9 @@ abstract class SurveySubmitRequestModel with _$SurveySubmitRequestModel {
   const SurveySubmitRequestModel._();
 
   const factory SurveySubmitRequestModel({
-    @JsonKey(name: "answers") @Default([]) List<SurveyQuestionAnswerModel> answers,
+    @JsonKey(name: "answers")
+    @Default([])
+    List<SurveyQuestionAnswerModel> answers,
   }) = _SurveySubmitRequestModel;
 
   factory SurveySubmitRequestModel.fromJson(Map<String, dynamic> json) =>

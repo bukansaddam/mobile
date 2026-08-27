@@ -119,7 +119,9 @@ class TokohDetailSheet extends StatelessWidget {
                       radius: 26,
                       backgroundColor: AppColors.primary,
                       child: Text(
-                        tokoh.nama.isNotEmpty ? tokoh.nama[0].toUpperCase() : 'T',
+                        tokoh.nama.isNotEmpty
+                            ? tokoh.nama[0].toUpperCase()
+                            : 'T',
                         style: AppTextStyles.titleLarge.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.bold,
