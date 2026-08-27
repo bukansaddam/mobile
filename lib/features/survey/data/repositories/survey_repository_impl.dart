@@ -61,12 +61,7 @@ class SurveyRepositoryImpl implements SurveyRepository {
     required int surveyId,
     required SurveySubmitRequestEntity request,
   }) async {
-    if (remoteDatasource != null) {
-      await remoteDatasource!.submitSurveyAnswers(
-        surveyId: surveyId,
-        request: request.toModel(),
-      );
-    }
+    // API submit disabled per requirement: submit is saved locally only
   }
 
   @override

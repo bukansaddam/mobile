@@ -98,19 +98,20 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   ) async {
     emit(SurveySubmittingState());
     try {
-      if (submitApiSurveyAnswersUsecase != null) {
-        await submitApiSurveyAnswersUsecase!(
-          surveyId: event.surveyId,
-          request: event.request,
-        );
-      }
-
       final repository = getMonthlySurveyStatusUsecase.repository;
+      final responses = event.request.answers.map((ans) {
+        return DynamicSurveyResponseItem(
+          questionId: ans.questionId.toString(),
+          questionText: 'Pertanyaan #${ans.questionId}',
+          answer: ans.value,
+        );
+      }).toList();
+
       final localSurvey = DynamicMonthlySurveyEntity(
         id: event.surveyId.toString(),
         period: event.periodKey,
         periodLabel: 'Survey Bulanan',
-        responses: [],
+        responses: responses,
         submittedAt: DateTime.now(),
       );
       await repository.submitDynamicMonthlySurvey(localSurvey);
@@ -134,7 +135,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       }
     } catch (e) {
       emit(
-        SurveyFailureState('Gagal mengirim jawaban survey: ${e.toString()}'),
+        SurveyFailureState('Gagal menyimpan jawaban survey: ${e.toString()}'),
       );
     }
   }
