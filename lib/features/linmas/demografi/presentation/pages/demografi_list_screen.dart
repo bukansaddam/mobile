@@ -10,6 +10,7 @@ import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.
 import 'package:akar/features/linmas/demografi/domain/entities/organisasi_entity.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/presentation/widgets/tokoh_detail_sheet.dart';
 
 class DemografiListScreen extends StatefulWidget {
   const DemografiListScreen({super.key});
@@ -1379,24 +1380,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   Widget _buildTokohCard(TokohEntity tokoh) {
     final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi);
 
-    final String subtitleText = [
-      tokoh.jenisKelamin,
-      tokoh.profesi,
-      if (tokoh.suku.isNotEmpty) 'Suku ${tokoh.suku}',
-    ].join(' • ');
-
-    final String institusiInfo = tokoh.namaInstitusi.isNotEmpty
-        ? (tokoh.jabatanInstitusi.isNotEmpty
-              ? '${tokoh.namaInstitusi} (${tokoh.jabatanInstitusi})'
-              : tokoh.namaInstitusi)
-        : '';
-
-    final String organisasiInfo = tokoh.namaOrganisasi.isNotEmpty
-        ? (tokoh.jabatanOrganisasi.isNotEmpty
-              ? '${tokoh.namaOrganisasi} (${tokoh.jabatanOrganisasi})'
-              : tokoh.namaOrganisasi)
-        : '';
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -1411,14 +1394,28 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => TokohDetailSheet.show(context, tokoh),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
               children: [
+                CircleAvatar(
+                  radius: 22,
+                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  child: Text(
+                    tokoh.nama.isNotEmpty ? tokoh.nama[0].toUpperCase() : 'T',
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1429,120 +1426,23 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                           fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        subtitleText,
+                        tokoh.profesi,
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                      if (institusiInfo.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.account_balance_rounded,
-                              size: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                institusiInfo,
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (organisasiInfo.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.groups_rounded,
-                              size: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                organisasiInfo,
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Divider(height: 1, color: AppColors.grey200),
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.phone_rounded,
-                  size: 14,
-                  color: AppColors.textSecondary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  tokoh.noTelp.isNotEmpty ? tokoh.noTelp : '-',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.grey100,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.grey300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.public_rounded,
-                        size: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        tokoh.wilayah,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
                           color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
@@ -1564,19 +1464,15 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     ),
                   ),
                 ),
+                const SizedBox(width: 6),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.grey400,
+                  size: 20,
+                ),
               ],
             ),
-            if (tokoh.createdAt != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Disubmit: ${DateFormat('dd MMM yyyy, HH:mm').format(tokoh.createdAt!)} WIB',
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontSize: 10,
-                  color: AppColors.textHint,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
