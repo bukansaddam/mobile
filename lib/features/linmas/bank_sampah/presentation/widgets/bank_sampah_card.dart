@@ -71,21 +71,21 @@ class BankSampahCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => BankSampahDetailSheet.show(context, report: report),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.grey200),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
+                color: AppColors.black.withValues(alpha: 0.03),
+                blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
             ],
           ),
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -93,127 +93,40 @@ class BankSampahCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(7),
+                    width: 52,
+                    height: 52,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.account_balance_rounded,
-                      color: AppColors.primary,
-                      size: 16,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          report.bankSampahNama,
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          DateFormat(
-                            'dd MMM yyyy, HH:mm',
-                            'id_ID',
-                          ).format(report.createdAt),
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: jenisColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
+                      color: jenisColor.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: jenisColor.withValues(alpha: 0.3),
+                        color: jenisColor.withValues(alpha: 0.2),
                       ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _getJenisIcon(report.jenisSampah),
-                          size: 12,
-                          color: jenisColor,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          report.jenisSampah,
-                          style: TextStyle(
-                            color: jenisColor,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-              const Divider(height: 1, color: AppColors.grey200),
-              const SizedBox(height: 12),
-
-              Row(
-                children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey100,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.grey200),
-                    ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                       child: hasPhoto
                           ? (hasLocalPhoto
                                 ? Image.file(
                                     File(report.fotoPath!),
-                                    width: 64,
-                                    height: 64,
+                                    width: 52,
+                                    height: 52,
                                     fit: BoxFit.cover,
                                     errorBuilder:
-                                        (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) => const Icon(
-                                          Icons.image_not_supported_outlined,
-                                          color: AppColors.grey400,
+                                        (context, error, stackTrace) => Icon(
+                                          _getJenisIcon(report.jenisSampah),
+                                          color: jenisColor,
                                           size: 24,
                                         ),
                                   )
                                 : Image.network(
                                     report.fotoUrl!,
-                                    width: 64,
-                                    height: 64,
+                                    width: 52,
+                                    height: 52,
                                     fit: BoxFit.cover,
                                     errorBuilder:
-                                        (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) => const Icon(
-                                          Icons.image_not_supported_outlined,
-                                          color: AppColors.grey400,
+                                        (context, error, stackTrace) => Icon(
+                                          _getJenisIcon(report.jenisSampah),
+                                          color: jenisColor,
                                           size: 24,
                                         ),
                                   ))
@@ -221,46 +134,113 @@ class BankSampahCard extends StatelessWidget {
                               child: Icon(
                                 _getJenisIcon(report.jenisSampah),
                                 color: jenisColor,
-                                size: 28,
+                                size: 24,
                               ),
                             ),
                     ),
                   ),
-                  const SizedBox(width: 14),
-
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Berat: ',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                            Expanded(
+                              child: Text(
+                                report.bankSampahNama,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                  height: 1.25,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            Text(
-                              '${report.beratKg.toStringAsFixed(report.beratKg.truncateToDouble() == report.beratKg ? 0 : 1)} kg',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: jenisColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: jenisColor.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    _getJenisIcon(report.jenisSampah),
+                                    size: 11,
+                                    color: jenisColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    report.jenisSampah,
+                                    style: TextStyle(
+                                      color: jenisColor,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          DateFormat(
+                            'dd MMMM yyyy, HH:mm',
+                            'id_ID',
+                          ).format(report.createdAt),
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontSize: 11,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Row(
                           children: [
                             Text(
-                              'Nilai: ',
-                              style: AppTextStyles.bodySmall.copyWith(
+                              'Berat: ',
+                              style: AppTextStyles.caption.copyWith(
                                 color: AppColors.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              '${report.beratKg.toStringAsFixed(report.beratKg.truncateToDouble() == report.beratKg ? 0 : 1)} kg',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '•',
+                              style: TextStyle(
+                                color: AppColors.grey400,
+                                fontSize: 10,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Nilai: ',
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
                               ),
                             ),
                             Text(
                               currencyFormatter.format(report.nilaiRupiah),
-                              style: AppTextStyles.bodyMedium.copyWith(
+                              style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                               ),
@@ -272,23 +252,23 @@ class BankSampahCard extends StatelessWidget {
                   ),
                 ],
               ),
-
               if (report.catatan.isNotEmpty) ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
-                    vertical: 6,
+                    vertical: 5,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.grey50,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     report.catatan,
                     style: AppTextStyles.caption.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
