@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/kta_card_dialog.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:flutter/material.dart';
@@ -351,8 +352,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton.icon(
-                          // onPressed: () => showKtaCardDialog(context, user),
-                          onPressed: () {},
+                          onPressed: () => showKtaCardDialog(context, user),
                           icon: const Icon(Icons.download_rounded, size: 16),
                           label: const Text('KTA'),
                           style: ElevatedButton.styleFrom(

@@ -469,7 +469,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                         elevation: 0,
                       ),
                       child: Text(
-                        isSubmitting ? 'Simpan...' : 'Simpan Profil Baseline',
+                        isSubmitting ? 'Simpan...' : 'Simpan',
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

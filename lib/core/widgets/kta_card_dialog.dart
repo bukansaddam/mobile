@@ -217,26 +217,6 @@ class _KtaCardModalState extends State<KtaCardModal> {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 4,
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFFFFD700),
-                            Color(0xFFFFA500),
-                            Color(0xFFFFD700),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ),
 
                   Padding(
                     padding: const EdgeInsets.all(18.0),
@@ -265,7 +245,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
                                   Text(
-                                    'AKAR NARADATA',
+                                    'AKAR',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 13,
@@ -276,7 +256,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    'KARTU TANDA ANGGOTA DIGITAL',
+                                    'KARTU TANDA ANGGOTA',
                                     style: TextStyle(
                                       color: Color(0xFFFFD700),
                                       fontSize: 9,
@@ -499,7 +479,8 @@ class _KtaCardModalState extends State<KtaCardModal> {
           SizedBox(
             height: 48,
             child: ElevatedButton.icon(
-              onPressed: _isDownloading ? null : _downloadKta,
+              // onPressed: _isDownloading ? null : _downloadKta,
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
@@ -518,9 +499,9 @@ class _KtaCardModalState extends State<KtaCardModal> {
                         color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.download_rounded, size: 22),
+                  : null,
               label: Text(
-                _isDownloading ? 'MENGUNDUH KTA...' : 'UNDUH KTA DIGITAL (PNG)',
+                _isDownloading ? 'MENGUNDUH KTA...' : 'UNDUH',
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
