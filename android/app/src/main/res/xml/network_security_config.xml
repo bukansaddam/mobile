@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Melarang semua traffic HTTP biasa (unencrypted) -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Hanya percaya CA resmi sistem bawaan OS.
+                 Sertifikat CA pengguna (Burp Suite, Charles Proxy, mitmproxy) akan DITOLAK -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">akaraslinmas.id</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

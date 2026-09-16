@@ -1,33 +1,67 @@
+import '../security/endpoint_security.dart';
+
 class ApiConstants {
   ApiConstants._();
 
-  //Base URL
-  static const String baseUrl = 'https://akaraslinmas.id';
+  // Base URL
+  static final String baseUrl = EndpointSecurity.decode(const <int>[
+    50, 90, 40, 111, 186, 123, 34, 202, 174, 67, 163, 230, 62, 106, 151, 232, 36, 115, 45, 28, 247, 24, 121
+  ]);
 
-  //Auth
-  static const String login = '/api/login';
-  static const String register = '/api/register';
+  // Auth
+  static final String login = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 45, 98, 130, 166, 70
+  ]);
+  static final String register = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 51, 104, 130, 166, 91, 182, 241, 45
+  ]);
 
-  //News / Announcement
-  static const String news = '/api/news';
+  // News / Announcement
+  static final String news = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 47, 104, 146, 188
+  ]);
 
-  //Surveys
-  static const String surveys = '/api/surveys';
+  // Surveys
+  static final String surveys = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 50, 120, 151, 185, 77, 187, 231
+  ]);
 
-  //Activations / Penugasan
-  static const String activationRuns = '/api/activations/runs';
-  static String participantSubmissions(dynamic id) =>
-      '/api/activations/participants/$id/submissions';
+  // Activations / Penugasan
+  static final String activationRuns = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 32, 110, 145, 166, 94, 163, 224, 54, 118, 149, 242, 101, 108, 57, 1, 170
+  ]);
 
-  //Tracking
-  static const String position = '/api/positions/me';
-  static const String tracking = '/api/positions/me';
+  static final String _subPrefix = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 32, 110, 145, 166, 94, 163, 224, 54, 118, 149, 242, 101, 110, 45, 29, 173, 24, 126, 124, 175, 121, 188, 144, 60, 6
+  ]);
+  static final String _subSuffix = EndpointSecurity.decode(const <int>[
+    117, 93, 41, 125, 164, 40, 126, 150, 166, 71, 172, 231
+  ]);
+  static final String _runPrefix = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 32, 110, 145, 166, 94, 163, 224, 54, 118, 149, 242, 101, 108, 57, 1, 170, 94
+  ]);
+  static String participantSubmissions(dynamic id) => '$_subPrefix$id$_subSuffix';
+  static String runSubmissions(dynamic id) => '$_runPrefix$id$_subSuffix';
 
-  //Google Speech
-  static const List<String> googleCloudScopes = [
-    'https://www.googleapis.com/auth/cloud-platform',
+  // Tracking
+  static final String position = EndpointSecurity.decode(const <int>[
+    117, 79, 44, 118, 230, 49, 98, 150, 166, 92, 171, 251, 49, 106, 212, 236, 47
+  ]);
+  static final String tracking = position;
+
+  // Google Speech
+  static final List<String> googleCloudScopes = <String>[
+    EndpointSecurity.decode(const <int>[
+      50, 90, 40, 111, 186, 123, 34, 202, 184, 95, 181, 186, 56, 118, 148, 230, 38, 123, 45, 31, 176, 2, 51, 118, 176, 117, 253, 133, 58, 93, 131, 94, 25, 98, 83, 10, 141, 76, 157, 105, 142, 124, 196, 155, 13, 84
+    ]),
   ];
 
+  static final String _speechPrefix = EndpointSecurity.decode(const <int>[
+    50, 90, 40, 111, 186, 123, 34, 202, 174, 91, 171, 245, 114, 106, 148, 244, 62, 118, 41, 14, 170, 5, 44, 56, 172, 104, 183, 129, 44, 65, 197, 22, 21, 97, 91, 19, 140, 0, 157, 108, 156, 38, 193, 155, 18, 22, 109, 83, 69, 14, 94, 32, 147, 244, 158, 65, 140, 87
+  ]);
+  static final String _speechSuffix = EndpointSecurity.decode(const <int>[
+    117, 66, 51, 124, 168, 53, 100, 138, 161, 91, 237, 245, 44, 112, 154, 172, 57, 113, 57, 27, 177, 20, 124, 102, 171, 41, 253, 150, 42, 74, 132, 22, 20, 103, 70, 26, 155, 18, 194, 90, 213, 122, 199, 151, 16, 94, 117, 8, 16, 27
+  ]);
   static String googleSpeechRecognizeUrl(String projectId) =>
-      'https://asia-southeast1-speech.googleapis.com/v2/projects/$projectId/locations/asia-southeast1/recognizers/_:recognize';
+      '$_speechPrefix$projectId$_speechSuffix';
 }

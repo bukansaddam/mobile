@@ -99,7 +99,6 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     String? receiverNik,
     String? receiverName,
   }) async {
-    // Compress any image format (HEIC, PNG, JPG, BMP, etc.) to WebP
     final webpFile = await ImageCompressHelper.compressToWebp(file);
     final rawName = webpFile.path.split('/').last;
     final webpName = rawName.endsWith('.webp')
@@ -116,7 +115,6 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     debugPrint('👤 Receiver Name            : ${receiverName ?? '-'}');
     debugPrint('════════════════════════════════════════════════════════════');
 
-    // 1. Primary Endpoint: /api/activations/participants/{id}/submissions
     var response = await handleRequest<ActivationSubmissionResponseModel>(
       () async => dio.post(
         ApiConstants.participantSubmissions(participantId),
@@ -138,15 +136,14 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
       },
     );
 
-    // 2. Fallback Endpoint if 404 (e.g. using run ID): /api/activations/runs/{id}/submissions
     if (!response.success && response.statusCode == 404) {
       debugPrint(
-        '⚠️ Primary endpoint 404. Attempting Fallback to /api/activations/runs/$participantId/submissions',
+        '⚠️ Primary endpoint 404. Attempting Fallback to run submissions',
       );
 
       response = await handleRequest<ActivationSubmissionResponseModel>(
         () async => dio.post(
-          '/api/activations/runs/$participantId/submissions',
+          ApiConstants.runSubmissions(participantId),
           data: await _createFormData(
             webpFile: webpFile,
             webpName: webpName,

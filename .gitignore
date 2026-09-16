@@ -47,3 +47,13 @@ app.*.map.json
 ios/Flutter/Secrets.xcconfig
 
 /lib/core/crd
+
+# Environment & Secret Variables
+.env
+.env.*
+!.env.example
+
+# Secret Encryption Tooling
+tool/encrypt_endpoint.*
+
+.vscode
