@@ -76,8 +76,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
           return;
         }
       }
-
-      // Check conditional fields if shown
       if (q.shouldShowConditionalFields(answer?.toString())) {
         for (final cond in q.conditionalFields) {
           final condKey = '${q.id}_cond_${cond.id}';
@@ -291,7 +289,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Banner
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -367,8 +364,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     ),
                   ),
                 ],
-
-                // Render Dynamic API Questions
                 ...survey.questions.asMap().entries.map((entry) {
                   final index = entry.key + 1;
                   final question = entry.value;
@@ -627,8 +622,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
   }
 
-  // --- API Question Builder ---
-
   Widget _buildApiQuestionCard({
     required int number,
     required SurveyQuestionEntity question,
@@ -695,8 +688,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
           const SizedBox(height: 8),
 
           _buildApiQuestionInput(question, isEnabled),
-
-          // Render Branching / Conditional Fields when option matches showFieldsWhen
           if (showConditional && question.hasConditionalFields) ...[
             const SizedBox(height: 14),
             Container(
@@ -860,8 +851,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
         }).toList(),
       );
     }
-
-    // Default: Isian (Textfield)
     final controller = _getTextController(key);
     return TextFormField(
       controller: controller,
@@ -1034,8 +1023,6 @@ class _SurveyScreenState extends State<SurveyScreen> {
       ),
     );
   }
-
-  // --- Legacy Form Builder ---
 
   Widget _buildLegacyDynamicQuestionCard({
     required int number,

@@ -114,7 +114,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Nama Institusi *
                         _buildLabel('Nama Institusi', isRequired: true),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -134,7 +133,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         ),
                         const SizedBox(height: 14),
 
-                        // Scope Institusi *
                         _buildLabel('Scope Institusi', isRequired: true),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
@@ -163,7 +161,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         ),
                         const SizedBox(height: 14),
 
-                        // Alamat (Opsional)
                         _buildLabel('Alamat Institusi', isRequired: false),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -296,8 +293,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-
-                        // Nama Organisasi *
                         _buildLabel('Nama Organisasi', isRequired: true),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -316,8 +311,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           ),
                         ),
                         const SizedBox(height: 14),
-
-                        // Perkiraan Jumlah Anggota *
                         _buildLabel(
                           'Perkiraan Jumlah Anggota',
                           isRequired: true,
@@ -343,8 +336,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           ),
                         ),
                         const SizedBox(height: 14),
-
-                        // Bergerak di Bidang *
                         _buildLabel('Bergerak di Bidang', isRequired: true),
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
@@ -372,8 +363,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           ),
                         ),
                         const SizedBox(height: 14),
-
-                        // Alamat Sekretariat (Opsional)
                         _buildLabel('Alamat Sekretariat', isRequired: false),
                         const SizedBox(height: 6),
                         TextFormField(
@@ -838,7 +827,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
         }
       },
       builder: (context, state) {
-        // Dynamic Options from Tab lists (Full Unfiltered Lists)
         final List<String> institusiListOptions = [
           'Tidak Ada',
           ...state.institusiList.map((i) => i.nama),
@@ -928,8 +916,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // 1. Nama Tokoh *
                     _buildLabel('Nama Tokoh', isRequired: true),
                     const SizedBox(height: 6),
                     TextFormField(
@@ -948,8 +934,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-
-                    // 2. No. HP (Opsional)
                     _buildLabel('No. HP', isRequired: false),
                     const SizedBox(height: 6),
                     TextFormField(
@@ -962,8 +946,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-
-                    // 3. Jenis Kelamin (Dropdown) *
                     _buildLabel('Jenis Kelamin', isRequired: true),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
@@ -991,8 +973,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-
-                    // 4. Profesi (Dropdown) *
                     _buildLabel('Profesi', isRequired: true),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
@@ -1020,8 +1000,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-
-                    // 5. Institusi (Dropdown dari list tab institusi - hanya title, dengan pencarian) *
                     _buildLabel('Institusi', isRequired: true),
                     const SizedBox(height: 6),
                     InkWell(
@@ -1078,7 +1056,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
 
-                    // - Jabatan di Institusi (Opsional) - keluar setelah memilih institusi
                     if (showJabatanInstitusi) ...[
                       const SizedBox(height: 14),
                       _buildLabel('Jabatan di Institusi', isRequired: false),
@@ -1094,8 +1071,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ],
                     const SizedBox(height: 18),
-
-                    // 6. Afiliasi (Dropdown) *
                     _buildLabel('Afiliasi', isRequired: true),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
@@ -1123,8 +1098,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-
-                    // 7. Nama Organisasi (Dropdown dari list tab organisasi - hanya title, dengan pencarian) *
                     _buildLabel('Nama Organisasi', isRequired: true),
                     const SizedBox(height: 6),
                     InkWell(
@@ -1180,8 +1153,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         ),
                       ),
                     ),
-
-                    // - Jabatan di Organisasi (Opsional) - keluar setelah memilih organisasi
                     if (showJabatanOrganisasi) ...[
                       const SizedBox(height: 14),
                       _buildLabel('Jabatan di Organisasi', isRequired: false),
@@ -1197,8 +1168,6 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       ),
                     ],
                     const SizedBox(height: 18),
-
-                    // 8. Suku (Dropdown semua suku di Indonesia & berikan search) *
                     _buildLabel('Suku', isRequired: true),
                     const SizedBox(height: 6),
                     InkWell(

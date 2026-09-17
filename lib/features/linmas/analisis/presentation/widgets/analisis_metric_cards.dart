@@ -84,9 +84,9 @@ class AnalisisSummaryChartCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
 
-          SizedBox(
-            height: 105,
+          IntrinsicHeight(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: _buildMiniCard(
@@ -95,10 +95,6 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                     subtitle: 'Kegiatan aktif',
                     icon: Icons.assignment_outlined,
                     color: const Color(0xFF0F9F66),
-                    gradientColors: const [
-                      Color(0xFF0F9F66),
-                      Color(0xFF0A754B),
-                    ],
                     onTap: () => onStatusCardTap?.call(null),
                   ),
                 ),
@@ -110,10 +106,6 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                     subtitle: 'Sedang jalan',
                     icon: Icons.event_note_rounded,
                     color: const Color(0xFFD99B00),
-                    gradientColors: const [
-                      Color(0xFFD99B00),
-                      Color(0xFFB37B00),
-                    ],
                     onTap: () =>
                         onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
                   ),
@@ -126,10 +118,6 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                     subtitle: 'Selesai',
                     icon: Icons.insert_drive_file_outlined,
                     color: const Color(0xFF5CB836),
-                    gradientColors: const [
-                      Color(0xFF5CB836),
-                      Color(0xFF438A24),
-                    ],
                     onTap: () =>
                         onStatusCardTap?.call(ActivationStatus.selesai),
                   ),
@@ -189,34 +177,19 @@ class AnalisisSummaryChartCard extends StatelessWidget {
     required String subtitle,
     required IconData icon,
     required Color color,
-    List<Color>? gradientColors,
     VoidCallback? onTap,
   }) {
-    final primaryColor = gradientColors?.first ?? color;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           decoration: BoxDecoration(
-            color: gradientColors == null ? color : null,
-            gradient: gradientColors != null
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: gradientColors,
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withValues(alpha: 0.25),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            color: AppColors.grey50,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.grey200),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,21 +201,22 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: color.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(icon, color: Colors.white, size: 16),
+                    child: Icon(icon, color: color, size: 16),
                   ),
                   Text(
                     '$count',
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: color,
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -251,16 +225,18 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      fontSize: 9,
-                      color: Colors.white.withValues(alpha: 0.8),
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

@@ -119,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Logo & Branding Header
                       Center(
                         child: Container(
                           width: 84,
@@ -173,7 +172,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 36),
 
-                      // Card Form Container
                       Card(
                         elevation: 3,
                         shadowColor: AppColors.black.withValues(alpha: 0.08),
@@ -185,7 +183,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Username Input
                               Text(
                                 'Username',
                                 style: AppTextStyles.labelLarge.copyWith(
@@ -237,7 +234,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 20),
 
-                              // Password Input
                               Text(
                                 'Kata Sandi',
                                 style: AppTextStyles.labelLarge.copyWith(
@@ -306,7 +302,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               const SizedBox(height: 28),
 
-                              // Login Button
                               ElevatedButton(
                                 onPressed: isLoading ? null : _handleLogin,
                                 style: ElevatedButton.styleFrom(
@@ -347,7 +342,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 24),
 
-                      // Register Link Navigation
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: () {

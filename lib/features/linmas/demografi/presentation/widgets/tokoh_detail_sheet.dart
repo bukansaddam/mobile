@@ -55,7 +55,6 @@ class TokohDetailSheet extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Drag handle
               Center(
                 child: Container(
                   width: 44,
@@ -67,8 +66,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Sheet Title & Close Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -101,8 +98,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-
-              // Header Profile Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -153,7 +148,6 @@ class TokohDetailSheet extends StatelessWidget {
                             spacing: 6,
                             runSpacing: 4,
                             children: [
-                              // Afiliasi Badge
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 10,
@@ -175,7 +169,6 @@ class TokohDetailSheet extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // Wilayah Badge
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 10,
@@ -215,8 +208,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Section: Identitas & Profil
               Text(
                 'Identitas Personal',
                 style: AppTextStyles.titleMedium.copyWith(
@@ -262,8 +253,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Section: Institusi (if available)
               if (tokoh.namaInstitusi.isNotEmpty) ...[
                 Text(
                   'Institusi',
@@ -299,8 +288,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
               ],
-
-              // Section: Organisasi (if available)
               if (tokoh.namaOrganisasi.isNotEmpty) ...[
                 Text(
                   'Organisasi',
@@ -336,8 +323,6 @@ class TokohDetailSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
               ],
-
-              // Section: Waktu Submission
               if (tokoh.createdAt != null) ...[
                 Container(
                   width: double.infinity,

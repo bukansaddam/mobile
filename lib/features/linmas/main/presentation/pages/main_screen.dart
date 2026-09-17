@@ -278,17 +278,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           body: SafeArea(
             child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.2),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.15],
-                ),
-              ),
+              color: AppColors.background,
               child: user == null
                   ? Center(
                       child: Padding(

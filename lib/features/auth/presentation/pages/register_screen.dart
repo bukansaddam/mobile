@@ -203,7 +203,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Nama Lengkap
                             _buildTextFieldLabel('Nama Lengkap'),
                             TextFormField(
                               controller: _nameController,
@@ -221,7 +220,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Nomor HP
                             _buildTextFieldLabel('Nomor Telepon'),
                             TextFormField(
                               controller: _phoneController,
@@ -239,7 +237,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // NIK
                             _buildTextFieldLabel(
                               'NIK (Nomor Induk Kependudukan)',
                             ),
@@ -264,7 +261,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Username
                             _buildTextFieldLabel('Username'),
                             TextFormField(
                               controller: _usernameController,
@@ -281,7 +277,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Email
                             _buildTextFieldLabel('Email'),
                             TextFormField(
                               controller: _emailController,
@@ -304,7 +299,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Password
                             _buildTextFieldLabel('Kata Sandi'),
                             TextFormField(
                               controller: _passwordController,
@@ -343,7 +337,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            // Confirm Password
                             _buildTextFieldLabel('Konfirmasi Kata Sandi'),
                             TextFormField(
                               controller: _confirmPasswordController,
@@ -382,7 +375,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 28),
 
-                            // Register Submit Button
                             ElevatedButton(
                               onPressed: isLoading ? null : _handleRegister,
                               style: ElevatedButton.styleFrom(
@@ -422,7 +414,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Navigation to Login
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {

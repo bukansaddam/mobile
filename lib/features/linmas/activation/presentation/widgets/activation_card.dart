@@ -41,7 +41,6 @@ class ActivationCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                // Vertical Left Color Strip Indicator (Color depends on Category!)
                 Positioned(
                   left: 0,
                   top: 18,
@@ -57,17 +56,14 @@ class ActivationCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header Row: Nama Kegiatan & Donut Progress Chart
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Title & Category Badge
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,7 +80,6 @@ class ActivationCard extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 8),
-                                // Kategori Badge Chip
                                 Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,
@@ -121,7 +116,6 @@ class ActivationCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 12),
-                          // Progress Donut Chart with fraction format (e.g. 3/5)
                           ActivationDonutChart(
                             completedSteps: activity.completedSteps,
                             totalSteps: activity.totalSteps,
@@ -132,8 +126,6 @@ class ActivationCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 12),
-
-                      // Location & Status Row
                       Row(
                         children: [
                           const Icon(
@@ -155,7 +147,6 @@ class ActivationCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Status Badge
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
@@ -183,8 +174,6 @@ class ActivationCard extends StatelessWidget {
                         ],
                       ),
                       const Divider(height: 20),
-
-                      // Deadline Date Range (Space Between: Start Date di Kiri, End Date di Kanan)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -227,8 +216,6 @@ class ActivationCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-
-                      // Linear Progress Bar Indicator (Visual Timeline Deadline)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: LinearProgressIndicator(

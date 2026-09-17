@@ -27,59 +27,44 @@ class AnalisisScreen extends StatelessWidget {
           builder: (context, analisisState) {
             return Scaffold(
               backgroundColor: AppColors.background,
-              body: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.primary.withValues(alpha: 0.2),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.15],
-                  ),
-                ),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(18, 14, 18, 30),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AnalisisSummaryChartCard(
-                        totalTasks: analisisState.totalTasks,
-                        totalAgendas: analisisState.totalAgendas,
-                        totalReports: analisisState.totalReports,
-                        onStatusCardTap: (status) {
-                          context.read<ActivationBloc>().add(
-                            SetActivationStatusFilterEvent(status),
-                          );
-                          onNavigateToTab?.call(2);
-                        },
-                      ),
-                      const SizedBox(height: 20),
+              body: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(18, 14, 18, 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnalisisSummaryChartCard(
+                      totalTasks: analisisState.totalTasks,
+                      totalAgendas: analisisState.totalAgendas,
+                      totalReports: analisisState.totalReports,
+                      onStatusCardTap: (status) {
+                        context.read<ActivationBloc>().add(
+                          SetActivationStatusFilterEvent(status),
+                        );
+                        onNavigateToTab?.call(2);
+                      },
+                    ),
+                    const SizedBox(height: 20),
 
-                      CategoryDistributionChartCard(
-                        categoryData: analisisState.categoryDistribution,
-                        onCategoryTap: (category) {
-                          context.read<ActivationBloc>().add(
-                            SetActivationCategoryFilterEvent(category),
-                          );
-                          onNavigateToTab?.call(2);
-                        },
-                      ),
-                      const SizedBox(height: 20),
+                    CategoryDistributionChartCard(
+                      categoryData: analisisState.categoryDistribution,
+                      onCategoryTap: (category) {
+                        context.read<ActivationBloc>().add(
+                          SetActivationCategoryFilterEvent(category),
+                        );
+                        onNavigateToTab?.call(2);
+                      },
+                    ),
+                    const SizedBox(height: 20),
 
-                      BlocBuilder<BankSampahBloc, BankSampahState>(
-                        builder: (context, bankState) {
-                          return BankSampahAnalisisCard(
-                            reports: bankState.reports,
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                    BlocBuilder<BankSampahBloc, BankSampahState>(
+                      builder: (context, bankState) {
+                        return BankSampahAnalisisCard(
+                          reports: bankState.reports,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
             );

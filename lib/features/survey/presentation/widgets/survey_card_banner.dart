@@ -66,167 +66,134 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.accent,
-                  AppColors.accent.withValues(alpha: 0.85),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: AppColors.accent,
               borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accent.withValues(alpha: 0.25),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
             ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -20,
-                  bottom: -20,
-                  child: Icon(
-                    isSubmitted
-                        ? Icons.check_circle_outline_rounded
-                        : Icons.assignment_turned_in_rounded,
-                    size: 130,
-                    color: AppColors.white.withValues(alpha: 0.12),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.calendar_today_rounded,
-                                  size: 12,
-                                  color: AppColors.white,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Periode $periodLabel',
-                                  style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onLongPress: isSubmitted
-                                ? () {
-                                    context.read<SurveyBloc>().add(
-                                      const ResetSurveyStatusEvent(),
-                                    );
-                                    ScaffoldMessenger.of(
-                                      context,
-                                    ).clearSnackBars();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Status survey berhasil di-reset untuk pengujian.',
-                                        ),
-                                        behavior: SnackBarBehavior.floating,
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
-                                  }
-                                : null,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSubmitted
-                                    ? AppColors.white
-                                    : const Color(0xFFFEF3C7),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                isSubmitted ? 'Sudah Diisi' : 'Wajib Diisi',
-                                style: TextStyle(
-                                  color: isSubmitted
-                                      ? AppColors.accent
-                                      : const Color(0xFFD97706),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Survey Bulanan Lingkungan & RT',
-                        style: AppTextStyles.titleMedium.copyWith(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        isSubmitted
-                            ? 'Terima kasih atas partisipasi Anda dalam memantau lingkungan & keamanan RT.'
-                            : 'Isi pertanyaan survey bulanan berkala dari Admin untuk evaluasi lingkungan RT Anda.',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.white.withValues(alpha: 0.9),
-                          height: 1.3,
+                        decoration: BoxDecoration(
+                          color: AppColors.white.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      ),
-                      if (!isSubmitted) ...[
-                        const SizedBox(height: 14),
-                        SizedBox(
-                          height: 36,
-                          child: ElevatedButton(
-                            onPressed: () => context.pushNamed('survey'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.white,
-                              foregroundColor: AppColors.accent,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.calendar_today_rounded,
+                              size: 12,
+                              color: AppColors.white,
                             ),
-                            child: Text(
-                              'Isi Survey Sekarang',
-                              style: TextStyle(
-                                fontSize: 12,
+                            const SizedBox(width: 4),
+                            Text(
+                              'Periode $periodLabel',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.white,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 11,
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onLongPress: isSubmitted
+                            ? () {
+                                context.read<SurveyBloc>().add(
+                                  const ResetSurveyStatusEvent(),
+                                );
+                                ScaffoldMessenger.of(context).clearSnackBars();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Status survey berhasil di-reset untuk pengujian.',
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            : null,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSubmitted
+                                ? AppColors.white
+                                : const Color(0xFFFEF3C7),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            isSubmitted ? 'Sudah Diisi' : 'Wajib Diisi',
+                            style: TextStyle(
+                              color: isSubmitted
+                                  ? AppColors.accent
+                                  : const Color(0xFF92400E),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(
+                    'Survey Bulanan Lingkungan & RT',
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isSubmitted
+                        ? 'Terima kasih atas partisipasi Anda dalam memantau lingkungan & keamanan RT.'
+                        : 'Isi pertanyaan survey bulanan berkala dari Admin untuk evaluasi lingkungan RT Anda.',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.white.withValues(alpha: 0.9),
+                      height: 1.3,
+                    ),
+                  ),
+                  if (!isSubmitted) ...[
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: () => context.pushNamed('survey'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.white,
+                          foregroundColor: AppColors.accent,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Isi Survey Sekarang',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
         );

@@ -141,7 +141,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       ),
                       const SizedBox(height: 16),
 
-                      // Header
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Row(
@@ -201,14 +200,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       const SizedBox(height: 14),
                       const Divider(height: 1, color: AppColors.grey200),
 
-                      // Scrollable Filter Sections
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Section 1: Urutkan Berdasarkan
                               const Text(
                                 'Urutkan Berdasarkan',
                                 style: TextStyle(
@@ -758,33 +755,42 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   ),
                   tabs: const [
                     Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.people_alt_rounded, size: 18),
-                          SizedBox(width: 6),
-                          Text('Tokoh'),
-                        ],
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.people_alt_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text('Tokoh'),
+                          ],
+                        ),
                       ),
                     ),
                     Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.account_balance_rounded, size: 18),
-                          SizedBox(width: 6),
-                          Text('Institusi'),
-                        ],
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.account_balance_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text('Institusi'),
+                          ],
+                        ),
                       ),
                     ),
                     Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.groups_rounded, size: 18),
-                          SizedBox(width: 6),
-                          Text('Organisasi'),
-                        ],
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.groups_rounded, size: 18),
+                            SizedBox(width: 6),
+                            Text('Organisasi'),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -1115,13 +1121,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      // TAB 1: Tokoh List
                       _buildTokohTab(context, state),
-
-                      // TAB 2: Institusi List
                       _buildInstitusiTab(context, state),
-
-                      // TAB 3: Organisasi List
                       _buildOrganisasiTab(context, state),
                     ],
                   ),
@@ -1134,7 +1135,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Tab 1: Tokoh ----------------
   Widget _buildTokohTab(BuildContext context, DemografiState state) {
     final list = state.tokohList;
 
@@ -1201,7 +1201,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Tab 2: Institusi ----------------
   Widget _buildInstitusiTab(BuildContext context, DemografiState state) {
     final list = state.institusiList;
 
@@ -1268,7 +1267,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Tab 3: Organisasi ----------------
   Widget _buildOrganisasiTab(BuildContext context, DemografiState state) {
     final list = state.organisasiList;
 
@@ -1376,7 +1374,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Card Tokoh ----------------
   Widget _buildTokohCard(TokohEntity tokoh) {
     final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi);
 
@@ -1478,7 +1475,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Card Institusi ----------------
   Widget _buildInstitusiCard(InstitusiEntity institusi) {
     final scopeColor = _getScopeColor(institusi.scope);
 
@@ -1508,7 +1504,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Kategori Badge at Top Header
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -1632,7 +1627,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     );
   }
 
-  // ---------------- Card Organisasi ----------------
   Widget _buildOrganisasiCard(OrganisasiEntity organisasi) {
     final bidangColor = _getBidangColor(organisasi.bidang);
 
@@ -1696,6 +1690,26 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                           ),
                         ],
                       ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.people_alt_outlined,
+                            size: 14,
+                            color: AppColors.textSecondary,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '${organisasi.jumlahAnggota} Anggota',
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -1726,37 +1740,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       fontWeight: FontWeight.bold,
                       color: bidangColor,
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.grey100,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.grey300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.people_alt_outlined,
-                        size: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '~${organisasi.jumlahAnggota} Anggota',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
                 const Spacer(),

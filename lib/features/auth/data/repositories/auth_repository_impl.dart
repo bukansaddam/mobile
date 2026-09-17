@@ -25,7 +25,6 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
 
-      // Save token and user data locally
       await localDatasource.saveToken(authModel.accessToken);
       await localDatasource.saveUser(authModel.user);
 
@@ -60,7 +59,6 @@ class AuthRepositoryImpl implements AuthRepository {
         passwordConfirmation: passwordConfirmation,
       );
 
-      // Save token and user data locally if available upon registration
       if (authModel.accessToken.isNotEmpty) {
         await localDatasource.saveToken(authModel.accessToken);
         await localDatasource.saveUser(authModel.user);

@@ -246,7 +246,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Drag handle
                 Center(
                   child: Container(
                     width: 44,
@@ -258,8 +257,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Header Title
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -278,8 +275,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ],
                 ),
                 const Divider(height: 16),
-
-                // Section Header: Photos Count Badge (Max 5)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -314,8 +309,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 10),
-
-                // Horizontal List of Captured Photos & Add Photo Tile
                 SizedBox(
                   height: 108,
                   child: ListView.builder(
@@ -365,12 +358,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                const SizedBox(height: 16),
-
-                // Door to Door Conditional Fields (Nama & NIK Penerima)
                 if (isDoorToDoor) ...[
-                  // 1. Nama Penerima
                   _buildMandatoryLabel('Nama Penerima'),
                   const SizedBox(height: 6),
                   TextFormField(
@@ -395,8 +383,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     ),
                   ),
                   const SizedBox(height: 14),
-
-                  // 2. NIK Penerima
                   _buildMandatoryLabel('NIK Penerima'),
                   const SizedBox(height: 6),
                   TextFormField(
@@ -426,8 +412,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ),
                   const SizedBox(height: 14),
                 ],
-
-                // Field Catatan
                 Text(
                   'Catatan',
                   style: AppTextStyles.labelMedium.copyWith(
@@ -453,8 +437,6 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Tombol Kirim Laporan
                 SizedBox(
                   width: double.infinity,
                   height: 50,

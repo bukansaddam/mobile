@@ -361,8 +361,6 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
           ),
 
           const SizedBox(height: 16),
-
-          // Timeframe Selector Tabs
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
@@ -377,10 +375,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               ],
             ),
           ),
-
           const SizedBox(height: 12),
-
-          // Date / Period Range Text
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -445,10 +440,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                 ),
             ],
           ),
-
           const SizedBox(height: 14),
-
-          // 3 Stat Cards
           Row(
             children: [
               Expanded(

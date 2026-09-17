@@ -192,7 +192,7 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                   ),
                                   SizedBox(width: 4),
                                   Text(
-                                    'IKLAN',
+                                    'INFORMASI',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 10,
