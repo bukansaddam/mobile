@@ -1,7 +1,5 @@
 part of 'demografi_bloc.dart';
 
-enum DemografiStatus { initial, loading, success, failure }
-
 enum DemografiSortOption {
   terbaru('Terbaru', Icons.schedule_rounded),
   namaAz('Nama (A - Z)', Icons.sort_by_alpha_rounded),
@@ -13,61 +11,114 @@ enum DemografiSortOption {
   const DemografiSortOption(this.label, this.icon);
 }
 
-class DemografiState extends Equatable {
-  final DemografiStatus status;
-  final bool isSubmitting;
-  final String? errorMessage;
-  final String? actionSuccessMessage;
-  final int activeTabIndex;
+abstract class DemografiState extends Equatable {
+  const DemografiState();
 
+  int get activeTabIndex => 0;
+  String get searchQuery => '';
+  bool get hasActiveFilter => false;
+  DemografiSortOption get selectedSortOption => DemografiSortOption.terbaru;
+  String? get selectedProfesiFilter => null;
+  String? get selectedScopeFilter => null;
+  String? get selectedAfiliasiFilter => null;
+  String? get selectedInstitusiKategoriFilter => null;
+  String? get selectedInstitusiScopeFilter => null;
+
+  bool get isSubmitting => false;
+  String? get actionSuccessMessage => null;
+  String? get errorMessage => null;
+
+  List<TokohEntity> get tokohList => const [];
+  List<InstitusiEntity> get institusiList => const [];
+  List<TokohEntity> get filteredTokohList => const [];
+  List<InstitusiEntity> get filteredInstitusiList => const [];
+
+  @override
+  List<Object?> get props => [];
+}
+
+class DemografiInitialState extends DemografiState {
+  const DemografiInitialState();
+}
+
+class DemografiLoadingState extends DemografiState {
+  const DemografiLoadingState();
+}
+
+class DemografiFailureState extends DemografiState {
+  final String message;
+
+  const DemografiFailureState(this.message);
+
+  @override
+  String? get errorMessage => message;
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class DemografiLoadedState extends DemografiState {
+  @override
   final List<TokohEntity> tokohList;
+  @override
   final List<InstitusiEntity> institusiList;
-  final List<OrganisasiEntity> organisasiList;
 
+  @override
+  final int activeTabIndex;
+  @override
   final String searchQuery;
+
+  @override
   final String? selectedProfesiFilter;
+  @override
   final String? selectedScopeFilter;
+  @override
   final String? selectedAfiliasiFilter;
+  @override
   final String? selectedInstitusiKategoriFilter;
+  @override
   final String? selectedInstitusiScopeFilter;
-  final String? selectedOrganisasiBidangFilter;
+  @override
   final DemografiSortOption selectedSortOption;
 
-  const DemografiState({
-    this.status = DemografiStatus.initial,
-    this.isSubmitting = false,
-    this.errorMessage,
-    this.actionSuccessMessage,
-    this.activeTabIndex = 0,
+  @override
+  final bool isSubmitting;
+  @override
+  final String? actionSuccessMessage;
+  @override
+  final String? errorMessage;
+
+  const DemografiLoadedState({
     this.tokohList = const [],
     this.institusiList = const [],
-    this.organisasiList = const [],
+    this.activeTabIndex = 0,
     this.searchQuery = '',
     this.selectedProfesiFilter,
     this.selectedScopeFilter,
     this.selectedAfiliasiFilter,
     this.selectedInstitusiKategoriFilter,
     this.selectedInstitusiScopeFilter,
-    this.selectedOrganisasiBidangFilter,
     this.selectedSortOption = DemografiSortOption.terbaru,
+    this.isSubmitting = false,
+    this.actionSuccessMessage,
+    this.errorMessage,
   });
 
+  @override
   bool get hasActiveFilter {
     if (activeTabIndex == 0) {
       return selectedProfesiFilter != null ||
           selectedScopeFilter != null ||
           selectedAfiliasiFilter != null ||
           selectedSortOption != DemografiSortOption.terbaru;
-    } else if (activeTabIndex == 1) {
+    } else {
       return selectedInstitusiKategoriFilter != null ||
           selectedInstitusiScopeFilter != null ||
-          selectedSortOption != DemografiSortOption.terbaru;
-    } else {
-      return selectedOrganisasiBidangFilter != null ||
           selectedSortOption != DemografiSortOption.terbaru;
     }
   }
 
+  @override
   List<TokohEntity> get filteredTokohList {
     List<TokohEntity> list = List.from(tokohList);
 
@@ -111,6 +162,7 @@ class DemografiState extends Equatable {
     return list;
   }
 
+  @override
   List<InstitusiEntity> get filteredInstitusiList {
     List<InstitusiEntity> list = List.from(institusiList);
 
@@ -155,54 +207,13 @@ class DemografiState extends Equatable {
     return list;
   }
 
-  List<OrganisasiEntity> get filteredOrganisasiList {
-    List<OrganisasiEntity> list = List.from(organisasiList);
-
-    if (searchQuery.trim().isNotEmpty) {
-      final q = searchQuery.toLowerCase();
-      list = list.where((org) {
-        return org.nama.toLowerCase().contains(q);
-      }).toList();
-    }
-
-    if (selectedOrganisasiBidangFilter != null) {
-      list = list
-          .where((o) => o.bidang == selectedOrganisasiBidangFilter)
-          .toList();
-    }
-
-    switch (selectedSortOption) {
-      case DemografiSortOption.terbaru:
-        list.sort((a, b) {
-          final aDate = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          final bDate = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          return bDate.compareTo(aDate);
-        });
-        break;
-      case DemografiSortOption.namaAz:
-        list.sort(
-          (a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()),
-        );
-        break;
-      case DemografiSortOption.namaZa:
-        list.sort(
-          (a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()),
-        );
-        break;
-    }
-
-    return list;
-  }
-
-  DemografiState copyWith({
-    DemografiStatus? status,
+  DemografiLoadedState copyWith({
     bool? isSubmitting,
     String? errorMessage,
     String? actionSuccessMessage,
     int? activeTabIndex,
     List<TokohEntity>? tokohList,
     List<InstitusiEntity>? institusiList,
-    List<OrganisasiEntity>? organisasiList,
     String? searchQuery,
     String? selectedProfesiFilter,
     bool clearProfesi = false,
@@ -214,19 +225,15 @@ class DemografiState extends Equatable {
     bool clearInstitusiKategori = false,
     String? selectedInstitusiScopeFilter,
     bool clearInstitusiScope = false,
-    String? selectedOrganisasiBidangFilter,
-    bool clearOrganisasiBidang = false,
     DemografiSortOption? selectedSortOption,
   }) {
-    return DemografiState(
-      status: status ?? this.status,
+    return DemografiLoadedState(
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage,
       actionSuccessMessage: actionSuccessMessage,
       activeTabIndex: activeTabIndex ?? this.activeTabIndex,
       tokohList: tokohList ?? this.tokohList,
       institusiList: institusiList ?? this.institusiList,
-      organisasiList: organisasiList ?? this.organisasiList,
       searchQuery: searchQuery ?? this.searchQuery,
       selectedProfesiFilter: clearProfesi
           ? null
@@ -244,31 +251,24 @@ class DemografiState extends Equatable {
       selectedInstitusiScopeFilter: clearInstitusiScope
           ? null
           : (selectedInstitusiScopeFilter ?? this.selectedInstitusiScopeFilter),
-      selectedOrganisasiBidangFilter: clearOrganisasiBidang
-          ? null
-          : (selectedOrganisasiBidangFilter ??
-                this.selectedOrganisasiBidangFilter),
       selectedSortOption: selectedSortOption ?? this.selectedSortOption,
     );
   }
 
   @override
   List<Object?> get props => [
-    status,
     isSubmitting,
     errorMessage,
     actionSuccessMessage,
     activeTabIndex,
     tokohList,
     institusiList,
-    organisasiList,
     searchQuery,
     selectedProfesiFilter,
     selectedScopeFilter,
     selectedAfiliasiFilter,
     selectedInstitusiKategoriFilter,
     selectedInstitusiScopeFilter,
-    selectedOrganisasiBidangFilter,
     selectedSortOption,
   ];
 }

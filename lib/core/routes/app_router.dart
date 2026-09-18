@@ -6,10 +6,13 @@ import 'package:akar/features/auth/presentation/pages/login_screen.dart';
 import 'package:akar/features/linmas/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/linmas/presensi/presentation/pages/presensi_screen.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/pages/ronda_screen.dart';
-import 'package:akar/features/linmas/demografi/presentation/pages/demografi_list_screen.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/demografi_list_screen.dart';
 import 'package:akar/features/linmas/demografi/presentation/pages/add_tokoh_screen.dart';
 import 'package:akar/features/linmas/demografi/presentation/pages/add_institusi_screen.dart';
-import 'package:akar/features/linmas/demografi/presentation/pages/add_organisasi_screen.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/add_organisasi_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
@@ -228,17 +231,32 @@ class AppRouter {
       GoRoute(
         path: tambahTokohPath,
         name: tambahTokoh,
-        builder: (context, state) => const AddTokohScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          return AddTokohScreen(
+            initialTokoh: extra is TokohEntity ? extra : null,
+          );
+        },
       ),
       GoRoute(
         path: tambahInstitusiPath,
         name: tambahInstitusi,
-        builder: (context, state) => const AddInstitusiScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          return AddInstitusiScreen(
+            initialInstitusi: extra is InstitusiEntity ? extra : null,
+          );
+        },
       ),
       GoRoute(
         path: tambahOrganisasiPath,
         name: tambahOrganisasi,
-        builder: (context, state) => const AddOrganisasiScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          return AddOrganisasiScreen(
+            initialOrganisasi: extra is OrganisasiEntity ? extra : null,
+          );
+        },
       ),
       GoRoute(
         path: bankSampahPath,

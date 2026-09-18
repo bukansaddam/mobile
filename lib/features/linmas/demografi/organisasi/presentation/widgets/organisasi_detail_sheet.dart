@@ -5,17 +5,21 @@ import 'package:intl/intl.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
+import '../../domain/entities/organisasi_entity.dart';
 
-class TokohDetailSheet extends StatelessWidget {
-  final TokohEntity tokoh;
+class OrganisasiDetailSheet extends StatelessWidget {
+  final OrganisasiEntity organisasi;
   final VoidCallback? onEdit;
 
-  const TokohDetailSheet({super.key, required this.tokoh, this.onEdit});
+  const OrganisasiDetailSheet({
+    super.key,
+    required this.organisasi,
+    this.onEdit,
+  });
 
   static Future<void> show(
-    BuildContext context,
-    TokohEntity tokoh, {
+    BuildContext context, {
+    required OrganisasiEntity organisasi,
     VoidCallback? onEdit,
   }) {
     return showModalBottomSheet(
@@ -25,32 +29,16 @@ class TokohDetailSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) => TokohDetailSheet(tokoh: tokoh, onEdit: onEdit),
+      builder: (context) =>
+          OrganisasiDetailSheet(organisasi: organisasi, onEdit: onEdit),
     );
-  }
-
-  Color _getAfiliasiColor(String afiliasi) {
-    switch (afiliasi.toLowerCase()) {
-      case 'politik':
-        return const Color(0xFFE53935);
-      case 'ormas':
-        return const Color(0xFFFB8C00);
-      case 'agama':
-        return const Color(0xFF1E88E5);
-      case 'budaya':
-        return const Color(0xFF8E24AA);
-      case 'pemuda':
-        return const Color(0xFF43A047);
-      case 'pengusaha':
-        return const Color(0xFF00ACC1);
-      default:
-        return AppColors.primary;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi);
+    final String initialChar = organisasi.nama.trim().isNotEmpty
+        ? organisasi.nama.trim()[0].toUpperCase()
+        : 'O';
 
     return SafeArea(
       child: Container(
@@ -82,7 +70,7 @@ class TokohDetailSheet extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Detail Tokoh Demografi',
+                          'Detail Organisasi Demografi',
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -90,7 +78,7 @@ class TokohDetailSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Informasi profil lengkap tokoh',
+                          'Informasi lengkap organisasi kemasyarakatan',
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
@@ -122,9 +110,7 @@ class TokohDetailSheet extends StatelessWidget {
                       radius: 26,
                       backgroundColor: AppColors.primary,
                       child: Text(
-                        tokoh.nama.isNotEmpty
-                            ? tokoh.nama[0].toUpperCase()
-                            : 'T',
+                        initialChar,
                         style: AppTextStyles.titleLarge.copyWith(
                           color: AppColors.white,
                           fontWeight: FontWeight.bold,
@@ -137,21 +123,13 @@ class TokohDetailSheet extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            tokoh.nama,
+                            organisasi.nama,
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            tokoh.profesi,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           Wrap(
                             spacing: 6,
                             runSpacing: 4,
@@ -162,18 +140,22 @@ class TokohDetailSheet extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: afiliasiColor.withValues(alpha: 0.1),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: afiliasiColor.withValues(alpha: 0.3),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                                 child: Text(
-                                  tokoh.afiliasi,
+                                  organisasi.bidang,
                                   style: AppTextStyles.bodySmall.copyWith(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: afiliasiColor,
+                                    color: AppColors.primary,
                                   ),
                                 ),
                               ),
@@ -191,13 +173,15 @@ class TokohDetailSheet extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
-                                      Icons.public_rounded,
+                                      Icons.people_alt_outlined,
                                       size: 12,
                                       color: AppColors.textSecondary,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      tokoh.wilayah,
+                                      organisasi.jumlahAnggota == 0
+                                          ? 'Belum ada anggota'
+                                          : '${organisasi.jumlahAnggota} Anggota',
                                       style: AppTextStyles.bodySmall.copyWith(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
@@ -217,7 +201,7 @@ class TokohDetailSheet extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Identitas Personal',
+                'Informasi Organisasi',
                 style: AppTextStyles.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
@@ -233,105 +217,41 @@ class TokohDetailSheet extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildInfoTile(
-                      icon: Icons.wc_rounded,
-                      label: 'Jenis Kelamin',
-                      value: tokoh.jenisKelamin,
+                      icon: Icons.category_outlined,
+                      label: 'Bidang Organisasi',
+                      value: organisasi.bidang,
                     ),
                     const Divider(height: 1, color: AppColors.grey200),
                     _buildInfoTile(
-                      icon: Icons.work_outline_rounded,
-                      label: 'Profesi',
-                      value: tokoh.profesi,
+                      icon: Icons.groups_outlined,
+                      label: 'Jumlah Anggota',
+                      value: organisasi.jumlahAnggota == 0
+                          ? 'Belum ada anggota terdaftar'
+                          : '${organisasi.jumlahAnggota} Orang',
                     ),
-                    if (tokoh.suku.isNotEmpty) ...[
+                    const Divider(height: 1, color: AppColors.grey200),
+                    _buildInfoTile(
+                      icon: Icons.place_rounded,
+                      label: 'Alamat Sekretariat',
+                      value:
+                          (organisasi.alamatSekretariat != null &&
+                              organisasi.alamatSekretariat!.trim().isNotEmpty)
+                          ? organisasi.alamatSekretariat!
+                          : 'Alamat belum diisi',
+                    ),
+                    if (organisasi.formattedWilayah.isNotEmpty) ...[
                       const Divider(height: 1, color: AppColors.grey200),
                       _buildInfoTile(
-                        icon: Icons.diversity_3_rounded,
-                        label: 'Suku',
-                        value: tokoh.suku,
+                        icon: Icons.public_rounded,
+                        label: 'Wilayah / Cakupan',
+                        value: organisasi.formattedWilayah,
                       ),
                     ],
-                    const Divider(height: 1, color: AppColors.grey200),
-                    _buildInfoTile(
-                      icon: Icons.phone_rounded,
-                      label: 'No. Telepon',
-                      value: tokoh.noTelp.isNotEmpty ? tokoh.noTelp : '-',
-                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-              if (tokoh.namaInstitusi.isNotEmpty) ...[
-                Text(
-                  'Institusi',
-                  style: AppTextStyles.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.grey50,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.grey200),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildInfoTile(
-                        icon: Icons.account_balance_rounded,
-                        label: 'Nama Institusi',
-                        value: tokoh.namaInstitusi,
-                      ),
-                      if (tokoh.jabatanInstitusi.isNotEmpty) ...[
-                        const Divider(height: 1, color: AppColors.grey200),
-                        _buildInfoTile(
-                          icon: Icons.badge_outlined,
-                          label: 'Jabatan di Institusi',
-                          value: tokoh.jabatanInstitusi,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-              if (tokoh.namaOrganisasi.isNotEmpty) ...[
-                Text(
-                  'Organisasi',
-                  style: AppTextStyles.titleMedium.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.grey50,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: AppColors.grey200),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildInfoTile(
-                        icon: Icons.groups_rounded,
-                        label: 'Nama Organisasi',
-                        value: tokoh.namaOrganisasi,
-                      ),
-                      if (tokoh.jabatanOrganisasi.isNotEmpty) ...[
-                        const Divider(height: 1, color: AppColors.grey200),
-                        _buildInfoTile(
-                          icon: Icons.badge_outlined,
-                          label: 'Jabatan di Organisasi',
-                          value: tokoh.jabatanOrganisasi,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
-              if (tokoh.createdAt != null) ...[
+              if (organisasi.createdAt != null) ...[
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
@@ -356,7 +276,7 @@ class TokohDetailSheet extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(tokoh.createdAt!)} WIB',
+                          '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(organisasi.createdAt!)} WIB',
                           style: AppTextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
@@ -366,10 +286,9 @@ class TokohDetailSheet extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
-
-              const SizedBox(height: 12),
+                const SizedBox(height: 20),
+              ] else
+                const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -379,7 +298,10 @@ class TokohDetailSheet extends StatelessWidget {
                     if (onEdit != null) {
                       onEdit!();
                     } else {
-                      context.push(AppRouter.tambahTokohPath, extra: tokoh);
+                      context.push(
+                        AppRouter.tambahOrganisasiPath,
+                        extra: organisasi,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -391,7 +313,7 @@ class TokohDetailSheet extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Edit Data Tokoh',
+                    'Ubah Data Organisasi',
                     style: AppTextStyles.labelLarge.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.bold,

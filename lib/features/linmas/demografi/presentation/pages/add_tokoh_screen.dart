@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 
 class AddTokohScreen extends StatefulWidget {
-  const AddTokohScreen({super.key});
+  final TokohEntity? initialTokoh;
+
+  const AddTokohScreen({super.key, this.initialTokoh});
 
   @override
   State<AddTokohScreen> createState() => _AddTokohScreenState();
@@ -36,6 +40,38 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   final List<String> _profesiOptions = DemografiConstants.profesiOptions;
   final List<String> _afiliasiOptions = DemografiConstants.afiliasiOptions;
   final List<String> _sukuOptions = DemografiConstants.sukuIndonesiaOptions;
+
+  bool get _isEdit => widget.initialTokoh != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialTokoh != null) {
+      final t = widget.initialTokoh!;
+      _namaController.text = t.nama;
+      _noTelpController.text = t.noTelp;
+      _jabatanInstitusiController.text = t.jabatanInstitusi;
+      _jabatanOrganisasiController.text = t.jabatanOrganisasi;
+      if (_jenisKelaminOptions.contains(t.jenisKelamin)) {
+        _selectedJenisKelamin = t.jenisKelamin;
+      }
+      if (_profesiOptions.contains(t.profesi)) {
+        _selectedProfesi = t.profesi;
+      }
+      if (_afiliasiOptions.contains(t.afiliasi)) {
+        _selectedAfiliasi = t.afiliasi;
+      }
+      if (t.namaInstitusi.isNotEmpty) {
+        _selectedInstitusi = t.namaInstitusi;
+      }
+      if (t.namaOrganisasi.isNotEmpty) {
+        _selectedOrganisasi = t.namaOrganisasi;
+      }
+      if (t.suku.isNotEmpty && _sukuOptions.contains(t.suku)) {
+        _selectedSuku = t.suku;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -387,7 +423,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                     jumlahAnggotaController.text.trim(),
                                   ) ??
                                   0;
-                              parentContext.read<DemografiBloc>().add(
+                              parentContext.read<OrganisasiBloc>().add(
                                 AddOrganisasiEvent(
                                   nama: newNama,
                                   jumlahAnggota: jumlah,
@@ -815,8 +851,17 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
               ),
             ),
           );
-        } else if (state.status == DemografiStatus.failure &&
-            state.errorMessage != null) {
+        } else if (state is DemografiFailureState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is DemografiLoadedState &&
+            state.errorMessage != null &&
+            !state.isSubmitting) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
@@ -832,10 +877,15 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
           ...state.institusiList.map((i) => i.nama),
         ];
 
+        final organisasiBloc = context.watch<OrganisasiBloc>();
         final List<String> organisasiListOptions = [
           'Tidak Ada',
-          ...state.organisasiList.map((o) => o.nama),
+          ...organisasiBloc.listOrganisasi.map((o) => o.nama),
         ];
+        if (_selectedOrganisasi != 'Tidak Ada' &&
+            !organisasiListOptions.contains(_selectedOrganisasi)) {
+          organisasiListOptions.add(_selectedOrganisasi);
+        }
 
         final bool showJabatanInstitusi = _selectedInstitusi != 'Tidak Ada';
 
@@ -866,9 +916,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                 ),
               ),
             ),
-            title: const Text(
-              'Tambah Tokoh Baru',
-              style: TextStyle(
+            title: Text(
+              _isEdit ? 'Edit Data Tokoh' : 'Tambah Tokoh Baru',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -904,7 +954,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
+                              _isEdit
+                                  ? 'Perbarui formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.'
+                                  : 'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.primaryDark,
                                 fontWeight: FontWeight.w500,
@@ -1260,9 +1312,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'SIMPAN TOKOH BARU',
-                          style: TextStyle(
+                      : Text(
+                          _isEdit ? 'SIMPAN PERUBAHAN' : 'SIMPAN TOKOH BARU',
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,

@@ -46,12 +46,17 @@ import 'package:akar/features/linmas/demografi/data/datasources/demografi_remote
 import 'package:akar/features/linmas/demografi/data/repositories/demografi_repository_impl.dart';
 import 'package:akar/features/linmas/demografi/domain/repositories/demografi_repository.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/add_institusi_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/add_organisasi_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/add_tokoh_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/get_institusi_list_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/get_organisasi_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/get_tokoh_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/datasources/organisasi_remote_datasource.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/repositories/organisasi_repository_impl.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/repositories/organisasi_repository.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/add_organisasi_usecase.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/get_organisasi_list_usecase.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/update_organisasi_usecase.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_local_datasource.dart';
 import 'package:akar/features/linmas/bank_sampah/data/repositories/bank_sampah_repository_impl.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
@@ -139,6 +144,9 @@ Future<void> init() async {
   sl.registerLazySingleton<DemografiRemoteDatasource>(
     () => DemografiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<OrganisasiRemoteDatasource>(
+    () => OrganisasiRemoteDatasourceImpl(),
+  );
   sl.registerLazySingleton<AnnouncementRemoteDatasource>(
     () => AnnouncementRemoteDatasourceImpl(),
   );
@@ -170,6 +178,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<DemografiRepository>(
     () => DemografiRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<OrganisasiRepository>(
+    () => OrganisasiRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<AnnouncementRepository>(
     () => AnnouncementRepositoryImpl(remoteDatasource: sl()),
@@ -217,6 +228,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<AddOrganisasiUsecase>(
     () => AddOrganisasiUsecase(sl()),
+  );
+  sl.registerLazySingleton<UpdateOrganisasiUsecase>(
+    () => UpdateOrganisasiUsecase(sl()),
   );
   sl.registerLazySingleton<GetBankSampahReportsUsecase>(
     () => GetBankSampahReportsUsecase(sl()),
@@ -292,8 +306,13 @@ Future<void> init() async {
       addTokohUsecase: sl(),
       getInstitusiListUsecase: sl(),
       addInstitusiUsecase: sl(),
+    ),
+  );
+  sl.registerFactory<OrganisasiBloc>(
+    () => OrganisasiBloc(
       getOrganisasiListUsecase: sl(),
-      addOrganisasiListUsecase: sl(),
+      addOrganisasiUsecase: sl(),
+      updateOrganisasiUsecase: sl(),
     ),
   );
   sl.registerFactory<BankSampahBloc>(

@@ -37,6 +37,10 @@ void main() {
       expect(ApiConstants.tracking, '/api/positions/me');
     });
 
+    test('organizations endpoint decodes accurately', () {
+      expect(ApiConstants.figureOrganizations, '/api/figure/organizations');
+    });
+
     test('google speech constants decode accurately', () {
       expect(ApiConstants.googleCloudScopes, [
         'https://www.googleapis.com/auth/cloud-platform',

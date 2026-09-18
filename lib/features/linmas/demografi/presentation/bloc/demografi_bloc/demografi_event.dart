@@ -7,7 +7,9 @@ abstract class DemografiEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FetchDemografiDataEvent extends DemografiEvent {}
+class FetchDemografiDataEvent extends DemografiEvent {
+  const FetchDemografiDataEvent();
+}
 
 class SetDemografiActiveTabEvent extends DemografiEvent {
   final int index;
@@ -56,6 +58,15 @@ class SetDemografiAfiliasiFilterEvent extends DemografiEvent {
   List<Object?> get props => [afiliasi];
 }
 
+class SetDemografiInstitusiKategoriFilterEvent extends DemografiEvent {
+  final String? kategori;
+
+  const SetDemografiInstitusiKategoriFilterEvent(this.kategori);
+
+  @override
+  List<Object?> get props => [kategori];
+}
+
 class SetDemografiInstitusiScopeFilterEvent extends DemografiEvent {
   final String? scope;
 
@@ -63,15 +74,6 @@ class SetDemografiInstitusiScopeFilterEvent extends DemografiEvent {
 
   @override
   List<Object?> get props => [scope];
-}
-
-class SetDemografiOrganisasiBidangFilterEvent extends DemografiEvent {
-  final String? bidang;
-
-  const SetDemografiOrganisasiBidangFilterEvent(this.bidang);
-
-  @override
-  List<Object?> get props => [bidang];
 }
 
 class SetDemografiSortOptionEvent extends DemografiEvent {
@@ -128,15 +130,6 @@ class AddTokohEvent extends DemografiEvent {
   ];
 }
 
-class SetDemografiInstitusiKategoriFilterEvent extends DemografiEvent {
-  final String? kategori;
-
-  const SetDemografiInstitusiKategoriFilterEvent(this.kategori);
-
-  @override
-  List<Object?> get props => [kategori];
-}
-
 class AddInstitusiEvent extends DemografiEvent {
   final String nama;
   final String kategori;
@@ -152,21 +145,4 @@ class AddInstitusiEvent extends DemografiEvent {
 
   @override
   List<Object?> get props => [nama, kategori, scope, alamat];
-}
-
-class AddOrganisasiEvent extends DemografiEvent {
-  final String nama;
-  final int jumlahAnggota;
-  final String bidang;
-  final String? alamatSekretariat;
-
-  const AddOrganisasiEvent({
-    required this.nama,
-    required this.jumlahAnggota,
-    required this.bidang,
-    this.alamatSekretariat,
-  });
-
-  @override
-  List<Object?> get props => [nama, jumlahAnggota, bidang, alamatSekretariat];
 }

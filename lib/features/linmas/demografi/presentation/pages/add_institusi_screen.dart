@@ -5,10 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
+import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
 
 class AddInstitusiScreen extends StatefulWidget {
-  const AddInstitusiScreen({super.key});
+  final InstitusiEntity? initialInstitusi;
+
+  const AddInstitusiScreen({super.key, this.initialInstitusi});
 
   @override
   State<AddInstitusiScreen> createState() => _AddInstitusiScreenState();
@@ -22,6 +25,21 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
 
   String _selectedScope = DemografiConstants.defaultInstitusiScope;
   final List<String> _scopeOptions = DemografiConstants.institusiScopeOptions;
+
+  bool get _isEdit => widget.initialInstitusi != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialInstitusi != null) {
+      final inst = widget.initialInstitusi!;
+      _namaController.text = inst.nama;
+      _alamatController.text = inst.alamat ?? '';
+      if (_scopeOptions.contains(inst.scope)) {
+        _selectedScope = inst.scope;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -48,7 +66,8 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<DemografiBloc, DemografiState>(
       listener: (context, state) {
-        if (state.status == DemografiStatus.success) {
+        if (state is DemografiLoadedState &&
+            state.actionSuccessMessage == 'Institusi berhasil ditambahkan') {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
@@ -70,8 +89,17 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
             ),
           );
           context.pop();
-        } else if (state.status == DemografiStatus.failure &&
-            state.errorMessage != null) {
+        } else if (state is DemografiFailureState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else if (state is DemografiLoadedState &&
+            state.errorMessage != null &&
+            !state.isSubmitting) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
@@ -107,9 +135,9 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                 ),
               ),
             ),
-            title: const Text(
-              'Tambah Institusi Baru',
-              style: TextStyle(
+            title: Text(
+              _isEdit ? 'Edit Data Institusi' : 'Tambah Institusi Baru',
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
@@ -145,7 +173,9 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Isi formulir pendataan institusi dengan valid agar informasi wilayah & alamat tepat.',
+                              _isEdit
+                                  ? 'Perbarui formulir pendataan institusi dengan valid agar informasi wilayah & alamat tepat.'
+                                  : 'Isi formulir pendataan institusi dengan valid agar informasi wilayah & alamat tepat.',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.primaryDark,
                                 fontWeight: FontWeight.w500,
@@ -262,9 +292,11 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'SIMPAN INSTITUSI BARU',
-                          style: TextStyle(
+                      : Text(
+                          _isEdit
+                              ? 'SIMPAN PERUBAHAN'
+                              : 'SIMPAN INSTITUSI BARU',
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,

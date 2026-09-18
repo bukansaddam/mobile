@@ -1,14 +1,13 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/organisasi_entity.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/add_institusi_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/add_organisasi_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/add_tokoh_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/get_institusi_list_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/get_organisasi_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/get_tokoh_list_usecase.dart';
 
 part 'demografi_event.dart';
@@ -19,17 +18,13 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
   final AddTokohUsecase addTokohUsecase;
   final GetInstitusiListUsecase getInstitusiListUsecase;
   final AddInstitusiUsecase addInstitusiUsecase;
-  final GetOrganisasiListUsecase getOrganisasiListUsecase;
-  final AddOrganisasiUsecase addOrganisasiListUsecase;
 
   DemografiBloc({
     required this.getTokohListUsecase,
     required this.addTokohUsecase,
     required this.getInstitusiListUsecase,
     required this.addInstitusiUsecase,
-    required this.getOrganisasiListUsecase,
-    required this.addOrganisasiListUsecase,
-  }) : super(const DemografiState()) {
+  }) : super(const DemografiInitialState()) {
     on<FetchDemografiDataEvent>(_onFetchData);
     on<SetDemografiActiveTabEvent>(_onSetActiveTab);
     on<SetDemografiSearchQueryEvent>(_onSetSearchQuery);
@@ -39,29 +34,29 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
     on<SetDemografiAfiliasiFilterEvent>(_onSetAfiliasiFilter);
     on<SetDemografiInstitusiKategoriFilterEvent>(_onSetInstitusiKategoriFilter);
     on<SetDemografiInstitusiScopeFilterEvent>(_onSetInstitusiScopeFilter);
-    on<SetDemografiOrganisasiBidangFilterEvent>(_onSetOrganisasiBidangFilter);
     on<SetDemografiSortOptionEvent>(_onSetSortOption);
     on<ResetDemografiFiltersEvent>(_onResetFilters);
     on<AddTokohEvent>(_onAddTokoh);
     on<AddInstitusiEvent>(_onAddInstitusi);
-    on<AddOrganisasiEvent>(_onAddOrganisasi);
 
-    add(FetchDemografiDataEvent());
+    add(const FetchDemografiDataEvent());
   }
 
   Future<void> _onFetchData(
     FetchDemografiDataEvent event,
     Emitter<DemografiState> emit,
   ) async {
-    emit(state.copyWith(status: DemografiStatus.loading, errorMessage: null));
+    final currentState = state;
+
+    if (currentState is! DemografiLoadedState) {
+      emit(const DemografiLoadingState());
+    }
 
     final resTokoh = await getTokohListUsecase.call();
     final resInstitusi = await getInstitusiListUsecase.call();
-    final resOrganisasi = await getOrganisasiListUsecase.call();
 
-    List<TokohEntity> tokoh = state.tokohList;
-    List<InstitusiEntity> institusi = state.institusiList;
-    List<OrganisasiEntity> organisasi = state.organisasiList;
+    List<TokohEntity> tokoh = currentState.tokohList;
+    List<InstitusiEntity> institusi = currentState.institusiList;
     String? errorMsg;
 
     resTokoh.fold((f) => errorMsg = f.message, (data) => tokoh = data);
@@ -71,27 +66,14 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
       (data) => institusi = data,
     );
 
-    resOrganisasi.fold(
-      (f) => errorMsg ??= f.message,
-      (data) => organisasi = data,
-    );
-
-    if (errorMsg != null &&
-        tokoh.isEmpty &&
-        institusi.isEmpty &&
-        organisasi.isEmpty) {
-      emit(
-        state.copyWith(status: DemografiStatus.failure, errorMessage: errorMsg),
-      );
+    if (errorMsg != null && tokoh.isEmpty && institusi.isEmpty) {
+      emit(DemografiFailureState(errorMsg!));
     } else {
-      emit(
-        state.copyWith(
-          status: DemografiStatus.success,
-          tokohList: tokoh,
-          institusiList: institusi,
-          organisasiList: organisasi,
-        ),
-      );
+      if (currentState is DemografiLoadedState) {
+        emit(currentState.copyWith(tokohList: tokoh, institusiList: institusi));
+      } else {
+        emit(DemografiLoadedState(tokohList: tokoh, institusiList: institusi));
+      }
     }
   }
 
@@ -99,130 +81,153 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
     SetDemografiActiveTabEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(state.copyWith(activeTabIndex: event.index));
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          activeTabIndex: event.index,
+          searchQuery: '',
+        ),
+      );
+    } else {
+      emit(DemografiLoadedState(activeTabIndex: event.index, searchQuery: ''));
+    }
   }
 
   void _onSetSearchQuery(
     SetDemografiSearchQueryEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(state.copyWith(searchQuery: event.query));
+    if (state is DemografiLoadedState) {
+      emit((state as DemografiLoadedState).copyWith(searchQuery: event.query));
+    } else {
+      emit(DemografiLoadedState(searchQuery: event.query));
+    }
   }
 
   void _onClearSearch(
     ClearDemografiSearchEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(state.copyWith(searchQuery: ''));
+    if (state is DemografiLoadedState) {
+      emit((state as DemografiLoadedState).copyWith(searchQuery: ''));
+    }
   }
 
   void _onSetProfesiFilter(
     SetDemografiProfesiFilterEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        selectedProfesiFilter: event.profesi,
-        clearProfesi: event.profesi == null,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedProfesiFilter: event.profesi,
+          clearProfesi: event.profesi == null,
+        ),
+      );
+    }
   }
 
   void _onSetScopeFilter(
     SetDemografiScopeFilterEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        selectedScopeFilter: event.scope,
-        clearScope: event.scope == null,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedScopeFilter: event.scope,
+          clearScope: event.scope == null,
+        ),
+      );
+    }
   }
 
   void _onSetAfiliasiFilter(
     SetDemografiAfiliasiFilterEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        selectedAfiliasiFilter: event.afiliasi,
-        clearAfiliasi: event.afiliasi == null,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedAfiliasiFilter: event.afiliasi,
+          clearAfiliasi: event.afiliasi == null,
+        ),
+      );
+    }
   }
 
   void _onSetInstitusiKategoriFilter(
     SetDemografiInstitusiKategoriFilterEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        selectedInstitusiKategoriFilter: event.kategori,
-        clearInstitusiKategori: event.kategori == null,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedInstitusiKategoriFilter: event.kategori,
+          clearInstitusiKategori: event.kategori == null,
+        ),
+      );
+    }
   }
 
   void _onSetInstitusiScopeFilter(
     SetDemografiInstitusiScopeFilterEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        selectedInstitusiScopeFilter: event.scope,
-        clearInstitusiScope: event.scope == null,
-      ),
-    );
-  }
-
-  void _onSetOrganisasiBidangFilter(
-    SetDemografiOrganisasiBidangFilterEvent event,
-    Emitter<DemografiState> emit,
-  ) {
-    emit(
-      state.copyWith(
-        selectedOrganisasiBidangFilter: event.bidang,
-        clearOrganisasiBidang: event.bidang == null,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedInstitusiScopeFilter: event.scope,
+          clearInstitusiScope: event.scope == null,
+        ),
+      );
+    }
   }
 
   void _onSetSortOption(
     SetDemografiSortOptionEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(state.copyWith(selectedSortOption: event.option));
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          selectedSortOption: event.option,
+        ),
+      );
+    }
   }
 
   void _onResetFilters(
     ResetDemografiFiltersEvent event,
     Emitter<DemografiState> emit,
   ) {
-    emit(
-      state.copyWith(
-        clearProfesi: true,
-        clearScope: true,
-        clearAfiliasi: true,
-        clearInstitusiKategori: true,
-        clearInstitusiScope: true,
-        clearOrganisasiBidang: true,
-        selectedSortOption: DemografiSortOption.terbaru,
-      ),
-    );
+    if (state is DemografiLoadedState) {
+      emit(
+        (state as DemografiLoadedState).copyWith(
+          clearProfesi: true,
+          clearScope: true,
+          clearAfiliasi: true,
+          clearInstitusiKategori: true,
+          clearInstitusiScope: true,
+          selectedSortOption: DemografiSortOption.terbaru,
+        ),
+      );
+    }
   }
 
   Future<void> _onAddTokoh(
     AddTokohEvent event,
     Emitter<DemografiState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        isSubmitting: true,
-        errorMessage: null,
-        actionSuccessMessage: null,
-      ),
-    );
+    final currentState = state;
+    if (currentState is DemografiLoadedState) {
+      emit(
+        currentState.copyWith(
+          isSubmitting: true,
+          errorMessage: null,
+          actionSuccessMessage: null,
+        ),
+      );
+    }
 
     final entity = TokohEntity(
       nama: event.nama,
@@ -243,20 +248,30 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
 
     result.fold(
       (failure) {
-        emit(
-          state.copyWith(isSubmitting: false, errorMessage: failure.message),
-        );
+        if (state is DemografiLoadedState) {
+          emit(
+            (state as DemografiLoadedState).copyWith(
+              isSubmitting: false,
+              errorMessage: failure.message,
+            ),
+          );
+        } else {
+          emit(DemografiFailureState(failure.message));
+        }
       },
       (newTokoh) {
-        final list = List<TokohEntity>.from(state.tokohList)
-          ..insert(0, newTokoh);
-        emit(
-          state.copyWith(
-            isSubmitting: false,
-            tokohList: list,
-            actionSuccessMessage: 'Tokoh masyarakat berhasil ditambahkan',
-          ),
-        );
+        if (state is DemografiLoadedState) {
+          final loaded = state as DemografiLoadedState;
+          final list = List<TokohEntity>.from(loaded.tokohList)
+            ..insert(0, newTokoh);
+          emit(
+            loaded.copyWith(
+              isSubmitting: false,
+              tokohList: list,
+              actionSuccessMessage: 'Tokoh masyarakat berhasil ditambahkan',
+            ),
+          );
+        }
       },
     );
   }
@@ -265,13 +280,16 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
     AddInstitusiEvent event,
     Emitter<DemografiState> emit,
   ) async {
-    emit(
-      state.copyWith(
-        isSubmitting: true,
-        errorMessage: null,
-        actionSuccessMessage: null,
-      ),
-    );
+    final currentState = state;
+    if (currentState is DemografiLoadedState) {
+      emit(
+        currentState.copyWith(
+          isSubmitting: true,
+          errorMessage: null,
+          actionSuccessMessage: null,
+        ),
+      );
+    }
 
     final entity = InstitusiEntity(
       nama: event.nama,
@@ -285,62 +303,30 @@ class DemografiBloc extends Bloc<DemografiEvent, DemografiState> {
 
     result.fold(
       (failure) {
-        emit(
-          state.copyWith(isSubmitting: false, errorMessage: failure.message),
-        );
+        if (state is DemografiLoadedState) {
+          emit(
+            (state as DemografiLoadedState).copyWith(
+              isSubmitting: false,
+              errorMessage: failure.message,
+            ),
+          );
+        } else {
+          emit(DemografiFailureState(failure.message));
+        }
       },
       (newInstitusi) {
-        final list = List<InstitusiEntity>.from(state.institusiList)
-          ..insert(0, newInstitusi);
-        emit(
-          state.copyWith(
-            isSubmitting: false,
-            institusiList: list,
-            actionSuccessMessage: 'Institusi berhasil ditambahkan',
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _onAddOrganisasi(
-    AddOrganisasiEvent event,
-    Emitter<DemografiState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        isSubmitting: true,
-        errorMessage: null,
-        actionSuccessMessage: null,
-      ),
-    );
-
-    final entity = OrganisasiEntity(
-      nama: event.nama,
-      jumlahAnggota: event.jumlahAnggota,
-      bidang: event.bidang,
-      alamatSekretariat: event.alamatSekretariat,
-      createdAt: DateTime.now(),
-    );
-
-    final result = await addOrganisasiListUsecase.call(entity);
-
-    result.fold(
-      (failure) {
-        emit(
-          state.copyWith(isSubmitting: false, errorMessage: failure.message),
-        );
-      },
-      (newOrganisasi) {
-        final list = List<OrganisasiEntity>.from(state.organisasiList)
-          ..insert(0, newOrganisasi);
-        emit(
-          state.copyWith(
-            isSubmitting: false,
-            organisasiList: list,
-            actionSuccessMessage: 'Organisasi berhasil ditambahkan',
-          ),
-        );
+        if (state is DemografiLoadedState) {
+          final loaded = state as DemografiLoadedState;
+          final list = List<InstitusiEntity>.from(loaded.institusiList)
+            ..insert(0, newInstitusi);
+          emit(
+            loaded.copyWith(
+              isSubmitting: false,
+              institusiList: list,
+              actionSuccessMessage: 'Institusi berhasil ditambahkan',
+            ),
+          );
+        }
       },
     );
   }

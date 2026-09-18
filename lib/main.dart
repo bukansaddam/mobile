@@ -17,6 +17,7 @@ import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bl
 import 'package:akar/features/linmas/presensi/presentation/bloc/presensi_bloc/presensi_bloc.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/bloc/ronda_bloc/ronda_bloc.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PresensiBloc>(create: (_) => di.sl<PresensiBloc>()),
         BlocProvider<RondaBloc>(create: (_) => di.sl<RondaBloc>()),
         BlocProvider<DemografiBloc>(create: (_) => di.sl<DemografiBloc>()),
+        BlocProvider<OrganisasiBloc>(create: (_) => di.sl<OrganisasiBloc>()),
         BlocProvider<BankSampahBloc>(create: (_) => di.sl<BankSampahBloc>()),
         BlocProvider<MainCubit>(create: (_) => di.sl<MainCubit>()),
         BlocProvider<SurveyBloc>(create: (_) => di.sl<SurveyBloc>()),

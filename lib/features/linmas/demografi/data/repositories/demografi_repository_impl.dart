@@ -1,7 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import '../../domain/entities/institusi_mapper.dart';
-import '../../domain/entities/organisasi_mapper.dart';
 import '../../domain/entities/tokoh_mapper.dart';
 import '../../domain/repositories/demografi_repository.dart';
 import '../datasources/demografi_remote_datasource.dart';
@@ -51,30 +50,6 @@ class DemografiRepositoryImpl implements DemografiRepository {
     try {
       final model = entity.toModel();
       final result = await remoteDatasource.addInstitusi(model);
-      return Right(result.toDomain());
-    } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
-    }
-  }
-
-  // ------------------ Organisasi ------------------
-  @override
-  Future<Either<Failure, List<OrganisasiEntity>>> getOrganisasiList() async {
-    try {
-      final list = await remoteDatasource.getOrganisasiList();
-      return Right(list.map((m) => m.toDomain()).toList());
-    } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
-    }
-  }
-
-  @override
-  Future<Either<Failure, OrganisasiEntity>> addOrganisasi(
-    OrganisasiEntity entity,
-  ) async {
-    try {
-      final model = entity.toModel();
-      final result = await remoteDatasource.addOrganisasi(model);
       return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));

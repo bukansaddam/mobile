@@ -209,6 +209,35 @@ class ApiConstants {
   ]);
   static final String tracking = position;
 
+  // Demografi / Organisasi
+  static final String figureOrganizations = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    39,
+    100,
+    130,
+    186,
+    90,
+    167,
+    187,
+    48,
+    107,
+    156,
+    224,
+    36,
+    119,
+    54,
+    14,
+    173,
+    24,
+    114,
+    123,
+    172,
+  ]);
+
   // Google Speech
   static final List<String> googleCloudScopes = <String>[
     EndpointSecurity.decode(const <int>[

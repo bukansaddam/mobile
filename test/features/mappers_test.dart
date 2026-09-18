@@ -5,10 +5,10 @@ import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_report_
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_mapper.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_mapper.dart';
 import 'package:akar/features/linmas/demografi/data/models/institusi_model.dart';
-import 'package:akar/features/linmas/demografi/data/models/organisasi_model.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/models/organisasi_model.dart';
 import 'package:akar/features/linmas/demografi/data/models/tokoh_model.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/institusi_mapper.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/organisasi_mapper.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_mapper.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_mapper.dart';
 import 'package:akar/features/linmas/panic/data/models/panic_model.dart';
 import 'package:akar/features/linmas/panic/domain/entities/panic_mapper.dart';
@@ -253,6 +253,114 @@ void main() {
       expect(back.id, model.id);
       expect(back.nama, model.nama);
       expect(back.bidang, model.bidang);
+    });
+
+    test('OrganisasiModel and OrganisasiResponseModel matches new API spec with nested regions and meta', () {
+      final jsonResponse = <String, dynamic>{
+        "data": [
+          {
+            "id": 3,
+            "name": "polpol",
+            "estimated_member_count": 10,
+            "field": "politik",
+            "secretariat_address": null,
+            "province_id": 11,
+            "regency_id": 159,
+            "district_id": 1991,
+            "village_id": 25695,
+            "created_at": "2026-09-17T07:51:36.000000Z",
+            "updated_at": "2026-09-17T07:51:36.000000Z",
+            "figures_count": 0,
+            "province": {
+              "id": 11,
+              "name": "Daerah Khusus Ibukota Jakarta",
+              "code": "31"
+            },
+            "regency": {
+              "id": 159,
+              "name": "Kota Administrasi Jakarta Selatan",
+              "code": "31.74"
+            },
+            "district": {
+              "id": 1991,
+              "name": "Tebet",
+              "code": "31.74.01"
+            },
+            "village": {
+              "id": 25695,
+              "name": "Tebet Timur",
+              "code": "31.74.01.1001"
+            }
+          },
+          {
+            "id": 4,
+            "name": "polpolfull",
+            "estimated_member_count": 10,
+            "field": "politik",
+            "secretariat_address": "ada lah",
+            "province_id": 11,
+            "regency_id": 159,
+            "district_id": 1991,
+            "village_id": 25695,
+            "created_at": "2026-09-17T08:17:09.000000Z",
+            "updated_at": "2026-09-17T08:17:09.000000Z",
+            "figures_count": 0,
+            "province": {
+              "id": 11,
+              "name": "Daerah Khusus Ibukota Jakarta",
+              "code": "31"
+            },
+            "regency": {
+              "id": 159,
+              "name": "Kota Administrasi Jakarta Selatan",
+              "code": "31.74"
+            },
+            "district": {
+              "id": 1991,
+              "name": "Tebet",
+              "code": "31.74.01"
+            },
+            "village": {
+              "id": 25695,
+              "name": "Tebet Timur",
+              "code": "31.74.01.1001"
+            }
+          }
+        ],
+        "meta": {
+          "current_page": 1,
+          "last_page": 1,
+          "per_page": 10,
+          "total": 2
+        },
+        "success": true,
+        "message": "OK"
+      };
+
+      final response = OrganisasiResponseModel.fromJson(jsonResponse);
+      expect(response.success, true);
+      expect(response.message, 'OK');
+      expect(response.data.length, 2);
+      expect(response.meta?.currentPage, 1);
+      expect(response.meta?.total, 2);
+
+      final item1 = response.data.first;
+      expect(item1.id, '3');
+      expect(item1.nama, 'polpol');
+      expect(item1.jumlahAnggota, 10);
+      expect(item1.bidang, 'Politik');
+      expect(item1.provinceId, 11);
+      expect(item1.province?.name, 'Daerah Khusus Ibukota Jakarta');
+      expect(item1.district?.name, 'Tebet');
+      expect(item1.village?.name, 'Tebet Timur');
+      expect(item1.formattedWilayah, 'Tebet Timur, Tebet, Kota Administrasi Jakarta Selatan');
+
+      final domainEntity = item1.toDomain();
+      expect(domainEntity.provinceName, 'Daerah Khusus Ibukota Jakarta');
+      expect(domainEntity.formattedWilayah, 'Tebet Timur, Tebet, Kota Administrasi Jakarta Selatan');
+
+      final mappedBack = domainEntity.toModel();
+      expect(mappedBack.province?.code, '31');
     });
   });
 

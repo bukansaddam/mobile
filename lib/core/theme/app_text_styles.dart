@@ -78,6 +78,8 @@ class AppTextStyles {
     letterSpacing: 0.5,
   );
 
+  static const TextStyle button = labelLarge;
+
   static const TextStyle labelMedium = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
