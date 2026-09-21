@@ -238,6 +238,53 @@ class ApiConstants {
     172,
   ]);
 
+  // Demografi / Institusi
+  static final String figureInstitutions = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    39,
+    100,
+    130,
+    186,
+    90,
+    167,
+    187,
+    54,
+    119,
+    136,
+    245,
+    35,
+    106,
+    57,
+    27,
+    176,
+    30,
+    115,
+    102,
+  ]);
+
+  // Master Categories
+  static final String categories = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    34,
+    108,
+    145,
+    170,
+    79,
+    173,
+    230,
+    54,
+    124,
+    136,
+  ]);
+
   // Google Speech
   static final List<String> googleCloudScopes = <String>[
     EndpointSecurity.decode(const <int>[

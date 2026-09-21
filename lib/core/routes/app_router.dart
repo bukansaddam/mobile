@@ -7,11 +7,11 @@ import 'package:akar/features/linmas/panic/presentation/pages/panic_screen.dart'
 import 'package:akar/features/linmas/presensi/presentation/pages/presensi_screen.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/pages/ronda_screen.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/demografi_list_screen.dart';
 import 'package:akar/features/linmas/demografi/presentation/pages/add_tokoh_screen.dart';
-import 'package:akar/features/linmas/demografi/presentation/pages/add_institusi_screen.dart';
+import 'package:akar/features/linmas/demografi/institusi/presentation/pages/add_institusi_screen.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/add_organisasi_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';

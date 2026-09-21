@@ -30,6 +30,11 @@ class EndpointSecurity {
 
   /// Mendekode token byte menjadi string asli
   static String decode(List<int> tokens) {
+    if (_k.isEmpty) {
+      throw StateError(
+        'ENDPOINT_KEY is not defined. Ensure --dart-define-from-file=.env is provided.',
+      );
+    }
     final int len = tokens.length;
     final Uint8List buffer = Uint8List(len);
     final int kLen = _k.length;

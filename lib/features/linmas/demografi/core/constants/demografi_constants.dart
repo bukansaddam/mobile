@@ -103,6 +103,8 @@ class DemografiConstants {
     'Kesehatan & Medis',
     'Pendidikan & Akademik',
     'Kebencanaan & Mitigasi',
+    'Keagamaan',
+    'Pelayanan Publik & BUMD',
   ];
 
   static const String defaultInstitusiKategori = 'Pemerintahan & Birokrasi';

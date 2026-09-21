@@ -4,10 +4,10 @@ import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_locatio
 import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_report_model.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_mapper.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_mapper.dart';
-import 'package:akar/features/linmas/demografi/data/models/institusi_model.dart';
+import 'package:akar/features/linmas/demografi/institusi/data/models/institusi_model.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/models/organisasi_model.dart';
 import 'package:akar/features/linmas/demografi/data/models/tokoh_model.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/institusi_mapper.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_mapper.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_mapper.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_mapper.dart';
 import 'package:akar/features/linmas/panic/data/models/panic_model.dart';
@@ -206,6 +206,93 @@ void main() {
       final back = entity.toModel();
       expect(back.id, model.id);
       expect(back.nama, model.nama);
+    });
+
+    test('InstitusiModel toApiJson matches required payload format', () {
+      final model = InstitusiModel(
+        nama: 'Kantor Kelurahan Menteng',
+        scope: 'Kelurahan',
+        categoryId: 13,
+        alamat: 'Jl. Menteng Raya No. 10',
+      );
+
+      final json = model.toApiJson();
+      expect(json, {
+        'name': 'Kantor Kelurahan Menteng',
+        'scope': 'kelurahan',
+        'category_id': 13,
+        'institution_address': 'Jl. Menteng Raya No. 10',
+      });
+
+      // Also verify fallback when categoryId and alamat are null
+      final fallbackModel = InstitusiModel(
+        nama: 'Polsek Sukamaju',
+        scope: 'Kecamatan',
+      );
+      expect(fallbackModel.toApiJson(), {
+        'name': 'Polsek Sukamaju',
+        'scope': 'kecamatan',
+        'category_id': 0,
+        'institution_address': '',
+      });
+
+      // Verify kabupaten/kota produces kabupaten_kota in payload
+      final kabKotaModel = InstitusiModel(
+        nama: 'Dinas Sosial',
+        scope: 'Kabupaten/Kota',
+        categoryId: 13,
+      );
+      expect(kabKotaModel.toApiJson()['scope'], 'kabupaten_kota');
+
+      final kabKotaModel2 = InstitusiModel(
+        nama: 'Dinas Kesehatan',
+        scope: 'kabupaten_kota',
+        categoryId: 14,
+      );
+      expect(kabKotaModel2.toApiJson()['scope'], 'kabupaten_kota');
+    });
+
+    test('InstitusiModel fromJson extracts only label when category is Map', () {
+      final json = {
+        'id': '1',
+        'name': 'Universitas Tebet',
+        'category_id': 16,
+        'category': {
+          'id': 16,
+          'label': 'Pendidikan & Akademik',
+          'code': 'inst_pendidikan',
+          'domain': 'institution',
+          'is_active': true,
+        },
+        'scope': 'nasional',
+        'address': 'Jl. Tebet Pinggir Jalan',
+      };
+
+      final model = InstitusiModel.fromJson(json);
+      expect(model.kategori, 'Pendidikan & Akademik');
+      expect(model.categoryId, 16);
+
+      final entity = model.toDomain();
+      expect(entity.kategori, 'Pendidikan & Akademik');
+      expect(entity.displayKategori, 'Pendidikan & Akademik');
+      expect(entity.categoryId, 16);
+
+      // Verify displayKategori cleans up if a map-like string was somehow present
+      const entityWithRawMapString = InstitusiEntity(
+        nama: 'Test',
+        scope: 'nasional',
+        kategori: '{id: 16, label: Pendidikan & Akademik, code: inst_pendidikan}',
+      );
+      expect(entityWithRawMapString.displayKategori, 'Pendidikan & Akademik');
+
+      // Verify scope parsing of 'kabupaten_kota'
+      final kabKotaJson = {
+        'name': 'Dinas Perhubungan',
+        'scope': 'kabupaten_kota',
+      };
+      final kabKotaParsed = InstitusiModel.fromJson(kabKotaJson);
+      expect(kabKotaParsed.scope, 'Kabupaten/Kota');
+      expect(kabKotaParsed.toDomain().displayScope, 'Kabupaten/Kota');
     });
 
     test('TokohModel toDomain & toModel mapping', () {

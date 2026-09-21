@@ -41,6 +41,14 @@ void main() {
       expect(ApiConstants.figureOrganizations, '/api/figure/organizations');
     });
 
+    test('institutions endpoint decodes accurately', () {
+      expect(ApiConstants.figureInstitutions, '/api/figure/institutions');
+    });
+
+    test('categories endpoint decodes accurately', () {
+      expect(ApiConstants.categories, '/api/categories');
+    });
+
     test('google speech constants decode accurately', () {
       expect(ApiConstants.googleCloudScopes, [
         'https://www.googleapis.com/auth/cloud-platform',

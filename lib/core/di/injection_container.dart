@@ -57,6 +57,18 @@ import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/add_or
 import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/get_organisasi_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/usecases/update_organisasi_usecase.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
+import 'package:akar/features/linmas/demografi/institusi/data/datasources/institusi_remote_datasource.dart';
+import 'package:akar/features/linmas/demografi/institusi/data/repositories/institusi_repository_impl.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/repositories/institusi_repository.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/add_institusi_usecase.dart'
+    as inst;
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_categories_usecase.dart'
+    as inst;
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_list_usecase.dart'
+    as inst;
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/update_institusi_usecase.dart'
+    as inst;
+import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_local_datasource.dart';
 import 'package:akar/features/linmas/bank_sampah/data/repositories/bank_sampah_repository_impl.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
@@ -147,6 +159,9 @@ Future<void> init() async {
   sl.registerLazySingleton<OrganisasiRemoteDatasource>(
     () => OrganisasiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<InstitusiRemoteDatasource>(
+    () => InstitusiRemoteDatasourceImpl(),
+  );
   sl.registerLazySingleton<AnnouncementRemoteDatasource>(
     () => AnnouncementRemoteDatasourceImpl(),
   );
@@ -181,6 +196,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<OrganisasiRepository>(
     () => OrganisasiRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<InstitusiRepository>(
+    () => InstitusiRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<AnnouncementRepository>(
     () => AnnouncementRepositoryImpl(remoteDatasource: sl()),
@@ -231,6 +249,18 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<UpdateOrganisasiUsecase>(
     () => UpdateOrganisasiUsecase(sl()),
+  );
+  sl.registerLazySingleton<inst.GetInstitusiListUsecase>(
+    () => inst.GetInstitusiListUsecase(sl()),
+  );
+  sl.registerLazySingleton<inst.GetInstitusiCategoriesUsecase>(
+    () => inst.GetInstitusiCategoriesUsecase(sl()),
+  );
+  sl.registerLazySingleton<inst.AddInstitusiUsecase>(
+    () => inst.AddInstitusiUsecase(sl()),
+  );
+  sl.registerLazySingleton<inst.UpdateInstitusiUsecase>(
+    () => inst.UpdateInstitusiUsecase(sl()),
   );
   sl.registerLazySingleton<GetBankSampahReportsUsecase>(
     () => GetBankSampahReportsUsecase(sl()),
@@ -313,6 +343,14 @@ Future<void> init() async {
       getOrganisasiListUsecase: sl(),
       addOrganisasiUsecase: sl(),
       updateOrganisasiUsecase: sl(),
+    ),
+  );
+  sl.registerFactory<InstitusiBloc>(
+    () => InstitusiBloc(
+      getInstitusiListUsecase: sl<inst.GetInstitusiListUsecase>(),
+      addInstitusiUsecase: sl<inst.AddInstitusiUsecase>(),
+      updateInstitusiUsecase: sl<inst.UpdateInstitusiUsecase>(),
+      getCategoriesUsecase: sl<inst.GetInstitusiCategoriesUsecase>(),
     ),
   );
   sl.registerFactory<BankSampahBloc>(

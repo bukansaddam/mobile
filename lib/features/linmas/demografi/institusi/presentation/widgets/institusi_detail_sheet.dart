@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/institusi_entity.dart';
+import '../../domain/entities/institusi_entity.dart';
 
 class InstitusiDetailSheet extends StatelessWidget {
   final InstitusiEntity institusi;
@@ -77,7 +77,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Informasi profil lengkap institusi',
+                          'Informasi lengkap profil institusi',
                           style: AppTextStyles.caption.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
@@ -129,79 +129,37 @@ class InstitusiDetailSheet extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scopeColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: scopeColor.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.verified_rounded,
+                                  size: 12,
+                                  color: scopeColor,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: const Color(
-                                    0xFF0284C7,
-                                  ).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: const Color(
-                                      0xFF0284C7,
-                                    ).withValues(alpha: 0.25),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Scope: ${institusi.displayScope}',
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: scopeColor,
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.local_offer_outlined,
-                                      size: 11,
-                                      color: Color(0xFF0284C7),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      institusi.kategori,
-                                      style: AppTextStyles.bodySmall.copyWith(
-                                        fontSize: 10.5,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF0284C7),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: scopeColor.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: scopeColor.withValues(alpha: 0.3),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.verified_rounded,
-                                      size: 12,
-                                      color: scopeColor,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Scope: ${institusi.scope}',
-                                      style: AppTextStyles.bodySmall.copyWith(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                        color: scopeColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -229,13 +187,13 @@ class InstitusiDetailSheet extends StatelessWidget {
                     _buildInfoTile(
                       icon: Icons.local_offer_outlined,
                       label: 'Kategori',
-                      value: institusi.kategori,
+                      value: institusi.displayKategori,
                     ),
                     const Divider(height: 1, color: AppColors.grey200),
                     _buildInfoTile(
                       icon: Icons.verified_rounded,
                       label: 'Scope Wilayah',
-                      value: institusi.scope,
+                      value: institusi.displayScope,
                     ),
                     const Divider(height: 1, color: AppColors.grey200),
                     _buildInfoTile(
@@ -247,6 +205,14 @@ class InstitusiDetailSheet extends StatelessWidget {
                           ? institusi.alamat!
                           : 'Alamat belum diisi',
                     ),
+                    if (institusi.formattedWilayah.isNotEmpty) ...[
+                      const Divider(height: 1, color: AppColors.grey200),
+                      _buildInfoTile(
+                        icon: Icons.map_rounded,
+                        label: 'Wilayah Terkait',
+                        value: institusi.formattedWilayah,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -313,7 +279,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Edit Data Institusi',
+                    'Ubah Data Institusi',
                     style: AppTextStyles.labelLarge.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.bold,
