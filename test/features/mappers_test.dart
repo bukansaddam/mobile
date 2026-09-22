@@ -6,10 +6,10 @@ import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_loc
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_mapper.dart';
 import 'package:akar/features/linmas/demografi/institusi/data/models/institusi_model.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/models/organisasi_model.dart';
-import 'package:akar/features/linmas/demografi/data/models/tokoh_model.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/models/tokoh_model.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_mapper.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_mapper.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/tokoh_mapper.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_mapper.dart';
 import 'package:akar/features/linmas/panic/data/models/panic_model.dart';
 import 'package:akar/features/linmas/panic/domain/entities/panic_mapper.dart';
 import 'package:akar/features/linmas/presensi/data/models/presensi_model.dart';

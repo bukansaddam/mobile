@@ -12,12 +12,12 @@ import 'package:akar/features/linmas/demografi/institusi/domain/entities/institu
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/widgets/institusi_detail_sheet.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
-import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
-import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/widgets/organisasi_detail_sheet.dart';
-import 'package:akar/features/linmas/demografi/presentation/widgets/tokoh_detail_sheet.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
+import 'package:akar/features/linmas/demografi/tokoh/presentation/widgets/tokoh_detail_sheet.dart';
+import 'package:akar/core/widgets/shimmer_loading.dart';
 
 class DemografiListScreen extends StatefulWidget {
   const DemografiListScreen({super.key});
@@ -39,7 +39,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   @override
   void initState() {
     super.initState();
-    _lastTabIndex = context.read<DemografiBloc>().state.activeTabIndex;
+    _lastTabIndex = 0;
     _tabController = TabController(
       length: 3,
       vsync: this,
@@ -136,12 +136,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
       setState(() {});
     }
 
-    final demografiBloc = context.read<DemografiBloc>();
     final tokohBloc = context.read<TokohBloc>();
     final institusiBloc = context.read<InstitusiBloc>();
     final organisasiBloc = context.read<OrganisasiBloc>();
-    demografiBloc.add(ClearDemografiSearchEvent());
-    demografiBloc.add(SetDemografiActiveTabEvent(newIndex));
     tokohBloc.add(const SetTokohFilterEvent(search: ''));
     institusiBloc.add(const SetInstitusiFilterEvent(search: ''));
     organisasiBloc.add(const SetOrganisasiFilterEvent(search: ''));
@@ -221,219 +218,154 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
-        return BlocBuilder<DemografiBloc, DemografiState>(
-          builder: (context, state) {
-            return BlocBuilder<TokohBloc, TokohState>(
-              builder: (context, tokohState) {
-                return BlocBuilder<OrganisasiBloc, OrganisasiState>(
-                  builder: (context, organisasiState) {
-                    return BlocBuilder<InstitusiBloc, InstitusiState>(
-                      builder: (context, institusiState) {
-                        final tokohBloc = context.read<TokohBloc>();
-                        final organisasiBloc = context.read<OrganisasiBloc>();
-                        final institusiBloc = context.read<InstitusiBloc>();
-                        final activeTab = state.activeTabIndex;
-                        final hasActiveFilter = activeTab == 2
-                            ? organisasiBloc.hasActiveFilter
-                            : activeTab == 1
-                            ? institusiBloc.hasActiveFilter
-                            : tokohBloc.hasActiveFilter;
+        return BlocBuilder<TokohBloc, TokohState>(
+          builder: (context, tokohState) {
+            return BlocBuilder<OrganisasiBloc, OrganisasiState>(
+              builder: (context, organisasiState) {
+                return BlocBuilder<InstitusiBloc, InstitusiState>(
+                  builder: (context, institusiState) {
+                    final tokohBloc = context.read<TokohBloc>();
+                    final organisasiBloc = context.read<OrganisasiBloc>();
+                    final institusiBloc = context.read<InstitusiBloc>();
+                    final activeTab = _tabController.index;
+                    final hasActiveFilter = activeTab == 2
+                        ? organisasiBloc.hasActiveFilter
+                        : activeTab == 1
+                        ? institusiBloc.hasActiveFilter
+                        : tokohBloc.hasActiveFilter;
 
-                        return SafeArea(
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              bottom: MediaQuery.of(
-                                bottomSheetContext,
-                              ).viewInsets.bottom,
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              constraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(
-                                      bottomSheetContext,
-                                    ).size.height *
-                                    0.85,
+                    return SafeArea(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(
+                            bottomSheetContext,
+                          ).viewInsets.bottom,
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.of(bottomSheetContext).size.height *
+                                0.85,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 12),
+                              Center(
+                                child: Container(
+                                  width: 38,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey300,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                ),
                               ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  const SizedBox(height: 12),
-                                  Center(
-                                    child: Container(
-                                      width: 38,
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.grey300,
-                                        borderRadius: BorderRadius.circular(2),
+                              const SizedBox(height: 16),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Filter & Urutkan Demografi',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'Filter & Urutkan Demografi',
+                                    if (hasActiveFilter)
+                                      TextButton(
+                                        onPressed: () {
+                                          if (activeTab == 2) {
+                                            context.read<OrganisasiBloc>().add(
+                                              const ResetOrganisasiFilterEvent(),
+                                            );
+                                          } else if (activeTab == 1) {
+                                            context.read<InstitusiBloc>().add(
+                                              const ResetInstitusiFilterEvent(),
+                                            );
+                                          } else {
+                                            context.read<TokohBloc>().add(
+                                              const ResetTokohFilterEvent(),
+                                            );
+                                          }
+                                        },
+                                        style: TextButton.styleFrom(
+                                          foregroundColor: AppColors.error,
+                                          padding: EdgeInsets.zero,
+                                          minimumSize: Size.zero,
+                                          tapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                        ),
+                                        child: const Text(
+                                          'Reset Filter',
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
                                           ),
-                                        ),
-                                        if (hasActiveFilter)
-                                          TextButton(
-                                            onPressed: () {
-                                              if (activeTab == 2) {
-                                                context.read<OrganisasiBloc>().add(
-                                                  const ResetOrganisasiFilterEvent(),
-                                                );
-                                              } else if (activeTab == 1) {
-                                                context.read<InstitusiBloc>().add(
-                                                  const ResetInstitusiFilterEvent(),
-                                                );
-                                              } else {
-                                                context.read<TokohBloc>().add(
-                                                  const ResetTokohFilterEvent(),
-                                                );
-                                              }
-                                            },
-                                            style: TextButton.styleFrom(
-                                              foregroundColor: AppColors.error,
-                                              padding: EdgeInsets.zero,
-                                              minimumSize: Size.zero,
-                                              tapTargetSize:
-                                                  MaterialTapTargetSize
-                                                      .shrinkWrap,
-                                            ),
-                                            child: const Text(
-                                              'Reset Filter',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        activeTab == 0
-                                            ? 'Kustomisasi daftar tokoh sesuai kebutuhan Anda'
-                                            : activeTab == 1
-                                            ? 'Kustomisasi daftar institusi sesuai kebutuhan Anda'
-                                            : 'Kustomisasi daftar organisasi sesuai kebutuhan Anda',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: AppColors.textSecondary,
                                         ),
                                       ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    activeTab == 0
+                                        ? 'Kustomisasi daftar tokoh sesuai kebutuhan Anda'
+                                        : activeTab == 1
+                                        ? 'Kustomisasi daftar institusi sesuai kebutuhan Anda'
+                                        : 'Kustomisasi daftar organisasi sesuai kebutuhan Anda',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
                                     ),
                                   ),
-                                  const SizedBox(height: 14),
-                                  const Divider(
-                                    height: 1,
-                                    color: AppColors.grey200,
-                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              const Divider(
+                                height: 1,
+                                color: AppColors.grey200,
+                              ),
 
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Urutkan Berdasarkan',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.textPrimary,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          if (activeTab == 2)
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: OrganisasiSortOption
-                                                  .values
-                                                  .map((sortOpt) {
-                                                    final isSelected =
-                                                        organisasiBloc
-                                                            .selectedSortOption ==
-                                                        sortOpt;
-                                                    return _buildFilterChip(
-                                                      label: sortOpt.label,
-                                                      icon: sortOpt.icon,
-                                                      isSelected: isSelected,
-                                                      onTap: () {
-                                                        context
-                                                            .read<
-                                                              OrganisasiBloc
-                                                            >()
-                                                            .add(
-                                                              SetOrganisasiFilterEvent(
-                                                                sort: sortOpt,
-                                                              ),
-                                                            );
-                                                      },
-                                                    );
-                                                  })
-                                                  .toList(),
-                                            )
-                                          else if (activeTab == 1)
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: InstitusiSortOption
-                                                  .values
-                                                  .map((sortOpt) {
-                                                    final isSelected =
-                                                        institusiBloc
-                                                            .selectedSortOption ==
-                                                        sortOpt;
-                                                    return _buildFilterChip(
-                                                      label: sortOpt.label,
-                                                      isSelected: isSelected,
-                                                      onTap: () {
-                                                        context
-                                                            .read<
-                                                              InstitusiBloc
-                                                            >()
-                                                            .add(
-                                                              SetInstitusiFilterEvent.sort(
-                                                                sortOpt,
-                                                              ),
-                                                            );
-                                                      },
-                                                    );
-                                                  })
-                                                  .toList(),
-                                            )
-                                          else
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: TokohSortOption.values.map((
-                                                sortOpt,
-                                              ) {
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        'Urutkan Berdasarkan',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      if (activeTab == 2)
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: OrganisasiSortOption.values
+                                              .map((sortOpt) {
                                                 final isSelected =
-                                                    tokohBloc
+                                                    organisasiBloc
                                                         .selectedSortOption ==
                                                     sortOpt;
                                                 return _buildFilterChip(
@@ -441,333 +373,360 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                                   icon: sortOpt.icon,
                                                   isSelected: isSelected,
                                                   onTap: () {
-                                                    context.read<TokohBloc>().add(
-                                                      SetTokohFilterEvent.sort(
-                                                        sortOpt,
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              }).toList(),
-                                            ),
-                                          const SizedBox(height: 22),
-
-                                          // Tab 0 specific filters (Tokoh)
-                                          if (activeTab == 0) ...[
-                                            // Profesi Tokoh
-                                            const Text(
-                                              'Profesi Tokoh',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildFilterChip(
-                                                  label: 'Semua Profesi',
-                                                  isSelected:
-                                                      tokohBloc
-                                                          .selectedProfesiFilter ==
-                                                      null,
-                                                  onTap: () {
-                                                    context.read<TokohBloc>().add(
-                                                      const SetTokohFilterEvent.field(
-                                                        null,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                                ...DemografiConstants
-                                                    .profesiOptions
-                                                    .map((profesi) {
-                                                      final isSelected =
-                                                          tokohBloc
-                                                              .selectedProfesiFilter ==
-                                                          profesi;
-                                                      return _buildFilterChip(
-                                                        label: profesi,
-                                                        isSelected: isSelected,
-                                                        onTap: () {
-                                                          context
-                                                              .read<TokohBloc>()
-                                                              .add(
-                                                                SetTokohFilterEvent.field(
-                                                                  profesi,
-                                                                ),
-                                                              );
-                                                        },
-                                                      );
-                                                    }),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 22),
-
-                                            // Afiliasi Tokoh
-                                            const Text(
-                                              'Afiliasi Tokoh',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildFilterChip(
-                                                  label: 'Semua Afiliasi',
-                                                  isSelected:
-                                                      tokohBloc
-                                                          .selectedAfiliasiFilter ==
-                                                      null,
-                                                  onTap: () {
-                                                    context.read<TokohBloc>().add(
-                                                      const SetTokohFilterEvent.label(
-                                                        null,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                                ...DemografiConstants
-                                                    .afiliasiOptions
-                                                    .map((afiliasi) {
-                                                      final isSelected =
-                                                          tokohBloc
-                                                              .selectedAfiliasiFilter ==
-                                                          afiliasi;
-                                                      return _buildFilterChip(
-                                                        label: afiliasi,
-                                                        isSelected: isSelected,
-                                                        onTap: () {
-                                                          context
-                                                              .read<TokohBloc>()
-                                                              .add(
-                                                                SetTokohFilterEvent.label(
-                                                                  afiliasi,
-                                                                ),
-                                                              );
-                                                        },
-                                                      );
-                                                    }),
-                                              ],
-                                            ),
-                                          ],
-
-                                          // Tab 1 specific filters (Institusi)
-                                          if (activeTab == 1) ...[
-                                            const Text(
-                                              'Kategori Institusi',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildFilterChip(
-                                                  label: 'Semua Kategori',
-                                                  isSelected:
-                                                      institusiBloc
-                                                          .selectedKategoriFilter ==
-                                                      null,
-                                                  onTap: () {
                                                     context
-                                                        .read<InstitusiBloc>()
+                                                        .read<OrganisasiBloc>()
                                                         .add(
-                                                          const SetInstitusiFilterEvent.kategori(
-                                                            null,
+                                                          SetOrganisasiFilterEvent(
+                                                            sort: sortOpt,
                                                           ),
                                                         );
                                                   },
-                                                ),
-                                                ...institusiBloc.categoryOptions.map((
-                                                  kat,
-                                                ) {
+                                                );
+                                              })
+                                              .toList(),
+                                        )
+                                      else if (activeTab == 1)
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: InstitusiSortOption.values.map((
+                                            sortOpt,
+                                          ) {
+                                            final isSelected =
+                                                institusiBloc
+                                                    .selectedSortOption ==
+                                                sortOpt;
+                                            return _buildFilterChip(
+                                              label: sortOpt.label,
+                                              isSelected: isSelected,
+                                              onTap: () {
+                                                context.read<InstitusiBloc>().add(
+                                                  SetInstitusiFilterEvent.sort(
+                                                    sortOpt,
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }).toList(),
+                                        )
+                                      else
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: TokohSortOption.values.map((
+                                            sortOpt,
+                                          ) {
+                                            final isSelected =
+                                                tokohBloc.selectedSortOption ==
+                                                sortOpt;
+                                            return _buildFilterChip(
+                                              label: sortOpt.label,
+                                              icon: sortOpt.icon,
+                                              isSelected: isSelected,
+                                              onTap: () {
+                                                context.read<TokohBloc>().add(
+                                                  SetTokohFilterEvent.sort(
+                                                    sortOpt,
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }).toList(),
+                                        ),
+                                      const SizedBox(height: 22),
+
+                                      if (activeTab == 0) ...[
+                                        const Text(
+                                          'Profesi Tokoh',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _buildFilterChip(
+                                              label: 'Semua Profesi',
+                                              isSelected:
+                                                  tokohBloc
+                                                      .selectedProfesiFilter ==
+                                                  null,
+                                              onTap: () {
+                                                context.read<TokohBloc>().add(
+                                                  const SetTokohFilterEvent.field(
+                                                    null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            ...DemografiConstants.profesiOptions.map((
+                                              profesi,
+                                            ) {
+                                              final isSelected =
+                                                  tokohBloc
+                                                      .selectedProfesiFilter ==
+                                                  profesi;
+                                              return _buildFilterChip(
+                                                label: profesi,
+                                                isSelected: isSelected,
+                                                onTap: () {
+                                                  context.read<TokohBloc>().add(
+                                                    SetTokohFilterEvent.field(
+                                                      profesi,
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 22),
+
+                                        const Text(
+                                          'Afiliasi Tokoh',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _buildFilterChip(
+                                              label: 'Semua Afiliasi',
+                                              isSelected:
+                                                  tokohBloc
+                                                      .selectedAfiliasiFilter ==
+                                                  null,
+                                              onTap: () {
+                                                context.read<TokohBloc>().add(
+                                                  const SetTokohFilterEvent.label(
+                                                    null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            ...DemografiConstants.afiliasiOptions.map((
+                                              afiliasi,
+                                            ) {
+                                              final isSelected =
+                                                  tokohBloc
+                                                      .selectedAfiliasiFilter ==
+                                                  afiliasi;
+                                              return _buildFilterChip(
+                                                label: afiliasi,
+                                                isSelected: isSelected,
+                                                onTap: () {
+                                                  context.read<TokohBloc>().add(
+                                                    SetTokohFilterEvent.label(
+                                                      afiliasi,
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }),
+                                          ],
+                                        ),
+                                      ],
+
+                                      if (activeTab == 1) ...[
+                                        const Text(
+                                          'Kategori Institusi',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _buildFilterChip(
+                                              label: 'Semua Kategori',
+                                              isSelected:
+                                                  institusiBloc
+                                                      .selectedKategoriFilter ==
+                                                  null,
+                                              onTap: () {
+                                                context.read<InstitusiBloc>().add(
+                                                  const SetInstitusiFilterEvent.kategori(
+                                                    null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            ...institusiBloc.categoryOptions.map((
+                                              kat,
+                                            ) {
+                                              final isSelected =
+                                                  institusiBloc
+                                                      .selectedKategoriFilter ==
+                                                  kat;
+                                              return _buildFilterChip(
+                                                label: kat,
+                                                isSelected: isSelected,
+                                                onTap: () {
+                                                  context.read<InstitusiBloc>().add(
+                                                    SetInstitusiFilterEvent.kategori(
+                                                      kat,
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          'Scope Institusi',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _buildFilterChip(
+                                              label: 'Semua Scope',
+                                              isSelected:
+                                                  institusiBloc
+                                                      .selectedScopeFilter ==
+                                                  null,
+                                              onTap: () {
+                                                context.read<InstitusiBloc>().add(
+                                                  const SetInstitusiFilterEvent.scope(
+                                                    null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            ...DemografiConstants
+                                                .institusiScopeOptions
+                                                .map((scope) {
                                                   final isSelected =
                                                       institusiBloc
-                                                          .selectedKategoriFilter ==
-                                                      kat;
+                                                          .selectedScopeFilter ==
+                                                      scope;
                                                   return _buildFilterChip(
-                                                    label: kat,
+                                                    label: scope,
                                                     isSelected: isSelected,
                                                     onTap: () {
                                                       context
                                                           .read<InstitusiBloc>()
                                                           .add(
-                                                            SetInstitusiFilterEvent.kategori(
-                                                              kat,
+                                                            SetInstitusiFilterEvent.scope(
+                                                              scope,
                                                             ),
                                                           );
                                                     },
                                                   );
                                                 }),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 16),
-                                            const Text(
-                                              'Scope Institusi',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildFilterChip(
-                                                  label: 'Semua Scope',
-                                                  isSelected:
-                                                      institusiBloc
-                                                          .selectedScopeFilter ==
-                                                      null,
-                                                  onTap: () {
-                                                    context
-                                                        .read<InstitusiBloc>()
-                                                        .add(
-                                                          const SetInstitusiFilterEvent.scope(
-                                                            null,
-                                                          ),
-                                                        );
-                                                  },
-                                                ),
-                                                ...DemografiConstants
-                                                    .institusiScopeOptions
-                                                    .map((scope) {
-                                                      final isSelected =
-                                                          institusiBloc
-                                                              .selectedScopeFilter ==
-                                                          scope;
-                                                      return _buildFilterChip(
-                                                        label: scope,
-                                                        isSelected: isSelected,
-                                                        onTap: () {
-                                                          context
-                                                              .read<
-                                                                InstitusiBloc
-                                                              >()
-                                                              .add(
-                                                                SetInstitusiFilterEvent.scope(
-                                                                  scope,
-                                                                ),
-                                                              );
-                                                        },
-                                                      );
-                                                    }),
-                                              ],
-                                            ),
                                           ],
-
-                                          // Tab 2 specific filters (Organisasi)
-                                          if (activeTab == 2) ...[
-                                            const Text(
-                                              'Bidang Organisasi',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Wrap(
-                                              spacing: 8,
-                                              runSpacing: 8,
-                                              children: [
-                                                _buildFilterChip(
-                                                  label: 'Semua Bidang',
-                                                  isSelected:
-                                                      organisasiBloc
-                                                          .selectedBidangFilter ==
-                                                      null,
-                                                  onTap: () {
-                                                    context
-                                                        .read<OrganisasiBloc>()
-                                                        .add(
-                                                          const SetOrganisasiFilterEvent(
-                                                            field: null,
-                                                          ),
-                                                        );
-                                                  },
-                                                ),
-                                                ...DemografiConstants
-                                                    .organisasiBidangOptions
-                                                    .map((bidang) {
-                                                      final isSelected =
-                                                          organisasiBloc
-                                                              .selectedBidangFilter ==
-                                                          bidang;
-                                                      return _buildFilterChip(
-                                                        label: bidang,
-                                                        isSelected: isSelected,
-                                                        onTap: () {
-                                                          context
-                                                              .read<
-                                                                OrganisasiBloc
-                                                              >()
-                                                              .add(
-                                                                SetOrganisasiFilterEvent(
-                                                                  field: bidang,
-                                                                ),
-                                                              );
-                                                        },
-                                                      );
-                                                    }),
-                                              ],
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Apply Button
-                                  Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: SizedBox(
-                                      width: double.infinity,
-                                      height: 48,
-                                      child: ElevatedButton(
-                                        onPressed: () =>
-                                            Navigator.pop(bottomSheetContext),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.primary,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              16,
-                                            ),
-                                          ),
-                                          elevation: 0,
                                         ),
-                                        child: const Text(
-                                          'Terapkan Filter',
+                                      ],
+
+                                      if (activeTab == 2) ...[
+                                        const Text(
+                                          'Bidang Organisasi',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                                            color: AppColors.textPrimary,
                                           ),
                                         ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: [
+                                            _buildFilterChip(
+                                              label: 'Semua Bidang',
+                                              isSelected:
+                                                  organisasiBloc
+                                                      .selectedBidangFilter ==
+                                                  null,
+                                              onTap: () {
+                                                context.read<OrganisasiBloc>().add(
+                                                  const SetOrganisasiFilterEvent(
+                                                    field: null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            ...DemografiConstants
+                                                .organisasiBidangOptions
+                                                .map((bidang) {
+                                                  final isSelected =
+                                                      organisasiBloc
+                                                          .selectedBidangFilter ==
+                                                      bidang;
+                                                  return _buildFilterChip(
+                                                    label: bidang,
+                                                    isSelected: isSelected,
+                                                    onTap: () {
+                                                      context
+                                                          .read<
+                                                            OrganisasiBloc
+                                                          >()
+                                                          .add(
+                                                            SetOrganisasiFilterEvent(
+                                                              field: bidang,
+                                                            ),
+                                                          );
+                                                    },
+                                                  );
+                                                }),
+                                          ],
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.pop(bottomSheetContext),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: const Text(
+                                      'Terapkan Filter',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
                 );
@@ -868,9 +827,10 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     final organisasiState = organisasiBloc.state;
     final institusiBloc = context.watch<InstitusiBloc>();
     final institusiState = institusiBloc.state;
-    return BlocBuilder<DemografiBloc, DemografiState>(
-      builder: (context, state) {
-        final activeTab = state.activeTabIndex;
+    return AnimatedBuilder(
+      animation: _tabController,
+      builder: (context, _) {
+        final activeTab = _tabController.index;
         final isOrgTab = activeTab == 2;
         final isInstTab = activeTab == 1;
         final hasActiveFilter = isOrgTab
@@ -1022,7 +982,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Column(
               children: [
-                // Top Search & Filter Bar
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Column(
@@ -1053,16 +1012,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     .primaryFocus
                                     ?.unfocus(),
                                 onChanged: (val) {
-                                  setState(() {});
                                   _debounceTimer?.cancel();
                                   _debounceTimer = Timer(
                                     const Duration(milliseconds: 500),
                                     () {
                                       if (!mounted) return;
-                                      final demografiBloc = context
-                                          .read<DemografiBloc>();
-                                      if (demografiBloc.state.activeTabIndex ==
-                                          2) {
+                                      final activeTab = _tabController.index;
+                                      if (activeTab == 2) {
                                         final orgBloc = context
                                             .read<OrganisasiBloc>();
                                         orgBloc.add(
@@ -1070,10 +1026,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                             val.trim(),
                                           ),
                                         );
-                                      } else if (demografiBloc
-                                              .state
-                                              .activeTabIndex ==
-                                          1) {
+                                      } else if (activeTab == 1) {
                                         final instBloc = context
                                             .read<InstitusiBloc>();
                                         instBloc.add(
@@ -1095,9 +1048,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                 },
                                 onSubmitted: (val) {
                                   _debounceTimer?.cancel();
-                                  final demografiBloc = context
-                                      .read<DemografiBloc>();
-                                  if (demografiBloc.state.activeTabIndex == 2) {
+                                  final activeTab = _tabController.index;
+                                  if (activeTab == 2) {
                                     final orgBloc = context
                                         .read<OrganisasiBloc>();
                                     orgBloc.add(
@@ -1105,10 +1057,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                         val.trim(),
                                       ),
                                     );
-                                  } else if (demografiBloc
-                                          .state
-                                          .activeTabIndex ==
-                                      1) {
+                                  } else if (activeTab == 1) {
                                     final instBloc = context
                                         .read<InstitusiBloc>();
                                     instBloc.add(
@@ -1132,52 +1081,51 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     Icons.search_rounded,
                                     color: AppColors.primary,
                                   ),
-                                  suffixIcon: _searchController.text.isNotEmpty
-                                      ? IconButton(
-                                          icon: const Icon(
-                                            Icons.clear_rounded,
-                                            color: AppColors.grey500,
-                                          ),
-                                          onPressed: () {
-                                            _debounceTimer?.cancel();
-                                            _searchController.clear();
-                                            setState(() {});
-                                            final demografiBloc = context
-                                                .read<DemografiBloc>();
-                                            if (demografiBloc
-                                                    .state
-                                                    .activeTabIndex ==
-                                                2) {
-                                              final orgBloc = context
-                                                  .read<OrganisasiBloc>();
-                                              orgBloc.add(
-                                                const SetOrganisasiFilterEvent.search(
-                                                  '',
-                                                ),
-                                              );
-                                            } else if (demografiBloc
-                                                    .state
-                                                    .activeTabIndex ==
-                                                1) {
-                                              final instBloc = context
-                                                  .read<InstitusiBloc>();
-                                              instBloc.add(
-                                                const SetInstitusiFilterEvent.search(
-                                                  '',
-                                                ),
-                                              );
-                                            } else {
-                                              final tokBloc = context
-                                                  .read<TokohBloc>();
-                                              tokBloc.add(
-                                                const SetTokohFilterEvent.search(
-                                                  '',
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        )
-                                      : null,
+                                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                                    valueListenable: _searchController,
+                                    builder: (context, value, _) {
+                                      if (value.text.isEmpty) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return IconButton(
+                                        icon: const Icon(
+                                          Icons.clear_rounded,
+                                          color: AppColors.grey500,
+                                        ),
+                                        onPressed: () {
+                                          _debounceTimer?.cancel();
+                                          _searchController.clear();
+                                          final activeTab =
+                                              _tabController.index;
+                                          if (activeTab == 2) {
+                                            final orgBloc = context
+                                                .read<OrganisasiBloc>();
+                                            orgBloc.add(
+                                              const SetOrganisasiFilterEvent.search(
+                                                '',
+                                              ),
+                                            );
+                                          } else if (activeTab == 1) {
+                                            final instBloc = context
+                                                .read<InstitusiBloc>();
+                                            instBloc.add(
+                                              const SetInstitusiFilterEvent.search(
+                                                '',
+                                              ),
+                                            );
+                                          } else {
+                                            final tokBloc = context
+                                                .read<TokohBloc>();
+                                            tokBloc.add(
+                                              const SetTokohFilterEvent.search(
+                                                '',
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      );
+                                    },
+                                  ),
                                   filled: true,
                                   fillColor: AppColors.white,
                                   contentPadding: const EdgeInsets.symmetric(
@@ -1209,7 +1157,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                           ),
                           const SizedBox(width: 10),
 
-                          // Filter Trigger Button
                           Container(
                             height: 52,
                             width: 52,
@@ -1248,7 +1195,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         ],
                       ),
 
-                      // Active Filter Chips Row
                       if (hasActiveFilter) ...[
                         const SizedBox(height: 10),
                         Align(
@@ -1258,7 +1204,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                             physics: const BouncingScrollPhysics(),
                             child: Row(
                               children: [
-                                // Sort Tag
                                 _buildAppliedTag(
                                   label: isOrgTab
                                       ? organisasiBloc.selectedSortOption.label
@@ -1273,7 +1218,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   onTap: () => _showFilterBottomSheet(context),
                                 ),
 
-                                // Tokoh Filters
                                 if (activeTab == 0) ...[
                                   if (tokohBloc.selectedProfesiFilter !=
                                       null) ...[
@@ -1305,7 +1249,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   ],
                                 ],
 
-                                // Institusi Filters
                                 if (activeTab == 1) ...[
                                   if (institusiBloc.selectedKategoriFilter !=
                                       null) ...[
@@ -1338,7 +1281,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   ],
                                 ],
 
-                                // Organisasi Filters
                                 if (isOrgTab &&
                                     organisasiBloc.selectedBidangFilter !=
                                         null) ...[
@@ -1355,7 +1297,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   ),
                                 ],
 
-                                // Reset Button Tag
                                 const SizedBox(width: 8),
                                 GestureDetector(
                                   onTap: () {
@@ -1419,7 +1360,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   ),
                 ),
 
-                // TabBarView Content
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -1462,12 +1402,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Daftar Tokoh',
-                  style: AppTextStyles.titleLarge.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: AppColors.textPrimary,
+                Expanded(
+                  child: Text(
+                    'Daftar Tokoh',
+                    style: AppTextStyles.titleLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
@@ -1493,7 +1437,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           ),
           Expanded(
             child: state is TokohLoading && list.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? DemografiShimmerList.tokoh()
                 : state is TokohFailure && list.isEmpty
                 ? _buildErrorState(
                     context,
@@ -1519,6 +1463,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     icon: Icons.person_search_rounded,
                   )
                 : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     controller: _tokohScrollController,
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                     itemCount: list.length + (tokohBloc.page != null ? 1 : 0),
@@ -1573,12 +1518,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Daftar Institusi',
-                  style: AppTextStyles.titleLarge.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: AppColors.textPrimary,
+                Expanded(
+                  child: Text(
+                    'Daftar Institusi',
+                    style: AppTextStyles.titleLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
@@ -1604,7 +1553,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           ),
           Expanded(
             child: state is InstitusiLoading && list.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? DemografiShimmerList.institusi()
                 : state is InstitusiFailure && list.isEmpty
                 ? _buildErrorState(
                     context,
@@ -1629,6 +1578,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     icon: Icons.domain_outlined,
                   )
                 : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     controller: _institusiScrollController,
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                     itemCount:
@@ -1683,12 +1633,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Daftar Organisasi',
-                  style: AppTextStyles.titleLarge.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: AppColors.textPrimary,
+                Expanded(
+                  child: Text(
+                    'Daftar Organisasi',
+                    style: AppTextStyles.titleLarge.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
@@ -1714,7 +1668,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           ),
           Expanded(
             child: state is OrganisasiLoading && list.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? DemografiShimmerList.organisasi()
                 : state is OrganisasiFailure && list.isEmpty
                 ? _buildErrorState(
                     context,
@@ -1739,6 +1693,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     icon: Icons.groups_outlined,
                   )
                 : ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     controller: _organisasiScrollController,
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                     itemCount:
@@ -1777,6 +1732,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }) {
     return Center(
       child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1818,6 +1774,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }) {
     return Center(
       child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1856,9 +1813,17 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                 if (onRetry != null) {
                   onRetry();
                 } else {
-                  context.read<DemografiBloc>().add(
-                    const FetchDemografiDataEvent(),
-                  );
+                  if (_tabController.index == 0) {
+                    context.read<TokohBloc>().add(const GetTokohEvent());
+                  } else if (_tabController.index == 1) {
+                    context.read<InstitusiBloc>().add(
+                      const GetInstitusiEvent(),
+                    );
+                  } else {
+                    context.read<OrganisasiBloc>().add(
+                      const GetOrganisasiEvent(),
+                    );
+                  }
                 }
               },
               icon: const Icon(Icons.refresh_rounded, color: Colors.white),

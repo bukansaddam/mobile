@@ -313,7 +313,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Ubah Data Organisasi',
+                    'Ubah Data',
                     style: AppTextStyles.labelLarge.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.bold,

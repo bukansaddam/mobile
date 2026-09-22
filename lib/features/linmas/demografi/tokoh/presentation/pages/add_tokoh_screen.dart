@@ -3,8 +3,8 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
-import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
-import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
+import '../../domain/entities/tokoh_entity.dart';
+import '../bloc/tokoh_bloc/tokoh_bloc.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 
@@ -824,514 +824,549 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TokohBloc, TokohState>(
-      listener: (context, state) {
-        if (state is TokohActionSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle_rounded, color: Colors.white),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(state.message)),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TokohBloc, TokohState>(
+          listener: (context, state) {
+            if (state is TokohActionSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    children: [
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(state.message)),
+                    ],
+                  ),
+                  backgroundColor: AppColors.success,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+              Navigator.pop(context);
+            } else if (state is TokohActionFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: AppColors.error,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+        ),
+        BlocListener<InstitusiBloc, InstitusiState>(
+          listener: (context, state) {
+            if (state is InstitusiActionSuccess && state.institusi != null) {
+              final newId = int.tryParse(state.institusi!.id ?? '') ?? 0;
+              if (newId > 0 && state.institusi!.nama == _selectedInstitusi) {
+                setState(() {
+                  _selectedInstitusiId = newId;
+                });
+              }
+            }
+          },
+        ),
+        BlocListener<OrganisasiBloc, OrganisasiState>(
+          listener: (context, state) {
+            if (state is OrganisasiActionSuccess) {
+              final newId = int.tryParse(state.organisasi.id ?? '') ?? 0;
+              if (newId > 0 && state.organisasi.nama == _selectedOrganisasi) {
+                setState(() {
+                  _selectedOrganisasiId = newId;
+                });
+              }
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<TokohBloc, TokohState>(
+        builder: (context, state) {
+          final institusiBloc = context.watch<InstitusiBloc>();
+          final List<String> institusiListOptions = [
+            'Tidak Ada',
+            ...institusiBloc.listInstitusi.map((i) => i.nama),
+          ];
+          if (_selectedInstitusi != 'Tidak Ada' &&
+              !institusiListOptions.contains(_selectedInstitusi)) {
+            institusiListOptions.add(_selectedInstitusi);
+          }
+
+          final organisasiBloc = context.watch<OrganisasiBloc>();
+          final List<String> organisasiListOptions = [
+            'Tidak Ada',
+            ...organisasiBloc.listOrganisasi.map((o) => o.nama),
+          ];
+          if (_selectedOrganisasi != 'Tidak Ada' &&
+              !organisasiListOptions.contains(_selectedOrganisasi)) {
+            organisasiListOptions.add(_selectedOrganisasi);
+          }
+
+          final bool showJabatanInstitusi = _selectedInstitusi != 'Tidak Ada';
+
+          final bool showJabatanOrganisasi = _selectedOrganisasi != 'Tidak Ada';
+
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              backgroundColor: AppColors.white,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: true,
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.grey300),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left_rounded,
+                      color: AppColors.textPrimary,
+                      size: 22,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ),
+              title: Text(
+                _isEdit ? 'Ubah Data Tokoh' : 'Tambah Tokoh Baru',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            body: GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryLight,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: AppColors.primary,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _isEdit
+                                    ? 'Perbarui formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.'
+                                    : 'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
+                                style: AppTextStyles.bodySmall.copyWith(
+                                  color: AppColors.primaryDark,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildLabel('Nama Tokoh', isRequired: true),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _namaController,
+                        textCapitalization: TextCapitalization.words,
+                        onTapOutside: (event) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Nama tokoh wajib diisi';
+                          }
+                          return null;
+                        },
+                        decoration: _buildInputDecoration(
+                          hintText: 'Contoh: H. Ahmad Subardjo',
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildLabel('No. HP', isRequired: false),
+                      const SizedBox(height: 6),
+                      TextFormField(
+                        controller: _noTelpController,
+                        keyboardType: TextInputType.phone,
+                        onTapOutside: (event) =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                        decoration: _buildInputDecoration(
+                          hintText: 'Contoh: 081234567890 (Opsional)',
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildLabel('Jenis Kelamin', isRequired: true),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedJenisKelamin,
+                        items: _jenisKelaminOptions.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedJenisKelamin = val;
+                            });
+                          }
+                        },
+                        decoration: _buildInputDecoration(
+                          hintText: 'Pilih Jenis Kelamin',
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildLabel('Profesi', isRequired: true),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedProfesi,
+                        items: _profesiOptions.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedProfesi = val;
+                            });
+                          }
+                        },
+                        decoration: _buildInputDecoration(
+                          hintText: 'Pilih Profesi',
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildLabel('Institusi', isRequired: true),
+                      const SizedBox(height: 6),
+                      InkWell(
+                        onTap: () => _showSearchablePicker(
+                          context: context,
+                          title: 'Pilih Institusi',
+                          hintSearch: 'Cari institusi...',
+                          options: institusiListOptions,
+                          selectedValue: _selectedInstitusi,
+                          onSelected: (val) {
+                            setState(() {
+                              _selectedInstitusi = val;
+                              if (val == 'Tidak Ada') {
+                                _selectedInstitusiId = 0;
+                              } else {
+                                final inst = institusiBloc.listInstitusi
+                                    .where((i) => i.nama == val)
+                                    .firstOrNull;
+                                _selectedInstitusiId =
+                                    int.tryParse(inst?.id ?? '') ?? 0;
+                              }
+                            });
+                          },
+                          onAddNew: (searchQuery) {
+                            _showAddInstitusiDialog(
+                              context,
+                              initialName: searchQuery,
+                            );
+                          },
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _selectedInstitusi,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textPrimary,
+                                    fontWeight:
+                                        _selectedInstitusi != 'Tidak Ada'
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: AppColors.grey600,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      if (showJabatanInstitusi) ...[
+                        const SizedBox(height: 14),
+                        _buildLabel('Jabatan di Institusi', isRequired: false),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _jabatanInstitusiController,
+                          textCapitalization: TextCapitalization.words,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                          decoration: _buildInputDecoration(
+                            hintText: 'Contoh: Kepala / Sekretaris (Opsional)',
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 18),
+                      _buildLabel('Afiliasi', isRequired: true),
+                      const SizedBox(height: 6),
+                      DropdownButtonFormField<String>(
+                        initialValue: _selectedAfiliasi,
+                        items: _afiliasiOptions.map((item) {
+                          return DropdownMenuItem<String>(
+                            value: item,
+                            child: Text(
+                              item,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedAfiliasi = val;
+                            });
+                          }
+                        },
+                        decoration: _buildInputDecoration(
+                          hintText: 'Pilih Afiliasi',
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      _buildLabel('Nama Organisasi', isRequired: true),
+                      const SizedBox(height: 6),
+                      InkWell(
+                        onTap: () => _showSearchablePicker(
+                          context: context,
+                          title: 'Pilih Organisasi',
+                          hintSearch: 'Cari organisasi...',
+                          options: organisasiListOptions,
+                          selectedValue: _selectedOrganisasi,
+                          onSelected: (val) {
+                            setState(() {
+                              _selectedOrganisasi = val;
+                              if (val == 'Tidak Ada') {
+                                _selectedOrganisasiId = 0;
+                              } else {
+                                final org = organisasiBloc.listOrganisasi
+                                    .where((o) => o.nama == val)
+                                    .firstOrNull;
+                                _selectedOrganisasiId =
+                                    int.tryParse(org?.id ?? '') ?? 0;
+                              }
+                            });
+                          },
+                          onAddNew: (searchQuery) {
+                            _showAddOrganisasiDialog(
+                              context,
+                              initialName: searchQuery,
+                            );
+                          },
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _selectedOrganisasi,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textPrimary,
+                                    fontWeight:
+                                        _selectedOrganisasi != 'Tidak Ada'
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: AppColors.grey600,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (showJabatanOrganisasi) ...[
+                        const SizedBox(height: 14),
+                        _buildLabel('Jabatan di Organisasi', isRequired: false),
+                        const SizedBox(height: 6),
+                        TextFormField(
+                          controller: _jabatanOrganisasiController,
+                          textCapitalization: TextCapitalization.words,
+                          onTapOutside: (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                          decoration: _buildInputDecoration(
+                            hintText: 'Contoh: Ketua / Pembina (Opsional)',
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 18),
+                      _buildLabel('Suku', isRequired: true),
+                      const SizedBox(height: 6),
+                      InkWell(
+                        onTap: () => _showSearchablePicker(
+                          context: context,
+                          title: 'Pilih Suku',
+                          hintSearch: 'Cari suku (Jawa, Sunda, Batak...)...',
+                          options: _sukuOptions,
+                          selectedValue: _selectedSuku,
+                          onSelected: (val) {
+                            setState(() {
+                              _selectedSuku = val;
+                            });
+                          },
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  _selectedSuku ?? 'Pilih Suku (Cari Suku)...',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: _selectedSuku != null
+                                        ? AppColors.textPrimary
+                                        : const Color(0xFF94A3B8),
+                                    fontWeight: _selectedSuku != null
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down_rounded,
+                                color: AppColors.grey600,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            bottomNavigationBar: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -4),
+                  ),
                 ],
               ),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-          Navigator.pop(context);
-        } else if (state is TokohActionFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
-      builder: (context, state) {
-        final institusiBloc = context.watch<InstitusiBloc>();
-        final List<String> institusiListOptions = [
-          'Tidak Ada',
-          ...institusiBloc.listInstitusi.map((i) => i.nama),
-        ];
-        if (_selectedInstitusi != 'Tidak Ada' &&
-            !institusiListOptions.contains(_selectedInstitusi)) {
-          institusiListOptions.add(_selectedInstitusi);
-        }
-
-        final organisasiBloc = context.watch<OrganisasiBloc>();
-        final List<String> organisasiListOptions = [
-          'Tidak Ada',
-          ...organisasiBloc.listOrganisasi.map((o) => o.nama),
-        ];
-        if (_selectedOrganisasi != 'Tidak Ada' &&
-            !organisasiListOptions.contains(_selectedOrganisasi)) {
-          organisasiListOptions.add(_selectedOrganisasi);
-        }
-
-        final bool showJabatanInstitusi = _selectedInstitusi != 'Tidak Ada';
-
-        final bool showJabatanOrganisasi = _selectedOrganisasi != 'Tidak Ada';
-
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            centerTitle: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textPrimary,
-                    size: 22,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            ),
-            title: Text(
-              _isEdit ? 'Edit Data Tokoh' : 'Tambah Tokoh Baru',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ),
-          body: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+              child: SafeArea(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: state is TokohActionLoading ? null : _submitForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                        ),
                       ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.info_outline_rounded,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              _isEdit
-                                  ? 'Perbarui formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.'
-                                  : 'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.primaryDark,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 13,
-                              ),
+                      elevation: 0,
+                    ),
+                    child: state is TokohActionLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            _isEdit ? 'SIMPAN PERUBAHAN' : 'SIMPAN TOKOH BARU',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildLabel('Nama Tokoh', isRequired: true),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _namaController,
-                      textCapitalization: TextCapitalization.words,
-                      onTapOutside: (event) =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Nama tokoh wajib diisi';
-                        }
-                        return null;
-                      },
-                      decoration: _buildInputDecoration(
-                        hintText: 'Contoh: H. Ahmad Subardjo',
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildLabel('No. HP', isRequired: false),
-                    const SizedBox(height: 6),
-                    TextFormField(
-                      controller: _noTelpController,
-                      keyboardType: TextInputType.phone,
-                      onTapOutside: (event) =>
-                          FocusManager.instance.primaryFocus?.unfocus(),
-                      decoration: _buildInputDecoration(
-                        hintText: 'Contoh: 081234567890 (Opsional)',
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildLabel('Jenis Kelamin', isRequired: true),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedJenisKelamin,
-                      items: _jenisKelaminOptions.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedJenisKelamin = val;
-                          });
-                        }
-                      },
-                      decoration: _buildInputDecoration(
-                        hintText: 'Pilih Jenis Kelamin',
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildLabel('Profesi', isRequired: true),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedProfesi,
-                      items: _profesiOptions.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedProfesi = val;
-                          });
-                        }
-                      },
-                      decoration: _buildInputDecoration(
-                        hintText: 'Pilih Profesi',
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildLabel('Institusi', isRequired: true),
-                    const SizedBox(height: 6),
-                    InkWell(
-                      onTap: () => _showSearchablePicker(
-                        context: context,
-                        title: 'Pilih Institusi',
-                        hintSearch: 'Cari institusi...',
-                        options: institusiListOptions,
-                        selectedValue: _selectedInstitusi,
-                        onSelected: (val) {
-                          setState(() {
-                            _selectedInstitusi = val;
-                            if (val == 'Tidak Ada') {
-                              _selectedInstitusiId = 0;
-                            } else {
-                              final inst = institusiBloc.listInstitusi
-                                  .where((i) => i.nama == val)
-                                  .firstOrNull;
-                              _selectedInstitusiId =
-                                  int.tryParse(inst?.id ?? '') ?? 0;
-                            }
-                          });
-                        },
-                        onAddNew: (searchQuery) {
-                          _showAddInstitusiDialog(
-                            context,
-                            initialName: searchQuery,
-                          );
-                        },
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _selectedInstitusi,
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: _selectedInstitusi != 'Tidak Ada'
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_rounded,
-                              color: AppColors.grey600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    if (showJabatanInstitusi) ...[
-                      const SizedBox(height: 14),
-                      _buildLabel('Jabatan di Institusi', isRequired: false),
-                      const SizedBox(height: 6),
-                      TextFormField(
-                        controller: _jabatanInstitusiController,
-                        textCapitalization: TextCapitalization.words,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                        decoration: _buildInputDecoration(
-                          hintText: 'Contoh: Kepala / Sekretaris (Opsional)',
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 18),
-                    _buildLabel('Afiliasi', isRequired: true),
-                    const SizedBox(height: 6),
-                    DropdownButtonFormField<String>(
-                      initialValue: _selectedAfiliasi,
-                      items: _afiliasiOptions.map((item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(
-                            item,
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setState(() {
-                            _selectedAfiliasi = val;
-                          });
-                        }
-                      },
-                      decoration: _buildInputDecoration(
-                        hintText: 'Pilih Afiliasi',
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    _buildLabel('Nama Organisasi', isRequired: true),
-                    const SizedBox(height: 6),
-                    InkWell(
-                      onTap: () => _showSearchablePicker(
-                        context: context,
-                        title: 'Pilih Organisasi',
-                        hintSearch: 'Cari organisasi...',
-                        options: organisasiListOptions,
-                        selectedValue: _selectedOrganisasi,
-                        onSelected: (val) {
-                          setState(() {
-                            _selectedOrganisasi = val;
-                            if (val == 'Tidak Ada') {
-                              _selectedOrganisasiId = 0;
-                            } else {
-                              final org = organisasiBloc.listOrganisasi
-                                  .where((o) => o.nama == val)
-                                  .firstOrNull;
-                              _selectedOrganisasiId =
-                                  int.tryParse(org?.id ?? '') ?? 0;
-                            }
-                          });
-                        },
-                        onAddNew: (searchQuery) {
-                          _showAddOrganisasiDialog(
-                            context,
-                            initialName: searchQuery,
-                          );
-                        },
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _selectedOrganisasi,
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: _selectedOrganisasi != 'Tidak Ada'
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_rounded,
-                              color: AppColors.grey600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (showJabatanOrganisasi) ...[
-                      const SizedBox(height: 14),
-                      _buildLabel('Jabatan di Organisasi', isRequired: false),
-                      const SizedBox(height: 6),
-                      TextFormField(
-                        controller: _jabatanOrganisasiController,
-                        textCapitalization: TextCapitalization.words,
-                        onTapOutside: (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                        decoration: _buildInputDecoration(
-                          hintText: 'Contoh: Ketua / Pembina (Opsional)',
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 18),
-                    _buildLabel('Suku', isRequired: true),
-                    const SizedBox(height: 6),
-                    InkWell(
-                      onTap: () => _showSearchablePicker(
-                        context: context,
-                        title: 'Pilih Suku',
-                        hintSearch: 'Cari suku (Jawa, Sunda, Batak...)...',
-                        options: _sukuOptions,
-                        selectedValue: _selectedSuku,
-                        onSelected: (val) {
-                          setState(() {
-                            _selectedSuku = val;
-                          });
-                        },
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _selectedSuku ?? 'Pilih Suku (Cari Suku)...',
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  color: _selectedSuku != null
-                                      ? AppColors.textPrimary
-                                      : const Color(0xFF94A3B8),
-                                  fontWeight: _selectedSuku != null
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_rounded,
-                              color: AppColors.grey600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          bottomNavigationBar: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: state is TokohActionLoading ? null : _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
                   ),
-                  child: state is TokohActionLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(
-                          _isEdit ? 'SIMPAN PERUBAHAN' : 'SIMPAN TOKOH BARU',
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
                 ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

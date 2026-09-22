@@ -18,3 +18,7 @@ extension TokohResponseModelX on TokohResponseModel {
 extension TokohEntityX on TokohEntity {
   TokohModel toModel() => TokohModel.fromEntity(this);
 }
+
+extension TokohModelX on TokohModel {
+  TokohEntity toDomain() => this;
+}

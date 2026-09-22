@@ -244,7 +244,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
               ),
             ),
             title: Text(
-              _isEdit ? 'Edit Data Institusi' : 'Tambah Institusi Baru',
+              _isEdit ? 'Ubah Data Institusi' : 'Tambah Institusi Baru',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

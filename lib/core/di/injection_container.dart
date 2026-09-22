@@ -42,23 +42,12 @@ import 'package:akar/features/linmas/ronda_malam/data/repositories/ronda_reposit
 import 'package:akar/features/linmas/ronda_malam/domain/repositories/ronda_repository.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/usecases/submit_ronda_laporan_usecase.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/bloc/ronda_bloc/ronda_bloc.dart';
-import 'package:akar/features/linmas/demografi/data/datasources/demografi_remote_datasource.dart';
-import 'package:akar/features/linmas/demografi/data/repositories/demografi_repository_impl.dart';
-import 'package:akar/features/linmas/demografi/domain/repositories/demografi_repository.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/add_institusi_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/add_tokoh_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/get_institusi_list_usecase.dart';
-import 'package:akar/features/linmas/demografi/domain/usecases/get_tokoh_list_usecase.dart';
-import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
 import 'package:akar/features/linmas/demografi/tokoh/data/datasources/tokoh_remote_datasource.dart';
 import 'package:akar/features/linmas/demografi/tokoh/data/repositories/tokoh_repository_impl.dart';
 import 'package:akar/features/linmas/demografi/tokoh/domain/repositories/tokoh_repository.dart';
-import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/add_tokoh_usecase.dart'
-    as tkh;
-import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/get_tokoh_list_usecase.dart'
-    as tkh;
-import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/update_tokoh_usecase.dart'
-    as tkh;
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/add_tokoh_usecase.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/get_tokoh_list_usecase.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/update_tokoh_usecase.dart';
 import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/datasources/organisasi_remote_datasource.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/repositories/organisasi_repository_impl.dart';
@@ -70,14 +59,10 @@ import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/orga
 import 'package:akar/features/linmas/demografi/institusi/data/datasources/institusi_remote_datasource.dart';
 import 'package:akar/features/linmas/demografi/institusi/data/repositories/institusi_repository_impl.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/repositories/institusi_repository.dart';
-import 'package:akar/features/linmas/demografi/institusi/domain/usecases/add_institusi_usecase.dart'
-    as inst;
-import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_categories_usecase.dart'
-    as inst;
-import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_list_usecase.dart'
-    as inst;
-import 'package:akar/features/linmas/demografi/institusi/domain/usecases/update_institusi_usecase.dart'
-    as inst;
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/add_institusi_usecase.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_categories_usecase.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_list_usecase.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/usecases/update_institusi_usecase.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_local_datasource.dart';
 import 'package:akar/features/linmas/bank_sampah/data/repositories/bank_sampah_repository_impl.dart';
@@ -163,9 +148,6 @@ Future<void> init() async {
   sl.registerLazySingleton<RondaRemoteDatasource>(
     () => RondaRemoteDatasourceImpl(),
   );
-  sl.registerLazySingleton<DemografiRemoteDatasource>(
-    () => DemografiRemoteDatasourceImpl(),
-  );
   sl.registerLazySingleton<TokohRemoteDatasource>(
     () => TokohRemoteDatasourceImpl(),
   );
@@ -206,9 +188,6 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<TokohRepository>(
     () => TokohRepositoryImpl(remoteDatasource: sl()),
-  );
-  sl.registerLazySingleton<DemografiRepository>(
-    () => DemografiRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<OrganisasiRepository>(
     () => OrganisasiRepositoryImpl(remoteDatasource: sl()),
@@ -251,21 +230,7 @@ Future<void> init() async {
     () => GetTokohListUsecase(sl()),
   );
   sl.registerLazySingleton<AddTokohUsecase>(() => AddTokohUsecase(sl()));
-  sl.registerLazySingleton<tkh.GetTokohListUsecase>(
-    () => tkh.GetTokohListUsecase(sl()),
-  );
-  sl.registerLazySingleton<tkh.AddTokohUsecase>(
-    () => tkh.AddTokohUsecase(sl()),
-  );
-  sl.registerLazySingleton<tkh.UpdateTokohUsecase>(
-    () => tkh.UpdateTokohUsecase(sl()),
-  );
-  sl.registerLazySingleton<GetInstitusiListUsecase>(
-    () => GetInstitusiListUsecase(sl()),
-  );
-  sl.registerLazySingleton<AddInstitusiUsecase>(
-    () => AddInstitusiUsecase(sl()),
-  );
+  sl.registerLazySingleton<UpdateTokohUsecase>(() => UpdateTokohUsecase(sl()));
   sl.registerLazySingleton<GetOrganisasiListUsecase>(
     () => GetOrganisasiListUsecase(sl()),
   );
@@ -275,17 +240,17 @@ Future<void> init() async {
   sl.registerLazySingleton<UpdateOrganisasiUsecase>(
     () => UpdateOrganisasiUsecase(sl()),
   );
-  sl.registerLazySingleton<inst.GetInstitusiListUsecase>(
-    () => inst.GetInstitusiListUsecase(sl()),
+  sl.registerLazySingleton<GetInstitusiListUsecase>(
+    () => GetInstitusiListUsecase(sl()),
   );
-  sl.registerLazySingleton<inst.GetInstitusiCategoriesUsecase>(
-    () => inst.GetInstitusiCategoriesUsecase(sl()),
+  sl.registerLazySingleton<GetInstitusiCategoriesUsecase>(
+    () => GetInstitusiCategoriesUsecase(sl()),
   );
-  sl.registerLazySingleton<inst.AddInstitusiUsecase>(
-    () => inst.AddInstitusiUsecase(sl()),
+  sl.registerLazySingleton<AddInstitusiUsecase>(
+    () => AddInstitusiUsecase(sl()),
   );
-  sl.registerLazySingleton<inst.UpdateInstitusiUsecase>(
-    () => inst.UpdateInstitusiUsecase(sl()),
+  sl.registerLazySingleton<UpdateInstitusiUsecase>(
+    () => UpdateInstitusiUsecase(sl()),
   );
   sl.registerLazySingleton<GetBankSampahReportsUsecase>(
     () => GetBankSampahReportsUsecase(sl()),
@@ -355,19 +320,11 @@ Future<void> init() async {
   sl.registerFactory<RondaBloc>(
     () => RondaBloc(submitRondaLaporanUsecase: sl()),
   );
-  sl.registerFactory<DemografiBloc>(
-    () => DemografiBloc(
-      getTokohListUsecase: sl(),
-      addTokohUsecase: sl(),
-      getInstitusiListUsecase: sl(),
-      addInstitusiUsecase: sl(),
-    ),
-  );
   sl.registerFactory<TokohBloc>(
     () => TokohBloc(
-      getTokohListUsecase: sl<tkh.GetTokohListUsecase>(),
-      addTokohUsecase: sl<tkh.AddTokohUsecase>(),
-      updateTokohUsecase: sl<tkh.UpdateTokohUsecase>(),
+      getTokohListUsecase: sl<GetTokohListUsecase>(),
+      addTokohUsecase: sl<AddTokohUsecase>(),
+      updateTokohUsecase: sl<UpdateTokohUsecase>(),
     ),
   );
   sl.registerFactory<OrganisasiBloc>(
@@ -379,10 +336,10 @@ Future<void> init() async {
   );
   sl.registerFactory<InstitusiBloc>(
     () => InstitusiBloc(
-      getInstitusiListUsecase: sl<inst.GetInstitusiListUsecase>(),
-      addInstitusiUsecase: sl<inst.AddInstitusiUsecase>(),
-      updateInstitusiUsecase: sl<inst.UpdateInstitusiUsecase>(),
-      getCategoriesUsecase: sl<inst.GetInstitusiCategoriesUsecase>(),
+      getInstitusiListUsecase: sl<GetInstitusiListUsecase>(),
+      addInstitusiUsecase: sl<AddInstitusiUsecase>(),
+      updateInstitusiUsecase: sl<UpdateInstitusiUsecase>(),
+      getCategoriesUsecase: sl<GetInstitusiCategoriesUsecase>(),
     ),
   );
   sl.registerFactory<BankSampahBloc>(
