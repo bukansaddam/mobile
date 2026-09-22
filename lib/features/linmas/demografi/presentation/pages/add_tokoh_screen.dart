@@ -2,10 +2,10 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 import 'package:akar/features/linmas/demografi/domain/entities/tokoh_entity.dart';
-import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
+import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 
 class AddTokohScreen extends StatefulWidget {
@@ -32,7 +32,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   String _selectedAfiliasi = DemografiConstants.defaultAfiliasi;
 
   String _selectedInstitusi = 'Tidak Ada';
+  int _selectedInstitusiId = 0;
   String _selectedOrganisasi = 'Tidak Ada';
+  int _selectedOrganisasiId = 0;
   String? _selectedSuku;
 
   final List<String> _jenisKelaminOptions =
@@ -64,9 +66,11 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
       if (t.namaInstitusi.isNotEmpty) {
         _selectedInstitusi = t.namaInstitusi;
       }
+      _selectedInstitusiId = t.instituteId ?? 0;
       if (t.namaOrganisasi.isNotEmpty) {
         _selectedOrganisasi = t.namaOrganisasi;
       }
+      _selectedOrganisasiId = t.organizationId ?? 0;
       if (t.suku.isNotEmpty && _sukuOptions.contains(t.suku)) {
         _selectedSuku = t.suku;
       }
@@ -216,8 +220,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             onPressed: () {
                               if (!formKey.currentState!.validate()) return;
                               final newNama = namaController.text.trim();
-                              parentContext.read<DemografiBloc>().add(
-                                AddInstitusiEvent(
+                              parentContext.read<InstitusiBloc>().add(
+                                CreateInstitusiEvent(
                                   nama: newNama,
                                   scope: selectedScope,
                                   alamat: alamatController.text.trim().isEmpty
@@ -786,43 +790,50 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
         ? ''
         : _selectedOrganisasi;
 
-    context.read<DemografiBloc>().add(
-      AddTokohEvent(
-        nama: _namaController.text.trim(),
-        noTelp: _noTelpController.text.trim(),
-        jenisKelamin: _selectedJenisKelamin,
-        profesi: _selectedProfesi,
-        namaInstitusi: finalInstitusi,
-        jabatanInstitusi: finalInstitusi.isNotEmpty
-            ? _jabatanInstitusiController.text.trim()
-            : '',
-        afiliasi: _selectedAfiliasi,
-        namaOrganisasi: finalOrganisasi,
-        jabatanOrganisasi: finalOrganisasi.isNotEmpty
-            ? _jabatanOrganisasiController.text.trim()
-            : '',
-        suku: _selectedSuku!,
-      ),
+    final entity = TokohEntity(
+      id: widget.initialTokoh?.id,
+      nama: _namaController.text.trim(),
+      noTelp: _noTelpController.text.trim(),
+      jenisKelamin: _selectedJenisKelamin,
+      profesi: _selectedProfesi,
+      wilayah: widget.initialTokoh?.wilayah ?? 'Nasional',
+      instituteId: _selectedInstitusi == 'Tidak Ada' ? 0 : _selectedInstitusiId,
+      namaInstitusi: finalInstitusi,
+      jabatanInstitusi: finalInstitusi.isNotEmpty
+          ? _jabatanInstitusiController.text.trim()
+          : '',
+      afiliasi: _selectedAfiliasi,
+      organizationId: _selectedOrganisasi == 'Tidak Ada'
+          ? 0
+          : _selectedOrganisasiId,
+      namaOrganisasi: finalOrganisasi,
+      jabatanOrganisasi: finalOrganisasi.isNotEmpty
+          ? _jabatanOrganisasiController.text.trim()
+          : '',
+      suku: _selectedSuku!,
     );
+
+    if (_isEdit) {
+      context.read<TokohBloc>().add(
+        UpdateTokohEvent(id: widget.initialTokoh!.id!, tokoh: entity),
+      );
+    } else {
+      context.read<TokohBloc>().add(CreateTokohEvent(entity));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DemografiBloc, DemografiState>(
+    return BlocConsumer<TokohBloc, TokohState>(
       listener: (context, state) {
-        if (state.actionSuccessMessage ==
-            'Tokoh masyarakat berhasil ditambahkan') {
+        if (state is TokohActionSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Row(
                 children: [
                   const Icon(Icons.check_circle_rounded, color: Colors.white),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Tokoh "${_namaController.text.trim()}" berhasil ditambahkan!',
-                    ),
-                  ),
+                  Expanded(child: Text(state.message)),
                 ],
               ),
               backgroundColor: AppColors.success,
@@ -832,26 +843,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
               ),
             ),
           );
-          context.pop();
-        } else if (state.actionSuccessMessage != null &&
-            state.actionSuccessMessage!.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle_rounded, color: Colors.white),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(state.actionSuccessMessage!)),
-                ],
-              ),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        } else if (state is DemografiFailureState) {
+          Navigator.pop(context);
+        } else if (state is TokohActionFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -859,23 +852,18 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-        } else if (state is DemografiLoadedState &&
-            state.errorMessage != null &&
-            !state.isSubmitting) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
         }
       },
       builder: (context, state) {
+        final institusiBloc = context.watch<InstitusiBloc>();
         final List<String> institusiListOptions = [
           'Tidak Ada',
-          ...state.institusiList.map((i) => i.nama),
+          ...institusiBloc.listInstitusi.map((i) => i.nama),
         ];
+        if (_selectedInstitusi != 'Tidak Ada' &&
+            !institusiListOptions.contains(_selectedInstitusi)) {
+          institusiListOptions.add(_selectedInstitusi);
+        }
 
         final organisasiBloc = context.watch<OrganisasiBloc>();
         final List<String> organisasiListOptions = [
@@ -1064,6 +1052,15 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         onSelected: (val) {
                           setState(() {
                             _selectedInstitusi = val;
+                            if (val == 'Tidak Ada') {
+                              _selectedInstitusiId = 0;
+                            } else {
+                              final inst = institusiBloc.listInstitusi
+                                  .where((i) => i.nama == val)
+                                  .firstOrNull;
+                              _selectedInstitusiId =
+                                  int.tryParse(inst?.id ?? '') ?? 0;
+                            }
                           });
                         },
                         onAddNew: (searchQuery) {
@@ -1162,6 +1159,15 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         onSelected: (val) {
                           setState(() {
                             _selectedOrganisasi = val;
+                            if (val == 'Tidak Ada') {
+                              _selectedOrganisasiId = 0;
+                            } else {
+                              final org = organisasiBloc.listOrganisasi
+                                  .where((o) => o.nama == val)
+                                  .firstOrNull;
+                              _selectedOrganisasiId =
+                                  int.tryParse(org?.id ?? '') ?? 0;
+                            }
                           });
                         },
                         onAddNew: (searchQuery) {
@@ -1293,7 +1299,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: state.isSubmitting ? null : _submitForm,
+                  onPressed: state is TokohActionLoading ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
@@ -1303,7 +1309,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: state.isSubmitting
+                  child: state is TokohActionLoading
                       ? const SizedBox(
                           height: 20,
                           width: 20,

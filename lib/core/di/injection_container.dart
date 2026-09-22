@@ -50,6 +50,16 @@ import 'package:akar/features/linmas/demografi/domain/usecases/add_tokoh_usecase
 import 'package:akar/features/linmas/demografi/domain/usecases/get_institusi_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/domain/usecases/get_tokoh_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/presentation/bloc/demografi_bloc/demografi_bloc.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/datasources/tokoh_remote_datasource.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/repositories/tokoh_repository_impl.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/repositories/tokoh_repository.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/add_tokoh_usecase.dart'
+    as tkh;
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/get_tokoh_list_usecase.dart'
+    as tkh;
+import 'package:akar/features/linmas/demografi/tokoh/domain/usecases/update_tokoh_usecase.dart'
+    as tkh;
+import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/datasources/organisasi_remote_datasource.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/repositories/organisasi_repository_impl.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/repositories/organisasi_repository.dart';
@@ -156,6 +166,9 @@ Future<void> init() async {
   sl.registerLazySingleton<DemografiRemoteDatasource>(
     () => DemografiRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<TokohRemoteDatasource>(
+    () => TokohRemoteDatasourceImpl(),
+  );
   sl.registerLazySingleton<OrganisasiRemoteDatasource>(
     () => OrganisasiRemoteDatasourceImpl(),
   );
@@ -190,6 +203,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<RondaRepository>(
     () => RondaRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<TokohRepository>(
+    () => TokohRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<DemografiRepository>(
     () => DemografiRepositoryImpl(remoteDatasource: sl()),
@@ -235,6 +251,15 @@ Future<void> init() async {
     () => GetTokohListUsecase(sl()),
   );
   sl.registerLazySingleton<AddTokohUsecase>(() => AddTokohUsecase(sl()));
+  sl.registerLazySingleton<tkh.GetTokohListUsecase>(
+    () => tkh.GetTokohListUsecase(sl()),
+  );
+  sl.registerLazySingleton<tkh.AddTokohUsecase>(
+    () => tkh.AddTokohUsecase(sl()),
+  );
+  sl.registerLazySingleton<tkh.UpdateTokohUsecase>(
+    () => tkh.UpdateTokohUsecase(sl()),
+  );
   sl.registerLazySingleton<GetInstitusiListUsecase>(
     () => GetInstitusiListUsecase(sl()),
   );
@@ -336,6 +361,13 @@ Future<void> init() async {
       addTokohUsecase: sl(),
       getInstitusiListUsecase: sl(),
       addInstitusiUsecase: sl(),
+    ),
+  );
+  sl.registerFactory<TokohBloc>(
+    () => TokohBloc(
+      getTokohListUsecase: sl<tkh.GetTokohListUsecase>(),
+      addTokohUsecase: sl<tkh.AddTokohUsecase>(),
+      updateTokohUsecase: sl<tkh.UpdateTokohUsecase>(),
     ),
   );
   sl.registerFactory<OrganisasiBloc>(

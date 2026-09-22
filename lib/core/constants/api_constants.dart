@@ -238,6 +238,21 @@ class ApiConstants {
     172,
   ]);
 
+  // Demografi / Tokoh
+  static final String figures = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    39,
+    100,
+    130,
+    186,
+    90,
+    167,
+  ]);
+
   // Demografi / Institusi
   static final String figureInstitutions = EndpointSecurity.decode(const <int>[
     117,
