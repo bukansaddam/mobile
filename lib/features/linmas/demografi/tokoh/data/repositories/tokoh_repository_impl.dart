@@ -17,6 +17,8 @@ class TokohRepositoryImpl implements TokohRepository {
     String? label,
     String? field,
     String? name,
+    String? affiliations,
+    String? professions,
   }) async {
     try {
       final res = await remoteDatasource.getTokohList(
@@ -25,6 +27,8 @@ class TokohRepositoryImpl implements TokohRepository {
         label: label,
         field: field,
         name: name,
+        affiliations: affiliations,
+        professions: professions,
       );
       return Right(res.toDomain());
     } catch (e) {

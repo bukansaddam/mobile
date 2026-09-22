@@ -12,6 +12,8 @@ abstract class TokohRemoteDatasource {
     String? label,
     String? field,
     String? name,
+    String? affiliations,
+    String? professions,
   });
   Future<TokohModel> addTokoh(TokohModel model);
   Future<TokohModel> updateTokoh(String id, TokohModel model);
@@ -26,18 +28,28 @@ class TokohRemoteDatasourceImpl extends BaseRemoteDataSource
     String? label,
     String? field,
     String? name,
+    String? affiliations,
+    String? professions,
   }) async {
     final queryParams = <String, dynamic>{};
     if (page != null) queryParams['page'] = page;
     if (perPage != null) queryParams['per_page'] = perPage;
-    if (label != null && label.trim().isNotEmpty) {
-      queryParams['label'] = label.trim();
-    }
-    if (field != null && field.trim().isNotEmpty) {
-      queryParams['field'] = field.trim().toLowerCase();
-    }
     if (name != null && name.trim().isNotEmpty) {
       queryParams['name'] = name.trim();
+    }
+
+    final aff = (affiliations != null && affiliations.trim().isNotEmpty)
+        ? affiliations.trim()
+        : (label != null && label.trim().isNotEmpty ? label.trim() : null);
+    if (aff != null) {
+      queryParams['affiliations'] = aff;
+    }
+
+    final prof = (professions != null && professions.trim().isNotEmpty)
+        ? professions.trim()
+        : (field != null && field.trim().isNotEmpty ? field.trim() : null);
+    if (prof != null) {
+      queryParams['professions'] = prof;
     }
 
     try {

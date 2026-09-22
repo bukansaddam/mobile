@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:akar/features/linmas/demografi/tokoh/data/models/tokoh_model.dart';
+import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
 
 void main() {
   group('TokohModel Tests', () {
@@ -130,6 +131,25 @@ void main() {
       expect(response.meta?.perPage, 10);
       expect(response.meta?.total, 25);
       expect(response.meta?.lastPage, 3);
+    });
+
+    test('TokohEvent supports affiliations and professions filter properties', () {
+      const getEvent = GetTokohEvent(
+        affiliations: 'Agama',
+        professions: 'Pendidik',
+        search: 'Budi',
+      );
+      expect(getEvent.affiliations, 'Agama');
+      expect(getEvent.professions, 'Pendidik');
+      expect(getEvent.search, 'Budi');
+
+      const setAffEvent = SetTokohFilterEvent.affiliations('Ormas');
+      expect(setAffEvent.hasAffiliations, isTrue);
+      expect(setAffEvent.affiliations, 'Ormas');
+
+      const setProfEvent = SetTokohFilterEvent.professions('Dokter');
+      expect(setProfEvent.hasProfessions, isTrue);
+      expect(setProfEvent.professions, 'Dokter');
     });
   });
 }

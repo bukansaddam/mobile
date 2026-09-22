@@ -8,6 +8,8 @@ abstract class TokohRepository {
     String? label,
     String? field,
     String? name,
+    String? affiliations,
+    String? professions,
   });
 
   Future<Either<Failure, TokohEntity>> addTokoh(TokohEntity entity);

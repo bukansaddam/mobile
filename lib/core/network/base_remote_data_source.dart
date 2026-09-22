@@ -66,16 +66,20 @@ abstract class BaseRemoteDataSource {
         );
       }
 
-      final msg =
-          dataMap?['message'] as String? ??
-          dataMap?['meta']?['message'] as String?;
+      final msg = dataMap != null
+          ? ErrorUtils.parseErrorMessage(dataMap)
+          : 'Terjadi Kesalahan';
       return ApiResponse<T>(
         success: false,
-        message: msg != null && msg.isNotEmpty ? msg : 'Terjadi Kesalahan',
+        message: msg.isNotEmpty ? msg : 'Terjadi Kesalahan',
         statusCode: response.statusCode,
       );
     } on DioException catch (e) {
-      AppLogger.e('[BASE_DS] DioException: ${e.message}', e, e.stackTrace);
+      AppLogger.e(
+        '[BASE_DS] DioException: ${e.message} | Response data: ${e.response?.data}',
+        e,
+        e.stackTrace,
+      );
       return ApiResponse<T>(
         success: false,
         message: _parseDioError(e),

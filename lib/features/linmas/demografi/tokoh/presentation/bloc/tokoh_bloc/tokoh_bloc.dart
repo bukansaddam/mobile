@@ -22,8 +22,8 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
   int total = 0;
 
   String searchQuery = '';
-  String? selectedProfesiFilter; // GET param 'field'
-  String? selectedAfiliasiFilter; // GET param 'label'
+  String? selectedProfesiFilter;
+  String? selectedAfiliasiFilter;
   TokohSortOption selectedSortOption = TokohSortOption.terbaru;
 
   bool get hasActiveFilter =>
@@ -106,22 +106,28 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
     final querySearch = (event.search != null)
         ? (event.search!.trim().isNotEmpty ? event.search!.trim() : null)
         : (searchQuery.trim().isNotEmpty ? searchQuery.trim() : null);
-    final filterField = (event.field != null)
-        ? (event.field!.trim().isNotEmpty ? event.field!.trim() : null)
-        : (selectedProfesiFilter?.trim().isNotEmpty == true
-              ? selectedProfesiFilter!.trim()
-              : null);
-    final filterLabel = (event.label != null)
-        ? (event.label!.trim().isNotEmpty ? event.label!.trim() : null)
-        : (selectedAfiliasiFilter?.trim().isNotEmpty == true
-              ? selectedAfiliasiFilter!.trim()
-              : null);
+    final filterField =
+        (event.professions != null && event.professions!.trim().isNotEmpty)
+        ? event.professions!.trim()
+        : ((event.field != null && event.field!.trim().isNotEmpty)
+              ? event.field!.trim()
+              : (selectedProfesiFilter?.trim().isNotEmpty == true
+                    ? selectedProfesiFilter!.trim()
+                    : null));
+    final filterLabel =
+        (event.affiliations != null && event.affiliations!.trim().isNotEmpty)
+        ? event.affiliations!.trim()
+        : ((event.label != null && event.label!.trim().isNotEmpty)
+              ? event.label!.trim()
+              : (selectedAfiliasiFilter?.trim().isNotEmpty == true
+                    ? selectedAfiliasiFilter!.trim()
+                    : null));
 
     final result = await getTokohListUsecase.call(
       page: page!,
       perPage: limit,
-      field: filterField,
-      label: filterLabel,
+      affiliations: filterLabel,
+      professions: filterField,
       name: querySearch,
     );
 
@@ -151,8 +157,16 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
     page = 1;
     listTokoh.clear();
     if (event.search != null) searchQuery = event.search!;
-    if (event.field != null) selectedProfesiFilter = event.field;
-    if (event.label != null) selectedAfiliasiFilter = event.label;
+    if (event.professions != null) {
+      selectedProfesiFilter = event.professions;
+    } else if (event.field != null) {
+      selectedProfesiFilter = event.field;
+    }
+    if (event.affiliations != null) {
+      selectedAfiliasiFilter = event.affiliations;
+    } else if (event.label != null) {
+      selectedAfiliasiFilter = event.label;
+    }
     if (event.sort != null) selectedSortOption = event.sort!;
 
     add(
@@ -160,18 +174,26 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
         search: searchQuery,
         field: selectedProfesiFilter,
         label: selectedAfiliasiFilter,
+        affiliations: selectedAfiliasiFilter,
+        professions: selectedProfesiFilter,
         sort: selectedSortOption,
       ),
     );
   }
 
   void _onSetFilter(SetTokohFilterEvent event, Emitter<TokohState> emit) {
-    if (event.hasField) {
+    if (event.hasProfessions) {
+      selectedProfesiFilter = event.professions;
+    } else if (event.hasField) {
       selectedProfesiFilter = event.field;
     }
-    if (event.hasLabel) {
+
+    if (event.hasAffiliations) {
+      selectedAfiliasiFilter = event.affiliations;
+    } else if (event.hasLabel) {
       selectedAfiliasiFilter = event.label;
     }
+
     if (event.sort != null) {
       selectedSortOption = event.sort!;
     }
@@ -183,6 +205,8 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
         search: searchQuery,
         field: selectedProfesiFilter,
         label: selectedAfiliasiFilter,
+        affiliations: selectedAfiliasiFilter,
+        professions: selectedProfesiFilter,
         sort: selectedSortOption,
       ),
     );
@@ -197,7 +221,9 @@ class TokohBloc extends Bloc<TokohEvent, TokohState> {
         search: searchQuery,
         field: null,
         label: null,
-        sort: TokohSortOption.terbaru,
+        affiliations: null,
+        professions: null,
+        sort: selectedSortOption,
       ),
     );
   }

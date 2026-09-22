@@ -11,24 +11,56 @@ class GetTokohEvent extends TokohEvent {
   final String? search;
   final String? field;
   final String? label;
+  final String? affiliations;
+  final String? professions;
   final TokohSortOption? sort;
 
-  const GetTokohEvent({this.search, this.field, this.label, this.sort});
+  const GetTokohEvent({
+    this.search,
+    this.field,
+    this.label,
+    this.affiliations,
+    this.professions,
+    this.sort,
+  });
 
   @override
-  List<Object?> get props => [search, field, label, sort];
+  List<Object?> get props => [
+    search,
+    field,
+    label,
+    affiliations,
+    professions,
+    sort,
+  ];
 }
 
 class RefreshTokohEvent extends TokohEvent {
   final String? search;
   final String? field;
   final String? label;
+  final String? affiliations;
+  final String? professions;
   final TokohSortOption? sort;
 
-  const RefreshTokohEvent({this.search, this.field, this.label, this.sort});
+  const RefreshTokohEvent({
+    this.search,
+    this.field,
+    this.label,
+    this.affiliations,
+    this.professions,
+    this.sort,
+  });
 
   @override
-  List<Object?> get props => [search, field, label, sort];
+  List<Object?> get props => [
+    search,
+    field,
+    label,
+    affiliations,
+    professions,
+    sort,
+  ];
 }
 
 class SetTokohFilterEvent extends TokohEvent {
@@ -36,6 +68,10 @@ class SetTokohFilterEvent extends TokohEvent {
   final bool hasField;
   final String? label;
   final bool hasLabel;
+  final String? affiliations;
+  final bool hasAffiliations;
+  final String? professions;
+  final bool hasProfessions;
   final TokohSortOption? sort;
   final String? search;
 
@@ -44,6 +80,10 @@ class SetTokohFilterEvent extends TokohEvent {
     this.hasField = false,
     this.label,
     this.hasLabel = false,
+    this.affiliations,
+    this.hasAffiliations = false,
+    this.professions,
+    this.hasProfessions = false,
     this.sort,
     this.search,
   });
@@ -52,6 +92,21 @@ class SetTokohFilterEvent extends TokohEvent {
     : hasField = true,
       label = null,
       hasLabel = false,
+      affiliations = null,
+      hasAffiliations = false,
+      professions = null,
+      hasProfessions = false,
+      sort = null,
+      search = null;
+
+  const SetTokohFilterEvent.professions(this.professions)
+    : field = null,
+      hasField = false,
+      label = null,
+      hasLabel = false,
+      affiliations = null,
+      hasAffiliations = false,
+      hasProfessions = true,
       sort = null,
       search = null;
 
@@ -59,6 +114,21 @@ class SetTokohFilterEvent extends TokohEvent {
     : field = null,
       hasField = false,
       hasLabel = true,
+      affiliations = null,
+      hasAffiliations = false,
+      professions = null,
+      hasProfessions = false,
+      sort = null,
+      search = null;
+
+  const SetTokohFilterEvent.affiliations(this.affiliations)
+    : field = null,
+      hasField = false,
+      label = null,
+      hasLabel = false,
+      hasAffiliations = true,
+      professions = null,
+      hasProfessions = false,
       sort = null,
       search = null;
 
@@ -67,6 +137,10 @@ class SetTokohFilterEvent extends TokohEvent {
       hasField = false,
       label = null,
       hasLabel = false,
+      affiliations = null,
+      hasAffiliations = false,
+      professions = null,
+      hasProfessions = false,
       search = null;
 
   const SetTokohFilterEvent.search(this.search)
@@ -74,10 +148,25 @@ class SetTokohFilterEvent extends TokohEvent {
       hasField = false,
       label = null,
       hasLabel = false,
+      affiliations = null,
+      hasAffiliations = false,
+      professions = null,
+      hasProfessions = false,
       sort = null;
 
   @override
-  List<Object?> get props => [field, hasField, label, hasLabel, sort, search];
+  List<Object?> get props => [
+    field,
+    hasField,
+    label,
+    hasLabel,
+    affiliations,
+    hasAffiliations,
+    professions,
+    hasProfessions,
+    sort,
+    search,
+  ];
 }
 
 class ResetTokohFilterEvent extends TokohEvent {

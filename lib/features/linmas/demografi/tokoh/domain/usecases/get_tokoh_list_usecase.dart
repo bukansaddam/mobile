@@ -13,6 +13,8 @@ class GetTokohListUsecase {
     String? label,
     String? field,
     String? name,
+    String? affiliations,
+    String? professions,
   }) async {
     return await repository.getTokohList(
       page: page,
@@ -20,6 +22,8 @@ class GetTokohListUsecase {
       label: label,
       field: field,
       name: name,
+      affiliations: affiliations,
+      professions: professions,
     );
   }
 }

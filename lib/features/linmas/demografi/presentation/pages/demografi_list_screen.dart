@@ -148,7 +148,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         RefreshTokohEvent(
           search: '',
           field: tokohBloc.selectedProfesiFilter,
+          professions: tokohBloc.selectedProfesiFilter,
           label: tokohBloc.selectedAfiliasiFilter,
+          affiliations: tokohBloc.selectedAfiliasiFilter,
           sort: tokohBloc.selectedSortOption,
         ),
       );
@@ -457,7 +459,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                                   null,
                                               onTap: () {
                                                 context.read<TokohBloc>().add(
-                                                  const SetTokohFilterEvent.field(
+                                                  const SetTokohFilterEvent.professions(
                                                     null,
                                                   ),
                                                 );
@@ -475,7 +477,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                                 isSelected: isSelected,
                                                 onTap: () {
                                                   context.read<TokohBloc>().add(
-                                                    SetTokohFilterEvent.field(
+                                                    SetTokohFilterEvent.professions(
                                                       profesi,
                                                     ),
                                                   );
@@ -507,7 +509,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                                   null,
                                               onTap: () {
                                                 context.read<TokohBloc>().add(
-                                                  const SetTokohFilterEvent.label(
+                                                  const SetTokohFilterEvent.affiliations(
                                                     null,
                                                   ),
                                                 );
@@ -525,7 +527,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                                 isSelected: isSelected,
                                                 onTap: () {
                                                   context.read<TokohBloc>().add(
-                                                    SetTokohFilterEvent.label(
+                                                    SetTokohFilterEvent.affiliations(
                                                       afiliasi,
                                                     ),
                                                   );
@@ -1227,7 +1229,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                           'Profesi: ${tokohBloc.selectedProfesiFilter}',
                                       onRemove: () =>
                                           context.read<TokohBloc>().add(
-                                            const SetTokohFilterEvent.field(
+                                            const SetTokohFilterEvent.professions(
                                               null,
                                             ),
                                           ),
@@ -1241,7 +1243,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                           'Afiliasi: ${tokohBloc.selectedAfiliasiFilter}',
                                       onRemove: () =>
                                           context.read<TokohBloc>().add(
-                                            const SetTokohFilterEvent.label(
+                                            const SetTokohFilterEvent.affiliations(
                                               null,
                                             ),
                                           ),
@@ -1387,7 +1389,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         tokohBloc.add(
           RefreshTokohEvent(
             field: tokohBloc.selectedProfesiFilter,
+            professions: tokohBloc.selectedProfesiFilter,
             label: tokohBloc.selectedAfiliasiFilter,
+            affiliations: tokohBloc.selectedAfiliasiFilter,
             sort: tokohBloc.selectedSortOption,
             search: tokohBloc.searchQuery.trim().isNotEmpty
                 ? tokohBloc.searchQuery.trim()
@@ -1446,7 +1450,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       tokohBloc.add(
                         RefreshTokohEvent(
                           field: tokohBloc.selectedProfesiFilter,
+                          professions: tokohBloc.selectedProfesiFilter,
                           label: tokohBloc.selectedAfiliasiFilter,
+                          affiliations: tokohBloc.selectedAfiliasiFilter,
                           sort: tokohBloc.selectedSortOption,
                           search: tokohBloc.searchQuery.trim().isNotEmpty
                               ? tokohBloc.searchQuery.trim()

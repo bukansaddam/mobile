@@ -76,5 +76,63 @@ void main() {
       final result = ErrorUtils.parseErrorMessage(rawError);
       expect(result, equals('Terjadi Kesalahan'));
     });
+
+    test('extracts specific validation errors from errors map', () {
+      final dioException = DioException(
+        requestOptions: RequestOptions(path: '/api/figure'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/api/figure'),
+          statusCode: 422,
+          data: {
+            'message': 'Validation failed',
+            'errors': {
+              'phone': ['The phone has already been taken.'],
+            },
+          },
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      final result = ErrorUtils.parseErrorMessage(dioException);
+      expect(result, equals('The phone has already been taken.'));
+    });
+
+    test('extracts multiple validation errors and joins them', () {
+      final dioException = DioException(
+        requestOptions: RequestOptions(path: '/api/figure'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/api/figure'),
+          statusCode: 422,
+          data: {
+            'message': 'Validation failed',
+            'errors': {
+              'phone': ['The phone field is required.'],
+              'institute_id': ['The selected institute id is invalid.'],
+            },
+          },
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      final result = ErrorUtils.parseErrorMessage(dioException);
+      expect(
+        result,
+        equals(
+          'The phone field is required.\nThe selected institute id is invalid.',
+        ),
+      );
+    });
+
+    test('extracts errors when input is a Map directly', () {
+      final mapData = {
+        'message': 'Validation failed',
+        'errors': {
+          'ethnic': ['Suku wajib diisi'],
+        },
+      };
+
+      final result = ErrorUtils.parseErrorMessage(mapData);
+      expect(result, equals('Suku wajib diisi'));
+    });
   });
 }
