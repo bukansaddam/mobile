@@ -1,24 +1,58 @@
-import '../../data/models/tokoh_model.dart';
-import 'tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/models/tokoh_model.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
 
-extension TokohResponseModelX on TokohResponseModel {
-  TokohPaginatedEntity toDomain() {
-    return TokohPaginatedEntity(
-      success: success,
-      total: meta?.total ?? data.length,
-      currentPage: meta?.currentPage ?? 1,
-      lastPage: meta?.lastPage ?? 1,
-      perPage: meta?.perPage ?? 10,
-      data: data,
-      message: message,
-    );
-  }
+export 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
+
+extension TokohModelMapper on TokohModel {
+  TokohEntity toDomain() => TokohEntity(
+    id: id,
+    nama: nama,
+    noTelp: noTelp,
+    jenisKelamin: jenisKelamin,
+    profesi: profesi,
+    wilayah: wilayah,
+    instituteId: instituteId,
+    namaInstitusi: namaInstitusi,
+    jabatanInstitusi: jabatanInstitusi,
+    afiliasi: afiliasi,
+    organizationId: organizationId,
+    namaOrganisasi: namaOrganisasi,
+    jabatanOrganisasi: jabatanOrganisasi,
+    suku: suku,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }
 
-extension TokohEntityX on TokohEntity {
-  TokohModel toModel() => TokohModel.fromEntity(this);
+extension TokohEntityMapper on TokohEntity {
+  TokohModel toModel() => TokohModel(
+    id: id,
+    nama: nama,
+    noTelp: noTelp,
+    jenisKelamin: jenisKelamin,
+    profesi: profesi,
+    wilayah: wilayah,
+    instituteId: instituteId,
+    namaInstitusi: namaInstitusi,
+    jabatanInstitusi: jabatanInstitusi,
+    afiliasi: afiliasi,
+    organizationId: organizationId,
+    namaOrganisasi: namaOrganisasi,
+    jabatanOrganisasi: jabatanOrganisasi,
+    suku: suku,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+  );
 }
 
-extension TokohModelX on TokohModel {
-  TokohEntity toDomain() => this;
+extension TokohResponseModelMapper on TokohResponseModel {
+  TokohPaginatedEntity toDomain() => TokohPaginatedEntity(
+    success: success,
+    message: message,
+    data: data.map((e) => e.toDomain()).toList(),
+    currentPage: meta?.currentPage ?? 1,
+    lastPage: meta?.lastPage ?? 1,
+    perPage: meta?.perPage ?? 10,
+    total: meta?.total ?? data.length,
+  );
 }

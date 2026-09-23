@@ -41,7 +41,7 @@ class TokohRepositoryImpl implements TokohRepository {
     try {
       final model = entity.toModel();
       final result = await remoteDatasource.addTokoh(model);
-      return Right(result);
+      return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }
@@ -55,7 +55,7 @@ class TokohRepositoryImpl implements TokohRepository {
     try {
       final model = entity.toModel();
       final result = await remoteDatasource.updateTokoh(id, model);
-      return Right(result);
+      return Right(result.toDomain());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }

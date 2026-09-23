@@ -1,128 +1,40 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class TokohEntity extends Equatable {
-  final String? id;
-  final String nama;
-  final String noTelp;
-  final String jenisKelamin; // Laki-laki, Perempuan
-  final String profesi;
-  final String wilayah; // Scope
-  final int? instituteId;
-  final String namaInstitusi;
-  final String jabatanInstitusi;
-  final String afiliasi; // Politik, Ormas, Agama, Budaya, Pemuda, Pengusaha
-  final int? organizationId;
-  final String namaOrganisasi;
-  final String jabatanOrganisasi;
-  final String suku;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+part 'tokoh_entity.freezed.dart';
 
-  const TokohEntity({
-    this.id,
-    required this.nama,
-    this.noTelp = '',
-    this.jenisKelamin = 'Laki-laki',
-    required this.profesi,
-    this.wilayah = 'Nasional',
-    this.instituteId,
-    this.namaInstitusi = '',
-    this.jabatanInstitusi = '',
-    required this.afiliasi,
-    this.organizationId,
-    this.namaOrganisasi = '',
-    this.jabatanOrganisasi = '',
-    required this.suku,
-    this.createdAt,
-    this.updatedAt,
-  });
+@freezed
+abstract class TokohEntity with _$TokohEntity {
+  const TokohEntity._();
 
-  TokohEntity copyWith({
+  const factory TokohEntity({
     String? id,
-    String? nama,
-    String? noTelp,
-    String? jenisKelamin,
-    String? profesi,
-    String? wilayah,
+    required String nama,
+    @Default('') String noTelp,
+    @Default('Laki-laki') String jenisKelamin,
+    required String profesi,
+    @Default('Nasional') String wilayah,
     int? instituteId,
-    String? namaInstitusi,
-    String? jabatanInstitusi,
-    String? afiliasi,
+    @Default('') String namaInstitusi,
+    @Default('') String jabatanInstitusi,
+    required String afiliasi,
     int? organizationId,
-    String? namaOrganisasi,
-    String? jabatanOrganisasi,
-    String? suku,
+    @Default('') String namaOrganisasi,
+    @Default('') String jabatanOrganisasi,
+    required String suku,
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) {
-    return TokohEntity(
-      id: id ?? this.id,
-      nama: nama ?? this.nama,
-      noTelp: noTelp ?? this.noTelp,
-      jenisKelamin: jenisKelamin ?? this.jenisKelamin,
-      profesi: profesi ?? this.profesi,
-      wilayah: wilayah ?? this.wilayah,
-      instituteId: instituteId ?? this.instituteId,
-      namaInstitusi: namaInstitusi ?? this.namaInstitusi,
-      jabatanInstitusi: jabatanInstitusi ?? this.jabatanInstitusi,
-      afiliasi: afiliasi ?? this.afiliasi,
-      organizationId: organizationId ?? this.organizationId,
-      namaOrganisasi: namaOrganisasi ?? this.namaOrganisasi,
-      jabatanOrganisasi: jabatanOrganisasi ?? this.jabatanOrganisasi,
-      suku: suku ?? this.suku,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    id,
-    nama,
-    noTelp,
-    jenisKelamin,
-    profesi,
-    wilayah,
-    instituteId,
-    namaInstitusi,
-    jabatanInstitusi,
-    afiliasi,
-    organizationId,
-    namaOrganisasi,
-    jabatanOrganisasi,
-    suku,
-    createdAt,
-    updatedAt,
-  ];
+  }) = _TokohEntity;
 }
 
-class TokohPaginatedEntity extends Equatable {
-  final bool success;
-  final int total;
-  final int currentPage;
-  final int lastPage;
-  final int perPage;
-  final List<TokohEntity> data;
-  final String? message;
-
-  const TokohPaginatedEntity({
-    this.success = false,
-    this.total = 0,
-    this.currentPage = 1,
-    this.lastPage = 1,
-    this.perPage = 10,
-    this.data = const [],
-    this.message,
-  });
-
-  @override
-  List<Object?> get props => [
-    success,
-    total,
-    currentPage,
-    lastPage,
-    perPage,
-    data,
-    message,
-  ];
+@freezed
+abstract class TokohPaginatedEntity with _$TokohPaginatedEntity {
+  const factory TokohPaginatedEntity({
+    @Default(false) bool success,
+    @Default(0) int total,
+    @Default(1) int currentPage,
+    @Default(1) int lastPage,
+    @Default(10) int perPage,
+    @Default([]) List<TokohEntity> data,
+    String? message,
+  }) = _TokohPaginatedEntity;
 }

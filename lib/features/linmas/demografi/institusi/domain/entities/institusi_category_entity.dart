@@ -1,22 +1,15 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class InstitusiCategoryEntity extends Equatable {
-  final int? id;
-  final String label;
-  final String? code;
-  final bool isActive;
-  final String? domain;
-  final String? color;
+part 'institusi_category_entity.freezed.dart';
 
-  const InstitusiCategoryEntity({
-    this.id,
-    required this.label,
-    this.code,
-    this.isActive = true,
-    this.domain,
-    this.color,
-  });
-
-  @override
-  List<Object?> get props => [id, label, code, isActive, domain, color];
+@freezed
+abstract class InstitusiCategoryEntity with _$InstitusiCategoryEntity {
+  const factory InstitusiCategoryEntity({
+    int? id,
+    required String label,
+    String? code,
+    @Default(true) bool isActive,
+    String? domain,
+    String? color,
+  }) = _InstitusiCategoryEntity;
 }

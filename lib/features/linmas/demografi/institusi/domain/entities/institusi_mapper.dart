@@ -1,7 +1,10 @@
 import 'package:akar/features/linmas/demografi/institusi/data/models/institusi_model.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/institusi/data/models/institusi_category_model.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_category_entity.dart';
 
 export 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
+export 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_category_entity.dart';
 
 extension InstitusiRegionModelMapper on InstitusiRegionModel {
   InstitusiRegionEntity toDomain() =>
@@ -66,5 +69,27 @@ extension InstitusiResponseModelMapper on InstitusiResponseModel {
     lastPage: meta?.lastPage ?? 1,
     perPage: meta?.perPage ?? 10,
     total: meta?.total ?? data.length,
+  );
+}
+
+extension InstitusiCategoryModelMapper on InstitusiCategoryModel {
+  InstitusiCategoryEntity toDomain() => InstitusiCategoryEntity(
+    id: id,
+    label: label,
+    code: code,
+    isActive: isActive,
+    domain: domain,
+    color: color,
+  );
+}
+
+extension InstitusiCategoryEntityMapper on InstitusiCategoryEntity {
+  InstitusiCategoryModel toModel() => InstitusiCategoryModel(
+    id: id,
+    label: label,
+    code: code,
+    isActive: isActive,
+    domain: domain,
+    color: color,
   );
 }

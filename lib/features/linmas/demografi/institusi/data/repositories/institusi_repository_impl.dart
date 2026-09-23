@@ -65,7 +65,7 @@ class InstitusiRepositoryImpl implements InstitusiRepository {
   }) async {
     try {
       final result = await remoteDatasource.getCategories(domain: domain);
-      return Right(result);
+      return Right(result.map((e) => e.toDomain()).toList());
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }

@@ -1,34 +1,61 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/institusi_category_entity.dart';
 
-class InstitusiCategoryModel extends InstitusiCategoryEntity {
-  const InstitusiCategoryModel({
-    super.id,
-    required super.label,
-    super.code,
-    super.isActive = true,
-    super.domain,
-    super.color,
-  });
+part 'institusi_category_model.freezed.dart';
+part 'institusi_category_model.g.dart';
 
-  factory InstitusiCategoryModel.fromJson(Map<String, dynamic> json) {
-    return InstitusiCategoryModel(
-      id: json['id'] is int
-          ? json['id'] as int
-          : int.tryParse(json['id']?.toString() ?? ''),
-      label: (json['label'] ?? json['name'] ?? json['title'] ?? '').toString(),
-      code: json['code']?.toString(),
-      isActive: json['is_active'] is bool ? json['is_active'] as bool : true,
-      domain: json['domain']?.toString(),
-      color: json['color']?.toString(),
-    );
-  }
+Object? _readId(Map json, String key) {
+  final val = json['id'];
+  if (val is int) return val;
+  if (val is String) return int.tryParse(val);
+  return null;
+}
 
-  Map<String, dynamic> toJson() => {
-    if (id != null) 'id': id,
-    'label': label,
-    if (code != null) 'code': code,
-    'is_active': isActive,
-    if (domain != null) 'domain': domain,
-    if (color != null) 'color': color,
-  };
+Object? _readLabel(Map json, String key) =>
+    (json['label'] ?? json['name'] ?? json['title'] ?? '').toString();
+
+Object? _readIsActive(Map json, String key) {
+  final val = json['is_active'] ?? json['isActive'];
+  if (val is bool) return val;
+  if (val is int) return val == 1;
+  if (val is String) return val.toLowerCase() == 'true' || val == '1';
+  return true;
+}
+
+@freezed
+abstract class InstitusiCategoryModel with _$InstitusiCategoryModel {
+  const InstitusiCategoryModel._();
+
+  const factory InstitusiCategoryModel({
+    @JsonKey(name: 'id', readValue: _readId) int? id,
+    @JsonKey(name: 'label', readValue: _readLabel) required String label,
+    @JsonKey(name: 'code') String? code,
+    @JsonKey(name: 'is_active', readValue: _readIsActive)
+    @Default(true)
+    bool isActive,
+    @JsonKey(name: 'domain') String? domain,
+    @JsonKey(name: 'color') String? color,
+  }) = _InstitusiCategoryModel;
+
+  factory InstitusiCategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$InstitusiCategoryModelFromJson(json);
+
+  factory InstitusiCategoryModel.fromEntity(InstitusiCategoryEntity entity) =>
+      InstitusiCategoryModel(
+        id: entity.id,
+        label: entity.label,
+        code: entity.code,
+        isActive: entity.isActive,
+        domain: entity.domain,
+        color: entity.color,
+      );
+
+  InstitusiCategoryEntity toDomain() => InstitusiCategoryEntity(
+    id: id,
+    label: label,
+    code: code,
+    isActive: isActive,
+    domain: domain,
+    color: color,
+  );
 }
