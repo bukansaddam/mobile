@@ -79,11 +79,12 @@ class BankSampahDetailSheet extends StatelessWidget {
         report.fotoPath != null &&
         report.fotoPath!.isNotEmpty &&
         File(report.fotoPath!).existsSync();
-    final hasUrlPhoto = report.fotoUrl != null && report.fotoUrl!.isNotEmpty;
+    final photoUrl = report.displayPhotoUrl ?? report.fotoUrl;
+    final hasUrlPhoto = photoUrl != null && photoUrl.isNotEmpty;
     final hasPhoto = hasLocalPhoto || hasUrlPhoto;
     final photoTarget = hasLocalPhoto
         ? report.fotoPath!
-        : (hasUrlPhoto ? report.fotoUrl! : '');
+        : (hasUrlPhoto ? photoUrl : '');
 
     return SafeArea(
       child: Container(
@@ -174,7 +175,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                                       ),
                                 )
                               : Image.network(
-                                  report.fotoUrl!,
+                                  photoUrl!,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
                                       const Center(
@@ -472,23 +473,44 @@ class BankSampahDetailSheet extends StatelessWidget {
                     Row(
                       children: [
                         const Icon(
-                          Icons.person_outline_rounded,
+                          Icons.verified_outlined,
                           size: 18,
                           color: AppColors.grey600,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Petugas Linmas: ',
+                          'Status: ',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        Expanded(
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                (report.status.toLowerCase() == 'verified'
+                                        ? const Color(0xFF16A34A)
+                                        : const Color(0xFFD97706))
+                                    .withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color:
+                                  (report.status.toLowerCase() == 'verified'
+                                          ? const Color(0xFF16A34A)
+                                          : const Color(0xFFD97706))
+                                      .withValues(alpha: 0.3),
+                            ),
+                          ),
                           child: Text(
-                            report.petugasNama,
-                            style: AppTextStyles.bodySmall.copyWith(
+                            report.statusLabel,
+                            style: AppTextStyles.caption.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: report.status.toLowerCase() == 'verified'
+                                  ? const Color(0xFF16A34A)
+                                  : const Color(0xFFD97706),
                             ),
                           ),
                         ),

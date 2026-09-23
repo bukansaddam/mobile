@@ -53,10 +53,14 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     final locResult = await getLocationsUsecase();
 
     List<BankSampahReportEntity> reports = state.reports;
+    BankSampahSummaryEntity? summary = state.summary;
     List<BankSampahLocationEntity> locations = state.locations;
     String? errorMsg;
 
-    repResult.fold((f) => errorMsg = f.message, (data) => reports = data);
+    repResult.fold((f) => errorMsg = f.message, (data) {
+      reports = data.reports;
+      summary = data.summary;
+    });
 
     locResult.fold(
       (f) => errorMsg ??= f.message,
@@ -73,12 +77,15 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       state.copyWith(
         isLoading: false,
         reports: reports,
+        summary: summary,
         locations: locations,
         errorMessage: errorMsg,
       ),
     );
 
-    add(const UpdateBankSampahUserLocationEvent(silent: true));
+    if (!isClosed) {
+      add(const UpdateBankSampahUserLocationEvent(silent: true));
+    }
   }
 
   Future<void> _onRefreshData(
@@ -89,9 +96,13 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     final locResult = await getLocationsUsecase();
 
     List<BankSampahReportEntity> reports = state.reports;
+    BankSampahSummaryEntity? summary = state.summary;
     List<BankSampahLocationEntity> locations = state.locations;
 
-    repResult.fold((_) {}, (data) => reports = data);
+    repResult.fold((_) {}, (data) {
+      reports = data.reports;
+      summary = data.summary;
+    });
     locResult.fold(
       (_) {},
       (data) => locations = List<BankSampahLocationEntity>.from(data),
@@ -103,7 +114,9 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       state.userLongitude,
     );
 
-    emit(state.copyWith(reports: reports, locations: locations));
+    emit(
+      state.copyWith(reports: reports, summary: summary, locations: locations),
+    );
 
     add(const UpdateBankSampahUserLocationEvent(silent: true));
   }
@@ -119,8 +132,7 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        final locs = _applyDefaultDistances(state.locations);
-        emit(state.copyWith(isFetchingLocation: false, locations: locs));
+        emit(state.copyWith(isFetchingLocation: false));
         return;
       }
 
@@ -128,15 +140,13 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          final locs = _applyDefaultDistances(state.locations);
-          emit(state.copyWith(isFetchingLocation: false, locations: locs));
+          emit(state.copyWith(isFetchingLocation: false));
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        final locs = _applyDefaultDistances(state.locations);
-        emit(state.copyWith(isFetchingLocation: false, locations: locs));
+        emit(state.copyWith(isFetchingLocation: false));
         return;
       }
 
@@ -166,8 +176,7 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
         ),
       );
     } catch (_) {
-      final locs = _applyDefaultDistances(state.locations);
-      emit(state.copyWith(isFetchingLocation: false, locations: locs));
+      emit(state.copyWith(isFetchingLocation: false));
     }
   }
 
@@ -179,7 +188,7 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     if (lat != null && lng != null) {
       return _calculateDistances(locations, lat, lng);
     }
-    return _applyDefaultDistances(locations);
+    return locations;
   }
 
   List<BankSampahLocationEntity> _calculateDistances(
@@ -188,17 +197,16 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     double userLng,
   ) {
     final list = locations.map<BankSampahLocationEntity>((loc) {
-      double targetLat = loc.latitude ?? (userLat + (loc.latOffset ?? 0.002));
-      double targetLng = loc.longitude ?? (userLng + (loc.lngOffset ?? 0.002));
-
-      final distance = Geolocator.distanceBetween(
-        userLat,
-        userLng,
-        targetLat,
-        targetLng,
-      );
-
-      return loc.copyWith(distanceMeters: distance);
+      if (loc.latitude != null && loc.longitude != null) {
+        final distance = Geolocator.distanceBetween(
+          userLat,
+          userLng,
+          loc.latitude!,
+          loc.longitude!,
+        );
+        return loc.copyWith(distanceMeters: distance);
+      }
+      return loc;
     }).toList();
 
     list.sort((a, b) {
@@ -208,32 +216,6 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     });
 
     return list;
-  }
-
-  List<BankSampahLocationEntity> _applyDefaultDistances(
-    List<BankSampahLocationEntity> locations,
-  ) {
-    const defaultMeters = [350.0, 750.0, 1200.0, 1800.0, 2600.0];
-    final updatedList = <BankSampahLocationEntity>[];
-    for (int i = 0; i < locations.length; i++) {
-      final loc = locations[i];
-      if (loc.distanceMeters == null) {
-        final dist = i < defaultMeters.length
-            ? defaultMeters[i]
-            : (3000.0 + (i * 500));
-        updatedList.add(loc.copyWith(distanceMeters: dist));
-      } else {
-        updatedList.add(loc);
-      }
-    }
-
-    updatedList.sort((a, b) {
-      final distA = a.distanceMeters ?? double.infinity;
-      final distB = b.distanceMeters ?? double.infinity;
-      return distA.compareTo(distB);
-    });
-
-    return updatedList;
   }
 
   void _onSetSearchQuery(
@@ -312,7 +294,7 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       fotoUrl: event.fotoUrl,
       catatan: event.catatan,
       petugasNama: event.petugasNama,
-      createdAt: DateTime.now(),
+      createdAt: event.reportDate ?? DateTime.now(),
     );
 
     final result = await addReportUsecase(newReport);
@@ -326,13 +308,28 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       (added) {
         final list = List<BankSampahReportEntity>.from(state.reports)
           ..insert(0, added);
+
+        BankSampahSummaryEntity? updatedSummary = state.summary;
+        if (updatedSummary != null) {
+          updatedSummary = updatedSummary.copyWith(
+            totalKg: updatedSummary.totalKg + added.beratKg,
+            totalPendapatan: updatedSummary.totalPendapatan + added.nilaiRupiah,
+            totalSetoran: updatedSummary.totalSetoran + 1,
+          );
+        }
+
         emit(
           state.copyWith(
             isSubmitting: false,
             reports: list,
+            summary: updatedSummary,
             actionSuccessMessage: 'Laporan bank sampah berhasil disimpan',
           ),
         );
+
+        if (!isClosed) {
+          add(RefreshBankSampahDataEvent());
+        }
       },
     );
   }
@@ -347,11 +344,38 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
         emit(state.copyWith(errorMessage: failure.message));
       },
       (success) {
+        BankSampahReportEntity? deletedItem;
+        for (final item in state.reports) {
+          if (item.id == event.id) {
+            deletedItem = item;
+            break;
+          }
+        }
+
         final list = List<BankSampahReportEntity>.from(state.reports)
           ..removeWhere((item) => item.id == event.id);
+
+        BankSampahSummaryEntity? updatedSummary = state.summary;
+        if (updatedSummary != null && deletedItem != null) {
+          final newTotalKg = (updatedSummary.totalKg - deletedItem.beratKg)
+              .clamp(0.0, double.infinity);
+          final newTotalRp =
+              (updatedSummary.totalPendapatan - deletedItem.nilaiRupiah).clamp(
+                0.0,
+                double.infinity,
+              );
+          final newCount = (updatedSummary.totalSetoran - 1).clamp(0, 999999);
+          updatedSummary = updatedSummary.copyWith(
+            totalKg: newTotalKg,
+            totalPendapatan: newTotalRp,
+            totalSetoran: newCount,
+          );
+        }
+
         emit(
           state.copyWith(
             reports: list,
+            summary: updatedSummary,
             actionSuccessMessage: 'Laporan berhasil dihapus',
           ),
         );

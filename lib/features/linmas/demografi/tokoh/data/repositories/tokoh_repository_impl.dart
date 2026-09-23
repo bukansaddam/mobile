@@ -1,6 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
-import '../../domain/entities/tokoh_entity.dart';
 import '../../domain/entities/tokoh_mapper.dart';
 import '../../domain/repositories/tokoh_repository.dart';
 import '../datasources/tokoh_remote_datasource.dart';

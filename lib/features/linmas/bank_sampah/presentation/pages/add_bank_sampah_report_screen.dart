@@ -33,6 +33,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
   double _calculatedNilai = 0.0;
   File? _selectedPhoto;
+  DateTime _selectedDate = DateTime.now();
 
   @override
   void initState() {
@@ -42,11 +43,18 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
         const UpdateBankSampahUserLocationEvent(silent: true),
       );
       final state = context.read<BankSampahBloc>().state;
-      if (mounted && _selectedLocation == null) {
+      if (mounted && _selectedLocation == null && state.locations.isNotEmpty) {
+        final validLocs = state.locations
+            .where((l) => int.tryParse(l.id) != null)
+            .toList();
         setState(() {
           _selectedLocation =
-              state.nearestLocation ??
-              (state.locations.isNotEmpty ? state.locations.first : null);
+              state.nearestLocation != null &&
+                  int.tryParse(state.nearestLocation!.id) != null
+              ? state.nearestLocation
+              : (validLocs.isNotEmpty
+                    ? validLocs.first
+                    : state.locations.first);
         });
       }
     });
@@ -196,6 +204,20 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
       return;
     }
 
+    final bankIdInt = int.tryParse(_selectedLocation!.id);
+    if (bankIdInt == null || bankIdInt <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Lokasi Bank Sampah tidak valid. Silakan pilih unit Bank Sampah yang terdaftar.',
+          ),
+          backgroundColor: AppColors.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
     final parsedBerat =
         double.tryParse(_beratController.text.replaceAll(',', '.')) ?? 0.0;
     if (parsedBerat <= 0) {
@@ -221,6 +243,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
         fotoPath: _selectedPhoto?.path,
         catatan: _catatanController.text.trim(),
         petugasNama: petugasNama,
+        reportDate: _selectedDate,
       ),
     );
   }
@@ -235,6 +258,21 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
     return BlocConsumer<BankSampahBloc, BankSampahState>(
       listener: (context, state) {
+        if (_selectedLocation == null && state.locations.isNotEmpty) {
+          final validLocs = state.locations
+              .where((l) => int.tryParse(l.id) != null)
+              .toList();
+          if (validLocs.isNotEmpty) {
+            setState(() {
+              _selectedLocation =
+                  state.nearestLocation != null &&
+                      int.tryParse(state.nearestLocation!.id) != null
+                  ? state.nearestLocation
+                  : validLocs.first;
+            });
+          }
+        }
+
         if (state.actionSuccessMessage != null) {
           final parsedBerat =
               double.tryParse(_beratController.text.replaceAll(',', '.')) ??
@@ -589,6 +627,79 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                               });
                             }
                           },
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    _buildSectionHeader(
+                      icon: Icons.calendar_today_rounded,
+                      title: 'Tanggal Penyetoran *',
+                      subtitle: 'Tentukan tanggal saat sampah disetorkan',
+                    ),
+                    const SizedBox(height: 8),
+                    InkWell(
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedDate,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 30),
+                          ),
+                        );
+                        if (picked != null) {
+                          setState(() {
+                            _selectedDate = picked;
+                          });
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.grey300),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryLight,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.event_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                DateFormat(
+                                  'd MMMM yyyy',
+                                  'id_ID',
+                                ).format(_selectedDate),
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.edit_calendar_rounded,
+                              color: AppColors.grey600,
+                              size: 20,
+                            ),
+                          ],
                         ),
                       ),
                     ),

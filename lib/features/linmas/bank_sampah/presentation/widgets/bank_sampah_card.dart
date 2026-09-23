@@ -31,6 +31,22 @@ class BankSampahCard extends StatelessWidget {
     }
   }
 
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'verified':
+      case 'terverifikasi':
+        return const Color(0xFF16A34A);
+      case 'pending':
+      case 'menunggu':
+        return const Color(0xFFD97706);
+      case 'rejected':
+      case 'ditolak':
+        return const Color(0xFFDC2626);
+      default:
+        return const Color(0xFF16A34A);
+    }
+  }
+
   IconData _getJenisIcon(String jenis) {
     switch (jenis.toLowerCase()) {
       case 'organik':
@@ -64,7 +80,8 @@ class BankSampahCard extends StatelessWidget {
         report.fotoPath != null &&
         report.fotoPath!.isNotEmpty &&
         File(report.fotoPath!).existsSync();
-    final hasUrlPhoto = report.fotoUrl != null && report.fotoUrl!.isNotEmpty;
+    final photoUrl = report.displayPhotoUrl ?? report.fotoUrl;
+    final hasUrlPhoto = photoUrl != null && photoUrl.isNotEmpty;
     final hasPhoto = hasLocalPhoto || hasUrlPhoto;
 
     return Material(
@@ -119,7 +136,7 @@ class BankSampahCard extends StatelessWidget {
                                         ),
                                   )
                                 : Image.network(
-                                    report.fotoUrl!,
+                                    photoUrl!,
                                     width: 52,
                                     height: 52,
                                     fit: BoxFit.cover,
@@ -195,15 +212,47 @@ class BankSampahCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          DateFormat(
-                            'dd MMMM yyyy, HH:mm',
-                            'id_ID',
-                          ).format(report.createdAt),
-                          style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 11,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              DateFormat(
+                                'dd MMMM yyyy, HH:mm',
+                                'id_ID',
+                              ).format(report.createdAt),
+                              style: AppTextStyles.caption.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                              ),
+                            ),
+                            if (report.statusLabel.isNotEmpty) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 1.5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _getStatusColor(
+                                    report.status,
+                                  ).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: _getStatusColor(
+                                      report.status,
+                                    ).withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Text(
+                                  report.statusLabel,
+                                  style: TextStyle(
+                                    color: _getStatusColor(report.status),
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Row(

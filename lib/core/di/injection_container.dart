@@ -64,7 +64,7 @@ import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_ins
 import 'package:akar/features/linmas/demografi/institusi/domain/usecases/get_institusi_list_usecase.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/usecases/update_institusi_usecase.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
-import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_local_datasource.dart';
+import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_remote_datasource.dart';
 import 'package:akar/features/linmas/bank_sampah/data/repositories/bank_sampah_repository_impl.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah_location_usecase.dart';
@@ -160,8 +160,8 @@ Future<void> init() async {
   sl.registerLazySingleton<AnnouncementRemoteDatasource>(
     () => AnnouncementRemoteDatasourceImpl(),
   );
-  sl.registerLazySingleton<BankSampahLocalDatasource>(
-    () => BankSampahLocalDatasourceImpl(sharedPreferences: sl()),
+  sl.registerLazySingleton<BankSampahRemoteDataSource>(
+    () => BankSampahRemoteDataSourceImpl(),
   );
   sl.registerLazySingleton<LocationRemoteDataSource>(
     () => LocationRemoteDataSourceImpl(sl<Dio>()),
@@ -199,7 +199,7 @@ Future<void> init() async {
     () => AnnouncementRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<BankSampahRepository>(
-    () => BankSampahRepositoryImpl(localDatasource: sl()),
+    () => BankSampahRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton<LocationRepository>(
     () => LocationRepositoryImpl(

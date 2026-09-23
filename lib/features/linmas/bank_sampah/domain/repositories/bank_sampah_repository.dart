@@ -3,7 +3,10 @@ import '../entities/bank_sampah_location_entity.dart';
 import '../entities/bank_sampah_report_entity.dart';
 
 abstract class BankSampahRepository {
-  Future<Either<Failure, List<BankSampahReportEntity>>> getReports();
+  Future<Either<Failure, BankSampahReportsDataEntity>> getReports({
+    int? page,
+    int? perPage,
+  });
   Future<Either<Failure, BankSampahReportEntity>> addReport(
     BankSampahReportEntity report,
   );

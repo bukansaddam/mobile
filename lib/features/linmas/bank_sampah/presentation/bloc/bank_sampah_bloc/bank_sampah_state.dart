@@ -21,6 +21,7 @@ class BankSampahState extends Equatable {
 
   final List<BankSampahReportEntity> reports;
   final List<BankSampahLocationEntity> locations;
+  final BankSampahSummaryEntity? summary;
 
   final double? userLatitude;
   final double? userLongitude;
@@ -38,6 +39,7 @@ class BankSampahState extends Equatable {
     this.actionSuccessMessage,
     this.reports = const [],
     this.locations = const [],
+    this.summary,
     this.userLatitude,
     this.userLongitude,
     this.searchQuery = '',
@@ -67,7 +69,7 @@ class BankSampahState extends Equatable {
             searchQuery.toLowerCase(),
           ) ||
           report.catatan.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          report.petugasNama.toLowerCase().contains(searchQuery.toLowerCase());
+          report.statusLabel.toLowerCase().contains(searchQuery.toLowerCase());
 
       final matchesJenis =
           selectedJenisSampahFilter == null ||
@@ -105,12 +107,13 @@ class BankSampahState extends Equatable {
     return list;
   }
 
-  int get totalLaporanCount => reports.length;
+  int get totalLaporanCount => summary?.totalSetoran ?? reports.length;
 
   double get totalBeratKg =>
-      reports.fold(0.0, (sum, item) => sum + item.beratKg);
+      summary?.totalKg ?? reports.fold(0.0, (sum, item) => sum + item.beratKg);
 
   double get totalNilaiRupiah =>
+      summary?.totalPendapatan ??
       reports.fold(0.0, (sum, item) => sum + item.nilaiRupiah);
 
   BankSampahState copyWith({
@@ -121,6 +124,7 @@ class BankSampahState extends Equatable {
     String? actionSuccessMessage,
     List<BankSampahReportEntity>? reports,
     List<BankSampahLocationEntity>? locations,
+    BankSampahSummaryEntity? summary,
     double? userLatitude,
     double? userLongitude,
     String? searchQuery,
@@ -138,6 +142,7 @@ class BankSampahState extends Equatable {
       actionSuccessMessage: actionSuccessMessage,
       reports: reports ?? this.reports,
       locations: locations ?? this.locations,
+      summary: summary ?? this.summary,
       userLatitude: userLatitude ?? this.userLatitude,
       userLongitude: userLongitude ?? this.userLongitude,
       searchQuery: searchQuery ?? this.searchQuery,
@@ -160,6 +165,7 @@ class BankSampahState extends Equatable {
     actionSuccessMessage,
     reports,
     locations,
+    summary,
     userLatitude,
     userLongitude,
     searchQuery,

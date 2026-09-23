@@ -1,6 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
-import '../../domain/entities/institusi_category_entity.dart';
 import '../../domain/entities/institusi_mapper.dart';
 import '../../domain/repositories/institusi_repository.dart';
 import '../datasources/institusi_remote_datasource.dart';

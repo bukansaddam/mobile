@@ -7,7 +7,10 @@ class GetBankSampahReportsUsecase {
 
   GetBankSampahReportsUsecase(this.repository);
 
-  Future<Either<Failure, List<BankSampahReportEntity>>> call() {
-    return repository.getReports();
+  Future<Either<Failure, BankSampahReportsDataEntity>> call({
+    int? page,
+    int? perPage,
+  }) {
+    return repository.getReports(page: page, perPage: perPage);
   }
 }

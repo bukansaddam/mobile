@@ -67,6 +67,7 @@ class AddBankSampahReportEvent extends BankSampahEvent {
   final String? fotoUrl;
   final String catatan;
   final String petugasNama;
+  final DateTime? reportDate;
 
   const AddBankSampahReportEvent({
     required this.bankSampahId,
@@ -76,7 +77,8 @@ class AddBankSampahReportEvent extends BankSampahEvent {
     this.fotoPath,
     this.fotoUrl,
     this.catatan = '',
-    required this.petugasNama,
+    this.petugasNama = '',
+    this.reportDate,
   });
 
   @override
@@ -89,6 +91,7 @@ class AddBankSampahReportEvent extends BankSampahEvent {
     fotoUrl,
     catatan,
     petugasNama,
+    reportDate,
   ];
 }
 

@@ -16,22 +16,37 @@ class BankSampahLocationModel extends BankSampahLocationEntity {
   });
 
   factory BankSampahLocationModel.fromJson(Map<String, dynamic> json) {
+    String alamat = (json['alamat'] ?? json['address'] ?? '').toString();
+    if (alamat.isEmpty) {
+      final parts = [
+        json['villageName']?.toString(),
+        json['districtName']?.toString(),
+        json['regencyName']?.toString(),
+      ].where((s) => s != null && s.isNotEmpty).toList();
+      if (parts.isNotEmpty) {
+        alamat = parts.join(', ');
+      }
+    }
+
+    double? parseDouble(dynamic v) {
+      if (v == null) return null;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v);
+      return null;
+    }
+
     return BankSampahLocationModel(
-      id: json['id'] as String? ?? '',
-      nama: json['nama'] as String? ?? '',
-      alamat: json['alamat'] as String? ?? '',
-      kelurahan: json['kelurahan'] as String? ?? '',
-      pengelola: json['pengelola'] as String? ?? '',
-      kontak: json['kontak'] as String? ?? '',
-      latitude:
-          (json['latitude'] as num?)?.toDouble() ??
-          (json['lat'] as num?)?.toDouble(),
-      longitude:
-          (json['longitude'] as num?)?.toDouble() ??
-          (json['lng'] as num?)?.toDouble(),
-      latOffset: (json['latOffset'] as num?)?.toDouble(),
-      lngOffset: (json['lngOffset'] as num?)?.toDouble(),
-      distanceMeters: (json['distanceMeters'] as num?)?.toDouble(),
+      id: json['id'] != null ? json['id'].toString() : '',
+      nama: (json['nama'] ?? json['name'] ?? '').toString(),
+      alamat: alamat,
+      kelurahan: (json['kelurahan'] ?? json['villageName'] ?? '').toString(),
+      pengelola: (json['pengelola'] ?? json['manager'] ?? '').toString(),
+      kontak: (json['kontak'] ?? json['phone'] ?? '').toString(),
+      latitude: parseDouble(json['latitude'] ?? json['lat']),
+      longitude: parseDouble(json['longitude'] ?? json['lng']),
+      latOffset: parseDouble(json['latOffset']),
+      lngOffset: parseDouble(json['lngOffset']),
+      distanceMeters: parseDouble(json['distanceMeters']),
     );
   }
 
