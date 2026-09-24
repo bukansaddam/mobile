@@ -19,14 +19,6 @@ class BankSampahListScreen extends StatefulWidget {
 }
 
 class _BankSampahListScreenState extends State<BankSampahListScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,21 +28,26 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
+        leadingWidth: 56,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.grey300),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.chevron_left_rounded,
-                color: AppColors.textPrimary,
-                size: 22,
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Center(
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.grey300),
               ),
-              onPressed: () => Navigator.pop(context),
-              padding: EdgeInsets.zero,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.chevron_left_rounded,
+                  color: AppColors.textPrimary,
+                  size: 22,
+                ),
+                onPressed: () => Navigator.pop(context),
+                padding: EdgeInsets.zero,
+              ),
             ),
           ),
         ),
@@ -62,6 +59,45 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
             color: AppColors.textPrimary,
           ),
         ),
+        actions: [
+          BlocBuilder<BankSampahBloc, BankSampahState>(
+            builder: (context, state) {
+              final hasActiveFilter = state.hasActiveFilter;
+              return Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: hasActiveFilter
+                          ? AppColors.primary
+                          : AppColors.white,
+                      border: Border.all(
+                        color: hasActiveFilter
+                            ? AppColors.primary
+                            : AppColors.grey300,
+                      ),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.tune_rounded,
+                        color: hasActiveFilter
+                            ? Colors.white
+                            : AppColors.textPrimary,
+                        size: 20,
+                      ),
+                      tooltip: 'Filter & Urutkan',
+                      onPressed: () => _showFilterBottomSheet(context),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -94,191 +130,77 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                if (state.hasActiveFilter)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
                           children: [
-                            Expanded(
-                              child: Container(
-                                height: 52,
-                                decoration: BoxDecoration(
-                                  color: AppColors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.grey300),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColors.black.withValues(
-                                        alpha: 0.03,
-                                      ),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: TextField(
-                                  controller: _searchController,
-                                  onTapOutside: (event) => FocusManager
-                                      .instance
-                                      .primaryFocus
-                                      ?.unfocus(),
-                                  onChanged: (val) {
+                            if (state.selectedSortOption !=
+                                BankSampahSortOption.terbaru)
+                              _buildAppliedTag(
+                                label: state.selectedSortOption.label,
+                                icon: state.selectedSortOption.icon,
+                                color: const Color(0xFFC62828),
+                                onTap: () => _showFilterBottomSheet(context),
+                                onRemove: () =>
                                     context.read<BankSampahBloc>().add(
-                                      SetBankSampahSearchQueryEvent(val),
-                                    );
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText:
-                                        'Cari bank sampah, jenis, catatan...',
-                                    hintStyle: AppTextStyles.bodyMedium
-                                        .copyWith(color: AppColors.textHint),
-                                    prefixIcon: const Icon(
-                                      Icons.search_rounded,
-                                      color: AppColors.grey500,
+                                      const SetBankSampahSortOptionEvent(
+                                        BankSampahSortOption.terbaru,
+                                      ),
                                     ),
-                                    suffixIcon: state.searchQuery.isNotEmpty
-                                        ? IconButton(
-                                            icon: const Icon(
-                                              Icons.clear,
-                                              size: 18,
-                                            ),
-                                            onPressed: () {
-                                              _searchController.clear();
-                                              context.read<BankSampahBloc>().add(
-                                                ResetBankSampahFiltersEvent(),
-                                              );
-                                            },
-                                          )
-                                        : null,
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 14,
-                                    ),
-                                  ),
-                                ),
                               ),
-                            ),
-                            const SizedBox(width: 10),
 
-                            Container(
-                              height: 52,
-                              width: 52,
-                              decoration: BoxDecoration(
-                                color: state.hasActiveFilter
-                                    ? AppColors.primary
-                                    : AppColors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: state.hasActiveFilter
-                                      ? AppColors.primary
-                                      : AppColors.grey300,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withValues(
-                                      alpha: 0.05,
+                            if (state.selectedJenisSampahFilter != null) ...[
+                              if (state.selectedSortOption !=
+                                  BankSampahSortOption.terbaru)
+                                const SizedBox(width: 8),
+                              _buildAppliedTag(
+                                label:
+                                    'Jenis: ${state.selectedJenisSampahFilter}',
+                                icon:
+                                    state.selectedJenisSampahFilter == 'Organik'
+                                    ? Icons.eco_rounded
+                                    : Icons.recycling_rounded,
+                                color:
+                                    state.selectedJenisSampahFilter == 'Organik'
+                                    ? const Color(0xFF16A34A)
+                                    : const Color(0xFF0284C7),
+                                onTap: () => _showFilterBottomSheet(context),
+                                onRemove: () =>
+                                    context.read<BankSampahBloc>().add(
+                                      const SetBankSampahJenisFilterEvent(null),
                                     ),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
                               ),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.tune_rounded,
-                                  color: state.hasActiveFilter
-                                      ? Colors.white
-                                      : AppColors.textPrimary,
-                                  size: 22,
-                                ),
-                                tooltip: 'Filter & Urutkan',
-                                onPressed: () =>
-                                    _showFilterBottomSheet(context),
+                            ],
+
+                            if (state.selectedBankSampahFilter != null) ...[
+                              if (state.selectedSortOption !=
+                                      BankSampahSortOption.terbaru ||
+                                  state.selectedJenisSampahFilter != null)
+                                const SizedBox(width: 8),
+                              _buildAppliedTag(
+                                label:
+                                    'Lokasi: ${state.selectedBankSampahFilter}',
+                                icon: Icons.account_balance_rounded,
+                                color: const Color(0xFFD97706),
+                                onTap: () => _showFilterBottomSheet(context),
+                                onRemove: () =>
+                                    context.read<BankSampahBloc>().add(
+                                      const SetBankSampahLocationFilterEvent(
+                                        null,
+                                      ),
+                                    ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
-
-                        if (state.hasActiveFilter) ...[
-                          const SizedBox(height: 10),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
-                            child: Row(
-                              children: [
-                                if (state.selectedSortOption !=
-                                    BankSampahSortOption.terbaru)
-                                  _buildAppliedTag(
-                                    label: state.selectedSortOption.label,
-                                    icon: state.selectedSortOption.icon,
-                                    color: const Color(0xFFC62828),
-                                    onTap: () =>
-                                        _showFilterBottomSheet(context),
-                                    onRemove: () =>
-                                        context.read<BankSampahBloc>().add(
-                                          const SetBankSampahSortOptionEvent(
-                                            BankSampahSortOption.terbaru,
-                                          ),
-                                        ),
-                                  ),
-
-                                if (state.selectedJenisSampahFilter !=
-                                    null) ...[
-                                  if (state.selectedSortOption !=
-                                      BankSampahSortOption.terbaru)
-                                    const SizedBox(width: 8),
-                                  _buildAppliedTag(
-                                    label:
-                                        'Jenis: ${state.selectedJenisSampahFilter}',
-                                    icon:
-                                        state.selectedJenisSampahFilter ==
-                                            'Organik'
-                                        ? Icons.eco_rounded
-                                        : Icons.recycling_rounded,
-                                    color:
-                                        state.selectedJenisSampahFilter ==
-                                            'Organik'
-                                        ? const Color(0xFF16A34A)
-                                        : const Color(0xFF0284C7),
-                                    onTap: () =>
-                                        _showFilterBottomSheet(context),
-                                    onRemove: () =>
-                                        context.read<BankSampahBloc>().add(
-                                          const SetBankSampahJenisFilterEvent(
-                                            null,
-                                          ),
-                                        ),
-                                  ),
-                                ],
-
-                                if (state.selectedBankSampahFilter != null) ...[
-                                  const SizedBox(width: 8),
-                                  _buildAppliedTag(
-                                    label:
-                                        'Lokasi: ${state.selectedBankSampahFilter}',
-                                    icon: Icons.account_balance_rounded,
-                                    color: const Color(0xFFD97706),
-                                    onTap: () =>
-                                        _showFilterBottomSheet(context),
-                                    onRemove: () =>
-                                        context.read<BankSampahBloc>().add(
-                                          const SetBankSampahLocationFilterEvent(
-                                            null,
-                                          ),
-                                        ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
 
                 if (filteredList.isEmpty)
                   SliverFillRemaining(
@@ -310,9 +232,8 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            state.searchQuery.isNotEmpty ||
-                                    state.hasActiveFilter
-                                ? 'Tidak ditemukan laporan yang sesuai dengan kata kunci atau filter yang dipilih.'
+                            state.hasActiveFilter
+                                ? 'Tidak ditemukan laporan yang sesuai dengan filter yang dipilih.'
                                 : 'Mulai catat penimbangan sampah di Bank Sampah dengan menekan tombol Laporan Baru di bawah.',
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
@@ -320,17 +241,15 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 20),
-                          if (state.searchQuery.isNotEmpty ||
-                              state.hasActiveFilter)
+                          if (state.hasActiveFilter)
                             OutlinedButton.icon(
                               onPressed: () {
-                                _searchController.clear();
                                 context.read<BankSampahBloc>().add(
                                   ResetBankSampahFiltersEvent(),
                                 );
                               },
                               icon: const Icon(Icons.filter_alt_off_rounded),
-                              label: const Text('Reset Filter Pencarian'),
+                              label: const Text('Reset Filter'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppColors.primary,
                                 side: const BorderSide(
@@ -366,7 +285,12 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                   )
                 else
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 90),
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      state.hasActiveFilter ? 8 : 16,
+                      16,
+                      90,
+                    ),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final item = filteredList[index];
