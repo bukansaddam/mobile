@@ -1,15 +1,20 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/linmas/dashboard/domain/entities/member_dashboard_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_bloc.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class SurveyCardBanner extends StatefulWidget {
-  const SurveyCardBanner({super.key});
+  final MemberDashboardSurveyEntity? survey;
+
+  const SurveyCardBanner({super.key, this.survey});
 
   @override
   State<SurveyCardBanner> createState() => _SurveyCardBannerState();
@@ -42,8 +47,24 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
         String periodLabel = SurveyEntity.getCurrentPeriodLabel();
         bool isSubmitted = false;
         bool isDismissed = false;
+        bool isAvailable = true;
+        String surveyTitle = 'Survey Bulanan Lingkungan & RT';
+        String? surveyDescription;
 
-        if (state is SurveyStatusLoadedState) {
+        if (widget.survey != null) {
+          final s = widget.survey!;
+          if (s.periodLabel.isNotEmpty) {
+            periodLabel = s.periodLabel;
+          }
+          isSubmitted = s.isFilled;
+          isAvailable = s.isAvailable;
+          if (s.surveyTitle != null && s.surveyTitle!.trim().isNotEmpty) {
+            surveyTitle = s.surveyTitle!.trim();
+          }
+          if (s.description != null && s.description!.trim().isNotEmpty) {
+            surveyDescription = s.description!.trim();
+          }
+        } else if (state is SurveyStatusLoadedState) {
           periodLabel = state.periodLabel;
           isSubmitted = state.isSubmitted;
           isDismissed = state.isDismissed;
@@ -57,9 +78,29 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
         _isSubmitted = isSubmitted;
         _isDismissed = isDismissed;
 
-        if (isSubmitted && isDismissed) {
+        // Jangan tampilkan card jika survey tidak tersedia (is_available == false)
+        // atau survey sudah diisi (is_filled == true / isSubmitted == true)
+        if (!isAvailable || isSubmitted || isDismissed) {
           return const SizedBox.shrink();
         }
+
+        final descriptionText =
+            surveyDescription ??
+            (isSubmitted
+                ? 'Terima kasih atas partisipasi Anda dalam memantau lingkungan & keamanan RT.'
+                : 'Isi pertanyaan survey bulanan berkala dari Admin untuk evaluasi lingkungan RT Anda.');
+
+        final badgeText = isSubmitted
+            ? 'Sudah Diisi'
+            : (isAvailable ? 'Wajib Diisi' : 'Belum Tersedia');
+
+        final badgeBgColor = isSubmitted
+            ? AppColors.white
+            : (isAvailable ? const Color(0xFFFEF3C7) : const Color(0xFFE2E8F0));
+
+        final badgeTextColor = isSubmitted
+            ? AppColors.accent
+            : (isAvailable ? const Color(0xFF92400E) : const Color(0xFF475569));
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
@@ -130,17 +171,13 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: isSubmitted
-                                ? AppColors.white
-                                : const Color(0xFFFEF3C7),
+                            color: badgeBgColor,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            isSubmitted ? 'Sudah Diisi' : 'Wajib Diisi',
+                            badgeText,
                             style: TextStyle(
-                              color: isSubmitted
-                                  ? AppColors.accent
-                                  : const Color(0xFF92400E),
+                              color: badgeTextColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -151,7 +188,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Survey Bulanan Lingkungan & RT',
+                    surveyTitle,
                     style: AppTextStyles.titleMedium.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.bold,
@@ -159,20 +196,27 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    isSubmitted
-                        ? 'Terima kasih atas partisipasi Anda dalam memantau lingkungan & keamanan RT.'
-                        : 'Isi pertanyaan survey bulanan berkala dari Admin untuk evaluasi lingkungan RT Anda.',
+                    descriptionText,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.white.withValues(alpha: 0.9),
                       height: 1.3,
                     ),
                   ),
-                  if (!isSubmitted) ...[
+                  if (!isSubmitted && isAvailable) ...[
                     const SizedBox(height: 14),
                     SizedBox(
                       height: 36,
                       child: ElevatedButton(
-                        onPressed: () => context.pushNamed('survey'),
+                        onPressed: () async {
+                          await context.pushNamed('survey');
+                          if (context.mounted) {
+                            try {
+                              context.read<MemberDashboardBloc>().add(
+                                const FetchMemberDashboardEvent(),
+                              );
+                            } catch (_) {}
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.white,
                           foregroundColor: AppColors.accent,
@@ -183,7 +227,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                           ),
                         ),
                         child: const Text(
-                          'Isi Survey Sekarang',
+                          'Isi Survey',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,

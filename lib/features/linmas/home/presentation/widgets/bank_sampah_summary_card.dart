@@ -6,6 +6,9 @@ import 'package:intl/intl.dart';
 
 class BankSampahSummaryCard extends StatefulWidget {
   final UserEntity? user;
+  final String? userName;
+  final String? userPhone;
+  final String? userPhotoUrl;
   final double totalBeratKg;
   final double totalNilaiRupiah;
   final VoidCallback? onTap;
@@ -14,6 +17,9 @@ class BankSampahSummaryCard extends StatefulWidget {
   const BankSampahSummaryCard({
     super.key,
     this.user,
+    this.userName,
+    this.userPhone,
+    this.userPhotoUrl,
     required this.totalBeratKg,
     required this.totalNilaiRupiah,
     this.onTap,
@@ -48,16 +54,21 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
 
   @override
   Widget build(BuildContext context) {
-    final name =
-        (widget.user?.name != null && widget.user!.name!.trim().isNotEmpty)
-        ? widget.user!.name!.trim()
-        : 'Pengguna';
+    final name = (widget.userName != null && widget.userName!.trim().isNotEmpty)
+        ? widget.userName!.trim()
+        : ((widget.user?.name != null && widget.user!.name!.trim().isNotEmpty)
+              ? widget.user!.name!.trim()
+              : 'Pengguna');
 
     final phoneNumber =
-        (widget.user?.phoneNumber != null &&
-            widget.user!.phoneNumber!.trim().isNotEmpty)
-        ? widget.user!.phoneNumber!.trim()
-        : '-';
+        (widget.userPhone != null && widget.userPhone!.trim().isNotEmpty)
+        ? widget.userPhone!.trim()
+        : ((widget.user?.phoneNumber != null &&
+                  widget.user!.phoneNumber!.trim().isNotEmpty)
+              ? widget.user!.phoneNumber!.trim()
+              : '-');
+
+    final photoUrl = widget.userPhotoUrl;
 
     return Container(
       width: double.infinity,
@@ -93,17 +104,35 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                       ),
                     ),
                     child: ClipOval(
-                      child: Image.asset(
-                        'assets/indonesian_headshot_portrait.jpg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.person_rounded,
-                            size: 24,
-                            color: AppColors.primary,
-                          );
-                        },
-                      ),
+                      child: photoUrl != null && photoUrl.isNotEmpty
+                          ? Image.network(
+                              photoUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/indonesian_headshot_portrait.jpg',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.person_rounded,
+                                      size: 24,
+                                      color: AppColors.primary,
+                                    );
+                                  },
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              'assets/indonesian_headshot_portrait.jpg',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(
+                                  Icons.person_rounded,
+                                  size: 24,
+                                  color: AppColors.primary,
+                                );
+                              },
+                            ),
                     ),
                   ),
                 ),

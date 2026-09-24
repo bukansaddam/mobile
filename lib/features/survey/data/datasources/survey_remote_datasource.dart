@@ -55,8 +55,25 @@ class SurveyRemoteDatasourceImpl extends BaseRemoteDataSource
   }) async {
     final endpoint = '${ApiConstants.surveys}/$surveyId/answers';
 
+    final payload = {
+      'answers': request.answers.map((a) {
+        return {
+          'question_id': a.questionId,
+          'questionId': a.questionId,
+          'value': a.value,
+          'fields': a.fields.map((f) {
+            return {
+              'field_id': f.fieldId,
+              'fieldId': f.fieldId,
+              'value': f.value,
+            };
+          }).toList(),
+        };
+      }).toList(),
+    };
+
     final response = await handleRequest<Map<String, dynamic>>(
-      () => dio.post(endpoint, data: request.toJson()),
+      () => dio.post(endpoint, data: payload),
       fromJson: (json) {
         if (json is Map<String, dynamic>) {
           return json;

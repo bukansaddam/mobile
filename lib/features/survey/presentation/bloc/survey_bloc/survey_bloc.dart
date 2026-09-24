@@ -69,12 +69,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
         periodKey,
       );
       if (apiSurvey != null) {
-        emit(
-          ApiSurveyLoadedState(
-            survey: apiSurvey,
-            isSubmitted: latestSubmitted != null,
-          ),
-        );
+        emit(ApiSurveyLoadedState(survey: apiSurvey, isSubmitted: false));
         return;
       }
 
@@ -100,6 +95,13 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   ) async {
     emit(SurveySubmittingState());
     try {
+      if (submitApiSurveyAnswersUsecase != null) {
+        await submitApiSurveyAnswersUsecase!(
+          surveyId: event.surveyId,
+          request: event.request,
+        );
+      }
+
       final repository = getMonthlySurveyStatusUsecase.repository;
       final responses = event.request.answers.map((ans) {
         return DynamicSurveyResponseItem(
@@ -133,7 +135,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
       }
     } catch (e) {
       emit(
-        SurveyFailureState('Gagal menyimpan jawaban survey: ${e.toString()}'),
+        SurveyFailureState('Gagal mengirim jawaban survey: ${e.toString()}'),
       );
     }
   }

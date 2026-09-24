@@ -10,6 +10,9 @@ import 'package:akar/features/linmas/announcement/presentation/pages/announcemen
 import 'package:akar/features/linmas/announcement/presentation/widgets/announcement_detail_modal.dart';
 import 'package:akar/features/linmas/announcement/presentation/widgets/pengumuman_banner_slider.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_bloc.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_event.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_state.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/bank_sampah_summary_card.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -78,52 +81,101 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<AnnouncementBloc>()
-        ..add(const FetchAnnouncements())
-        ..add(const FetchBannerAnnouncements()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<AnnouncementBloc>()
+            ..add(const FetchAnnouncements())
+            ..add(const FetchBannerAnnouncements()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              sl<MemberDashboardBloc>()..add(const FetchMemberDashboardEvent()),
+        ),
+      ],
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
           final user = authState is AuthAuthenticated ? authState.user : null;
 
           return BlocBuilder<ActivationBloc, ActivationState>(
             builder: (context, activationState) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 12.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    BlocBuilder<BankSampahBloc, BankSampahState>(
-                      builder: (context, bankState) {
-                        return BankSampahSummaryCard(
-                          user: user,
-                          totalBeratKg: bankState.totalBeratKg,
-                          totalNilaiRupiah: bankState.totalNilaiRupiah,
-                          onTap: () {
-                            _dismissSurveyIfSubmitted(context);
-                            context.pushNamed('bankSampah');
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const SurveyCardBanner(),
-                    _buildMenuUtamaSection(context),
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<MemberDashboardBloc>().add(
+                    const RefreshMemberDashboardEvent(),
+                  );
+                  context.read<AnnouncementBloc>()
+                    ..add(const FetchAnnouncements())
+                    ..add(const FetchBannerAnnouncements());
+                  context.read<BankSampahBloc>().add(
+                    RefreshBankSampahDataEvent(),
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 12.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      BlocBuilder<MemberDashboardBloc, MemberDashboardState>(
+                        builder: (context, dashboardState) {
+                          final dashboard =
+                              dashboardState is MemberDashboardLoaded
+                              ? dashboardState.dashboard
+                              : null;
 
-                    const SizedBox(height: 20),
-                    const PengumumanBannerSlider(),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              BlocBuilder<BankSampahBloc, BankSampahState>(
+                                builder: (context, bankState) {
+                                  return BankSampahSummaryCard(
+                                    user: user,
+                                    userName: dashboard?.user.name,
+                                    userPhone: dashboard?.user.phone,
+                                    userPhotoUrl:
+                                        dashboard?.user.displayPhotoUrl,
+                                    totalBeratKg:
+                                        dashboard?.waste.totalWeightKg ??
+                                        bankState.totalBeratKg,
+                                    totalNilaiRupiah:
+                                        dashboard?.waste.totalEarnings ??
+                                        bankState.totalNilaiRupiah,
+                                    onTap: () {
+                                      _dismissSurveyIfSubmitted(context);
+                                      context.pushNamed('bankSampah');
+                                    },
+                                  );
+                                },
+                              ),
+                              if (dashboard?.survey != null &&
+                                  dashboard!.survey.isAvailable &&
+                                  !dashboard.survey.isFilled) ...[
+                                const SizedBox(height: 16),
+                                SurveyCardBanner(survey: dashboard.survey),
+                              ] else ...[
+                                const SizedBox(height: 16),
+                              ],
+                            ],
+                          );
+                        },
+                      ),
+                      _buildMenuUtamaSection(context),
 
-                    const SizedBox(height: 20),
-                    _buildPengumumanHeader(context),
-                    const SizedBox(height: 12),
-                    _buildPengumumanListTileSection(context),
+                      const SizedBox(height: 20),
+                      const PengumumanBannerSlider(),
 
-                    const SizedBox(height: 80),
-                  ],
+                      const SizedBox(height: 20),
+                      _buildPengumumanHeader(context),
+                      const SizedBox(height: 12),
+                      _buildPengumumanListTileSection(context),
+
+                      const SizedBox(height: 80),
+                    ],
+                  ),
                 ),
               );
             },

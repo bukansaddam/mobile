@@ -125,8 +125,8 @@ class BankSampahCard extends StatelessWidget {
                           ? (hasLocalPhoto
                                 ? Image.file(
                                     File(report.fotoPath!),
-                                    width: 52,
-                                    height: 52,
+                                    width: 42,
+                                    height: 42,
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) => Icon(
@@ -137,8 +137,8 @@ class BankSampahCard extends StatelessWidget {
                                   )
                                 : Image.network(
                                     photoUrl!,
-                                    width: 52,
-                                    height: 52,
+                                    width: 42,
+                                    height: 42,
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) => Icon(
@@ -176,60 +176,12 @@ class BankSampahCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: jenisColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: jenisColor.withValues(alpha: 0.3),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    _getJenisIcon(report.jenisSampah),
-                                    size: 11,
-                                    color: jenisColor,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    report.jenisSampah,
-                                    style: TextStyle(
-                                      color: jenisColor,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Text(
-                              DateFormat(
-                                'dd MMMM yyyy, HH:mm',
-                                'id_ID',
-                              ).format(report.createdAt),
-                              style: AppTextStyles.caption.copyWith(
-                                color: AppColors.textSecondary,
-                                fontSize: 11,
-                              ),
-                            ),
                             if (report.statusLabel.isNotEmpty) ...[
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 1.5,
+                                  horizontal: 8,
+                                  vertical: 3.5,
                                 ),
                                 decoration: BoxDecoration(
                                   color: _getStatusColor(
@@ -246,13 +198,24 @@ class BankSampahCard extends StatelessWidget {
                                   report.statusLabel,
                                   style: TextStyle(
                                     color: _getStatusColor(report.status),
-                                    fontSize: 9.5,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
                             ],
                           ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          DateFormat(
+                            'dd MMMM yyyy, HH:mm',
+                            'id_ID',
+                          ).format(report.createdAt),
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppColors.textSecondary,
+                            fontSize: 11,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Row(

@@ -74,6 +74,13 @@ import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 
+// Member Dashboard
+import 'package:akar/features/linmas/dashboard/data/datasources/member_dashboard_remote_datasource.dart';
+import 'package:akar/features/linmas/dashboard/data/repositories/member_dashboard_repository_impl.dart';
+import 'package:akar/features/linmas/dashboard/domain/repositories/member_dashboard_repository.dart';
+import 'package:akar/features/linmas/dashboard/domain/usecases/get_member_dashboard_usecase.dart';
+import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_bloc.dart';
+
 // Activation / Penugasan
 import 'package:akar/features/linmas/activation/data/datasources/activation_remote_datasource.dart';
 import 'package:akar/features/linmas/activation/data/repositories/activation_repository_impl.dart';
@@ -163,6 +170,9 @@ Future<void> init() async {
   sl.registerLazySingleton<BankSampahRemoteDataSource>(
     () => BankSampahRemoteDataSourceImpl(),
   );
+  sl.registerLazySingleton<MemberDashboardRemoteDataSource>(
+    () => MemberDashboardRemoteDataSourceImpl(),
+  );
   sl.registerLazySingleton<LocationRemoteDataSource>(
     () => LocationRemoteDataSourceImpl(sl<Dio>()),
   );
@@ -200,6 +210,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<BankSampahRepository>(
     () => BankSampahRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<MemberDashboardRepository>(
+    () => MemberDashboardRepositoryImpl(remoteDataSource: sl()),
   );
   sl.registerLazySingleton<LocationRepository>(
     () => LocationRepositoryImpl(
@@ -266,6 +279,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<AddBankSampahLocationUsecase>(
     () => AddBankSampahLocationUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetMemberDashboardUsecase>(
+    () => GetMemberDashboardUsecase(sl()),
   );
   sl.registerLazySingleton<GetAnnouncementsUsecase>(
     () => GetAnnouncementsUsecase(sl()),
@@ -350,6 +366,9 @@ Future<void> init() async {
       getLocationsUsecase: sl(),
       addLocationUsecase: sl(),
     ),
+  );
+  sl.registerFactory<MemberDashboardBloc>(
+    () => MemberDashboardBloc(getMemberDashboardUsecase: sl()),
   );
   sl.registerFactory<AnnouncementBloc>(
     () => AnnouncementBloc(getAnnouncementsUsecase: sl()),

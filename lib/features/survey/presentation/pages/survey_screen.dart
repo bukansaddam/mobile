@@ -184,7 +184,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Survey Bulanan Admin',
+          'Survey Bulanan',
           style: AppTextStyles.titleMedium.copyWith(
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
@@ -334,43 +334,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                if (isSubmitted) ...[
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFECFDF5),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.success),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: AppColors.success,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Anda telah mengisi survey bulanan ini.',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
                 ...survey.questions.asMap().entries.map((entry) {
                   final index = entry.key + 1;
                   final question = entry.value;
                   return _buildApiQuestionCard(
                     number: index,
                     question: question,
-                    isEnabled: !isSubmitted,
+                    isEnabled: true,
                   );
                 }),
                 const SizedBox(height: 24),
@@ -378,76 +348,75 @@ class _SurveyScreenState extends State<SurveyScreen> {
             ),
           ),
         ),
-        if (!isSubmitted)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: BlocBuilder<SurveyBloc, SurveyState>(
-                builder: (context, blocState) {
-                  final isSubmitting = blocState is SurveySubmittingState;
-
-                  return SizedBox(
-                    height: 48,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () => _submitApiForm(survey),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: isSubmitting
-                          ? const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Mengirim...',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.white,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Text(
-                              'Kirim',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white,
-                              ),
-                            ),
-                    ),
-                  );
-                },
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, -4),
               ),
+            ],
+          ),
+          child: SafeArea(
+            child: BlocBuilder<SurveyBloc, SurveyState>(
+              builder: (context, blocState) {
+                final isSubmitting = blocState is SurveySubmittingState;
+
+                return SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isSubmitting
+                        ? null
+                        : () => _submitApiForm(survey),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isSubmitting
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.white,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Mengirim...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            'Kirim',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.white,
+                            ),
+                          ),
+                  ),
+                );
+              },
             ),
           ),
+        ),
       ],
     );
   }
@@ -503,44 +472,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                if (isSubmitted) ...[
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFECFDF5),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.success),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: AppColors.success,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Anda telah mengisi survey bulanan dinamis untuk periode ${form.periodLabel}.',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.success,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-
                 ...form.questions.asMap().entries.map((entry) {
                   final index = entry.key + 1;
                   final question = entry.value;
                   return _buildLegacyDynamicQuestionCard(
                     number: index,
                     question: question,
-                    isEnabled: !isSubmitted,
+                    isEnabled: true,
                   );
                 }),
                 const SizedBox(height: 24),
@@ -548,76 +486,75 @@ class _SurveyScreenState extends State<SurveyScreen> {
             ),
           ),
         ),
-        if (!isSubmitted)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, -4),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              child: BlocBuilder<SurveyBloc, SurveyState>(
-                builder: (context, blocState) {
-                  final isSubmitting = blocState is SurveySubmittingState;
-
-                  return SizedBox(
-                    height: 48,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () => _submitDynamicForm(form),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: isSubmitting
-                          ? const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Mengirim...',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.white,
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Text(
-                              'Kirim',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white,
-                              ),
-                            ),
-                    ),
-                  );
-                },
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.black.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, -4),
               ),
+            ],
+          ),
+          child: SafeArea(
+            child: BlocBuilder<SurveyBloc, SurveyState>(
+              builder: (context, blocState) {
+                final isSubmitting = blocState is SurveySubmittingState;
+
+                return SizedBox(
+                  height: 48,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: isSubmitting
+                        ? null
+                        : () => _submitDynamicForm(form),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isSubmitting
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.white,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Mengirim...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            'Kirim',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.white,
+                            ),
+                          ),
+                  ),
+                );
+              },
             ),
           ),
+        ),
       ],
     );
   }
@@ -711,6 +648,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       Text(
                         'Pertanyaan Lanjutan:',
                         style: AppTextStyles.bodySmall.copyWith(
+                          fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryDark,
                         ),
@@ -854,6 +792,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     final controller = _getTextController(key);
     return TextFormField(
       controller: controller,
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
       enabled: isEnabled,
       maxLines: 3,
@@ -862,6 +801,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
       },
       decoration: InputDecoration(
         hintText: 'Tuliskan jawaban Anda...',
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
         filled: true,
         fillColor: AppColors.grey50,
         contentPadding: const EdgeInsets.symmetric(
@@ -892,6 +832,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             Text(
               field.label!,
               style: AppTextStyles.bodySmall.copyWith(
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
               ),
@@ -911,7 +852,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               child: Text(
                 field.value ?? '-',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                   color: AppColors.primaryDark,
                 ),
               ),
@@ -928,7 +869,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _answers[condKey] as String?,
-                  hint: const Text('Pilih salah satu...'),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                  hint: Text(
+                    'Pilih salah satu...',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textHint,
+                    ),
+                  ),
                   isExpanded: true,
                   onChanged: isEnabled
                       ? (val) {
@@ -940,7 +889,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   items: field.options.map((opt) {
                     return DropdownMenuItem<String>(
                       value: opt,
-                      child: Text(opt, style: AppTextStyles.bodyMedium),
+                      child: Text(
+                        opt,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
                     );
                   }).toList(),
                 ),
@@ -950,6 +904,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
           if (field.isText)
             TextFormField(
               controller: _getTextController(condKey),
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textPrimary,
+              ),
               onTapOutside: (event) =>
                   FocusManager.instance.primaryFocus?.unfocus(),
               enabled: isEnabled,
@@ -958,6 +915,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
               },
               decoration: InputDecoration(
                 hintText: 'Tuliskan jawaban Anda...',
+                hintStyle: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textHint,
+                ),
                 filled: true,
                 fillColor: AppColors.white,
                 contentPadding: const EdgeInsets.symmetric(
@@ -967,6 +927,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: const BorderSide(color: AppColors.grey300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: AppColors.grey300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: AppColors.primary),
                 ),
               ),
             ),
@@ -998,11 +966,18 @@ class _SurveyScreenState extends State<SurveyScreen> {
               child: IgnorePointer(
                 child: TextFormField(
                   controller: _getTextController(condKey),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
                   enabled: isEnabled,
                   decoration: InputDecoration(
                     hintText: 'Pilih jam (HH:mm)...',
+                    hintStyle: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textHint,
+                    ),
                     prefixIcon: const Icon(
                       Icons.access_time_rounded,
+                      size: 18,
                       color: AppColors.primary,
                     ),
                     filled: true,
@@ -1014,6 +989,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: AppColors.grey300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: AppColors.grey300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: const BorderSide(color: AppColors.primary),
                     ),
                   ),
                 ),
@@ -1175,6 +1158,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textPrimary,
+          ),
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
@@ -1185,6 +1171,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
           },
           decoration: InputDecoration(
             hintText: 'Masukkan angka',
+            hintStyle: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textHint,
+            ),
             filled: true,
             fillColor: AppColors.grey50,
             contentPadding: const EdgeInsets.symmetric(
@@ -1203,6 +1192,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textPrimary,
+          ),
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
@@ -1212,6 +1204,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
           },
           decoration: InputDecoration(
             hintText: 'Tuliskan jawaban Anda...',
+            hintStyle: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textHint,
+            ),
             filled: true,
             fillColor: AppColors.grey50,
             contentPadding: const EdgeInsets.symmetric(

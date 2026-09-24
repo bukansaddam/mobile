@@ -548,4 +548,27 @@ class ApiConstants {
     45,
     31,
   ]);
+  static final String dashboardMember = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    37,
+    108,
+    150,
+    167,
+    74,
+    173,
+    245,
+    45,
+    125,
+    212,
+    236,
+    47,
+    115,
+    46,
+    10,
+    171,
+  ]);
 }
