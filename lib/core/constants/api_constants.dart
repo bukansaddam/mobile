@@ -571,4 +571,7 @@ class ApiConstants {
     10,
     171,
   ]);
+
+  // Daily Reports / Laporan Harian
+  static const String dailyReports = '/api/daily-reports';
 }

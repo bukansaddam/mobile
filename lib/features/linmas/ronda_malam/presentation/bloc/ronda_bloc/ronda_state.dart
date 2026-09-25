@@ -68,10 +68,17 @@ class RondaState extends Equatable {
   final String? resikoSelokanTersumbat;
   final bool adaJalanRusak;
   final String? lokasiJalanRusakGps;
+  final double? latitudeJalanRusak;
+  final double? longitudeJalanRusak;
   final String? resikoJalanRusak;
   final bool adaLampuMati;
   final String? lokasiLampuMatiGps;
+  final double? latitudeLampuMati;
+  final double? longitudeLampuMati;
   final String? resikoLampuMati;
+
+  final String? patrolTime;
+  final String? waktuKejadian;
 
   // Step 4: Tambahan
   final String keterangan;
@@ -81,6 +88,8 @@ class RondaState extends Equatable {
   const RondaState({
     this.status = RondaStatus.initial,
     this.currentStep = 0,
+    this.patrolTime,
+    this.waktuKejadian,
     this.sampahMenumpuk = 1,
     this.selokanMampet = 1,
     this.fasilitasRusak = 1,
@@ -132,9 +141,13 @@ class RondaState extends Equatable {
     this.resikoSelokanTersumbat,
     this.adaJalanRusak = false,
     this.lokasiJalanRusakGps,
+    this.latitudeJalanRusak,
+    this.longitudeJalanRusak,
     this.resikoJalanRusak,
     this.adaLampuMati = false,
     this.lokasiLampuMatiGps,
+    this.latitudeLampuMati,
+    this.longitudeLampuMati,
     this.resikoLampuMati,
     this.keterangan = '',
     this.errorMessage,
@@ -195,10 +208,16 @@ class RondaState extends Equatable {
     String? resikoSelokanTersumbat,
     bool? adaJalanRusak,
     String? lokasiJalanRusakGps,
+    double? latitudeJalanRusak,
+    double? longitudeJalanRusak,
     String? resikoJalanRusak,
     bool? adaLampuMati,
     String? lokasiLampuMatiGps,
+    double? latitudeLampuMati,
+    double? longitudeLampuMati,
     String? resikoLampuMati,
+    String? patrolTime,
+    String? waktuKejadian,
     String? keterangan,
     String? errorMessage,
     RondaLaporanEntity? lastResult,
@@ -206,6 +225,8 @@ class RondaState extends Equatable {
     return RondaState(
       status: status ?? this.status,
       currentStep: currentStep ?? this.currentStep,
+      patrolTime: patrolTime ?? this.patrolTime,
+      waktuKejadian: waktuKejadian ?? this.waktuKejadian,
       sampahMenumpuk: sampahMenumpuk ?? this.sampahMenumpuk,
       selokanMampet: selokanMampet ?? this.selokanMampet,
       fasilitasRusak: fasilitasRusak ?? this.fasilitasRusak,
@@ -269,9 +290,13 @@ class RondaState extends Equatable {
           resikoSelokanTersumbat ?? this.resikoSelokanTersumbat,
       adaJalanRusak: adaJalanRusak ?? this.adaJalanRusak,
       lokasiJalanRusakGps: lokasiJalanRusakGps ?? this.lokasiJalanRusakGps,
+      latitudeJalanRusak: latitudeJalanRusak ?? this.latitudeJalanRusak,
+      longitudeJalanRusak: longitudeJalanRusak ?? this.longitudeJalanRusak,
       resikoJalanRusak: resikoJalanRusak ?? this.resikoJalanRusak,
       adaLampuMati: adaLampuMati ?? this.adaLampuMati,
       lokasiLampuMatiGps: lokasiLampuMatiGps ?? this.lokasiLampuMatiGps,
+      latitudeLampuMati: latitudeLampuMati ?? this.latitudeLampuMati,
+      longitudeLampuMati: longitudeLampuMati ?? this.longitudeLampuMati,
       resikoLampuMati: resikoLampuMati ?? this.resikoLampuMati,
       keterangan: keterangan ?? this.keterangan,
       errorMessage: errorMessage,
@@ -334,10 +359,16 @@ class RondaState extends Equatable {
     resikoSelokanTersumbat,
     adaJalanRusak,
     lokasiJalanRusakGps,
+    latitudeJalanRusak,
+    longitudeJalanRusak,
     resikoJalanRusak,
     adaLampuMati,
     lokasiLampuMatiGps,
+    latitudeLampuMati,
+    longitudeLampuMati,
     resikoLampuMati,
+    patrolTime,
+    waktuKejadian,
     keterangan,
     errorMessage,
     lastResult,

@@ -91,10 +91,16 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
         resikoSelokanTersumbat: event.resikoSelokanTersumbat,
         adaJalanRusak: event.adaJalanRusak,
         lokasiJalanRusakGps: event.lokasiJalanRusakGps,
+        latitudeJalanRusak: event.latitudeJalanRusak,
+        longitudeJalanRusak: event.longitudeJalanRusak,
         resikoJalanRusak: event.resikoJalanRusak,
         adaLampuMati: event.adaLampuMati,
         lokasiLampuMatiGps: event.lokasiLampuMatiGps,
+        latitudeLampuMati: event.latitudeLampuMati,
+        longitudeLampuMati: event.longitudeLampuMati,
         resikoLampuMati: event.resikoLampuMati,
+        patrolTime: event.patrolTime,
+        waktuKejadian: event.waktuKejadian,
         keterangan: event.keterangan,
       ),
     );
@@ -109,6 +115,10 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
     Emitter<RondaState> emit,
   ) async {
     emit(state.copyWith(status: RondaStatus.submitting, errorMessage: null));
+
+    final now = DateTime.now();
+    final timeNowStr =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
     final dataEntity = RondaLaporanEntity(
       sampahMenumpuk: state.sampahMenumpuk,
@@ -162,12 +172,18 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
       resikoSelokanTersumbat: state.resikoSelokanTersumbat,
       adaJalanRusak: state.adaJalanRusak,
       lokasiJalanRusakGps: state.lokasiJalanRusakGps,
+      latitudeJalanRusak: state.latitudeJalanRusak,
+      longitudeJalanRusak: state.longitudeJalanRusak,
       resikoJalanRusak: state.resikoJalanRusak,
       adaLampuMati: state.adaLampuMati,
       lokasiLampuMatiGps: state.lokasiLampuMatiGps,
+      latitudeLampuMati: state.latitudeLampuMati,
+      longitudeLampuMati: state.longitudeLampuMati,
       resikoLampuMati: state.resikoLampuMati,
+      patrolTime: timeNowStr,
+      waktuKejadian: timeNowStr,
       keterangan: state.keterangan,
-      timestamp: DateTime.now(),
+      timestamp: now,
     );
 
     final result = await submitRondaLaporanUsecase.call(dataEntity);

@@ -1016,9 +1016,13 @@ class _RondaScreenState extends State<RondaScreen> {
                   label: 'Lokasi Kejadian (GPS)',
                   value: state.lokasiJalanRusakGps,
                   hintText: 'pilih lokasi gps',
-                  onGpsSelected: (gpsCoords) {
+                  onLocationSelected: (address, lat, lng) {
                     context.read<RondaBloc>().add(
-                      UpdateRondaFieldEvent(lokasiJalanRusakGps: gpsCoords),
+                      UpdateRondaFieldEvent(
+                        lokasiJalanRusakGps: address,
+                        latitudeJalanRusak: lat,
+                        longitudeJalanRusak: lng,
+                      ),
                     );
                   },
                 ),
@@ -1062,9 +1066,13 @@ class _RondaScreenState extends State<RondaScreen> {
                   label: 'Lokasi Kejadian (GPS)',
                   value: state.lokasiLampuMatiGps,
                   hintText: 'pilih lokasi gps',
-                  onGpsSelected: (gpsCoords) {
+                  onLocationSelected: (address, lat, lng) {
                     context.read<RondaBloc>().add(
-                      UpdateRondaFieldEvent(lokasiLampuMatiGps: gpsCoords),
+                      UpdateRondaFieldEvent(
+                        lokasiLampuMatiGps: address,
+                        latitudeLampuMati: lat,
+                        longitudeLampuMati: lng,
+                      ),
                     );
                   },
                 ),
@@ -1586,7 +1594,8 @@ class _RondaScreenState extends State<RondaScreen> {
   Widget _buildGpsInput({
     required String label,
     required String? value,
-    required Function(String) onGpsSelected,
+    required void Function(String address, double? lat, double? lng)
+        onLocationSelected,
     String? hintText,
   }) {
     final effectiveHint = hintText ?? 'pilih lokasi gps';
@@ -1617,12 +1626,16 @@ class _RondaScreenState extends State<RondaScreen> {
         const SizedBox(height: 6),
         InkWell(
           onTap: () async {
-            final selectedLocation = await LocationPickerPage.show(
+            final result = await LocationPickerPage.showWithResult(
               context,
               initialAddress: hasValue ? value : null,
             );
-            if (selectedLocation != null && selectedLocation.isNotEmpty) {
-              onGpsSelected(selectedLocation);
+            if (result != null && result.address.isNotEmpty) {
+              onLocationSelected(
+                result.address,
+                result.latitude,
+                result.longitude,
+              );
             }
           },
           borderRadius: BorderRadius.circular(10),
@@ -1671,6 +1684,7 @@ class _RondaScreenState extends State<RondaScreen> {
     required String? value,
     required Function(String) onTimeSelected,
     String? hintText,
+    bool isRequired = true,
   }) {
     final effectiveHint = hintText ?? 'pilih waktu';
     return Column(
@@ -1684,15 +1698,17 @@ class _RondaScreenState extends State<RondaScreen> {
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
             ),
-            children: const [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
+            children: isRequired
+                ? const [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ]
+                : const [],
           ),
         ),
         const SizedBox(height: 6),

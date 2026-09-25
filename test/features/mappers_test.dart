@@ -117,6 +117,10 @@ void main() {
         permasalahanSosial: 1,
         kasusPerzinahan: 1,
         orangTerlantar: 1,
+        latitudeJalanRusak: -6.237643,
+        longitudeJalanRusak: 106.853477,
+        latitudeLampuMati: -6.237650,
+        longitudeLampuMati: 106.853490,
         keterangan: 'Patroli selesai aman',
         timestamp: DateTime(2026, 8, 18, 23, 0),
       );
@@ -124,10 +128,18 @@ void main() {
       final entity = model.toDomain();
       expect(entity.id, 'RND-001');
       expect(entity.sampahMenumpuk, 2);
+      expect(entity.latitudeJalanRusak, -6.237643);
+      expect(entity.longitudeJalanRusak, 106.853477);
+      expect(entity.latitudeLampuMati, -6.237650);
+      expect(entity.longitudeLampuMati, 106.853490);
       expect(entity.keterangan, 'Patroli selesai aman');
 
       final mappedBack = entity.toModel();
       expect(mappedBack.id, model.id);
+      expect(mappedBack.latitudeJalanRusak, model.latitudeJalanRusak);
+      expect(mappedBack.longitudeJalanRusak, model.longitudeJalanRusak);
+      expect(mappedBack.latitudeLampuMati, model.latitudeLampuMati);
+      expect(mappedBack.longitudeLampuMati, model.longitudeLampuMati);
       expect(mappedBack.keterangan, model.keterangan);
       expect(mappedBack.jalanBerlubang, model.jalanBerlubang);
     });

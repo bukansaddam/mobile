@@ -74,14 +74,23 @@ class UpdateRondaFieldEvent extends RondaEvent {
   final String? resikoSelokanTersumbat;
   final bool? adaJalanRusak;
   final String? lokasiJalanRusakGps;
+  final double? latitudeJalanRusak;
+  final double? longitudeJalanRusak;
   final String? resikoJalanRusak;
   final bool? adaLampuMati;
   final String? lokasiLampuMatiGps;
+  final double? latitudeLampuMati;
+  final double? longitudeLampuMati;
   final String? resikoLampuMati;
+
+  final String? patrolTime;
+  final String? waktuKejadian;
 
   final String? keterangan;
 
   const UpdateRondaFieldEvent({
+    this.patrolTime,
+    this.waktuKejadian,
     this.sampahMenumpuk,
     this.selokanMampet,
     this.fasilitasRusak,
@@ -133,9 +142,13 @@ class UpdateRondaFieldEvent extends RondaEvent {
     this.resikoSelokanTersumbat,
     this.adaJalanRusak,
     this.lokasiJalanRusakGps,
+    this.latitudeJalanRusak,
+    this.longitudeJalanRusak,
     this.resikoJalanRusak,
     this.adaLampuMati,
     this.lokasiLampuMatiGps,
+    this.latitudeLampuMati,
+    this.longitudeLampuMati,
     this.resikoLampuMati,
     this.keterangan,
   });
@@ -193,10 +206,16 @@ class UpdateRondaFieldEvent extends RondaEvent {
     resikoSelokanTersumbat,
     adaJalanRusak,
     lokasiJalanRusakGps,
+    latitudeJalanRusak,
+    longitudeJalanRusak,
     resikoJalanRusak,
     adaLampuMati,
     lokasiLampuMatiGps,
+    latitudeLampuMati,
+    longitudeLampuMati,
     resikoLampuMati,
+    patrolTime,
+    waktuKejadian,
     keterangan,
   ];
 }

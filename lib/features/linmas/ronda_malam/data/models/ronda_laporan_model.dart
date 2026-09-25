@@ -3,6 +3,8 @@ import '../../domain/entities/ronda_laporan_entity.dart';
 class RondaLaporanModel extends RondaLaporanEntity {
   const RondaLaporanModel({
     super.id,
+    super.patrolTime,
+    super.waktuKejadian,
     super.sampahMenumpuk,
     super.selokanMampet,
     super.fasilitasRusak,
@@ -54,9 +56,13 @@ class RondaLaporanModel extends RondaLaporanEntity {
     super.resikoSelokanTersumbat,
     super.adaJalanRusak,
     super.lokasiJalanRusakGps,
+    super.latitudeJalanRusak,
+    super.longitudeJalanRusak,
     super.resikoJalanRusak,
     super.adaLampuMati,
     super.lokasiLampuMatiGps,
+    super.latitudeLampuMati,
+    super.longitudeLampuMati,
     super.resikoLampuMati,
     super.keterangan,
     super.timestamp,
@@ -65,6 +71,9 @@ class RondaLaporanModel extends RondaLaporanEntity {
   factory RondaLaporanModel.fromJson(Map<String, dynamic> json) {
     return RondaLaporanModel(
       id: json['id'] as String?,
+      patrolTime: json['patrolTime'] as String? ?? json['patrol_time'] as String?,
+      waktuKejadian:
+          json['waktuKejadian'] as String? ?? json['waktu_kejadian'] as String?,
       sampahMenumpuk: (json['sampahMenumpuk'] as num?)?.toInt() ?? 1,
       selokanMampet: (json['selokanMampet'] as num?)?.toInt() ?? 1,
       fasilitasRusak: (json['fasilitasRusak'] as num?)?.toInt() ?? 1,
@@ -121,9 +130,19 @@ class RondaLaporanModel extends RondaLaporanEntity {
       resikoSelokanTersumbat: json['resikoSelokanTersumbat'] as String?,
       adaJalanRusak: json['adaJalanRusak'] as bool? ?? false,
       lokasiJalanRusakGps: json['lokasiJalanRusakGps'] as String?,
+      latitudeJalanRusak: (json['latitudeJalanRusak'] as num?)?.toDouble() ??
+          (json['latitude_jalan_rusak'] as num?)?.toDouble() ??
+          (json['latitude'] as num?)?.toDouble(),
+      longitudeJalanRusak: (json['longitudeJalanRusak'] as num?)?.toDouble() ??
+          (json['longitude_jalan_rusak'] as num?)?.toDouble() ??
+          (json['longitude'] as num?)?.toDouble(),
       resikoJalanRusak: json['resikoJalanRusak'] as String?,
       adaLampuMati: json['adaLampuMati'] as bool? ?? false,
       lokasiLampuMatiGps: json['lokasiLampuMatiGps'] as String?,
+      latitudeLampuMati: (json['latitudeLampuMati'] as num?)?.toDouble() ??
+          (json['latitude_lampu_mati'] as num?)?.toDouble(),
+      longitudeLampuMati: (json['longitudeLampuMati'] as num?)?.toDouble() ??
+          (json['longitude_lampu_mati'] as num?)?.toDouble(),
       resikoLampuMati: json['resikoLampuMati'] as String?,
       keterangan: json['keterangan'] as String? ?? '',
       timestamp: json['timestamp'] != null
@@ -135,6 +154,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'patrolTime': patrolTime,
+      'waktuKejadian': waktuKejadian,
       'sampahMenumpuk': sampahMenumpuk,
       'selokanMampet': selokanMampet,
       'fasilitasRusak': fasilitasRusak,
@@ -186,9 +207,13 @@ class RondaLaporanModel extends RondaLaporanEntity {
       'resikoSelokanTersumbat': resikoSelokanTersumbat,
       'adaJalanRusak': adaJalanRusak,
       'lokasiJalanRusakGps': lokasiJalanRusakGps,
+      'latitudeJalanRusak': latitudeJalanRusak,
+      'longitudeJalanRusak': longitudeJalanRusak,
       'resikoJalanRusak': resikoJalanRusak,
       'adaLampuMati': adaLampuMati,
       'lokasiLampuMatiGps': lokasiLampuMatiGps,
+      'latitudeLampuMati': latitudeLampuMati,
+      'longitudeLampuMati': longitudeLampuMati,
       'resikoLampuMati': resikoLampuMati,
       'keterangan': keterangan,
       'timestamp': timestamp?.toIso8601String(),
@@ -198,6 +223,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
   factory RondaLaporanModel.fromEntity(RondaLaporanEntity entity) {
     return RondaLaporanModel(
       id: entity.id,
+      patrolTime: entity.patrolTime,
+      waktuKejadian: entity.waktuKejadian,
       sampahMenumpuk: entity.sampahMenumpuk,
       selokanMampet: entity.selokanMampet,
       fasilitasRusak: entity.fasilitasRusak,
@@ -249,12 +276,376 @@ class RondaLaporanModel extends RondaLaporanEntity {
       resikoSelokanTersumbat: entity.resikoSelokanTersumbat,
       adaJalanRusak: entity.adaJalanRusak,
       lokasiJalanRusakGps: entity.lokasiJalanRusakGps,
+      latitudeJalanRusak: entity.latitudeJalanRusak,
+      longitudeJalanRusak: entity.longitudeJalanRusak,
       resikoJalanRusak: entity.resikoJalanRusak,
       adaLampuMati: entity.adaLampuMati,
       lokasiLampuMatiGps: entity.lokasiLampuMatiGps,
+      latitudeLampuMati: entity.latitudeLampuMati,
+      longitudeLampuMati: entity.longitudeLampuMati,
       resikoLampuMati: entity.resikoLampuMati,
       keterangan: entity.keterangan,
       timestamp: entity.timestamp,
+    );
+  }
+
+  RondaLaporanModel copyWith({
+    String? id,
+    String? patrolTime,
+    String? waktuKejadian,
+    int? sampahMenumpuk,
+    int? selokanMampet,
+    int? fasilitasRusak,
+    int? kegiatanMengganggu,
+    int? potensiBahaya,
+    int? jalanBerlubang,
+    int? lampuMati,
+    int? laporanKeamanan,
+    int? wargaBertengkar,
+    int? tempatKurangAman,
+    int? kerumunanTidakTertib,
+    int? perluBantuanPetugas,
+    int? gangguanKamtibmas,
+    int? aktivitasMencurigakan,
+    int? kehilanganLingkungan,
+    int? wargaButuhBantuan,
+    int? kelompokBerselisih,
+    int? keluhanWarga,
+    int? kejadianMenggangguWarga,
+    int? perluTerusanRTRW,
+    int? permasalahanSosial,
+    int? kasusPerzinahan,
+    int? orangTerlantar,
+    bool? adaSampahMenumpuk,
+    String? waktuSampahMenumpuk,
+    String? lokasiSampahMenumpuk,
+    String? jenisSampahDominan,
+    bool? pengangkutanSesuaiJadwal,
+    String? alasanPengangkutan,
+    bool? adaPembakaranSampah,
+    String? waktuPembakaran,
+    String? lokasiPembakaran,
+    String? pembakaranDiberiTindakan,
+    bool? adaPencurian,
+    String? waktuPencurian,
+    String? lokasiPencurian,
+    String? pelakuPencurianDiketahui,
+    String? pencurianDilaporkanAparat,
+    bool? adaTawuran,
+    String? waktuTawuran,
+    String? lokasiTawuran,
+    String? pelakuTawuranDiketahui,
+    String? tawuranDilaporkanAparat,
+    bool? adaNarkoba,
+    String? narkobaDilaporkanAparat,
+    bool? adaSelokanTersumbat,
+    String? waktuSelokanTersumbat,
+    String? lokasiSelokanTersumbat,
+    String? resikoSelokanTersumbat,
+    bool? adaJalanRusak,
+    String? lokasiJalanRusakGps,
+    double? latitudeJalanRusak,
+    double? longitudeJalanRusak,
+    String? resikoJalanRusak,
+    bool? adaLampuMati,
+    String? lokasiLampuMatiGps,
+    double? latitudeLampuMati,
+    double? longitudeLampuMati,
+    String? resikoLampuMati,
+    String? keterangan,
+    DateTime? timestamp,
+  }) {
+    return RondaLaporanModel(
+      id: id ?? this.id,
+      patrolTime: patrolTime ?? this.patrolTime,
+      waktuKejadian: waktuKejadian ?? this.waktuKejadian,
+      sampahMenumpuk: sampahMenumpuk ?? this.sampahMenumpuk,
+      selokanMampet: selokanMampet ?? this.selokanMampet,
+      fasilitasRusak: fasilitasRusak ?? this.fasilitasRusak,
+      kegiatanMengganggu: kegiatanMengganggu ?? this.kegiatanMengganggu,
+      potensiBahaya: potensiBahaya ?? this.potensiBahaya,
+      jalanBerlubang: jalanBerlubang ?? this.jalanBerlubang,
+      lampuMati: lampuMati ?? this.lampuMati,
+      laporanKeamanan: laporanKeamanan ?? this.laporanKeamanan,
+      wargaBertengkar: wargaBertengkar ?? this.wargaBertengkar,
+      tempatKurangAman: tempatKurangAman ?? this.tempatKurangAman,
+      kerumunanTidakTertib: kerumunanTidakTertib ?? this.kerumunanTidakTertib,
+      perluBantuanPetugas: perluBantuanPetugas ?? this.perluBantuanPetugas,
+      gangguanKamtibmas: gangguanKamtibmas ?? this.gangguanKamtibmas,
+      aktivitasMencurigakan:
+          aktivitasMencurigakan ?? this.aktivitasMencurigakan,
+      kehilanganLingkungan: kehilanganLingkungan ?? this.kehilanganLingkungan,
+      wargaButuhBantuan: wargaButuhBantuan ?? this.wargaButuhBantuan,
+      kelompokBerselisih: kelompokBerselisih ?? this.kelompokBerselisih,
+      keluhanWarga: keluhanWarga ?? this.keluhanWarga,
+      kejadianMenggangguWarga:
+          kejadianMenggangguWarga ?? this.kejadianMenggangguWarga,
+      perluTerusanRTRW: perluTerusanRTRW ?? this.perluTerusanRTRW,
+      permasalahanSosial: permasalahanSosial ?? this.permasalahanSosial,
+      kasusPerzinahan: kasusPerzinahan ?? this.kasusPerzinahan,
+      orangTerlantar: orangTerlantar ?? this.orangTerlantar,
+      adaSampahMenumpuk: adaSampahMenumpuk ?? this.adaSampahMenumpuk,
+      waktuSampahMenumpuk: waktuSampahMenumpuk ?? this.waktuSampahMenumpuk,
+      lokasiSampahMenumpuk: lokasiSampahMenumpuk ?? this.lokasiSampahMenumpuk,
+      jenisSampahDominan: jenisSampahDominan ?? this.jenisSampahDominan,
+      pengangkutanSesuaiJadwal:
+          pengangkutanSesuaiJadwal ?? this.pengangkutanSesuaiJadwal,
+      alasanPengangkutan: alasanPengangkutan ?? this.alasanPengangkutan,
+      adaPembakaranSampah: adaPembakaranSampah ?? this.adaPembakaranSampah,
+      waktuPembakaran: waktuPembakaran ?? this.waktuPembakaran,
+      lokasiPembakaran: lokasiPembakaran ?? this.lokasiPembakaran,
+      pembakaranDiberiTindakan:
+          pembakaranDiberiTindakan ?? this.pembakaranDiberiTindakan,
+      adaPencurian: adaPencurian ?? this.adaPencurian,
+      waktuPencurian: waktuPencurian ?? this.waktuPencurian,
+      lokasiPencurian: lokasiPencurian ?? this.lokasiPencurian,
+      pelakuPencurianDiketahui:
+          pelakuPencurianDiketahui ?? this.pelakuPencurianDiketahui,
+      pencurianDilaporkanAparat:
+          pencurianDilaporkanAparat ?? this.pencurianDilaporkanAparat,
+      adaTawuran: adaTawuran ?? this.adaTawuran,
+      waktuTawuran: waktuTawuran ?? this.waktuTawuran,
+      lokasiTawuran: lokasiTawuran ?? this.lokasiTawuran,
+      pelakuTawuranDiketahui:
+          pelakuTawuranDiketahui ?? this.pelakuTawuranDiketahui,
+      tawuranDilaporkanAparat:
+          tawuranDilaporkanAparat ?? this.tawuranDilaporkanAparat,
+      adaNarkoba: adaNarkoba ?? this.adaNarkoba,
+      narkobaDilaporkanAparat:
+          narkobaDilaporkanAparat ?? this.narkobaDilaporkanAparat,
+      adaSelokanTersumbat: adaSelokanTersumbat ?? this.adaSelokanTersumbat,
+      waktuSelokanTersumbat:
+          waktuSelokanTersumbat ?? this.waktuSelokanTersumbat,
+      lokasiSelokanTersumbat:
+          lokasiSelokanTersumbat ?? this.lokasiSelokanTersumbat,
+      resikoSelokanTersumbat:
+          resikoSelokanTersumbat ?? this.resikoSelokanTersumbat,
+      adaJalanRusak: adaJalanRusak ?? this.adaJalanRusak,
+      lokasiJalanRusakGps: lokasiJalanRusakGps ?? this.lokasiJalanRusakGps,
+      latitudeJalanRusak: latitudeJalanRusak ?? this.latitudeJalanRusak,
+      longitudeJalanRusak: longitudeJalanRusak ?? this.longitudeJalanRusak,
+      resikoJalanRusak: resikoJalanRusak ?? this.resikoJalanRusak,
+      adaLampuMati: adaLampuMati ?? this.adaLampuMati,
+      lokasiLampuMatiGps: lokasiLampuMatiGps ?? this.lokasiLampuMatiGps,
+      latitudeLampuMati: latitudeLampuMati ?? this.latitudeLampuMati,
+      longitudeLampuMati: longitudeLampuMati ?? this.longitudeLampuMati,
+      resikoLampuMati: resikoLampuMati ?? this.resikoLampuMati,
+      keterangan: keterangan ?? this.keterangan,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
+  Map<String, dynamic> toDailyReportPayload() {
+    final now = timestamp ?? DateTime.now();
+    final defaultTime =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+    final effectivePatrolTime =
+        (patrolTime != null && patrolTime!.trim().isNotEmpty)
+            ? patrolTime!.trim()
+            : defaultTime;
+
+    final effectiveWaktuKejadian =
+        (waktuKejadian != null && waktuKejadian!.trim().isNotEmpty)
+            ? waktuKejadian!.trim()
+            : defaultTime;
+
+    // Penumpukan Sampah
+    final penumpukanSampahMap = <String, dynamic>{
+      'answer': adaSampahMenumpuk ? 'ya' : 'tidak',
+    };
+    if (adaSampahMenumpuk) {
+      penumpukanSampahMap['waktu_kejadian'] =
+          (waktuSampahMenumpuk != null && waktuSampahMenumpuk!.isNotEmpty)
+              ? waktuSampahMenumpuk!
+              : effectiveWaktuKejadian;
+      penumpukanSampahMap['lokasi_kejadian'] = lokasiSampahMenumpuk ?? '';
+      penumpukanSampahMap['jenis_sampah_dominan'] = jenisSampahDominan ?? '';
+    }
+
+    // Jadwal Pengangkutan
+    final jadwalPengangkutanMap = <String, dynamic>{
+      'answer': pengangkutanSesuaiJadwal ? 'ya' : 'tidak',
+    };
+    if (!pengangkutanSesuaiJadwal) {
+      jadwalPengangkutanMap['alasan'] =
+          (alasanPengangkutan != null && alasanPengangkutan!.isNotEmpty)
+              ? alasanPengangkutan!
+              : 'Truk pengangkut terlambat datang';
+    }
+
+    // Pembakaran Sampah
+    final pembakaranSampahMap = <String, dynamic>{
+      'answer': adaPembakaranSampah ? 'ya' : 'tidak',
+    };
+    if (adaPembakaranSampah) {
+      pembakaranSampahMap['waktu_kejadian'] =
+          (waktuPembakaran != null && waktuPembakaran!.isNotEmpty)
+              ? waktuPembakaran!
+              : effectiveWaktuKejadian;
+      pembakaranSampahMap['lokasi_kejadian'] = lokasiPembakaran ?? '';
+      pembakaranSampahMap['tindakan'] = pembakaranDiberiTindakan ?? '';
+    }
+
+    // Pencurian / Perampasan
+    final pencurianPerampasanMap = <String, dynamic>{
+      'answer': adaPencurian ? 'ya' : 'tidak',
+      'pelaku_diketahui':
+          (pelakuPencurianDiketahui?.toLowerCase() == 'ya' ||
+                  pelakuPencurianDiketahui?.toLowerCase() == 'true')
+              ? 'ya'
+              : 'tidak',
+      'lapor_aparat':
+          (pencurianDilaporkanAparat?.toLowerCase() == 'ya' ||
+                  pencurianDilaporkanAparat?.toLowerCase() == 'true')
+              ? 'ya'
+              : 'tidak',
+    };
+    if (adaPencurian) {
+      pencurianPerampasanMap['waktu_kejadian'] =
+          (waktuPencurian != null && waktuPencurian!.isNotEmpty)
+              ? waktuPencurian!
+              : effectiveWaktuKejadian;
+      pencurianPerampasanMap['lokasi_kejadian'] = lokasiPencurian ?? '';
+    }
+
+    // Perkelahian Kelompok
+    final perkelahianKelompokMap = <String, dynamic>{
+      'answer': adaTawuran ? 'ya' : 'tidak',
+    };
+    if (adaTawuran) {
+      perkelahianKelompokMap['waktu_kejadian'] =
+          (waktuTawuran != null && waktuTawuran!.isNotEmpty)
+              ? waktuTawuran!
+              : effectiveWaktuKejadian;
+      perkelahianKelompokMap['lokasi_kejadian'] = lokasiTawuran ?? '';
+      perkelahianKelompokMap['pelaku_diketahui'] =
+          (pelakuTawuranDiketahui?.toLowerCase() == 'ya') ? 'ya' : 'tidak';
+      perkelahianKelompokMap['lapor_aparat'] =
+          (tawuranDilaporkanAparat?.toLowerCase() == 'ya') ? 'ya' : 'tidak';
+    }
+
+    // Penyalahgunaan Narkoba
+    final penyalahgunaanNarkobaMap = <String, dynamic>{
+      'answer': adaNarkoba ? 'ya' : 'tidak',
+    };
+    if (adaNarkoba) {
+      penyalahgunaanNarkobaMap['lapor_aparat'] =
+          (narkobaDilaporkanAparat?.toLowerCase() == 'ya') ? 'ya' : 'tidak';
+    }
+
+    // Selokan Tersumbat
+    final selokanTersumbatMap = <String, dynamic>{
+      'answer': adaSelokanTersumbat ? 'ya' : 'tidak',
+    };
+    if (adaSelokanTersumbat) {
+      selokanTersumbatMap['waktu_kejadian'] =
+          (waktuSelokanTersumbat != null && waktuSelokanTersumbat!.isNotEmpty)
+              ? waktuSelokanTersumbat!
+              : effectiveWaktuKejadian;
+      selokanTersumbatMap['lokasi_kejadian'] = lokasiSelokanTersumbat ?? '';
+      selokanTersumbatMap['resiko'] = resikoSelokanTersumbat ?? '';
+    }
+
+    // Jalan Rusak
+    double? resolvedLatJalanRusak = latitudeJalanRusak;
+    double? resolvedLngJalanRusak = longitudeJalanRusak;
+    if ((resolvedLatJalanRusak == null || resolvedLngJalanRusak == null) &&
+        lokasiJalanRusakGps != null) {
+      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
+          .firstMatch(lokasiJalanRusakGps!);
+      if (match != null) {
+        resolvedLatJalanRusak ??= double.tryParse(match.group(1)!);
+        resolvedLngJalanRusak ??= double.tryParse(match.group(2)!);
+      }
+    }
+
+    final jalanRusakMap = <String, dynamic>{
+      'answer': adaJalanRusak ? 'ya' : 'tidak',
+      'resiko': (resikoJalanRusak != null && resikoJalanRusak!.isNotEmpty)
+          ? resikoJalanRusak!
+          : 'str',
+    };
+    if (adaJalanRusak) {
+      jalanRusakMap['lokasi_kejadian'] = lokasiJalanRusakGps ?? '';
+      if (resolvedLatJalanRusak != null) {
+        jalanRusakMap['latitude'] = resolvedLatJalanRusak;
+      }
+      if (resolvedLngJalanRusak != null) {
+        jalanRusakMap['longitude'] = resolvedLngJalanRusak;
+      }
+    }
+
+    // Lampu Mati
+    double? resolvedLatLampuMati = latitudeLampuMati;
+    double? resolvedLngLampuMati = longitudeLampuMati;
+    if ((resolvedLatLampuMati == null || resolvedLngLampuMati == null) &&
+        lokasiLampuMatiGps != null) {
+      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
+          .firstMatch(lokasiLampuMatiGps!);
+      if (match != null) {
+        resolvedLatLampuMati ??= double.tryParse(match.group(1)!);
+        resolvedLngLampuMati ??= double.tryParse(match.group(2)!);
+      }
+    }
+
+    final lampuMatiMap = <String, dynamic>{
+      'answer': adaLampuMati ? 'ya' : 'tidak',
+    };
+    if (adaLampuMati) {
+      lampuMatiMap['lokasi_kejadian'] = lokasiLampuMatiGps ?? '';
+      if (resolvedLatLampuMati != null) {
+        lampuMatiMap['latitude'] = resolvedLatLampuMati;
+      }
+      if (resolvedLngLampuMati != null) {
+        lampuMatiMap['longitude'] = resolvedLngLampuMati;
+      }
+      lampuMatiMap['resiko'] = resikoLampuMati ?? '';
+    }
+
+    return {
+      'patrol_time': effectivePatrolTime,
+      'waktu_kejadian': effectiveWaktuKejadian,
+      'patrol_checklist': {
+        'penumpukan_sampah': penumpukanSampahMap,
+        'jadwal_pengangkutan': jadwalPengangkutanMap,
+        'pembakaran_sampah': pembakaranSampahMap,
+        'pencurian_perampasan': pencurianPerampasanMap,
+        'perkelahian_kelompok': perkelahianKelompokMap,
+        'penyalahgunaan_narkoba': penyalahgunaanNarkobaMap,
+        'selokan_tersumbat': selokanTersumbatMap,
+        'jalan_rusak': jalanRusakMap,
+        'lampu_mati': lampuMatiMap,
+      },
+      'notes': keterangan,
+    };
+  }
+
+  factory RondaLaporanModel.fromApiResponse(
+    dynamic responseData, {
+    RondaLaporanModel? fallback,
+  }) {
+    String? resolvedId;
+    if (responseData is Map<String, dynamic>) {
+      resolvedId = (responseData['id'] ??
+              responseData['report_id'] ??
+              responseData['data']?['id'] ??
+              responseData['data']?['report_id'])
+          ?.toString();
+    } else if (responseData != null) {
+      resolvedId = responseData.toString();
+    }
+
+    resolvedId ??= fallback?.id ??
+        'RND-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
+
+    if (fallback != null) {
+      return fallback.copyWith(id: resolvedId);
+    }
+
+    return RondaLaporanModel(
+      id: resolvedId,
+      timestamp: DateTime.now(),
     );
   }
 }

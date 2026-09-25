@@ -9,14 +9,29 @@ import '../bloc/location_picker_cubit.dart';
 import '../bloc/location_picker_state.dart';
 import '../widgets/location_search_bar_widget.dart';
 
+class LocationPickerResult {
+  final String address;
+  final LatLng position;
+
+  double get latitude => position.latitude;
+  double get longitude => position.longitude;
+
+  const LocationPickerResult({
+    required this.address,
+    required this.position,
+  });
+}
+
 class LocationPickerPage extends StatefulWidget {
   final String? initialAddress;
   final LatLng? initialPosition;
+  final bool returnResultObject;
 
   const LocationPickerPage({
     super.key,
     this.initialAddress,
     this.initialPosition,
+    this.returnResultObject = false,
   });
 
   static Future<String?> show(
@@ -33,6 +48,27 @@ class LocationPickerPage extends StatefulWidget {
           child: LocationPickerPage(
             initialAddress: initialAddress,
             initialPosition: initialPosition,
+          ),
+        ),
+      ),
+    );
+  }
+
+  static Future<LocationPickerResult?> showWithResult(
+    BuildContext context, {
+    String? initialAddress,
+    LatLng? initialPosition,
+  }) {
+    return Navigator.push<LocationPickerResult>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BlocProvider(
+          create: (_) =>
+              sl<LocationPickerCubit>()..init(initialPosition, initialAddress),
+          child: LocationPickerPage(
+            initialAddress: initialAddress,
+            initialPosition: initialPosition,
+            returnResultObject: true,
           ),
         ),
       ),
@@ -339,10 +375,20 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                             onPressed: state.isLoadingAddress
                                 ? null
                                 : () {
-                                    Navigator.pop(
-                                      context,
-                                      state.selectedAddress,
-                                    );
+                                    if (widget.returnResultObject) {
+                                      Navigator.pop(
+                                        context,
+                                        LocationPickerResult(
+                                          address: state.selectedAddress,
+                                          position: state.targetPosition,
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.pop(
+                                        context,
+                                        state.selectedAddress,
+                                      );
+                                    }
                                   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,

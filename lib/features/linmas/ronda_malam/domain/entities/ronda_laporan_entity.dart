@@ -65,16 +65,25 @@ class RondaLaporanEntity extends Equatable {
   final String? resikoSelokanTersumbat;
   final bool adaJalanRusak;
   final String? lokasiJalanRusakGps;
+  final double? latitudeJalanRusak;
+  final double? longitudeJalanRusak;
   final String? resikoJalanRusak;
   final bool adaLampuMati;
   final String? lokasiLampuMatiGps;
+  final double? latitudeLampuMati;
+  final double? longitudeLampuMati;
   final String? resikoLampuMati;
+
+  final String? patrolTime;
+  final String? waktuKejadian;
 
   final String keterangan;
   final DateTime? timestamp;
 
   const RondaLaporanEntity({
     this.id,
+    this.patrolTime,
+    this.waktuKejadian,
     this.sampahMenumpuk = 1,
     this.selokanMampet = 1,
     this.fasilitasRusak = 1,
@@ -126,9 +135,13 @@ class RondaLaporanEntity extends Equatable {
     this.resikoSelokanTersumbat,
     this.adaJalanRusak = false,
     this.lokasiJalanRusakGps,
+    this.latitudeJalanRusak,
+    this.longitudeJalanRusak,
     this.resikoJalanRusak,
     this.adaLampuMati = false,
     this.lokasiLampuMatiGps,
+    this.latitudeLampuMati,
+    this.longitudeLampuMati,
     this.resikoLampuMati,
     this.keterangan = '',
     this.timestamp,
@@ -188,10 +201,16 @@ class RondaLaporanEntity extends Equatable {
     resikoSelokanTersumbat,
     adaJalanRusak,
     lokasiJalanRusakGps,
+    latitudeJalanRusak,
+    longitudeJalanRusak,
     resikoJalanRusak,
     adaLampuMati,
     lokasiLampuMatiGps,
+    latitudeLampuMati,
+    longitudeLampuMati,
     resikoLampuMati,
+    patrolTime,
+    waktuKejadian,
     keterangan,
     timestamp,
   ];
