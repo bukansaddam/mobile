@@ -17,11 +17,19 @@ class BankSampahRepositoryImpl implements BankSampahRepository {
   Future<Either<Failure, BankSampahReportsDataEntity>> getReports({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   }) async {
     try {
       final res = await remoteDataSource.getMyDeposits(
         page: page,
         perPage: perPage,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
+        bankId: bankId,
+        wasteType: wasteType,
       );
       return Right(res.toDomain());
     } catch (e) {

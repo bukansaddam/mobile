@@ -139,24 +139,32 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                         physics: const BouncingScrollPhysics(),
                         child: Row(
                           children: [
-                            if (state.selectedSortOption !=
-                                BankSampahSortOption.terbaru)
+                            if (state.sortBy != BankSampahSortBy.date ||
+                                state.sortDirection !=
+                                    BankSampahSortDirection.desc)
                               _buildAppliedTag(
-                                label: state.selectedSortOption.label,
-                                icon: state.selectedSortOption.icon,
-                                color: const Color(0xFFC62828),
+                                label:
+                                    '${state.sortBy.label}: ${_getDirectionContextLabel(state.sortDirection, state.sortBy)}',
+                                icon: state.sortDirection ==
+                                        BankSampahSortDirection.desc
+                                    ? Icons.south_rounded
+                                    : Icons.north_rounded,
+                                color: AppColors.primary,
                                 onTap: () => _showFilterBottomSheet(context),
                                 onRemove: () =>
                                     context.read<BankSampahBloc>().add(
-                                      const SetBankSampahSortOptionEvent(
-                                        BankSampahSortOption.terbaru,
+                                      const SetBankSampahSortEvent(
+                                        sortBy: BankSampahSortBy.date,
+                                        sortDirection:
+                                            BankSampahSortDirection.desc,
                                       ),
                                     ),
                               ),
 
                             if (state.selectedJenisSampahFilter != null) ...[
-                              if (state.selectedSortOption !=
-                                  BankSampahSortOption.terbaru)
+                              if (state.sortBy != BankSampahSortBy.date ||
+                                  state.sortDirection !=
+                                      BankSampahSortDirection.desc)
                                 const SizedBox(width: 8),
                               _buildAppliedTag(
                                 label:
@@ -165,10 +173,7 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                     state.selectedJenisSampahFilter == 'Organik'
                                     ? Icons.eco_rounded
                                     : Icons.recycling_rounded,
-                                color:
-                                    state.selectedJenisSampahFilter == 'Organik'
-                                    ? const Color(0xFF16A34A)
-                                    : const Color(0xFF0284C7),
+                                color: AppColors.primary,
                                 onTap: () => _showFilterBottomSheet(context),
                                 onRemove: () =>
                                     context.read<BankSampahBloc>().add(
@@ -178,15 +183,16 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                             ],
 
                             if (state.selectedBankSampahFilter != null) ...[
-                              if (state.selectedSortOption !=
-                                      BankSampahSortOption.terbaru ||
+                              if (state.sortBy != BankSampahSortBy.date ||
+                                  state.sortDirection !=
+                                      BankSampahSortDirection.desc ||
                                   state.selectedJenisSampahFilter != null)
                                 const SizedBox(width: 8),
                               _buildAppliedTag(
                                 label:
                                     'Lokasi: ${state.selectedBankSampahFilter}',
                                 icon: Icons.account_balance_rounded,
-                                color: const Color(0xFFD97706),
+                                color: AppColors.primary,
                                 onTap: () => _showFilterBottomSheet(context),
                                 onRemove: () =>
                                     context.read<BankSampahBloc>().add(
@@ -409,29 +415,82 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Urutkan Berdasarkan',
+                                'Kriteria Pengurutan',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Pilih kriteria kolom pengurutan data',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
                               const SizedBox(height: 10),
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
-                                children: BankSampahSortOption.values.map((
-                                  sortOpt,
+                                children: BankSampahSortBy.values.map((
+                                  sortBy,
                                 ) {
-                                  final isSelected =
-                                      state.selectedSortOption == sortOpt;
+                                  final isSelected = state.sortBy == sortBy;
                                   return _buildFilterChip(
-                                    label: sortOpt.label,
-                                    icon: sortOpt.icon,
+                                    label: sortBy.label,
+                                    icon: sortBy.icon,
                                     isSelected: isSelected,
                                     onTap: () {
                                       context.read<BankSampahBloc>().add(
-                                        SetBankSampahSortOptionEvent(sortOpt),
+                                        SetBankSampahSortEvent(
+                                          sortBy: sortBy,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 20),
+
+                              const Text(
+                                'Arah Pengurutan',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Pilih urutan menaik atau menurun',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: BankSampahSortDirection.values.map((
+                                  dir,
+                                ) {
+                                  final isSelected = state.sortDirection == dir;
+                                  final contextLabel = _getDirectionContextLabel(
+                                    dir,
+                                    state.sortBy,
+                                  );
+                                  return _buildFilterChip(
+                                    label: contextLabel,
+                                    icon: dir.icon,
+                                    isSelected: isSelected,
+                                    onTap: () {
+                                      context.read<BankSampahBloc>().add(
+                                        SetBankSampahSortEvent(
+                                          sortDirection: dir,
+                                        ),
                                       );
                                     },
                                   );
@@ -470,10 +529,6 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                     final isSelected =
                                         state.selectedJenisSampahFilter ==
                                         jenis;
-                                    final color =
-                                        jenis.toLowerCase() == 'organik'
-                                        ? const Color(0xFF16A34A)
-                                        : const Color(0xFF0284C7);
                                     final icon =
                                         jenis.toLowerCase() == 'organik'
                                         ? Icons.eco_rounded
@@ -481,7 +536,7 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                     return _buildFilterChip(
                                       label: jenis,
                                       icon: icon,
-                                      color: color,
+                                      color: AppColors.primary,
                                       isSelected: isSelected,
                                       onTap: () {
                                         context.read<BankSampahBloc>().add(
@@ -539,6 +594,7 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                       context.read<BankSampahBloc>().add(
                                         SetBankSampahLocationFilterEvent(
                                           selected.nama,
+                                          bankId: int.tryParse(selected.id),
                                         ),
                                       );
                                     }
@@ -557,7 +613,7 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                     border: Border.all(
                                       color:
                                           state.selectedBankSampahFilter != null
-                                          ? const Color(0xFFD97706)
+                                          ? AppColors.primary
                                           : AppColors.grey300,
                                       width:
                                           state.selectedBankSampahFilter != null
@@ -573,9 +629,9 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                           color:
                                               state.selectedBankSampahFilter !=
                                                   null
-                                              ? const Color(
-                                                  0xFFD97706,
-                                                ).withValues(alpha: 0.12)
+                                              ? AppColors.primary.withValues(
+                                                  alpha: 0.12,
+                                                )
                                               : AppColors.grey100,
                                           borderRadius: BorderRadius.circular(
                                             10,
@@ -586,7 +642,7 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                                           color:
                                               state.selectedBankSampahFilter !=
                                                   null
-                                              ? const Color(0xFFD97706)
+                                              ? AppColors.primary
                                               : AppColors.grey500,
                                           size: 20,
                                         ),
@@ -702,6 +758,35 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
         );
       },
     );
+  }
+
+  String _getDirectionContextLabel(
+    BankSampahSortDirection dir,
+    BankSampahSortBy sortBy,
+  ) {
+    if (dir == BankSampahSortDirection.desc) {
+      switch (sortBy) {
+        case BankSampahSortBy.date:
+          return 'Terbaru';
+        case BankSampahSortBy.weight:
+          return 'Terbanyak';
+        case BankSampahSortBy.price:
+          return 'Tertinggi';
+        case BankSampahSortBy.time:
+          return 'Paling Akhir';
+      }
+    } else {
+      switch (sortBy) {
+        case BankSampahSortBy.date:
+          return 'Terlama';
+        case BankSampahSortBy.weight:
+          return 'Tersedikit';
+        case BankSampahSortBy.price:
+          return 'Terendah';
+        case BankSampahSortBy.time:
+          return 'Paling Awal';
+      }
+    }
   }
 
   Widget _buildFilterChip({

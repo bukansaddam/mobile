@@ -1,15 +1,53 @@
 part of 'bank_sampah_bloc.dart';
 
+enum BankSampahSortBy {
+  date('date', 'Tanggal', Icons.calendar_today_rounded),
+  weight('weight', 'Bobot', Icons.scale_rounded),
+  price('price', 'Nilai', Icons.payments_rounded),
+  time('time', 'Waktu', Icons.schedule_rounded);
+
+  final String apiValue;
+  final String label;
+  final IconData icon;
+  const BankSampahSortBy(this.apiValue, this.label, this.icon);
+
+  static BankSampahSortBy fromApiValue(String? val) {
+    return BankSampahSortBy.values.firstWhere(
+      (e) => e.apiValue == val,
+      orElse: () => BankSampahSortBy.date,
+    );
+  }
+}
+
+enum BankSampahSortDirection {
+  desc('desc', 'Menurun', Icons.south_rounded),
+  asc('asc', 'Menaik', Icons.north_rounded);
+
+  final String apiValue;
+  final String label;
+  final IconData icon;
+  const BankSampahSortDirection(this.apiValue, this.label, this.icon);
+
+  static BankSampahSortDirection fromApiValue(String? val) {
+    return BankSampahSortDirection.values.firstWhere(
+      (e) => e.apiValue == val,
+      orElse: () => BankSampahSortDirection.desc,
+    );
+  }
+}
+
 enum BankSampahSortOption {
-  terbaru('Terbaru', Icons.schedule_rounded),
-  terlama('Terlama', Icons.history_rounded),
-  bobotTerbanyak('Bobot Terbanyak', Icons.arrow_upward_rounded),
-  bobotTersedikit('Bobot Tersedikit', Icons.arrow_downward_rounded),
-  nilaiTertinggi('Nilai Tertinggi', Icons.payments_rounded);
+  terbaru('Terbaru', Icons.schedule_rounded, BankSampahSortBy.date, BankSampahSortDirection.desc),
+  terlama('Terlama', Icons.history_rounded, BankSampahSortBy.date, BankSampahSortDirection.asc),
+  bobotTerbanyak('Bobot Terbanyak', Icons.arrow_upward_rounded, BankSampahSortBy.weight, BankSampahSortDirection.desc),
+  bobotTersedikit('Bobot Tersedikit', Icons.arrow_downward_rounded, BankSampahSortBy.weight, BankSampahSortDirection.asc),
+  nilaiTertinggi('Nilai Tertinggi', Icons.payments_rounded, BankSampahSortBy.price, BankSampahSortDirection.desc);
 
   final String label;
   final IconData icon;
-  const BankSampahSortOption(this.label, this.icon);
+  final BankSampahSortBy sortBy;
+  final BankSampahSortDirection sortDirection;
+  const BankSampahSortOption(this.label, this.icon, this.sortBy, this.sortDirection);
 }
 
 class BankSampahState extends Equatable {
@@ -29,7 +67,9 @@ class BankSampahState extends Equatable {
   final String searchQuery;
   final String? selectedJenisSampahFilter;
   final String? selectedBankSampahFilter;
-  final BankSampahSortOption selectedSortOption;
+  final int? selectedBankId;
+  final BankSampahSortBy sortBy;
+  final BankSampahSortDirection sortDirection;
 
   const BankSampahState({
     this.isLoading = false,
@@ -45,13 +85,41 @@ class BankSampahState extends Equatable {
     this.searchQuery = '',
     this.selectedJenisSampahFilter,
     this.selectedBankSampahFilter,
-    this.selectedSortOption = BankSampahSortOption.terbaru,
+    this.selectedBankId,
+    this.sortBy = BankSampahSortBy.date,
+    this.sortDirection = BankSampahSortDirection.desc,
   });
+
+  BankSampahSortOption get selectedSortOption {
+    if (sortBy == BankSampahSortBy.date &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.terbaru;
+    }
+    if (sortBy == BankSampahSortBy.date &&
+        sortDirection == BankSampahSortDirection.asc) {
+      return BankSampahSortOption.terlama;
+    }
+    if (sortBy == BankSampahSortBy.weight &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.bobotTerbanyak;
+    }
+    if (sortBy == BankSampahSortBy.weight &&
+        sortDirection == BankSampahSortDirection.asc) {
+      return BankSampahSortOption.bobotTersedikit;
+    }
+    if (sortBy == BankSampahSortBy.price &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.nilaiTertinggi;
+    }
+    return BankSampahSortOption.terbaru;
+  }
 
   bool get hasActiveFilter =>
       selectedJenisSampahFilter != null ||
       selectedBankSampahFilter != null ||
-      selectedSortOption != BankSampahSortOption.terbaru;
+      selectedBankId != null ||
+      sortBy != BankSampahSortBy.date ||
+      sortDirection != BankSampahSortDirection.desc;
 
   BankSampahLocationEntity? get nearestLocation {
     if (locations.isEmpty) return null;
@@ -78,29 +146,43 @@ class BankSampahState extends Equatable {
               selectedJenisSampahFilter!.toLowerCase();
 
       final matchesBankSampah =
-          selectedBankSampahFilter == null ||
-          selectedBankSampahFilter!.isEmpty ||
-          report.bankSampahNama.toLowerCase() ==
-              selectedBankSampahFilter!.toLowerCase();
+          (selectedBankId == null &&
+              (selectedBankSampahFilter == null ||
+                  selectedBankSampahFilter!.isEmpty)) ||
+          (selectedBankId != null &&
+              report.bankSampahId == selectedBankId.toString()) ||
+          (selectedBankSampahFilter != null &&
+              selectedBankSampahFilter!.isNotEmpty &&
+              report.bankSampahNama.toLowerCase() ==
+                  selectedBankSampahFilter!.toLowerCase());
 
       return matchesSearch && matchesJenis && matchesBankSampah;
     }).toList();
 
-    switch (selectedSortOption) {
-      case BankSampahSortOption.terbaru:
-        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    switch (sortBy) {
+      case BankSampahSortBy.date:
+        list.sort((a, b) => sortDirection == BankSampahSortDirection.desc
+            ? b.createdAt.compareTo(a.createdAt)
+            : a.createdAt.compareTo(b.createdAt));
         break;
-      case BankSampahSortOption.terlama:
-        list.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      case BankSampahSortBy.weight:
+        list.sort((a, b) => sortDirection == BankSampahSortDirection.desc
+            ? b.beratKg.compareTo(a.beratKg)
+            : a.beratKg.compareTo(b.beratKg));
         break;
-      case BankSampahSortOption.bobotTerbanyak:
-        list.sort((a, b) => b.beratKg.compareTo(a.beratKg));
+      case BankSampahSortBy.price:
+        list.sort((a, b) => sortDirection == BankSampahSortDirection.desc
+            ? b.nilaiRupiah.compareTo(a.nilaiRupiah)
+            : a.nilaiRupiah.compareTo(b.nilaiRupiah));
         break;
-      case BankSampahSortOption.bobotTersedikit:
-        list.sort((a, b) => a.beratKg.compareTo(b.beratKg));
-        break;
-      case BankSampahSortOption.nilaiTertinggi:
-        list.sort((a, b) => b.nilaiRupiah.compareTo(a.nilaiRupiah));
+      case BankSampahSortBy.time:
+        list.sort((a, b) {
+          final timeA = a.createdAt.hour * 60 + a.createdAt.minute;
+          final timeB = b.createdAt.hour * 60 + b.createdAt.minute;
+          return sortDirection == BankSampahSortDirection.desc
+              ? timeB.compareTo(timeA)
+              : timeA.compareTo(timeB);
+        });
         break;
     }
 
@@ -132,8 +214,18 @@ class BankSampahState extends Equatable {
     bool clearJenisFilter = false,
     String? selectedBankSampahFilter,
     bool clearBankSampahFilter = false,
+    int? selectedBankId,
+    bool clearBankId = false,
+    BankSampahSortBy? sortBy,
+    BankSampahSortDirection? sortDirection,
     BankSampahSortOption? selectedSortOption,
   }) {
+    var resolvedSortBy = sortBy ?? this.sortBy;
+    var resolvedSortDirection = sortDirection ?? this.sortDirection;
+    if (selectedSortOption != null && sortBy == null && sortDirection == null) {
+      resolvedSortBy = selectedSortOption.sortBy;
+      resolvedSortDirection = selectedSortOption.sortDirection;
+    }
     return BankSampahState(
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -152,7 +244,11 @@ class BankSampahState extends Equatable {
       selectedBankSampahFilter: clearBankSampahFilter
           ? null
           : (selectedBankSampahFilter ?? this.selectedBankSampahFilter),
-      selectedSortOption: selectedSortOption ?? this.selectedSortOption,
+      selectedBankId: (clearBankSampahFilter || clearBankId)
+          ? null
+          : (selectedBankId ?? this.selectedBankId),
+      sortBy: resolvedSortBy,
+      sortDirection: resolvedSortDirection,
     );
   }
 
@@ -171,6 +267,8 @@ class BankSampahState extends Equatable {
     searchQuery,
     selectedJenisSampahFilter,
     selectedBankSampahFilter,
-    selectedSortOption,
+    selectedBankId,
+    sortBy,
+    sortDirection,
   ];
 }

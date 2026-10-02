@@ -22,6 +22,10 @@ class FakeBankSampahRemoteDataSource implements BankSampahRemoteDataSource {
   Future<BankSampahMyDepositsResponseModel> getMyDeposits({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   }) async {
     if (shouldThrow) {
       throw Exception('Server error');

@@ -10,7 +10,18 @@ class GetBankSampahReportsUsecase {
   Future<Either<Failure, BankSampahReportsDataEntity>> call({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   }) {
-    return repository.getReports(page: page, perPage: perPage);
+    return repository.getReports(
+      page: page,
+      perPage: perPage,
+      sortBy: sortBy,
+      sortDirection: sortDirection,
+      bankId: bankId,
+      wasteType: wasteType,
+    );
   }
 }

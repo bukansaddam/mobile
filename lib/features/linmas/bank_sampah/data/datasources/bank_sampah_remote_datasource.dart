@@ -9,6 +9,10 @@ abstract class BankSampahRemoteDataSource {
   Future<BankSampahMyDepositsResponseModel> getMyDeposits({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   });
 
   Future<List<BankSampahLocationModel>> getBankSampahMap();
@@ -29,10 +33,26 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
   Future<BankSampahMyDepositsResponseModel> getMyDeposits({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   }) async {
     final queryParams = <String, dynamic>{};
     if (page != null) queryParams['page'] = page;
     if (perPage != null) queryParams['per_page'] = perPage;
+    if (sortBy != null && sortBy.trim().isNotEmpty) {
+      queryParams['sort_by'] = sortBy.trim();
+    }
+    if (sortDirection != null && sortDirection.trim().isNotEmpty) {
+      queryParams['sort_direction'] = sortDirection.trim();
+    }
+    if (bankId != null) {
+      queryParams['bank_id'] = bankId;
+    }
+    if (wasteType != null && wasteType.trim().isNotEmpty) {
+      queryParams['waste_type'] = wasteType.trim();
+    }
 
     final response = await dio.get(
       ApiConstants.bankSampahMyDeposits,

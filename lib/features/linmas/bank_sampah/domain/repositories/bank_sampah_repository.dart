@@ -6,6 +6,10 @@ abstract class BankSampahRepository {
   Future<Either<Failure, BankSampahReportsDataEntity>> getReports({
     int? page,
     int? perPage,
+    String? sortBy,
+    String? sortDirection,
+    int? bankId,
+    String? wasteType,
   });
   Future<Either<Failure, BankSampahReportEntity>> addReport(
     BankSampahReportEntity report,

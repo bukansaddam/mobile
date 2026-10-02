@@ -40,11 +40,22 @@ class SetBankSampahJenisFilterEvent extends BankSampahEvent {
 
 class SetBankSampahLocationFilterEvent extends BankSampahEvent {
   final String? bankSampahNama;
+  final int? bankId;
 
-  const SetBankSampahLocationFilterEvent(this.bankSampahNama);
+  const SetBankSampahLocationFilterEvent(this.bankSampahNama, {this.bankId});
 
   @override
-  List<Object?> get props => [bankSampahNama];
+  List<Object?> get props => [bankSampahNama, bankId];
+}
+
+class SetBankSampahSortEvent extends BankSampahEvent {
+  final BankSampahSortBy? sortBy;
+  final BankSampahSortDirection? sortDirection;
+
+  const SetBankSampahSortEvent({this.sortBy, this.sortDirection});
+
+  @override
+  List<Object?> get props => [sortBy, sortDirection];
 }
 
 class SetBankSampahSortOptionEvent extends BankSampahEvent {
