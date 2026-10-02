@@ -76,12 +76,21 @@ abstract class BankSampahReportEntity with _$BankSampahReportEntity {
 }
 
 @freezed
-abstract class BankSampahReportsDataEntity with _$BankSampahReportsDataEntity {
-  const factory BankSampahReportsDataEntity({
-    @Default([]) List<BankSampahReportEntity> reports,
-    BankSampahSummaryEntity? summary,
+abstract class BankSampahPaginatedEntity with _$BankSampahPaginatedEntity {
+  const BankSampahPaginatedEntity._();
+
+  const factory BankSampahPaginatedEntity({
+    @Default(false) bool success,
     @Default(0) int total,
     @Default(1) int currentPage,
     @Default(1) int lastPage,
-  }) = _BankSampahReportsDataEntity;
+    @Default(10) int perPage,
+    @Default([]) List<BankSampahReportEntity> data,
+    BankSampahSummaryEntity? summary,
+    String? message,
+  }) = _BankSampahPaginatedEntity;
+
+  List<BankSampahReportEntity> get reports => data;
 }
+
+typedef BankSampahReportsDataEntity = BankSampahPaginatedEntity;

@@ -63,7 +63,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
   Widget build(BuildContext context) {
     return BlocBuilder<BankSampahBloc, BankSampahState>(
       builder: (context, state) {
-        final allLocations = state.locations;
+        final allLocations = context.read<BankSampahBloc>().listLocations;
 
         final filtered = allLocations.where((loc) {
           if (_searchQuery.isEmpty) return true;

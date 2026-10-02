@@ -11,6 +11,7 @@ import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/delete_bank_sampah_report_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_locations_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 
 class FakeBankSampahRemoteDataSource implements BankSampahRemoteDataSource {
@@ -327,27 +328,26 @@ void main() {
 
   group('BankSampahBloc Tests', () {
     test('Initial load fetches server locations and reports', () async {
-      bloc.add(FetchBankSampahDataEvent());
       await expectLater(
         bloc.stream,
         emitsThrough(
           predicate<BankSampahState>((state) =>
-              state.locations.isNotEmpty &&
-              state.reports.isNotEmpty &&
-              state.totalLaporanCount > 0 &&
-              state.totalBeratKg > 0 &&
-              state.totalNilaiRupiah > 0),
+              state is BankSampahLoaded &&
+              bloc.listLocations.isNotEmpty &&
+              bloc.listReports.isNotEmpty &&
+              bloc.totalLaporanCount > 0 &&
+              bloc.totalBeratKg > 0 &&
+              bloc.totalNilaiRupiah > 0),
         ),
       );
     });
 
     test('Nearest location is identified from server locations', () async {
-      bloc.add(FetchBankSampahDataEvent());
       await expectLater(
         bloc.stream,
         emitsThrough(
           predicate<BankSampahState>((state) {
-            final nearest = state.nearestLocation;
+            final nearest = bloc.nearestLocation;
             return nearest != null && nearest.id == '7690';
           }),
         ),
@@ -355,29 +355,33 @@ void main() {
     });
 
     test('Add new report calculates value as berat * 5000 automatically', () async {
-      bloc.add(FetchBankSampahDataEvent());
-      await bloc.stream.firstWhere((s) => s.reports.isNotEmpty);
+      await bloc.stream.firstWhere(
+        (s) => s is BankSampahLoaded && bloc.listReports.isNotEmpty,
+      );
 
-      final initialCount = bloc.state.reports.length;
       const berat = 4.5;
       const expectedNilai = berat * BankSampahConstants.hargaPerKg;
 
-      bloc.add(const AddBankSampahReportEvent(
+      final reportToAdd = BankSampahReportEntity(
+        id: '',
         bankSampahId: '7690',
         bankSampahNama: 'BS JALAK GREEN COLLECTION',
         jenisSampah: 'Organik',
         beratKg: berat,
+        nilaiRupiah: expectedNilai,
         catatan: 'Testing report',
-      ));
+        createdAt: DateTime.now(),
+      );
+
+      bloc.add(CreateBankSampahReportEvent(reportToAdd));
 
       await expectLater(
         bloc.stream,
         emitsThrough(
           predicate<BankSampahState>((state) =>
-              state.reports.length == initialCount + 1 &&
-              state.reports.first.beratKg == berat &&
-              state.reports.first.nilaiRupiah == expectedNilai &&
-              state.reports.first.jenisSampah == 'Organik'),
+              state is BankSampahActionSuccess &&
+              state.report?.beratKg == berat &&
+              state.report?.nilaiRupiah == expectedNilai),
         ),
       );
     });

@@ -1,8 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:akar/features/linmas/bank_sampah/core/constants/bank_sampah_constants.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah_location_usecase.dart';
@@ -21,115 +22,373 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
   final GetBankSampahLocationsUsecase getLocationsUsecase;
   final AddBankSampahLocationUsecase addLocationUsecase;
 
+  List<BankSampahReportEntity> listReports = [];
+  List<BankSampahLocationEntity> listLocations = [];
+  BankSampahSummaryEntity? summary;
+
+  int? page = 1;
+  int limit = 10;
+  int total = 0;
+
+  double? userLatitude;
+  double? userLongitude;
+  bool isFetchingLocation = false;
+
+  String? selectedJenisSampahFilter;
+  String? selectedBankSampahFilter;
+  int? selectedBankId;
+  BankSampahSortBy sortBy = BankSampahSortBy.date;
+  BankSampahSortDirection sortDirection = BankSampahSortDirection.desc;
+
+  BankSampahSortOption get selectedSortOption {
+    if (sortBy == BankSampahSortBy.date &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.terbaru;
+    }
+    if (sortBy == BankSampahSortBy.date &&
+        sortDirection == BankSampahSortDirection.asc) {
+      return BankSampahSortOption.terlama;
+    }
+    if (sortBy == BankSampahSortBy.weight &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.bobotTerbanyak;
+    }
+    if (sortBy == BankSampahSortBy.weight &&
+        sortDirection == BankSampahSortDirection.asc) {
+      return BankSampahSortOption.bobotTersedikit;
+    }
+    if (sortBy == BankSampahSortBy.price &&
+        sortDirection == BankSampahSortDirection.desc) {
+      return BankSampahSortOption.nilaiTertinggi;
+    }
+    return BankSampahSortOption.terbaru;
+  }
+
+  bool get hasActiveFilter =>
+      selectedJenisSampahFilter != null ||
+      selectedBankSampahFilter != null ||
+      selectedBankId != null ||
+      sortBy != BankSampahSortBy.date ||
+      sortDirection != BankSampahSortDirection.desc;
+
+  BankSampahLocationEntity? get nearestLocation {
+    if (listLocations.isEmpty) return null;
+    return listLocations.first;
+  }
+
+  int get totalLaporanCount => summary?.totalSetoran ?? total;
+
+  double get totalBeratKg =>
+      summary?.totalKg ??
+      listReports.fold(0.0, (sum, item) => sum + item.beratKg);
+
+  double get totalNilaiRupiah =>
+      summary?.totalPendapatan ??
+      listReports.fold(0.0, (sum, item) => sum + item.nilaiRupiah);
+
+  List<BankSampahReportEntity> get displayList {
+    List<BankSampahReportEntity> list = List.from(listReports);
+    if (selectedJenisSampahFilter != null &&
+        selectedJenisSampahFilter!.trim().isNotEmpty) {
+      final j = selectedJenisSampahFilter!.toLowerCase();
+      list = list
+          .where((report) => report.jenisSampah.toLowerCase() == j)
+          .toList();
+    }
+    if (selectedBankId != null) {
+      list = list
+          .where((report) => report.bankSampahId == selectedBankId.toString())
+          .toList();
+    } else if (selectedBankSampahFilter != null &&
+        selectedBankSampahFilter!.trim().isNotEmpty) {
+      final b = selectedBankSampahFilter!.toLowerCase();
+      list = list
+          .where((report) => report.bankSampahNama.toLowerCase() == b)
+          .toList();
+    }
+    switch (sortBy) {
+      case BankSampahSortBy.date:
+        list.sort(
+          (a, b) => sortDirection == BankSampahSortDirection.desc
+              ? b.createdAt.compareTo(a.createdAt)
+              : a.createdAt.compareTo(b.createdAt),
+        );
+        break;
+      case BankSampahSortBy.weight:
+        list.sort(
+          (a, b) => sortDirection == BankSampahSortDirection.desc
+              ? b.beratKg.compareTo(a.beratKg)
+              : a.beratKg.compareTo(b.beratKg),
+        );
+        break;
+      case BankSampahSortBy.price:
+        list.sort(
+          (a, b) => sortDirection == BankSampahSortDirection.desc
+              ? b.nilaiRupiah.compareTo(a.nilaiRupiah)
+              : a.nilaiRupiah.compareTo(b.nilaiRupiah),
+        );
+        break;
+      case BankSampahSortBy.time:
+        list.sort((a, b) {
+          final timeA = a.createdAt.hour * 60 + a.createdAt.minute;
+          final timeB = b.createdAt.hour * 60 + b.createdAt.minute;
+          return sortDirection == BankSampahSortDirection.desc
+              ? timeB.compareTo(timeA)
+              : timeA.compareTo(timeB);
+        });
+        break;
+    }
+    return list;
+  }
+
   BankSampahBloc({
     required this.getReportsUsecase,
     required this.addReportUsecase,
     required this.deleteReportUsecase,
     required this.getLocationsUsecase,
     required this.addLocationUsecase,
-  }) : super(const BankSampahState()) {
-    on<FetchBankSampahDataEvent>(_onFetchData);
-    on<RefreshBankSampahDataEvent>(_onRefreshData);
-    on<UpdateBankSampahUserLocationEvent>(_onUpdateUserLocation);
-    on<SetBankSampahSearchQueryEvent>(_onSetSearchQuery);
-    on<SetBankSampahJenisFilterEvent>(_onSetJenisFilter);
-    on<SetBankSampahLocationFilterEvent>(_onSetLocationFilter);
-    on<SetBankSampahSortEvent>(_onSetSort);
-    on<SetBankSampahSortOptionEvent>(_onSetSortOption);
-    on<ResetBankSampahFiltersEvent>(_onResetFilters);
-    on<AddBankSampahReportEvent>(_onAddReport);
+  }) : super(BankSampahInitial()) {
+    on<GetBankSampahReportsEvent>(_onGetReports);
+    on<RefreshBankSampahReportsEvent>(_onRefreshReports);
+    on<SetBankSampahFilterEvent>(_onSetFilter);
+    on<ResetBankSampahFilterEvent>(_onResetFilter);
+    on<CreateBankSampahReportEvent>(_onCreateReport);
     on<DeleteBankSampahReportEvent>(_onDeleteReport);
     on<AddBankSampahLocationEvent>(_onAddLocation);
+    on<UpdateBankSampahUserLocationEvent>(_onUpdateUserLocation);
+    on<GetBankSampahLocationsEvent>(_onGetLocations);
 
-    add(FetchBankSampahDataEvent());
+    add(const RefreshBankSampahReportsEvent());
+    add(const GetBankSampahLocationsEvent());
   }
 
-  Future<void> _onFetchData(
-    FetchBankSampahDataEvent event,
+  Future<void> _onGetReports(
+    GetBankSampahReportsEvent event,
     Emitter<BankSampahState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    if (page == null) return;
 
-    final repResult = await getReportsUsecase(
-      sortBy: state.sortBy.apiValue,
-      sortDirection: state.sortDirection.apiValue,
-      bankId: state.selectedBankId,
-      wasteType: state.selectedJenisSampahFilter,
-    );
-    final locResult = await getLocationsUsecase();
+    if (page == 1) {
+      emit(BankSampahLoading());
+    }
 
-    List<BankSampahReportEntity> reports = state.reports;
-    BankSampahSummaryEntity? summary = state.summary;
-    List<BankSampahLocationEntity> locations = state.locations;
-    String? errorMsg;
+    final filterJenis =
+        (event.jenisSampah != null && event.jenisSampah!.trim().isNotEmpty)
+        ? event.jenisSampah!.trim()
+        : (selectedJenisSampahFilter?.trim().isNotEmpty == true
+              ? selectedJenisSampahFilter!.trim()
+              : null);
 
-    repResult.fold((f) => errorMsg = f.message, (data) {
-      reports = data.reports;
-      summary = data.summary;
-    });
+    final filterBankId = event.bankId ?? selectedBankId;
 
-    locResult.fold(
-      (f) => errorMsg ??= f.message,
-      (data) => locations = List<BankSampahLocationEntity>.from(data),
-    );
+    final sortB = event.sortBy ?? (event.sortOption?.sortBy ?? sortBy);
+    final sortD =
+        event.sortDirection ?? (event.sortOption?.sortDirection ?? sortDirection);
 
-    locations = _calculateOrApplyDistances(
-      locations,
-      state.userLatitude,
-      state.userLongitude,
+    final result = await getReportsUsecase.call(
+      page: page!,
+      perPage: limit,
+      sortBy: sortB.apiValue,
+      sortDirection: sortD.apiValue,
+      bankId: filterBankId,
+      wasteType: filterJenis,
     );
 
-    emit(
-      state.copyWith(
-        isLoading: false,
-        reports: reports,
-        summary: summary,
-        locations: locations,
-        errorMessage: errorMsg,
+    result.fold(
+      (failure) {
+        emit(BankSampahFailure(failure.message));
+      },
+      (paginated) {
+        listReports.addAll(paginated.data);
+        summary = paginated.summary ?? summary;
+        total = paginated.total;
+
+        emit(BankSampahLoaded(paginated));
+
+        if (paginated.data.length < limit ||
+            paginated.currentPage >= paginated.lastPage) {
+          page = null;
+        } else {
+          page = paginated.currentPage + 1;
+        }
+      },
+    );
+  }
+
+  Future<void> _onRefreshReports(
+    RefreshBankSampahReportsEvent event,
+    Emitter<BankSampahState> emit,
+  ) async {
+    page = 1;
+    listReports.clear();
+
+    if (event.jenisSampah != null) selectedJenisSampahFilter = event.jenisSampah;
+    if (event.bankId != null) selectedBankId = event.bankId;
+    if (event.bankSampahNama != null) {
+      selectedBankSampahFilter = event.bankSampahNama;
+    }
+    if (event.sortBy != null) sortBy = event.sortBy!;
+    if (event.sortDirection != null) sortDirection = event.sortDirection!;
+    if (event.sortOption != null) {
+      sortBy = event.sortOption!.sortBy;
+      sortDirection = event.sortOption!.sortDirection;
+    }
+
+    add(
+      GetBankSampahReportsEvent(
+        jenisSampah: selectedJenisSampahFilter,
+        bankId: selectedBankId,
+        bankSampahNama: selectedBankSampahFilter,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
       ),
     );
-
-    if (!isClosed) {
-      add(const UpdateBankSampahUserLocationEvent(silent: true));
-    }
   }
 
-  Future<void> _onRefreshData(
-    RefreshBankSampahDataEvent event,
+  void _onSetFilter(
+    SetBankSampahFilterEvent event,
+    Emitter<BankSampahState> emit,
+  ) {
+    if (event.hasJenisSampah) {
+      selectedJenisSampahFilter = event.jenisSampah;
+    }
+    if (event.hasBankSampah) {
+      selectedBankId = event.bankId;
+      selectedBankSampahFilter = event.bankSampahNama;
+      if (selectedBankId == null && selectedBankSampahFilter != null) {
+        final found = listLocations
+            .cast<BankSampahLocationEntity?>()
+            .firstWhere(
+              (loc) =>
+                  loc?.nama.toLowerCase() ==
+                  selectedBankSampahFilter!.toLowerCase(),
+              orElse: () => null,
+            );
+        if (found != null) {
+          selectedBankId = int.tryParse(found.id);
+        }
+      }
+    }
+    if (event.sortBy != null) {
+      sortBy = event.sortBy!;
+    }
+    if (event.sortDirection != null) {
+      sortDirection = event.sortDirection!;
+    }
+    if (event.sortOption != null) {
+      sortBy = event.sortOption!.sortBy;
+      sortDirection = event.sortOption!.sortDirection;
+    }
+
+    add(
+      RefreshBankSampahReportsEvent(
+        jenisSampah: selectedJenisSampahFilter,
+        bankId: selectedBankId,
+        bankSampahNama: selectedBankSampahFilter,
+        sortBy: sortBy,
+        sortDirection: sortDirection,
+      ),
+    );
+  }
+
+  void _onResetFilter(
+    ResetBankSampahFilterEvent event,
+    Emitter<BankSampahState> emit,
+  ) {
+    selectedJenisSampahFilter = null;
+    selectedBankSampahFilter = null;
+    selectedBankId = null;
+    sortBy = BankSampahSortBy.date;
+    sortDirection = BankSampahSortDirection.desc;
+
+    add(const RefreshBankSampahReportsEvent());
+  }
+
+  Future<void> _onCreateReport(
+    CreateBankSampahReportEvent event,
     Emitter<BankSampahState> emit,
   ) async {
-    final repResult = await getReportsUsecase(
-      sortBy: state.sortBy.apiValue,
-      sortDirection: state.sortDirection.apiValue,
-      bankId: state.selectedBankId,
-      wasteType: state.selectedJenisSampahFilter,
+    emit(BankSampahActionLoading());
+    final result = await addReportUsecase.call(event.report);
+
+    result.fold(
+      (failure) {
+        emit(BankSampahActionFailure(failure.message));
+      },
+      (created) {
+        emit(
+          BankSampahActionSuccess(
+            report: created,
+            message: 'Laporan bank sampah berhasil disimpan',
+          ),
+        );
+        add(const RefreshBankSampahReportsEvent());
+      },
     );
-    final locResult = await getLocationsUsecase();
+  }
 
-    List<BankSampahReportEntity> reports = state.reports;
-    BankSampahSummaryEntity? summary = state.summary;
-    List<BankSampahLocationEntity> locations = state.locations;
+  Future<void> _onDeleteReport(
+    DeleteBankSampahReportEvent event,
+    Emitter<BankSampahState> emit,
+  ) async {
+    emit(BankSampahActionLoading());
+    final result = await deleteReportUsecase.call(event.id);
 
-    repResult.fold((_) {}, (data) {
-      reports = data.reports;
-      summary = data.summary;
-    });
-    locResult.fold(
+    result.fold(
+      (failure) {
+        emit(BankSampahActionFailure(failure.message));
+      },
+      (success) {
+        listReports.removeWhere((item) => item.id == event.id);
+        emit(
+          const BankSampahActionSuccess(
+            message: 'Laporan berhasil dihapus',
+          ),
+        );
+        add(const RefreshBankSampahReportsEvent());
+      },
+    );
+  }
+
+  Future<void> _onGetLocations(
+    GetBankSampahLocationsEvent event,
+    Emitter<BankSampahState> emit,
+  ) async {
+    final result = await getLocationsUsecase.call();
+    result.fold(
       (_) {},
-      (data) => locations = List<BankSampahLocationEntity>.from(data),
+      (locations) {
+        listLocations = List<BankSampahLocationEntity>.from(locations);
+        listLocations = _calculateOrApplyDistances(
+          listLocations,
+          userLatitude,
+          userLongitude,
+        );
+      },
     );
-
-    locations = _calculateOrApplyDistances(
-      locations,
-      state.userLatitude,
-      state.userLongitude,
-    );
-
-    emit(
-      state.copyWith(reports: reports, summary: summary, locations: locations),
-    );
-
     add(const UpdateBankSampahUserLocationEvent(silent: true));
+  }
+
+  Future<void> _onAddLocation(
+    AddBankSampahLocationEvent event,
+    Emitter<BankSampahState> emit,
+  ) async {
+    emit(BankSampahActionLoading());
+    final result = await addLocationUsecase.call(event.location);
+    result.fold(
+      (failure) {
+        emit(BankSampahActionFailure(failure.message));
+      },
+      (added) {
+        listLocations.insert(0, added);
+        emit(
+          BankSampahActionSuccess(
+            location: added,
+            message: 'Lokasi bank sampah berhasil ditambahkan',
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _onUpdateUserLocation(
@@ -137,13 +396,13 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     Emitter<BankSampahState> emit,
   ) async {
     if (!event.silent) {
-      emit(state.copyWith(isFetchingLocation: true));
+      isFetchingLocation = true;
     }
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        emit(state.copyWith(isFetchingLocation: false));
+        isFetchingLocation = false;
         return;
       }
 
@@ -151,13 +410,13 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          emit(state.copyWith(isFetchingLocation: false));
+          isFetchingLocation = false;
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        emit(state.copyWith(isFetchingLocation: false));
+        isFetchingLocation = false;
         return;
       }
 
@@ -169,25 +428,17 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
         ),
       );
 
-      final userLat = pos.latitude;
-      final userLng = pos.longitude;
+      userLatitude = pos.latitude;
+      userLongitude = pos.longitude;
+      isFetchingLocation = false;
 
-      final updatedLocs = _calculateDistances(
-        state.locations,
-        userLat,
-        userLng,
-      );
-
-      emit(
-        state.copyWith(
-          isFetchingLocation: false,
-          userLatitude: userLat,
-          userLongitude: userLng,
-          locations: updatedLocs,
-        ),
+      listLocations = _calculateDistances(
+        listLocations,
+        userLatitude!,
+        userLongitude!,
       );
     } catch (_) {
-      emit(state.copyWith(isFetchingLocation: false));
+      isFetchingLocation = false;
     }
   }
 
@@ -227,305 +478,5 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     });
 
     return list;
-  }
-
-  void _onSetSearchQuery(
-    SetBankSampahSearchQueryEvent event,
-    Emitter<BankSampahState> emit,
-  ) {
-    emit(state.copyWith(searchQuery: event.query.trim()));
-  }
-
-  Future<void> _onSetJenisFilter(
-    SetBankSampahJenisFilterEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    final newJenis = event.jenis;
-    emit(
-      state.copyWith(
-        selectedJenisSampahFilter: newJenis,
-        clearJenisFilter: newJenis == null,
-        isLoading: true,
-      ),
-    );
-
-    final repResult = await getReportsUsecase(
-      sortBy: state.sortBy.apiValue,
-      sortDirection: state.sortDirection.apiValue,
-      bankId: state.selectedBankId,
-      wasteType: newJenis,
-    );
-
-    repResult.fold(
-      (f) => emit(state.copyWith(isLoading: false)),
-      (data) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            reports: data.reports,
-            summary: data.summary,
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _onSetLocationFilter(
-    SetBankSampahLocationFilterEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    final newBankName = event.bankSampahNama;
-    int? newBankId = event.bankId;
-    if (newBankId == null && newBankName != null) {
-      final found = state.locations
-          .cast<BankSampahLocationEntity?>()
-          .firstWhere(
-            (loc) => loc?.nama.toLowerCase() == newBankName.toLowerCase(),
-            orElse: () => null,
-          );
-      if (found != null) {
-        newBankId = int.tryParse(found.id);
-      }
-    }
-
-    emit(
-      state.copyWith(
-        selectedBankSampahFilter: newBankName,
-        selectedBankId: newBankName == null ? null : newBankId,
-        clearBankSampahFilter: newBankName == null,
-        clearBankId: newBankName == null,
-        isLoading: true,
-      ),
-    );
-
-    final repResult = await getReportsUsecase(
-      sortBy: state.sortBy.apiValue,
-      sortDirection: state.sortDirection.apiValue,
-      bankId: newBankName == null ? null : newBankId,
-      wasteType: state.selectedJenisSampahFilter,
-    );
-
-    repResult.fold(
-      (f) => emit(state.copyWith(isLoading: false)),
-      (data) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            reports: data.reports,
-            summary: data.summary,
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _onSetSort(
-    SetBankSampahSortEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    final newSortBy = event.sortBy ?? state.sortBy;
-    final newSortDirection = event.sortDirection ?? state.sortDirection;
-
-    emit(
-      state.copyWith(
-        sortBy: newSortBy,
-        sortDirection: newSortDirection,
-        isLoading: true,
-      ),
-    );
-
-    final repResult = await getReportsUsecase(
-      sortBy: newSortBy.apiValue,
-      sortDirection: newSortDirection.apiValue,
-      bankId: state.selectedBankId,
-      wasteType: state.selectedJenisSampahFilter,
-    );
-
-    repResult.fold(
-      (f) => emit(state.copyWith(isLoading: false)),
-      (data) {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            reports: data.reports,
-            summary: data.summary,
-          ),
-        );
-      },
-    );
-  }
-
-  void _onSetSortOption(
-    SetBankSampahSortOptionEvent event,
-    Emitter<BankSampahState> emit,
-  ) {
-    add(
-      SetBankSampahSortEvent(
-        sortBy: event.sortOption.sortBy,
-        sortDirection: event.sortOption.sortDirection,
-      ),
-    );
-  }
-
-  void _onResetFilters(
-    ResetBankSampahFiltersEvent event,
-    Emitter<BankSampahState> emit,
-  ) {
-    emit(
-      state.copyWith(
-        searchQuery: '',
-        clearJenisFilter: true,
-        clearBankSampahFilter: true,
-        clearBankId: true,
-        sortBy: BankSampahSortBy.date,
-        sortDirection: BankSampahSortDirection.desc,
-      ),
-    );
-    add(FetchBankSampahDataEvent());
-  }
-
-  Future<void> _onAddReport(
-    AddBankSampahReportEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    emit(
-      state.copyWith(
-        isSubmitting: true,
-        errorMessage: null,
-        actionSuccessMessage: null,
-      ),
-    );
-
-    final nilaiRupiah = event.beratKg * BankSampahConstants.hargaPerKg;
-    final newReport = BankSampahReportEntity(
-      id: '',
-      bankSampahId: event.bankSampahId,
-      bankSampahNama: event.bankSampahNama,
-      jenisSampah: event.jenisSampah,
-      beratKg: event.beratKg,
-      nilaiRupiah: nilaiRupiah,
-      fotoPath: event.fotoPath,
-      fotoUrl: event.fotoUrl,
-      catatan: event.catatan,
-      petugasNama: event.petugasNama,
-      createdAt: event.reportDate ?? DateTime.now(),
-    );
-
-    final result = await addReportUsecase(newReport);
-
-    result.fold(
-      (failure) {
-        emit(
-          state.copyWith(isSubmitting: false, errorMessage: failure.message),
-        );
-      },
-      (added) {
-        final list = List<BankSampahReportEntity>.from(state.reports)
-          ..insert(0, added);
-
-        BankSampahSummaryEntity? updatedSummary = state.summary;
-        if (updatedSummary != null) {
-          updatedSummary = updatedSummary.copyWith(
-            totalKg: updatedSummary.totalKg + added.beratKg,
-            totalPendapatan: updatedSummary.totalPendapatan + added.nilaiRupiah,
-            totalSetoran: updatedSummary.totalSetoran + 1,
-          );
-        }
-
-        emit(
-          state.copyWith(
-            isSubmitting: false,
-            reports: list,
-            summary: updatedSummary,
-            actionSuccessMessage: 'Laporan bank sampah berhasil disimpan',
-          ),
-        );
-
-        if (!isClosed) {
-          add(RefreshBankSampahDataEvent());
-        }
-      },
-    );
-  }
-
-  Future<void> _onDeleteReport(
-    DeleteBankSampahReportEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    final result = await deleteReportUsecase(event.id);
-    result.fold(
-      (failure) {
-        emit(state.copyWith(errorMessage: failure.message));
-      },
-      (success) {
-        BankSampahReportEntity? deletedItem;
-        for (final item in state.reports) {
-          if (item.id == event.id) {
-            deletedItem = item;
-            break;
-          }
-        }
-
-        final list = List<BankSampahReportEntity>.from(state.reports)
-          ..removeWhere((item) => item.id == event.id);
-
-        BankSampahSummaryEntity? updatedSummary = state.summary;
-        if (updatedSummary != null && deletedItem != null) {
-          final newTotalKg = (updatedSummary.totalKg - deletedItem.beratKg)
-              .clamp(0.0, double.infinity);
-          final newTotalRp =
-              (updatedSummary.totalPendapatan - deletedItem.nilaiRupiah).clamp(
-                0.0,
-                double.infinity,
-              );
-          final newCount = (updatedSummary.totalSetoran - 1).clamp(0, 999999);
-          updatedSummary = updatedSummary.copyWith(
-            totalKg: newTotalKg,
-            totalPendapatan: newTotalRp,
-            totalSetoran: newCount,
-          );
-        }
-
-        emit(
-          state.copyWith(
-            reports: list,
-            summary: updatedSummary,
-            actionSuccessMessage: 'Laporan berhasil dihapus',
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _onAddLocation(
-    AddBankSampahLocationEvent event,
-    Emitter<BankSampahState> emit,
-  ) async {
-    final newLocation = BankSampahLocationEntity(
-      id: '',
-      nama: event.nama,
-      alamat: event.alamat,
-      kelurahan: event.kelurahan,
-      pengelola: event.pengelola,
-      kontak: event.kontak,
-      distanceMeters: 450.0,
-    );
-
-    final result = await addLocationUsecase(newLocation);
-    result.fold(
-      (failure) {
-        emit(state.copyWith(errorMessage: failure.message));
-      },
-      (added) {
-        final list = List<BankSampahLocationEntity>.from(state.locations)
-          ..insert(0, added);
-        emit(
-          state.copyWith(
-            locations: list,
-            actionSuccessMessage: 'Lokasi bank sampah berhasil ditambahkan',
-          ),
-        );
-      },
-    );
   }
 }

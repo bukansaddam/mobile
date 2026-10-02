@@ -60,7 +60,7 @@ class AnalisisScreen extends StatelessWidget {
                     BlocBuilder<BankSampahBloc, BankSampahState>(
                       builder: (context, bankState) {
                         return BankSampahAnalisisCard(
-                          reports: bankState.reports,
+                          reports: context.read<BankSampahBloc>().listReports,
                         );
                       },
                     ),

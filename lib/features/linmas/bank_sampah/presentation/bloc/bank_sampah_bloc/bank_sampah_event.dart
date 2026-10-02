@@ -7,103 +7,141 @@ abstract class BankSampahEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class FetchBankSampahDataEvent extends BankSampahEvent {}
-
-class RefreshBankSampahDataEvent extends BankSampahEvent {}
-
-class UpdateBankSampahUserLocationEvent extends BankSampahEvent {
-  final bool silent;
-
-  const UpdateBankSampahUserLocationEvent({this.silent = false});
-
-  @override
-  List<Object?> get props => [silent];
-}
-
-class SetBankSampahSearchQueryEvent extends BankSampahEvent {
-  final String query;
-
-  const SetBankSampahSearchQueryEvent(this.query);
-
-  @override
-  List<Object?> get props => [query];
-}
-
-class SetBankSampahJenisFilterEvent extends BankSampahEvent {
-  final String? jenis;
-
-  const SetBankSampahJenisFilterEvent(this.jenis);
-
-  @override
-  List<Object?> get props => [jenis];
-}
-
-class SetBankSampahLocationFilterEvent extends BankSampahEvent {
-  final String? bankSampahNama;
+class GetBankSampahReportsEvent extends BankSampahEvent {
+  final String? jenisSampah;
   final int? bankId;
-
-  const SetBankSampahLocationFilterEvent(this.bankSampahNama, {this.bankId});
-
-  @override
-  List<Object?> get props => [bankSampahNama, bankId];
-}
-
-class SetBankSampahSortEvent extends BankSampahEvent {
+  final String? bankSampahNama;
   final BankSampahSortBy? sortBy;
   final BankSampahSortDirection? sortDirection;
+  final BankSampahSortOption? sortOption;
 
-  const SetBankSampahSortEvent({this.sortBy, this.sortDirection});
-
-  @override
-  List<Object?> get props => [sortBy, sortDirection];
-}
-
-class SetBankSampahSortOptionEvent extends BankSampahEvent {
-  final BankSampahSortOption sortOption;
-
-  const SetBankSampahSortOptionEvent(this.sortOption);
-
-  @override
-  List<Object?> get props => [sortOption];
-}
-
-class ResetBankSampahFiltersEvent extends BankSampahEvent {}
-
-class AddBankSampahReportEvent extends BankSampahEvent {
-  final String bankSampahId;
-  final String bankSampahNama;
-  final String jenisSampah;
-  final double beratKg;
-  final String? fotoPath;
-  final String? fotoUrl;
-  final String catatan;
-  final String petugasNama;
-  final DateTime? reportDate;
-
-  const AddBankSampahReportEvent({
-    required this.bankSampahId,
-    required this.bankSampahNama,
-    required this.jenisSampah,
-    required this.beratKg,
-    this.fotoPath,
-    this.fotoUrl,
-    this.catatan = '',
-    this.petugasNama = '',
-    this.reportDate,
+  const GetBankSampahReportsEvent({
+    this.jenisSampah,
+    this.bankId,
+    this.bankSampahNama,
+    this.sortBy,
+    this.sortDirection,
+    this.sortOption,
   });
 
   @override
   List<Object?> get props => [
-    bankSampahId,
-    bankSampahNama,
     jenisSampah,
-    beratKg,
-    fotoPath,
-    fotoUrl,
-    catatan,
-    petugasNama,
-    reportDate,
+    bankId,
+    bankSampahNama,
+    sortBy,
+    sortDirection,
+    sortOption,
   ];
+}
+
+class RefreshBankSampahReportsEvent extends BankSampahEvent {
+  final String? jenisSampah;
+  final int? bankId;
+  final String? bankSampahNama;
+  final BankSampahSortBy? sortBy;
+  final BankSampahSortDirection? sortDirection;
+  final BankSampahSortOption? sortOption;
+
+  const RefreshBankSampahReportsEvent({
+    this.jenisSampah,
+    this.bankId,
+    this.bankSampahNama,
+    this.sortBy,
+    this.sortDirection,
+    this.sortOption,
+  });
+
+  @override
+  List<Object?> get props => [
+    jenisSampah,
+    bankId,
+    bankSampahNama,
+    sortBy,
+    sortDirection,
+    sortOption,
+  ];
+}
+
+class SetBankSampahFilterEvent extends BankSampahEvent {
+  final String? jenisSampah;
+  final bool hasJenisSampah;
+  final int? bankId;
+  final String? bankSampahNama;
+  final bool hasBankSampah;
+  final BankSampahSortBy? sortBy;
+  final BankSampahSortDirection? sortDirection;
+  final BankSampahSortOption? sortOption;
+
+  const SetBankSampahFilterEvent({
+    this.jenisSampah,
+    this.hasJenisSampah = false,
+    this.bankId,
+    this.bankSampahNama,
+    this.hasBankSampah = false,
+    this.sortBy,
+    this.sortDirection,
+    this.sortOption,
+  });
+
+  const SetBankSampahFilterEvent.jenis(this.jenisSampah)
+    : hasJenisSampah = true,
+      bankId = null,
+      bankSampahNama = null,
+      hasBankSampah = false,
+      sortBy = null,
+      sortDirection = null,
+      sortOption = null;
+
+  const SetBankSampahFilterEvent.bank({this.bankId, this.bankSampahNama})
+    : hasJenisSampah = false,
+      jenisSampah = null,
+      hasBankSampah = true,
+      sortBy = null,
+      sortDirection = null,
+      sortOption = null;
+
+  const SetBankSampahFilterEvent.sort({this.sortBy, this.sortDirection})
+    : hasJenisSampah = false,
+      jenisSampah = null,
+      bankId = null,
+      bankSampahNama = null,
+      hasBankSampah = false,
+      sortOption = null;
+
+  const SetBankSampahFilterEvent.sortOption(this.sortOption)
+    : hasJenisSampah = false,
+      jenisSampah = null,
+      bankId = null,
+      bankSampahNama = null,
+      hasBankSampah = false,
+      sortBy = null,
+      sortDirection = null;
+
+  @override
+  List<Object?> get props => [
+    jenisSampah,
+    hasJenisSampah,
+    bankId,
+    bankSampahNama,
+    hasBankSampah,
+    sortBy,
+    sortDirection,
+    sortOption,
+  ];
+}
+
+class ResetBankSampahFilterEvent extends BankSampahEvent {
+  const ResetBankSampahFilterEvent();
+}
+
+class CreateBankSampahReportEvent extends BankSampahEvent {
+  final BankSampahReportEntity report;
+
+  const CreateBankSampahReportEvent(this.report);
+
+  @override
+  List<Object?> get props => [report];
 }
 
 class DeleteBankSampahReportEvent extends BankSampahEvent {
@@ -116,20 +154,25 @@ class DeleteBankSampahReportEvent extends BankSampahEvent {
 }
 
 class AddBankSampahLocationEvent extends BankSampahEvent {
-  final String nama;
-  final String alamat;
-  final String kelurahan;
-  final String pengelola;
-  final String kontak;
+  final BankSampahLocationEntity location;
 
-  const AddBankSampahLocationEvent({
-    required this.nama,
-    required this.alamat,
-    this.kelurahan = '',
-    this.pengelola = '',
-    this.kontak = '',
-  });
+  const AddBankSampahLocationEvent(this.location);
 
   @override
-  List<Object?> get props => [nama, alamat, kelurahan, pengelola, kontak];
+  List<Object?> get props => [location];
 }
+
+class UpdateBankSampahUserLocationEvent extends BankSampahEvent {
+  final bool silent;
+
+  const UpdateBankSampahUserLocationEvent({this.silent = false});
+
+  @override
+  List<Object?> get props => [silent];
+}
+
+class GetBankSampahLocationsEvent extends BankSampahEvent {
+  const GetBankSampahLocationsEvent();
+}
+
+typedef RefreshBankSampahDataEvent = RefreshBankSampahReportsEvent;

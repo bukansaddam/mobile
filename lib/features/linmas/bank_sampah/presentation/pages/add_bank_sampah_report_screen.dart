@@ -11,6 +11,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/core/constants/bank_sampah_constants.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/widgets/bank_sampah_search_sheet.dart';
 
@@ -39,22 +40,20 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<BankSampahBloc>().add(
-        const UpdateBankSampahUserLocationEvent(silent: true),
-      );
-      final state = context.read<BankSampahBloc>().state;
-      if (mounted && _selectedLocation == null && state.locations.isNotEmpty) {
-        final validLocs = state.locations
+      final bloc = context.read<BankSampahBloc>();
+      bloc.add(const UpdateBankSampahUserLocationEvent(silent: true));
+      if (mounted && _selectedLocation == null && bloc.listLocations.isNotEmpty) {
+        final validLocs = bloc.listLocations
             .where((l) => int.tryParse(l.id) != null)
             .toList();
         setState(() {
           _selectedLocation =
-              state.nearestLocation != null &&
-                  int.tryParse(state.nearestLocation!.id) != null
-              ? state.nearestLocation
+              bloc.nearestLocation != null &&
+                  int.tryParse(bloc.nearestLocation!.id) != null
+              ? bloc.nearestLocation
               : (validLocs.isNotEmpty
                     ? validLocs.first
-                    : state.locations.first);
+                    : bloc.listLocations.first);
         });
       }
     });
@@ -235,15 +234,19 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     final petugasNama = authState.user?.name ?? 'Petugas Linmas';
 
     context.read<BankSampahBloc>().add(
-      AddBankSampahReportEvent(
-        bankSampahId: _selectedLocation!.id,
-        bankSampahNama: _selectedLocation!.nama,
-        jenisSampah: _selectedJenisSampah,
-        beratKg: parsedBerat,
-        fotoPath: _selectedPhoto?.path,
-        catatan: _catatanController.text.trim(),
-        petugasNama: petugasNama,
-        reportDate: _selectedDate,
+      CreateBankSampahReportEvent(
+        BankSampahReportEntity(
+          id: '',
+          bankSampahId: _selectedLocation!.id,
+          bankSampahNama: _selectedLocation!.nama,
+          jenisSampah: _selectedJenisSampah,
+          beratKg: parsedBerat,
+          nilaiRupiah: _calculatedNilai,
+          fotoPath: _selectedPhoto?.path,
+          catatan: _catatanController.text.trim(),
+          petugasNama: petugasNama,
+          createdAt: _selectedDate,
+        ),
       ),
     );
   }
@@ -258,22 +261,23 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
     return BlocConsumer<BankSampahBloc, BankSampahState>(
       listener: (context, state) {
-        if (_selectedLocation == null && state.locations.isNotEmpty) {
-          final validLocs = state.locations
+        final bloc = context.read<BankSampahBloc>();
+        if (_selectedLocation == null && bloc.listLocations.isNotEmpty) {
+          final validLocs = bloc.listLocations
               .where((l) => int.tryParse(l.id) != null)
               .toList();
           if (validLocs.isNotEmpty) {
             setState(() {
               _selectedLocation =
-                  state.nearestLocation != null &&
-                      int.tryParse(state.nearestLocation!.id) != null
-                  ? state.nearestLocation
+                  bloc.nearestLocation != null &&
+                      int.tryParse(bloc.nearestLocation!.id) != null
+                  ? bloc.nearestLocation
                   : validLocs.first;
             });
           }
         }
 
-        if (state.actionSuccessMessage != null) {
+        if (state is BankSampahActionSuccess) {
           final parsedBerat =
               double.tryParse(_beratController.text.replaceAll(',', '.')) ??
               0.0;
@@ -298,10 +302,10 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
             ),
           );
           context.pop();
-        } else if (state.errorMessage != null) {
+        } else if (state is BankSampahActionFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage!),
+              content: Text(state.message),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
             ),
@@ -309,6 +313,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
         }
       },
       builder: (context, state) {
+        final isSubmitting = state is BankSampahActionLoading;
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
@@ -357,7 +362,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
             ),
             child: SafeArea(
               child: ElevatedButton(
-                onPressed: state.isSubmitting ? null : _submitReport,
+                onPressed: isSubmitting ? null : _submitReport,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -367,7 +372,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                   ),
                   elevation: 0,
                 ),
-                child: state.isSubmitting
+                child: isSubmitting
                     ? const SizedBox(
                         height: 20,
                         width: 20,

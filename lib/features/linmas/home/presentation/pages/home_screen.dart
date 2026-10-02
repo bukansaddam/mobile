@@ -132,6 +132,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               BlocBuilder<BankSampahBloc, BankSampahState>(
                                 builder: (context, bankState) {
+                                  final bankBloc =
+                                      context.read<BankSampahBloc>();
                                   return BankSampahSummaryCard(
                                     user: user,
                                     userName: dashboard?.user.name,
@@ -140,10 +142,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         dashboard?.user.displayPhotoUrl,
                                     totalBeratKg:
                                         dashboard?.waste.totalWeightKg ??
-                                        bankState.totalBeratKg,
+                                        bankBloc.totalBeratKg,
                                     totalNilaiRupiah:
                                         dashboard?.waste.totalEarnings ??
-                                        bankState.totalNilaiRupiah,
+                                        bankBloc.totalNilaiRupiah,
                                     onTap: () {
                                       _dismissSurveyIfSubmitted(context);
                                       context.pushNamed('bankSampah');

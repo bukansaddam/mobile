@@ -107,7 +107,7 @@ Object? _readFotoUrl(Map json, String key) {
 Object? _readCatatan(Map json, String key) =>
     (json['notes'] ?? json['catatan'] ?? '').toString();
 
-String _readCreatedAt(Map json, String key) {
+Object? _readCreatedAt(Map json, String key) {
   final raw = json['createdAt'];
   if (raw != null) {
     if (raw is DateTime) return raw.toIso8601String();
@@ -269,11 +269,16 @@ abstract class BankSampahMyDepositsResponseModel
     Map<String, dynamic> json,
   ) => _$BankSampahMyDepositsResponseModelFromJson(json);
 
-  BankSampahReportsDataEntity toDomain() => BankSampahReportsDataEntity(
-    reports: data.map((e) => e.toDomain()).toList(),
+  BankSampahPaginatedEntity toDomain() => BankSampahPaginatedEntity(
+    success: success,
+    message: message,
+    data: data.map((e) => e.toDomain()).toList(),
     summary: summary?.toDomain(),
     total: meta?.total ?? data.length,
     currentPage: meta?.currentPage ?? 1,
     lastPage: meta?.lastPage ?? 1,
+    perPage: meta?.perPage ?? 10,
   );
 }
+
+typedef BankSampahResponseModel = BankSampahMyDepositsResponseModel;

@@ -586,40 +586,40 @@ as DateTime,
 }
 
 /// @nodoc
-mixin _$BankSampahReportsDataEntity {
+mixin _$BankSampahPaginatedEntity {
 
- List<BankSampahReportEntity> get reports; BankSampahSummaryEntity? get summary; int get total; int get currentPage; int get lastPage;
-/// Create a copy of BankSampahReportsDataEntity
+ bool get success; int get total; int get currentPage; int get lastPage; int get perPage; List<BankSampahReportEntity> get data; BankSampahSummaryEntity? get summary; String? get message;
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$BankSampahReportsDataEntityCopyWith<BankSampahReportsDataEntity> get copyWith => _$BankSampahReportsDataEntityCopyWithImpl<BankSampahReportsDataEntity>(this as BankSampahReportsDataEntity, _$identity);
+$BankSampahPaginatedEntityCopyWith<BankSampahPaginatedEntity> get copyWith => _$BankSampahPaginatedEntityCopyWithImpl<BankSampahPaginatedEntity>(this as BankSampahPaginatedEntity, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahReportsDataEntity&&const DeepCollectionEquality().equals(other.reports, reports)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(reports),summary,total,currentPage,lastPage);
+int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(data),summary,message);
 
 @override
 String toString() {
-  return 'BankSampahReportsDataEntity(reports: $reports, summary: $summary, total: $total, currentPage: $currentPage, lastPage: $lastPage)';
+  return 'BankSampahPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, summary: $summary, message: $message)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $BankSampahReportsDataEntityCopyWith<$Res>  {
-  factory $BankSampahReportsDataEntityCopyWith(BankSampahReportsDataEntity value, $Res Function(BankSampahReportsDataEntity) _then) = _$BankSampahReportsDataEntityCopyWithImpl;
+abstract mixin class $BankSampahPaginatedEntityCopyWith<$Res>  {
+  factory $BankSampahPaginatedEntityCopyWith(BankSampahPaginatedEntity value, $Res Function(BankSampahPaginatedEntity) _then) = _$BankSampahPaginatedEntityCopyWithImpl;
 @useResult
 $Res call({
- List<BankSampahReportEntity> reports, BankSampahSummaryEntity? summary, int total, int currentPage, int lastPage
+ bool success, int total, int currentPage, int lastPage, int perPage, List<BankSampahReportEntity> data, BankSampahSummaryEntity? summary, String? message
 });
 
 
@@ -627,26 +627,29 @@ $BankSampahSummaryEntityCopyWith<$Res>? get summary;
 
 }
 /// @nodoc
-class _$BankSampahReportsDataEntityCopyWithImpl<$Res>
-    implements $BankSampahReportsDataEntityCopyWith<$Res> {
-  _$BankSampahReportsDataEntityCopyWithImpl(this._self, this._then);
+class _$BankSampahPaginatedEntityCopyWithImpl<$Res>
+    implements $BankSampahPaginatedEntityCopyWith<$Res> {
+  _$BankSampahPaginatedEntityCopyWithImpl(this._self, this._then);
 
-  final BankSampahReportsDataEntity _self;
-  final $Res Function(BankSampahReportsDataEntity) _then;
+  final BankSampahPaginatedEntity _self;
+  final $Res Function(BankSampahPaginatedEntity) _then;
 
-/// Create a copy of BankSampahReportsDataEntity
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? reports = null,Object? summary = freezed,Object? total = null,Object? currentPage = null,Object? lastPage = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? total = null,Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? data = null,Object? summary = freezed,Object? message = freezed,}) {
   return _then(_self.copyWith(
-reports: null == reports ? _self.reports : reports // ignore: cast_nullable_to_non_nullable
-as List<BankSampahReportEntity>,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
-as BankSampahSummaryEntity?,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
+as int,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
+as List<BankSampahReportEntity>,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
+as BankSampahSummaryEntity?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
-/// Create a copy of BankSampahReportsDataEntity
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -662,8 +665,8 @@ $BankSampahSummaryEntityCopyWith<$Res>? get summary {
 }
 
 
-/// Adds pattern-matching-related methods to [BankSampahReportsDataEntity].
-extension BankSampahReportsDataEntityPatterns on BankSampahReportsDataEntity {
+/// Adds pattern-matching-related methods to [BankSampahPaginatedEntity].
+extension BankSampahPaginatedEntityPatterns on BankSampahPaginatedEntity {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -676,10 +679,10 @@ extension BankSampahReportsDataEntityPatterns on BankSampahReportsDataEntity {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _BankSampahReportsDataEntity value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _BankSampahPaginatedEntity value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity() when $default != null:
+case _BankSampahPaginatedEntity() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -698,10 +701,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _BankSampahReportsDataEntity value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _BankSampahPaginatedEntity value)  $default,){
 final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity():
+case _BankSampahPaginatedEntity():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -719,10 +722,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _BankSampahReportsDataEntity value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _BankSampahPaginatedEntity value)?  $default,){
 final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity() when $default != null:
+case _BankSampahPaginatedEntity() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -740,10 +743,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<BankSampahReportEntity> reports,  BankSampahSummaryEntity? summary,  int total,  int currentPage,  int lastPage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool success,  int total,  int currentPage,  int lastPage,  int perPage,  List<BankSampahReportEntity> data,  BankSampahSummaryEntity? summary,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity() when $default != null:
-return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.lastPage);case _:
+case _BankSampahPaginatedEntity() when $default != null:
+return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that.perPage,_that.data,_that.summary,_that.message);case _:
   return orElse();
 
 }
@@ -761,10 +764,10 @@ return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<BankSampahReportEntity> reports,  BankSampahSummaryEntity? summary,  int total,  int currentPage,  int lastPage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool success,  int total,  int currentPage,  int lastPage,  int perPage,  List<BankSampahReportEntity> data,  BankSampahSummaryEntity? summary,  String? message)  $default,) {final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity():
-return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.lastPage);case _:
+case _BankSampahPaginatedEntity():
+return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that.perPage,_that.data,_that.summary,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -781,10 +784,10 @@ return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<BankSampahReportEntity> reports,  BankSampahSummaryEntity? summary,  int total,  int currentPage,  int lastPage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool success,  int total,  int currentPage,  int lastPage,  int perPage,  List<BankSampahReportEntity> data,  BankSampahSummaryEntity? summary,  String? message)?  $default,) {final _that = this;
 switch (_that) {
-case _BankSampahReportsDataEntity() when $default != null:
-return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.lastPage);case _:
+case _BankSampahPaginatedEntity() when $default != null:
+return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that.perPage,_that.data,_that.summary,_that.message);case _:
   return null;
 
 }
@@ -795,53 +798,56 @@ return $default(_that.reports,_that.summary,_that.total,_that.currentPage,_that.
 /// @nodoc
 
 
-class _BankSampahReportsDataEntity implements BankSampahReportsDataEntity {
-  const _BankSampahReportsDataEntity({final  List<BankSampahReportEntity> reports = const [], this.summary, this.total = 0, this.currentPage = 1, this.lastPage = 1}): _reports = reports;
+class _BankSampahPaginatedEntity extends BankSampahPaginatedEntity {
+  const _BankSampahPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<BankSampahReportEntity> data = const [], this.summary, this.message}): _data = data,super._();
   
 
- final  List<BankSampahReportEntity> _reports;
-@override@JsonKey() List<BankSampahReportEntity> get reports {
-  if (_reports is EqualUnmodifiableListView) return _reports;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_reports);
-}
-
-@override final  BankSampahSummaryEntity? summary;
+@override@JsonKey() final  bool success;
 @override@JsonKey() final  int total;
 @override@JsonKey() final  int currentPage;
 @override@JsonKey() final  int lastPage;
+@override@JsonKey() final  int perPage;
+ final  List<BankSampahReportEntity> _data;
+@override@JsonKey() List<BankSampahReportEntity> get data {
+  if (_data is EqualUnmodifiableListView) return _data;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_data);
+}
 
-/// Create a copy of BankSampahReportsDataEntity
+@override final  BankSampahSummaryEntity? summary;
+@override final  String? message;
+
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$BankSampahReportsDataEntityCopyWith<_BankSampahReportsDataEntity> get copyWith => __$BankSampahReportsDataEntityCopyWithImpl<_BankSampahReportsDataEntity>(this, _$identity);
+_$BankSampahPaginatedEntityCopyWith<_BankSampahPaginatedEntity> get copyWith => __$BankSampahPaginatedEntityCopyWithImpl<_BankSampahPaginatedEntity>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahReportsDataEntity&&const DeepCollectionEquality().equals(other._reports, _reports)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_reports),summary,total,currentPage,lastPage);
+int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),summary,message);
 
 @override
 String toString() {
-  return 'BankSampahReportsDataEntity(reports: $reports, summary: $summary, total: $total, currentPage: $currentPage, lastPage: $lastPage)';
+  return 'BankSampahPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, summary: $summary, message: $message)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$BankSampahReportsDataEntityCopyWith<$Res> implements $BankSampahReportsDataEntityCopyWith<$Res> {
-  factory _$BankSampahReportsDataEntityCopyWith(_BankSampahReportsDataEntity value, $Res Function(_BankSampahReportsDataEntity) _then) = __$BankSampahReportsDataEntityCopyWithImpl;
+abstract mixin class _$BankSampahPaginatedEntityCopyWith<$Res> implements $BankSampahPaginatedEntityCopyWith<$Res> {
+  factory _$BankSampahPaginatedEntityCopyWith(_BankSampahPaginatedEntity value, $Res Function(_BankSampahPaginatedEntity) _then) = __$BankSampahPaginatedEntityCopyWithImpl;
 @override @useResult
 $Res call({
- List<BankSampahReportEntity> reports, BankSampahSummaryEntity? summary, int total, int currentPage, int lastPage
+ bool success, int total, int currentPage, int lastPage, int perPage, List<BankSampahReportEntity> data, BankSampahSummaryEntity? summary, String? message
 });
 
 
@@ -849,27 +855,30 @@ $Res call({
 
 }
 /// @nodoc
-class __$BankSampahReportsDataEntityCopyWithImpl<$Res>
-    implements _$BankSampahReportsDataEntityCopyWith<$Res> {
-  __$BankSampahReportsDataEntityCopyWithImpl(this._self, this._then);
+class __$BankSampahPaginatedEntityCopyWithImpl<$Res>
+    implements _$BankSampahPaginatedEntityCopyWith<$Res> {
+  __$BankSampahPaginatedEntityCopyWithImpl(this._self, this._then);
 
-  final _BankSampahReportsDataEntity _self;
-  final $Res Function(_BankSampahReportsDataEntity) _then;
+  final _BankSampahPaginatedEntity _self;
+  final $Res Function(_BankSampahPaginatedEntity) _then;
 
-/// Create a copy of BankSampahReportsDataEntity
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? reports = null,Object? summary = freezed,Object? total = null,Object? currentPage = null,Object? lastPage = null,}) {
-  return _then(_BankSampahReportsDataEntity(
-reports: null == reports ? _self._reports : reports // ignore: cast_nullable_to_non_nullable
-as List<BankSampahReportEntity>,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
-as BankSampahSummaryEntity?,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? success = null,Object? total = null,Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? data = null,Object? summary = freezed,Object? message = freezed,}) {
+  return _then(_BankSampahPaginatedEntity(
+success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
+as bool,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
-as int,
+as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
+as int,data: null == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
+as List<BankSampahReportEntity>,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
+as BankSampahSummaryEntity?,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
-/// Create a copy of BankSampahReportsDataEntity
+/// Create a copy of BankSampahPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')

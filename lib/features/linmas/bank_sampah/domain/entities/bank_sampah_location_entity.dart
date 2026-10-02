@@ -1,59 +1,24 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class BankSampahLocationEntity extends Equatable {
-  final String id;
-  final String nama;
-  final String alamat;
-  final String kelurahan;
-  final String pengelola;
-  final String kontak;
-  final double? latitude;
-  final double? longitude;
-  final double? latOffset;
-  final double? lngOffset;
-  final double? distanceMeters;
+part 'bank_sampah_location_entity.freezed.dart';
 
-  const BankSampahLocationEntity({
-    required this.id,
-    required this.nama,
-    required this.alamat,
-    this.kelurahan = '',
-    this.pengelola = '',
-    this.kontak = '',
-    this.latitude,
-    this.longitude,
-    this.latOffset,
-    this.lngOffset,
-    this.distanceMeters,
-  });
+@freezed
+abstract class BankSampahLocationEntity with _$BankSampahLocationEntity {
+  const BankSampahLocationEntity._();
 
-  BankSampahLocationEntity copyWith({
-    String? id,
-    String? nama,
-    String? alamat,
-    String? kelurahan,
-    String? pengelola,
-    String? kontak,
+  const factory BankSampahLocationEntity({
+    required String id,
+    required String nama,
+    required String alamat,
+    @Default('') String kelurahan,
+    @Default('') String pengelola,
+    @Default('') String kontak,
     double? latitude,
     double? longitude,
     double? latOffset,
     double? lngOffset,
     double? distanceMeters,
-  }) {
-    return BankSampahLocationEntity(
-      id: id ?? this.id,
-      nama: nama ?? this.nama,
-      alamat: alamat ?? this.alamat,
-      kelurahan: kelurahan ?? this.kelurahan,
-      pengelola: pengelola ?? this.pengelola,
-      kontak: kontak ?? this.kontak,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      latOffset: latOffset ?? this.latOffset,
-      lngOffset: lngOffset ?? this.lngOffset,
-      distanceMeters: distanceMeters ?? this.distanceMeters,
-    );
-  }
+  }) = _BankSampahLocationEntity;
 
   /// Format jarak yang mudah dibaca (misal: "250 m" atau "1.2 km")
   String get formattedDistance {
@@ -65,19 +30,4 @@ class BankSampahLocationEntity extends Equatable {
       return '${inKm.toStringAsFixed(1)} km';
     }
   }
-
-  @override
-  List<Object?> get props => [
-    id,
-    nama,
-    alamat,
-    kelurahan,
-    pengelola,
-    kontak,
-    latitude,
-    longitude,
-    latOffset,
-    lngOffset,
-    distanceMeters,
-  ];
 }
