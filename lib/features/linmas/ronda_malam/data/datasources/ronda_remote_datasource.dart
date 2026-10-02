@@ -13,10 +13,7 @@ class RondaRemoteDatasourceImpl extends BaseRemoteDataSource
     final payload = model.toDailyReportPayload();
 
     final response = await handleRequest<RondaLaporanModel>(
-      () => dio.post(
-        ApiConstants.dailyReports,
-        data: payload,
-      ),
+      () => dio.post(ApiConstants.dailyReports, data: payload),
       fromJson: (json) =>
           RondaLaporanModel.fromApiResponse(json, fallback: model),
     );

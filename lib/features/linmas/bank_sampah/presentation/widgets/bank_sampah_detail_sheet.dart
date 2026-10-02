@@ -492,15 +492,15 @@ class BankSampahDetailSheet extends StatelessWidget {
                           decoration: BoxDecoration(
                             color:
                                 (report.status.toLowerCase() == 'verified'
-                                        ? const Color(0xFF16A34A)
-                                        : const Color(0xFFD97706))
+                                        ? const Color(0xFF15803D)
+                                        : const Color(0xFFB45309))
                                     .withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color:
                                   (report.status.toLowerCase() == 'verified'
-                                          ? const Color(0xFF16A34A)
-                                          : const Color(0xFFD97706))
+                                          ? const Color(0xFF15803D)
+                                          : const Color(0xFFB45309))
                                       .withValues(alpha: 0.3),
                             ),
                           ),
@@ -509,8 +509,8 @@ class BankSampahDetailSheet extends StatelessWidget {
                             style: AppTextStyles.caption.copyWith(
                               fontWeight: FontWeight.bold,
                               color: report.status.toLowerCase() == 'verified'
-                                  ? const Color(0xFF16A34A)
-                                  : const Color(0xFFD97706),
+                                  ? const Color(0xFF15803D)
+                                  : const Color(0xFFB45309),
                             ),
                           ),
                         ),
@@ -546,8 +546,25 @@ class BankSampahDetailSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.textPrimary,
+                    side: const BorderSide(color: AppColors.grey300),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Tutup',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

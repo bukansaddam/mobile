@@ -16,10 +16,7 @@ class LocationPickerResult {
   double get latitude => position.latitude;
   double get longitude => position.longitude;
 
-  const LocationPickerResult({
-    required this.address,
-    required this.position,
-  });
+  const LocationPickerResult({required this.address, required this.position});
 }
 
 class LocationPickerPage extends StatefulWidget {

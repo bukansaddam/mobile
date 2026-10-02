@@ -109,29 +109,17 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                               photoUrl,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  'assets/indonesian_headshot_portrait.jpg',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.person_rounded,
-                                      size: 24,
-                                      color: AppColors.primary,
-                                    );
-                                  },
-                                );
-                              },
-                            )
-                          : Image.asset(
-                              'assets/indonesian_headshot_portrait.jpg',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
                                 return const Icon(
                                   Icons.person_rounded,
                                   size: 24,
                                   color: AppColors.primary,
                                 );
                               },
+                            )
+                          : const Icon(
+                              Icons.person_rounded,
+                              size: 24,
+                              color: AppColors.primary,
                             ),
                     ),
                   ),

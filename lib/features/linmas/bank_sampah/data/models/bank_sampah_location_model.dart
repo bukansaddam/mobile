@@ -46,11 +46,9 @@ Object? _readLatitude(Map json, String key) =>
 Object? _readLongitude(Map json, String key) =>
     _parseDouble(json['longitude'] ?? json['lng']);
 
-Object? _readLatOffset(Map json, String key) =>
-    _parseDouble(json['latOffset']);
+Object? _readLatOffset(Map json, String key) => _parseDouble(json['latOffset']);
 
-Object? _readLngOffset(Map json, String key) =>
-    _parseDouble(json['lngOffset']);
+Object? _readLngOffset(Map json, String key) => _parseDouble(json['lngOffset']);
 
 Object? _readDistanceMeters(Map json, String key) =>
     _parseDouble(json['distanceMeters']);
@@ -69,9 +67,7 @@ abstract class BankSampahLocationModel with _$BankSampahLocationModel {
     @JsonKey(name: 'pengelola', readValue: _readPengelola)
     @Default('')
     String pengelola,
-    @JsonKey(name: 'kontak', readValue: _readKontak)
-    @Default('')
-    String kontak,
+    @JsonKey(name: 'kontak', readValue: _readKontak) @Default('') String kontak,
     @JsonKey(name: 'latitude', readValue: _readLatitude) double? latitude,
     @JsonKey(name: 'longitude', readValue: _readLongitude) double? longitude,
     @JsonKey(name: 'latOffset', readValue: _readLatOffset) double? latOffset,

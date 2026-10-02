@@ -35,15 +35,15 @@ class BankSampahCard extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'verified':
       case 'terverifikasi':
-        return const Color(0xFF16A34A);
+        return const Color(0xFF15803D);
       case 'pending':
       case 'menunggu':
-        return const Color(0xFFD97706);
+        return const Color(0xFFB45309);
       case 'rejected':
       case 'ditolak':
-        return const Color(0xFFDC2626);
+        return const Color(0xFFB91C1C);
       default:
-        return const Color(0xFF16A34A);
+        return const Color(0xFF15803D);
     }
   }
 
@@ -234,7 +234,7 @@ class BankSampahCard extends StatelessWidget {
                                 color: AppColors.textPrimary,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 8),
                             Text(
                               '•',
                               style: TextStyle(
@@ -242,7 +242,7 @@ class BankSampahCard extends StatelessWidget {
                                 fontSize: 10,
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 8),
                             Text(
                               'Nilai: ',
                               style: AppTextStyles.caption.copyWith(
@@ -250,11 +250,17 @@ class BankSampahCard extends StatelessWidget {
                                 fontSize: 12,
                               ),
                             ),
-                            Text(
-                              currencyFormatter.format(report.nilaiRupiah),
-                              style: AppTextStyles.bodySmall.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  currencyFormatter.format(report.nilaiRupiah),
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

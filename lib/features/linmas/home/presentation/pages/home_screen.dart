@@ -132,8 +132,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               BlocBuilder<BankSampahBloc, BankSampahState>(
                                 builder: (context, bankState) {
-                                  final bankBloc =
-                                      context.read<BankSampahBloc>();
+                                  final bankBloc = context
+                                      .read<BankSampahBloc>();
                                   return BankSampahSummaryCard(
                                     user: user,
                                     userName: dashboard?.user.name,

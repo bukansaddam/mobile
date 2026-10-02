@@ -37,17 +37,47 @@ enum BankSampahSortDirection {
 }
 
 enum BankSampahSortOption {
-  terbaru('Terbaru', Icons.schedule_rounded, BankSampahSortBy.date, BankSampahSortDirection.desc),
-  terlama('Terlama', Icons.history_rounded, BankSampahSortBy.date, BankSampahSortDirection.asc),
-  bobotTerbanyak('Bobot Terbanyak', Icons.arrow_upward_rounded, BankSampahSortBy.weight, BankSampahSortDirection.desc),
-  bobotTersedikit('Bobot Tersedikit', Icons.arrow_downward_rounded, BankSampahSortBy.weight, BankSampahSortDirection.asc),
-  nilaiTertinggi('Nilai Tertinggi', Icons.payments_rounded, BankSampahSortBy.price, BankSampahSortDirection.desc);
+  terbaru(
+    'Terbaru',
+    Icons.schedule_rounded,
+    BankSampahSortBy.date,
+    BankSampahSortDirection.desc,
+  ),
+  terlama(
+    'Terlama',
+    Icons.history_rounded,
+    BankSampahSortBy.date,
+    BankSampahSortDirection.asc,
+  ),
+  bobotTerbanyak(
+    'Bobot Terbanyak',
+    Icons.arrow_upward_rounded,
+    BankSampahSortBy.weight,
+    BankSampahSortDirection.desc,
+  ),
+  bobotTersedikit(
+    'Bobot Tersedikit',
+    Icons.arrow_downward_rounded,
+    BankSampahSortBy.weight,
+    BankSampahSortDirection.asc,
+  ),
+  nilaiTertinggi(
+    'Nilai Tertinggi',
+    Icons.payments_rounded,
+    BankSampahSortBy.price,
+    BankSampahSortDirection.desc,
+  );
 
   final String label;
   final IconData icon;
   final BankSampahSortBy sortBy;
   final BankSampahSortDirection sortDirection;
-  const BankSampahSortOption(this.label, this.icon, this.sortBy, this.sortDirection);
+  const BankSampahSortOption(
+    this.label,
+    this.icon,
+    this.sortBy,
+    this.sortDirection,
+  );
 }
 
 abstract class BankSampahState extends Equatable {

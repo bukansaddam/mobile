@@ -183,7 +183,8 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
 
     final sortB = event.sortBy ?? (event.sortOption?.sortBy ?? sortBy);
     final sortD =
-        event.sortDirection ?? (event.sortOption?.sortDirection ?? sortDirection);
+        event.sortDirection ??
+        (event.sortOption?.sortDirection ?? sortDirection);
 
     final result = await getReportsUsecase.call(
       page: page!,
@@ -222,7 +223,8 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     page = 1;
     listReports.clear();
 
-    if (event.jenisSampah != null) selectedJenisSampahFilter = event.jenisSampah;
+    if (event.jenisSampah != null)
+      selectedJenisSampahFilter = event.jenisSampah;
     if (event.bankId != null) selectedBankId = event.bankId;
     if (event.bankSampahNama != null) {
       selectedBankSampahFilter = event.bankSampahNama;
@@ -341,9 +343,7 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
       (success) {
         listReports.removeWhere((item) => item.id == event.id);
         emit(
-          const BankSampahActionSuccess(
-            message: 'Laporan berhasil dihapus',
-          ),
+          const BankSampahActionSuccess(message: 'Laporan berhasil dihapus'),
         );
         add(const RefreshBankSampahReportsEvent());
       },
@@ -355,17 +355,14 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     Emitter<BankSampahState> emit,
   ) async {
     final result = await getLocationsUsecase.call();
-    result.fold(
-      (_) {},
-      (locations) {
-        listLocations = List<BankSampahLocationEntity>.from(locations);
-        listLocations = _calculateOrApplyDistances(
-          listLocations,
-          userLatitude,
-          userLongitude,
-        );
-      },
-    );
+    result.fold((_) {}, (locations) {
+      listLocations = List<BankSampahLocationEntity>.from(locations);
+      listLocations = _calculateOrApplyDistances(
+        listLocations,
+        userLatitude,
+        userLongitude,
+      );
+    });
     add(const UpdateBankSampahUserLocationEvent(silent: true));
   }
 

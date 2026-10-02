@@ -71,7 +71,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
   factory RondaLaporanModel.fromJson(Map<String, dynamic> json) {
     return RondaLaporanModel(
       id: json['id'] as String?,
-      patrolTime: json['patrolTime'] as String? ?? json['patrol_time'] as String?,
+      patrolTime:
+          json['patrolTime'] as String? ?? json['patrol_time'] as String?,
       waktuKejadian:
           json['waktuKejadian'] as String? ?? json['waktu_kejadian'] as String?,
       sampahMenumpuk: (json['sampahMenumpuk'] as num?)?.toInt() ?? 1,
@@ -130,18 +131,22 @@ class RondaLaporanModel extends RondaLaporanEntity {
       resikoSelokanTersumbat: json['resikoSelokanTersumbat'] as String?,
       adaJalanRusak: json['adaJalanRusak'] as bool? ?? false,
       lokasiJalanRusakGps: json['lokasiJalanRusakGps'] as String?,
-      latitudeJalanRusak: (json['latitudeJalanRusak'] as num?)?.toDouble() ??
+      latitudeJalanRusak:
+          (json['latitudeJalanRusak'] as num?)?.toDouble() ??
           (json['latitude_jalan_rusak'] as num?)?.toDouble() ??
           (json['latitude'] as num?)?.toDouble(),
-      longitudeJalanRusak: (json['longitudeJalanRusak'] as num?)?.toDouble() ??
+      longitudeJalanRusak:
+          (json['longitudeJalanRusak'] as num?)?.toDouble() ??
           (json['longitude_jalan_rusak'] as num?)?.toDouble() ??
           (json['longitude'] as num?)?.toDouble(),
       resikoJalanRusak: json['resikoJalanRusak'] as String?,
       adaLampuMati: json['adaLampuMati'] as bool? ?? false,
       lokasiLampuMatiGps: json['lokasiLampuMatiGps'] as String?,
-      latitudeLampuMati: (json['latitudeLampuMati'] as num?)?.toDouble() ??
+      latitudeLampuMati:
+          (json['latitudeLampuMati'] as num?)?.toDouble() ??
           (json['latitude_lampu_mati'] as num?)?.toDouble(),
-      longitudeLampuMati: (json['longitudeLampuMati'] as num?)?.toDouble() ??
+      longitudeLampuMati:
+          (json['longitudeLampuMati'] as num?)?.toDouble() ??
           (json['longitude_lampu_mati'] as num?)?.toDouble(),
       resikoLampuMati: json['resikoLampuMati'] as String?,
       keterangan: json['keterangan'] as String? ?? '',
@@ -442,13 +447,13 @@ class RondaLaporanModel extends RondaLaporanEntity {
 
     final effectivePatrolTime =
         (patrolTime != null && patrolTime!.trim().isNotEmpty)
-            ? patrolTime!.trim()
-            : defaultTime;
+        ? patrolTime!.trim()
+        : defaultTime;
 
     final effectiveWaktuKejadian =
         (waktuKejadian != null && waktuKejadian!.trim().isNotEmpty)
-            ? waktuKejadian!.trim()
-            : defaultTime;
+        ? waktuKejadian!.trim()
+        : defaultTime;
 
     // Penumpukan Sampah
     final penumpukanSampahMap = <String, dynamic>{
@@ -457,8 +462,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
     if (adaSampahMenumpuk) {
       penumpukanSampahMap['waktu_kejadian'] =
           (waktuSampahMenumpuk != null && waktuSampahMenumpuk!.isNotEmpty)
-              ? waktuSampahMenumpuk!
-              : effectiveWaktuKejadian;
+          ? waktuSampahMenumpuk!
+          : effectiveWaktuKejadian;
       penumpukanSampahMap['lokasi_kejadian'] = lokasiSampahMenumpuk ?? '';
       penumpukanSampahMap['jenis_sampah_dominan'] = jenisSampahDominan ?? '';
     }
@@ -470,8 +475,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
     if (!pengangkutanSesuaiJadwal) {
       jadwalPengangkutanMap['alasan'] =
           (alasanPengangkutan != null && alasanPengangkutan!.isNotEmpty)
-              ? alasanPengangkutan!
-              : 'Truk pengangkut terlambat datang';
+          ? alasanPengangkutan!
+          : 'Truk pengangkut terlambat datang';
     }
 
     // Pembakaran Sampah
@@ -481,8 +486,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
     if (adaPembakaranSampah) {
       pembakaranSampahMap['waktu_kejadian'] =
           (waktuPembakaran != null && waktuPembakaran!.isNotEmpty)
-              ? waktuPembakaran!
-              : effectiveWaktuKejadian;
+          ? waktuPembakaran!
+          : effectiveWaktuKejadian;
       pembakaranSampahMap['lokasi_kejadian'] = lokasiPembakaran ?? '';
       pembakaranSampahMap['tindakan'] = pembakaranDiberiTindakan ?? '';
     }
@@ -492,20 +497,20 @@ class RondaLaporanModel extends RondaLaporanEntity {
       'answer': adaPencurian ? 'ya' : 'tidak',
       'pelaku_diketahui':
           (pelakuPencurianDiketahui?.toLowerCase() == 'ya' ||
-                  pelakuPencurianDiketahui?.toLowerCase() == 'true')
-              ? 'ya'
-              : 'tidak',
+              pelakuPencurianDiketahui?.toLowerCase() == 'true')
+          ? 'ya'
+          : 'tidak',
       'lapor_aparat':
           (pencurianDilaporkanAparat?.toLowerCase() == 'ya' ||
-                  pencurianDilaporkanAparat?.toLowerCase() == 'true')
-              ? 'ya'
-              : 'tidak',
+              pencurianDilaporkanAparat?.toLowerCase() == 'true')
+          ? 'ya'
+          : 'tidak',
     };
     if (adaPencurian) {
       pencurianPerampasanMap['waktu_kejadian'] =
           (waktuPencurian != null && waktuPencurian!.isNotEmpty)
-              ? waktuPencurian!
-              : effectiveWaktuKejadian;
+          ? waktuPencurian!
+          : effectiveWaktuKejadian;
       pencurianPerampasanMap['lokasi_kejadian'] = lokasiPencurian ?? '';
     }
 
@@ -516,8 +521,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
     if (adaTawuran) {
       perkelahianKelompokMap['waktu_kejadian'] =
           (waktuTawuran != null && waktuTawuran!.isNotEmpty)
-              ? waktuTawuran!
-              : effectiveWaktuKejadian;
+          ? waktuTawuran!
+          : effectiveWaktuKejadian;
       perkelahianKelompokMap['lokasi_kejadian'] = lokasiTawuran ?? '';
       perkelahianKelompokMap['pelaku_diketahui'] =
           (pelakuTawuranDiketahui?.toLowerCase() == 'ya') ? 'ya' : 'tidak';
@@ -541,8 +546,8 @@ class RondaLaporanModel extends RondaLaporanEntity {
     if (adaSelokanTersumbat) {
       selokanTersumbatMap['waktu_kejadian'] =
           (waktuSelokanTersumbat != null && waktuSelokanTersumbat!.isNotEmpty)
-              ? waktuSelokanTersumbat!
-              : effectiveWaktuKejadian;
+          ? waktuSelokanTersumbat!
+          : effectiveWaktuKejadian;
       selokanTersumbatMap['lokasi_kejadian'] = lokasiSelokanTersumbat ?? '';
       selokanTersumbatMap['resiko'] = resikoSelokanTersumbat ?? '';
     }
@@ -552,8 +557,9 @@ class RondaLaporanModel extends RondaLaporanEntity {
     double? resolvedLngJalanRusak = longitudeJalanRusak;
     if ((resolvedLatJalanRusak == null || resolvedLngJalanRusak == null) &&
         lokasiJalanRusakGps != null) {
-      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
-          .firstMatch(lokasiJalanRusakGps!);
+      final match = RegExp(
+        r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)',
+      ).firstMatch(lokasiJalanRusakGps!);
       if (match != null) {
         resolvedLatJalanRusak ??= double.tryParse(match.group(1)!);
         resolvedLngJalanRusak ??= double.tryParse(match.group(2)!);
@@ -581,8 +587,9 @@ class RondaLaporanModel extends RondaLaporanEntity {
     double? resolvedLngLampuMati = longitudeLampuMati;
     if ((resolvedLatLampuMati == null || resolvedLngLampuMati == null) &&
         lokasiLampuMatiGps != null) {
-      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
-          .firstMatch(lokasiLampuMatiGps!);
+      final match = RegExp(
+        r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)',
+      ).firstMatch(lokasiLampuMatiGps!);
       if (match != null) {
         resolvedLatLampuMati ??= double.tryParse(match.group(1)!);
         resolvedLngLampuMati ??= double.tryParse(match.group(2)!);
@@ -627,25 +634,24 @@ class RondaLaporanModel extends RondaLaporanEntity {
   }) {
     String? resolvedId;
     if (responseData is Map<String, dynamic>) {
-      resolvedId = (responseData['id'] ??
-              responseData['report_id'] ??
-              responseData['data']?['id'] ??
-              responseData['data']?['report_id'])
-          ?.toString();
+      resolvedId =
+          (responseData['id'] ??
+                  responseData['report_id'] ??
+                  responseData['data']?['id'] ??
+                  responseData['data']?['report_id'])
+              ?.toString();
     } else if (responseData != null) {
       resolvedId = responseData.toString();
     }
 
-    resolvedId ??= fallback?.id ??
+    resolvedId ??=
+        fallback?.id ??
         'RND-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
 
     if (fallback != null) {
       return fallback.copyWith(id: resolvedId);
     }
 
-    return RondaLaporanModel(
-      id: resolvedId,
-      timestamp: DateTime.now(),
-    );
+    return RondaLaporanModel(id: resolvedId, timestamp: DateTime.now());
   }
 }

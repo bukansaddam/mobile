@@ -87,7 +87,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.chevron_right_rounded),
-                    onPressed: tempYear < now.year + 5
+                    onPressed: tempYear < now.year
                         ? () {
                             setDialogState(() {
                               tempYear++;
@@ -192,7 +192,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
       context: context,
       initialDateRange: initialRange,
       firstDate: DateTime(2020),
-      lastDate: DateTime(now.year + 5),
+      lastDate: now,
       helpText: 'Pilih Rentang Mingguan',
       cancelText: 'BATAL',
       confirmText: 'TERAPKAN',
@@ -555,15 +555,17 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 2),
-          Text(
-            value,
-            style: AppTextStyles.bodyMedium.copyWith(
-              fontSize: 13,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: AppTextStyles.bodyMedium.copyWith(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

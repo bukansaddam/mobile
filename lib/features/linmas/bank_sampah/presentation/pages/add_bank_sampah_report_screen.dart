@@ -42,7 +42,9 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final bloc = context.read<BankSampahBloc>();
       bloc.add(const UpdateBankSampahUserLocationEvent(silent: true));
-      if (mounted && _selectedLocation == null && bloc.listLocations.isNotEmpty) {
+      if (mounted &&
+          _selectedLocation == null &&
+          bloc.listLocations.isNotEmpty) {
         final validLocs = bloc.listLocations
             .where((l) => int.tryParse(l.id) != null)
             .toList();
@@ -420,7 +422,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Catat penimbangan sampah di Bank Sampah. Nilai dihitung otomatis Rp 5.000 / kg.',
+                              'Catat hasil penimbangan sampah. Nilai konversi dihitung otomatis Rp 5.000 / kg.',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.primaryDark,
                                 fontWeight: FontWeight.w500,
@@ -432,11 +434,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.account_balance_rounded,
-                      title: 'Pilih Bank Sampah *',
-                      subtitle: 'Tentukan lokasi bank sampah penerima sampah',
-                    ),
+                    _buildSectionHeader('Pilih Bank Sampah', isRequired: true),
                     const SizedBox(height: 8),
                     InkWell(
                       onTap: () async {
@@ -581,11 +579,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.category_rounded,
-                      title: 'Jenis Sampah *',
-                      subtitle: 'Pilih kategori jenis sampah yang disetor',
-                    ),
+                    _buildSectionHeader('Jenis Sampah', isRequired: true),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -638,11 +632,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.calendar_today_rounded,
-                      title: 'Tanggal Penyetoran *',
-                      subtitle: 'Tentukan tanggal saat sampah disetorkan',
-                    ),
+                    _buildSectionHeader('Tanggal Penyetoran', isRequired: true),
                     const SizedBox(height: 8),
                     InkWell(
                       onTap: () async {
@@ -711,12 +701,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.scale_rounded,
-                      title: 'Berat Sampah (Kg) *',
-                      subtitle:
-                          'Masukkan bobot hasil penimbangan dalam kilogram',
-                    ),
+                    _buildSectionHeader('Berat Sampah (kg)', isRequired: true),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _beratController,
@@ -784,25 +769,20 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     ),
                     const SizedBox(height: 8),
 
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         _buildPresetChip('+1 kg', () => _addBeratPreset(1.0)),
-                        const SizedBox(width: 8),
                         _buildPresetChip('+5 kg', () => _addBeratPreset(5.0)),
-                        const SizedBox(width: 8),
                         _buildPresetChip('+10 kg', () => _addBeratPreset(10.0)),
-                        const SizedBox(width: 8),
                         _buildPresetChip('+25 kg', () => _addBeratPreset(25.0)),
                       ],
                     ),
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.payments_rounded,
-                      title: 'Nilai Sampah (Otomatis)',
-                      subtitle: 'Dihitung otomatis: Berat (kg) × Rp 5.000',
-                    ),
+                    _buildSectionHeader('Nilai Sampah (Otomatis)'),
                     const SizedBox(height: 8),
                     Container(
                       width: double.infinity,
@@ -827,25 +807,33 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Estimasi Total Nilai:',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.85),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Estimasi Total Nilai:',
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                currencyFormatter.format(_calculatedNilai),
-                                style: AppTextStyles.headlineMedium.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                                const SizedBox(height: 4),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    currencyFormatter.format(_calculatedNilai),
+                                    style: AppTextStyles.headlineMedium
+                                        .copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: 12),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
@@ -869,11 +857,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.camera_alt_rounded,
-                      title: 'Foto Sampah / Penimbangan',
-                      subtitle: 'Lampirkan foto sampah atau proses penimbangan',
-                    ),
+                    _buildSectionHeader('Foto Sampah (Opsional)'),
                     const SizedBox(height: 8),
                     if (_selectedPhoto != null)
                       Stack(
@@ -990,12 +974,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
 
                     const SizedBox(height: 20),
 
-                    _buildSectionHeader(
-                      icon: Icons.notes_rounded,
-                      title: 'Catatan Tambahan',
-                      subtitle:
-                          'Keterangan kondisi sampah atau rincian lainnya (opsional)',
-                    ),
+                    _buildSectionHeader('Catatan (Opsional)'),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _catatanController,
@@ -1067,28 +1046,46 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     );
   }
 
-  Widget _buildSectionHeader({
-    required IconData icon,
-    required String title,
-    required String subtitle,
+  Widget _buildSectionHeader(
+    String title, {
+    String? helperText,
+    bool isRequired = false,
   }) {
-    return Row(
+    final hasAsterisk = isRequired || title.contains('*');
+    final cleanTitle = title.replaceAll('*', '').trimRight();
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        Text.rich(
+          TextSpan(
+            text: cleanTitle,
+            style: AppTextStyles.bodyMedium.copyWith(
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+            ),
             children: [
-              Text(
-                title,
-                style: AppTextStyles.bodyMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+              if (hasAsterisk)
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
+        if (helperText != null && helperText.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(
+            helperText,
+            style: AppTextStyles.caption.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+            ),
+          ),
+        ],
       ],
     );
   }

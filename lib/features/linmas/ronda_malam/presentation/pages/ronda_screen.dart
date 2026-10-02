@@ -1595,7 +1595,7 @@ class _RondaScreenState extends State<RondaScreen> {
     required String label,
     required String? value,
     required void Function(String address, double? lat, double? lng)
-        onLocationSelected,
+    onLocationSelected,
     String? hintText,
   }) {
     final effectiveHint = hintText ?? 'pilih lokasi gps';
