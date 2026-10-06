@@ -8,6 +8,7 @@ import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/tracking_config_modal.dart';
 import 'package:akar/features/linmas/profile/presentation/pages/profile_screen.dart';
+import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
@@ -87,20 +88,30 @@ class _MainScreenState extends State<MainScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          floatingActionButton: SizedBox(
-            width: 60,
-            height: 60,
-            child: FloatingActionButton(
-              onPressed: () {
-                _dismissSurveyIfSubmitted(context);
-                context.pushNamed('panic');
-              },
-              backgroundColor: AppColors.error,
-              foregroundColor: AppColors.white,
-              elevation: 6,
-              shape: const CircleBorder(),
-              child: const Icon(Icons.warning_amber_rounded, size: 30),
-            ),
+          floatingActionButton: BlocBuilder<PanicBloc, PanicState>(
+            builder: (context, panicState) {
+              final isEmergency = panicState.isEmergencyActive;
+              return SizedBox(
+                width: 60,
+                height: 60,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    _dismissSurveyIfSubmitted(context);
+                    context.pushNamed('panic');
+                  },
+                  backgroundColor: AppColors.error,
+                  foregroundColor: AppColors.white,
+                  elevation: 6,
+                  shape: const CircleBorder(),
+                  child: Icon(
+                    isEmergency
+                        ? Icons.emergency_rounded
+                        : Icons.warning_amber_rounded,
+                    size: 30,
+                  ),
+                ),
+              );
+            },
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,

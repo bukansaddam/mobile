@@ -10,13 +10,18 @@ enum DisasterSeverity { warning, danger, critical }
 class DisasterAlertEvent {
   final String id;
   final String title;
-  final String type; // e.g. Gempa Bumi, Banjir, Tanah Longsor, Erupsi
+  final String type; // e.g. Panggilan Darurat SOS Anggota, Gempa Bumi, dll.
   final String description;
   final String location;
   final DisasterSeverity severity;
   final DateTime timestamp;
   final double? magnitude;
   final String? recommendedAction;
+  final String? senderName;
+  final String? senderPhone;
+  final double? latitude;
+  final double? longitude;
+  final String? note;
 
   DisasterAlertEvent({
     required this.id,
@@ -28,6 +33,11 @@ class DisasterAlertEvent {
     required this.timestamp,
     this.magnitude,
     this.recommendedAction,
+    this.senderName,
+    this.senderPhone,
+    this.latitude,
+    this.longitude,
+    this.note,
   });
 }
 
@@ -106,14 +116,19 @@ class DisasterAlertService {
   }
 
   /// Triggers a disaster alert with loud ringing alarm and high-priority push notification outside the app
-  Future<void> triggerAlert(DisasterAlertEvent event) async {
+  Future<void> triggerAlert(
+    DisasterAlertEvent event, {
+    bool showNotification = true,
+  }) async {
     _latestAlert = event;
     _alertStreamController.add(event);
 
     // 1. Start continuous ringing siren audio
     await _audioAlarmService.startEmergencyAlarm();
 
-    // 2. Show system push notification (Appears on top of other apps / Lock screen)
+    // 2. Show system push notification only if requested (avoid duplicates)
+    if (!showNotification) return;
+
     try {
       const androidDetails = AndroidNotificationDetails(
         'disaster_emergency_channel',
@@ -128,7 +143,7 @@ class DisasterAlertService {
         ongoing: true,
         playSound: true,
         enableVibration: true,
-        ticker: '🚨 PANGGILAN DARURAT BENCANA ALAM',
+        ticker: 'PANGGILAN DARURAT BENCANA ALAM',
       );
 
       const darwinDetails = DarwinNotificationDetails(
@@ -146,29 +161,10 @@ class DisasterAlertService {
 
       await _notificationsPlugin.show(
         id: 999,
-        title: '🚨 PERINGATAN DARURAT: ${event.title}',
+        title: 'PERINGATAN DARURAT: ${event.title}',
         body: '${event.location} - ${event.description}',
         notificationDetails: details,
       );
-
-      // Start re-trigger timer every 4 seconds so floating pop-up banner stays active continuously
-      _retriggerTimer?.cancel();
-      _retriggerTimer = Timer.periodic(const Duration(seconds: 4), (
-        timer,
-      ) async {
-        if (!_audioAlarmService.isPlaying) {
-          timer.cancel();
-          return;
-        }
-        try {
-          await _notificationsPlugin.show(
-            id: 999,
-            title: '🚨 PERINGATAN DARURAT: ${event.title}',
-            body: '${event.location} - ${event.description}',
-            notificationDetails: details,
-          );
-        } catch (_) {}
-      });
     } catch (e) {
       debugPrint('Local notification error: $e');
     }
@@ -246,7 +242,7 @@ class DisasterAlertService {
         ongoing: true,
         playSound: true,
         enableVibration: true,
-        ticker: '🚨 PANGGILAN DARURAT BENCANA ALAM',
+        ticker: 'PANGGILAN DARURAT BENCANA ALAM',
       );
 
       const darwinDetails = DarwinNotificationDetails(
@@ -265,7 +261,7 @@ class DisasterAlertService {
       // Trigger native OS Exact Alarm via AlarmManager (runs at Android OS level)
       await _notificationsPlugin.zonedSchedule(
         id: 999,
-        title: '🚨 PERINGATAN DARURAT: ${event.title}',
+        title: 'PERINGATAN DARURAT: ${event.title}',
         body: '${event.location} - ${event.description}',
         scheduledDate: scheduledTime,
         notificationDetails: details,

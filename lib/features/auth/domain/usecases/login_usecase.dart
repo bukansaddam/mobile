@@ -10,7 +10,12 @@ class LoginUsecase {
   Future<Either<Failure, AuthEntity>> call({
     required String username,
     required String password,
+    String? deviceId,
   }) async {
-    return await repository.login(username: username, password: password);
+    return await repository.login(
+      username: username,
+      password: password,
+      deviceId: deviceId,
+    );
   }
 }

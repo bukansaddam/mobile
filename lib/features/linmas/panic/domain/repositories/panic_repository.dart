@@ -9,6 +9,7 @@ abstract class PanicRepository {
   Future<PanicAlertResultEntity> sendPanicAlert({
     required double latitude,
     required double longitude,
+    bool isEmergency = true,
     String? selectedMemberId,
     String? note,
   });

@@ -26,6 +26,8 @@ import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complai
 import 'package:akar/features/masyarakat/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/survey/presentation/pages/survey_screen.dart';
 import 'package:akar/features/survey/presentation/pages/initial_survey_screen.dart';
+import 'package:akar/core/services/disaster_alert_service.dart';
+import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -55,6 +57,8 @@ class AppRouter {
   static const String main = 'main';
   static const String survey = 'survey';
   static const String initialSurvey = 'initialSurvey';
+  static const String emergencyCall = 'emergencyCall';
+  static const String emergencyCallPath = '/emergency-call';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -97,7 +101,11 @@ class AppRouter {
   static const String surveyPath = '/survey';
   static const String initialSurveyPath = '/initial-survey';
 
+  static final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>();
+
   static final GoRouter router = GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: splashPath,
     refreshListenable: GoRouterRefreshStream(sl<AuthBloc>().stream),
     redirect: (context, state) {
@@ -115,9 +123,10 @@ class AppRouter {
       final isMember = currentUser?.isMember ?? false;
 
       final isSplash = location == splashPath;
+      final isEmergencyCall = location == emergencyCallPath;
       final isAuthRoute = location == loginPath || location == registerPath;
 
-      if (isSplash) {
+      if (isSplash || isEmergencyCall) {
         return null;
       }
 
@@ -200,6 +209,24 @@ class AppRouter {
         path: initialSurveyPath,
         name: initialSurvey,
         builder: (context, state) => const InitialSurveyScreen(),
+      ),
+      GoRoute(
+        path: emergencyCallPath,
+        name: emergencyCall,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          final event = state.extra as DisasterAlertEvent? ??
+              DisasterAlertEvent(
+                id: DateTime.now().millisecondsSinceEpoch.toString(),
+                title: 'PANGGILAN DARURAT: SOS',
+                type: 'Darurat SOS',
+                description: 'Panggilan darurat masuk.',
+                location: 'Lokasi Terdeteksi',
+                severity: DisasterSeverity.critical,
+                timestamp: DateTime.now(),
+              );
+          return DisasterEmergencyWarningPage(event: event);
+        },
       ),
 
       // ----------------- Linmas (Officer) -----------------

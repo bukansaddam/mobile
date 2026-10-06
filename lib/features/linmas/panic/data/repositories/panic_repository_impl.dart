@@ -20,12 +20,14 @@ class PanicRepositoryImpl implements PanicRepository {
   Future<PanicAlertResultEntity> sendPanicAlert({
     required double latitude,
     required double longitude,
+    bool isEmergency = true,
     String? selectedMemberId,
     String? note,
   }) async {
     final result = await remoteDatasource.postPanicAlert(
       lat: latitude,
       lng: longitude,
+      isEmergency: isEmergency,
       selectedMemberId: selectedMemberId,
       note: note,
     );

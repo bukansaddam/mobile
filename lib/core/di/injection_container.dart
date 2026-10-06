@@ -6,6 +6,7 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
+import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
 
 // Auth
@@ -134,6 +135,12 @@ Future<void> init() async {
   sl.registerLazySingleton<AudioAlarmService>(() => audioAlarmService);
   sl.registerLazySingleton<DisasterAlertService>(
     () => DisasterAlertService(sl<AudioAlarmService>()),
+  );
+  sl.registerLazySingleton<FirebaseNotificationService>(
+    () => FirebaseNotificationService(
+      prefs: sl<SharedPreferences>(),
+      disasterAlertService: sl<DisasterAlertService>(),
+    ),
   );
 
   // ---------------------- Data Sources ----------------------
@@ -301,7 +308,12 @@ Future<void> init() async {
 
   // ---------------------- BLoCs & Cubits ----------------------
   sl.registerLazySingleton<AuthBloc>(
-    () => AuthBloc(loginUsecase: sl(), registerUsecase: sl(), repository: sl()),
+    () => AuthBloc(
+      loginUsecase: sl(),
+      registerUsecase: sl(),
+      repository: sl(),
+      notificationService: sl<FirebaseNotificationService>(),
+    ),
   );
   sl.registerLazySingleton<TrackingBloc>(
     () => TrackingBloc(sendLocationUsecase: sl(), sharedPreferences: sl()),

@@ -161,16 +161,23 @@ class PanicBloc extends Bloc<PanicEvent, PanicState> {
       final result = await sendPanicAlertUsecase.call(
         latitude: state.userLatitude,
         longitude: state.userLongitude,
+        isEmergency: event.isEmergency,
         selectedMemberId: event.selectedMemberId,
         note: event.note,
       );
 
-      emit(state.copyWith(status: PanicStatus.success, lastResult: result));
+      emit(
+        state.copyWith(
+          status: PanicStatus.success,
+          isEmergencyActive: event.isEmergency,
+          lastResult: result,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
           status: PanicStatus.error,
-          errorMessage: 'Gagal mengirimkan bantuan: $e',
+          errorMessage: 'Gagal memperbarui status darurat: $e',
         ),
       );
     }

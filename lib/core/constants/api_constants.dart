@@ -573,5 +573,81 @@ class ApiConstants {
   ]);
 
   // Daily Reports / Laporan Harian
-  static const String dailyReports = '/api/daily-reports';
+  static final String dailyReports = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    37,
+    108,
+    140,
+    163,
+    81,
+    239,
+    230,
+    58,
+    105,
+    148,
+    243,
+    62,
+    109,
+  ]);
+
+  // Emergency / SOS
+  static final String emergencyStatus = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    36,
+    96,
+    128,
+    189,
+    79,
+    167,
+    250,
+    60,
+    96,
+    212,
+    242,
+    62,
+    127,
+    56,
+    26,
+    170,
+  ]);
+  static String get emergencyStatusMe => emergencyStatus;
+
+  static final String villageMembersNearby =
+      EndpointSecurity.decode(const <int>[
+        117,
+        79,
+        44,
+        118,
+        230,
+        55,
+        100,
+        137,
+        163,
+        73,
+        165,
+        241,
+        114,
+        116,
+        158,
+        236,
+        40,
+        123,
+        62,
+        28,
+        246,
+        31,
+        120,
+        116,
+        173,
+        122,
+        171,
+      ]);
 }

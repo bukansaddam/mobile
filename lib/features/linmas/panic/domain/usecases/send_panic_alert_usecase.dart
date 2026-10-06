@@ -9,12 +9,14 @@ class SendPanicAlertUsecase {
   Future<PanicAlertResultEntity> call({
     required double latitude,
     required double longitude,
+    bool isEmergency = true,
     String? selectedMemberId,
     String? note,
   }) async {
     return await repository.sendPanicAlert(
       latitude: latitude,
       longitude: longitude,
+      isEmergency: isEmergency,
       selectedMemberId: selectedMemberId,
       note: note,
     );

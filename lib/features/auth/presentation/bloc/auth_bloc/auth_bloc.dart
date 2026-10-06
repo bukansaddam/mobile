@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
@@ -13,11 +14,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUsecase loginUsecase;
   final RegisterUsecase registerUsecase;
   final AuthRepository repository;
+  final FirebaseNotificationService? notificationService;
 
   AuthBloc({
     required this.loginUsecase,
     required this.registerUsecase,
     required this.repository,
+    this.notificationService,
   }) : super(AuthInitial()) {
     on<CheckAuthStatusEvent>((event, emit) async {
       emit(AuthChecking());
@@ -50,9 +53,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
 
+      // Resolve FCM device token (device_id) to store in database
+      String? deviceId = event.deviceId;
+      if (deviceId == null || deviceId.isEmpty) {
+        try {
+          deviceId = await notificationService?.getToken();
+        } catch (_) {}
+      }
+
       final result = await loginUsecase(
         username: event.username,
         password: event.password,
+        deviceId: deviceId,
       );
 
       result.fold((failure) => emit(AuthFailure(failure.message)), (
@@ -73,6 +85,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterEvent>((event, emit) async {
       emit(AuthLoading());
 
+      // Resolve FCM device token (device_id)
+      String? deviceId = event.deviceId;
+      if (deviceId == null || deviceId.isEmpty) {
+        try {
+          deviceId = await notificationService?.getToken();
+        } catch (_) {}
+      }
+
       final result = await registerUsecase(
         name: event.name,
         phoneNumber: event.phoneNumber,
@@ -83,6 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
         passwordConfirmation: event.passwordConfirmation,
+        deviceId: deviceId,
       );
 
       result.fold((failure) => emit(AuthFailure(failure.message)), (

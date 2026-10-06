@@ -5,6 +5,7 @@ abstract class AuthRepository {
   Future<Either<Failure, AuthEntity>> login({
     required String username,
     required String password,
+    String? deviceId,
   });
   Future<Either<Failure, AuthEntity>> register({
     required String name,
@@ -16,6 +17,7 @@ abstract class AuthRepository {
     required String email,
     required String password,
     required String passwordConfirmation,
+    String? deviceId,
   });
   Future<Either<Failure, UserEntity?>> getSavedUser();
   Future<Either<Failure, String?>> getSavedToken();

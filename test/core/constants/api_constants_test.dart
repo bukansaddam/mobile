@@ -49,6 +49,12 @@ void main() {
       expect(ApiConstants.categories, '/api/categories');
     });
 
+    test('emergency endpoint decodes accurately', () {
+      expect(ApiConstants.emergencyStatus, '/api/emergency/status');
+      expect(ApiConstants.emergencyStatusMe, '/api/emergency/status');
+      expect(ApiConstants.villageMembersNearby, '/api/village-members/nearby');
+    });
+
     test('google speech constants decode accurately', () {
       expect(ApiConstants.googleCloudScopes, [
         'https://www.googleapis.com/auth/cloud-platform',

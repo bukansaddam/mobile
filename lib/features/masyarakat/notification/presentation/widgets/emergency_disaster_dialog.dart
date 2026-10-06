@@ -127,7 +127,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      '🚨 PERINGATAN DARURAT 🚨',
+                      'PERINGATAN DARURAT',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,

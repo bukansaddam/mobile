@@ -18,11 +18,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthEntity>> login({
     required String username,
     required String password,
+    String? deviceId,
   }) async {
     try {
       final authModel = await remoteDatasource.login(
         username: username,
         password: password,
+        deviceId: deviceId,
       );
 
       await localDatasource.saveToken(authModel.accessToken);
@@ -45,6 +47,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
     required String passwordConfirmation,
+    String? deviceId,
   }) async {
     try {
       final authModel = await remoteDatasource.register(
@@ -57,6 +60,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
         passwordConfirmation: passwordConfirmation,
+        deviceId: deviceId,
       );
 
       if (authModel.accessToken.isNotEmpty) {

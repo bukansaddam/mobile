@@ -38,7 +38,7 @@ class AudioAlarmService {
       await player.setReleaseMode(ReleaseMode.loop);
       await player.setVolume(_volume);
       await player.play(AssetSource('sounds/emergency_alarm.wav'));
-      debugPrint('🚨 Emergency alarm siren started ringing via AudioPlayer!');
+      debugPrint('Emergency alarm siren started ringing via AudioPlayer!');
     } catch (e) {
       debugPrint(
         'AudioPlayer failed (e.g. MissingPluginException). Using SystemSound fallback: $e',

@@ -51,15 +51,23 @@ abstract class BaseRemoteDataSource {
       Map<String, dynamic>? dataMap;
       if (data is Map<String, dynamic>) {
         dataMap = data;
+      } else if (data is Map) {
+        dataMap = Map<String, dynamic>.from(data);
       }
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      final statusCode = response.statusCode ?? 200;
+      final is2xx = statusCode >= 200 && statusCode < 300;
+      final explicitSuccess = dataMap?['success'] ?? dataMap?['is_success'];
+      final isSuccess = is2xx && explicitSuccess != false;
+
+      if (isSuccess) {
         final message =
             (dataMap?['message'] ?? dataMap?['meta']?['message']) as String?;
+        final payload = dataMap != null ? (dataMap['data'] ?? dataMap) : data;
         return ApiResponse<T>(
           success: true,
-          data: dataMap != null && fromJson != null
-              ? fromJson(dataMap['data'] ?? dataMap)
+          data: payload != null && fromJson != null
+              ? fromJson(payload)
               : null,
           message: message,
           statusCode: response.statusCode,

@@ -4,6 +4,7 @@ enum PanicStatus { initial, loading, loaded, sending, success, error }
 
 class PanicState extends Equatable {
   final PanicStatus status;
+  final bool isEmergencyActive;
   final double userLatitude;
   final double userLongitude;
   final String fullAddress;
@@ -14,6 +15,7 @@ class PanicState extends Equatable {
 
   const PanicState({
     this.status = PanicStatus.initial,
+    this.isEmergencyActive = false,
     this.userLatitude = -6.2088,
     this.userLongitude = 106.8456,
     this.fullAddress =
@@ -26,6 +28,7 @@ class PanicState extends Equatable {
 
   PanicState copyWith({
     PanicStatus? status,
+    bool? isEmergencyActive,
     double? userLatitude,
     double? userLongitude,
     String? fullAddress,
@@ -36,6 +39,7 @@ class PanicState extends Equatable {
   }) {
     return PanicState(
       status: status ?? this.status,
+      isEmergencyActive: isEmergencyActive ?? this.isEmergencyActive,
       userLatitude: userLatitude ?? this.userLatitude,
       userLongitude: userLongitude ?? this.userLongitude,
       fullAddress: fullAddress ?? this.fullAddress,
@@ -49,6 +53,7 @@ class PanicState extends Equatable {
   @override
   List<Object?> get props => [
     status,
+    isEmergencyActive,
     userLatitude,
     userLongitude,
     fullAddress,

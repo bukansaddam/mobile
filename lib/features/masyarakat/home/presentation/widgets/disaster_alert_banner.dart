@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
+import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DisasterAlertBanner extends StatelessWidget {
   const DisasterAlertBanner({super.key});
@@ -56,6 +58,101 @@ class DisasterAlertBanner extends StatelessWidget {
                 style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
               ),
               const SizedBox(height: 16),
+              _buildSimulateOption(
+                context,
+                title: '📋 Salin Token FCM Perangkat',
+                subtitle:
+                    'Salin token unik HP ini untuk test notifikasi dari Firebase Console',
+                onTap: () async {
+                  Navigator.pop(context);
+                  final token =
+                      await sl<FirebaseNotificationService>().getToken();
+                  if (token != null && token.isNotEmpty) {
+                    await Clipboard.setData(ClipboardData(text: token));
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          title: const Row(
+                            children: [
+                              Icon(Icons.check_circle, color: Color(0xFF10B981)),
+                              SizedBox(width: 8),
+                              Text('Token FCM Berhasil Disalin',
+                                  style: TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Token FCM unik perangkat ini telah disalin ke clipboard:\n',
+                                style: TextStyle(fontSize: 13),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: SelectableText(
+                                  token,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontFamily: 'monospace',
+                                    color: Color(0xFF0F172A),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Gunakan token ini di Firebase Console -> Messaging -> Send test message.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF64748B),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            '⚠️ Gagal mengambil token FCM. Pastikan internet & izin notifikasi aktif.',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildSimulateOption(
+                context,
+                title: '⚙️ Izin Fullscreen di Luar Aplikasi (Overlay)',
+                subtitle:
+                    'Aktifkan agar panggilan darurat langsung fullscreen saat membuka aplikasi lain',
+                onTap: () async {
+                  Navigator.pop(context);
+                  await sl<FirebaseNotificationService>()
+                      .checkAndPromptOverlayPermission(context, forcePrompt: true);
+                },
+              ),
+              const SizedBox(height: 10),
               _buildSimulateOption(
                 context,
                 title: '📱 Tes Push Notifikasi Sistem (Luar Aplikasi)',

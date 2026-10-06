@@ -44,6 +44,68 @@ class _PanicScreenState extends State<PanicScreen> {
     super.dispose();
   }
 
+  void _confirmDeactivateEmergency() {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Icon(
+                Icons.check_circle_outline_rounded,
+                color: Color(0xFF16A34A),
+                size: 28,
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Matikan Sinyal SOS?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Apakah kondisi darurat Anda sudah selesai dan situasi telah aman?\n\nMenonaktifkan SOS akan memperbarui status Anda menjadi normal (is_emergency: false) di server.',
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: const Text(
+                'Batal',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogCtx);
+                context.read<PanicBloc>().add(
+                  const SendPanicAlertEvent(isEmergency: false),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF16A34A),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Ya, Matikan SOS'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _handleEmergencyButtonTap(PanicState state) {
     if (state.status == PanicStatus.sending) return;
 
@@ -67,7 +129,9 @@ class _PanicScreenState extends State<PanicScreen> {
         _tapCount = 0;
       });
 
-      context.read<PanicBloc>().add(const SendPanicAlertEvent());
+      context.read<PanicBloc>().add(
+        const SendPanicAlertEvent(isEmergency: true),
+      );
     }
   }
 
@@ -90,7 +154,19 @@ class _PanicScreenState extends State<PanicScreen> {
     return BlocConsumer<PanicBloc, PanicState>(
       listener: (context, state) {
         if (state.status == PanicStatus.success) {
-          _showSuccessEmergencyDialog(context, state);
+          if (state.isEmergencyActive) {
+            _showSuccessEmergencyDialog(context, state);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Sinyal darurat (SOS) telah berhasil dinonaktifkan. Anda dalam status aman.',
+                ),
+                backgroundColor: Color(0xFF16A34A),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         } else if (state.status == PanicStatus.error &&
             state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -340,7 +416,9 @@ class _PanicScreenState extends State<PanicScreen> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.92),
+                          color: state.isEmergencyActive
+                              ? AppColors.error.withValues(alpha: 0.95)
+                              : AppColors.primary.withValues(alpha: 0.92),
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
@@ -352,15 +430,19 @@ class _PanicScreenState extends State<PanicScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.warning_amber_rounded,
+                            Icon(
+                              state.isEmergencyActive
+                                  ? Icons.emergency_rounded
+                                  : Icons.warning_amber_rounded,
                               color: Colors.white,
                               size: 24,
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                'Mode Siaga: ${filteredMembers.length} Anggota Terdekat Dalam Radius $radiusLabel Terdeteksi',
+                                state.isEmergencyActive
+                                    ? 'SINYAL SOS AKTIF: Status darurat Anda sedang disiarkan ke tim terdekat!'
+                                    : 'Mode Siaga: ${filteredMembers.length} Anggota Terdekat Dalam Radius $radiusLabel Terdeteksi',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -684,7 +766,7 @@ class _PanicScreenState extends State<PanicScreen> {
                                 SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'Tidak ada anggota terdekat dalam radius ini. Silakan perbesar radius pilihan (1km/3km/5km) di sebelah kanan layar.',
+                                    'Tidak ada anggota terdekat dalam radius ini.',
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: AppColors.textPrimary,
@@ -886,76 +968,163 @@ class _PanicScreenState extends State<PanicScreen> {
             ),
             const SizedBox(height: 14),
 
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: state.status == PanicStatus.sending
-                        ? null
-                        : () => _handleEmergencyButtonTap(state),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.error,
-                      foregroundColor: Colors.white,
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+            if (state.isEmergencyActive) ...[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.error.withValues(alpha: 0.3),
                       ),
                     ),
-                    child: state.status == PanicStatus.sending
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Text(
-                            _tapCount == 0
-                                ? 'MINTA BANTUAN DARURAT'
-                                : 'TEKAN ${3 - _tapCount}X LAGI UNTUK MENGIRIM',
-                            style: const TextStyle(
-                              fontSize: 14,
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.warning_rounded,
+                          color: AppColors.error,
+                          size: 20,
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Status Darurat Anda Sedang Aktif di Server',
+                            style: TextStyle(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                              color: Colors.white,
+                              color: AppColors.error,
                             ),
                           ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      size: 13,
-                      color: _tapCount > 0
-                          ? AppColors.error
-                          : AppColors.textSecondary,
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _tapCount > 0
-                          ? 'Tekan ${3 - _tapCount}x lagi untuk mengonfirmasi sinyal SOS'
-                          : 'Tekan tombol 3x untuk mengirim bantuan darurat',
-                      style: TextStyle(
-                        fontSize: 11,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: state.status == PanicStatus.sending
+                          ? null
+                          : _confirmDeactivateEmergency,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF16A34A),
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: state.status == PanicStatus.sending
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              'MATIKAN SINYAL SOS',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Tekan tombol hijau di atas jika kondisi darurat telah teratasi',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      onPressed: state.status == PanicStatus.sending
+                          ? null
+                          : () => _handleEmergencyButtonTap(state),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.error,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: state.status == PanicStatus.sending
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              _tapCount == 0
+                                  ? 'MINTA BANTUAN DARURAT'
+                                  : 'TEKAN ${3 - _tapCount}X LAGI UNTUK MENGIRIM',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 13,
                         color: _tapCount > 0
                             ? AppColors.error
                             : AppColors.textSecondary,
-                        fontWeight: _tapCount > 0
-                            ? FontWeight.bold
-                            : FontWeight.w500,
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _tapCount > 0
+                            ? 'Tekan ${3 - _tapCount}x lagi untuk mengonfirmasi sinyal SOS'
+                            : 'Tekan tombol 3x untuk mengirim bantuan darurat',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: _tapCount > 0
+                              ? AppColors.error
+                              : AppColors.textSecondary,
+                          fontWeight: _tapCount > 0
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

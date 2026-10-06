@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:akar/core/di/injection_container.dart' as di;
+import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -57,11 +59,19 @@ class _LoginScreenState extends State<LoginScreen> {
     FocusScope.of(context).unfocus();
     await _requestLocationPermission();
 
+    String? deviceToken;
+    try {
+      deviceToken = await di.sl<FirebaseNotificationService>().getToken();
+    } catch (e) {
+      debugPrint('Gagal mengambil FCM device token: $e');
+    }
+
     if (!mounted) return;
     context.read<AuthBloc>().add(
       LoginEvent(
         username: _usernameController.text.trim(),
         password: _passwordController.text,
+        deviceId: deviceToken,
       ),
     );
   }

@@ -12,11 +12,16 @@ class CheckAuthStatusEvent extends AuthEvent {}
 class LoginEvent extends AuthEvent {
   final String username;
   final String password;
+  final String? deviceId;
 
-  const LoginEvent({required this.username, required this.password});
+  const LoginEvent({
+    required this.username,
+    required this.password,
+    this.deviceId,
+  });
 
   @override
-  List<Object?> get props => [username, password];
+  List<Object?> get props => [username, password, deviceId];
 }
 
 class RegisterEvent extends AuthEvent {
@@ -29,6 +34,7 @@ class RegisterEvent extends AuthEvent {
   final String email;
   final String password;
   final String passwordConfirmation;
+  final String? deviceId;
 
   const RegisterEvent({
     required this.name,
@@ -40,6 +46,7 @@ class RegisterEvent extends AuthEvent {
     required this.email,
     required this.password,
     required this.passwordConfirmation,
+    this.deviceId,
   });
 
   @override
@@ -53,6 +60,7 @@ class RegisterEvent extends AuthEvent {
     email,
     password,
     passwordConfirmation,
+    deviceId,
   ];
 }
 

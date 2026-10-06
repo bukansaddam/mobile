@@ -7,9 +7,11 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
+import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/di/injection_container.dart' as di;
 import 'package:akar/core/routes/app_router.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/home/presentation/bloc/home_bloc/home_bloc.dart';
@@ -29,8 +31,19 @@ import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.d
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID', null);
-  await di.init();
+
+  // Initialize Firebase Core
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Set background messaging handler before runApp
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Initialize dependency injection
+  await di.init();
+
+  // Initialize Firebase Push Notification Service
+  await di.sl<FirebaseNotificationService>().initialize();
+
   runApp(const MyApp());
 
   unawaited(
