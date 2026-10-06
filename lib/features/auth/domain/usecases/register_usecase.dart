@@ -18,18 +18,16 @@ class RegisterUsecase {
     required String password,
     required String passwordConfirmation,
     String? deviceId,
-  }) async {
-    return await repository.register(
-      name: name,
-      phoneNumber: phoneNumber,
-      nik: nik,
-      longitude: longitude,
-      latitude: latitude,
-      username: username,
-      email: email,
-      password: password,
-      passwordConfirmation: passwordConfirmation,
-      deviceId: deviceId,
-    );
-  }
+  }) => repository.register(
+    name: name,
+    phoneNumber: phoneNumber,
+    nik: nik,
+    longitude: longitude,
+    latitude: latitude,
+    username: username,
+    email: email,
+    password: password,
+    passwordConfirmation: passwordConfirmation,
+    deviceId: deviceId,
+  );
 }

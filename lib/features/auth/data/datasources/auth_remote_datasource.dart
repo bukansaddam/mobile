@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
-import 'package:flutter/material.dart';
+import 'package:akar/utils/app_logger.dart';
 
 abstract class AuthRemoteDatasource {
   Future<AuthModel> login({
@@ -34,28 +36,30 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     final Map<String, dynamic> requestData = {
       'username': username,
       'password': password,
+      if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
     };
-    if (deviceId != null && deviceId.isNotEmpty) {
-      requestData['device_id'] = deviceId;
-    }
 
-    debugPrint('[Debug] Login Request Data: ${requestData.toString()}');
+    try {
+      final response = await handleRequest<AuthModel>(
+        () => dio.post(ApiConstants.login, data: requestData),
+        fromJson: _parseAuthModel,
+      );
 
-    final response = await handleRequest<Map<String, dynamic>>(() async {
-      return await dio.post(ApiConstants.login, data: requestData);
-    }, fromJson: (json) => json as Map<String, dynamic>);
-
-    if (response.success && response.data != null) {
-      final map = Map<String, dynamic>.from(response.data!);
-      if (!map.containsKey('access_token') && map.containsKey('token')) {
-        map['access_token'] = map['token'];
+      if (response.success && response.data != null) {
+        final authModel = response.data!;
+        if (authModel.message == null && response.message != null) {
+          return authModel.copyWith(message: response.message);
+        }
+        return authModel;
+      } else {
+        throw Exception(response.message ?? 'Login gagal');
       }
-      if (!map.containsKey('message') && response.message != null) {
-        map['message'] = response.message;
-      }
-      return AuthModel.fromJson(map);
-    } else {
-      throw Exception(response.message ?? 'Login gagal');
+    } on DioException catch (e) {
+      AppLogger.e('[AUTH_DS] DioException: ${e.message}', e, e.stackTrace);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    } catch (e, s) {
+      AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
     }
   }
 
@@ -82,26 +86,38 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
       'email': email,
       'password': password,
       'password_confirmation': passwordConfirmation,
+      if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
     };
-    if (deviceId != null && deviceId.isNotEmpty) {
-      requestData['device_id'] = deviceId;
-    }
 
-    final response = await handleRequest<Map<String, dynamic>>(() async {
-      return await dio.post(ApiConstants.register, data: requestData);
-    }, fromJson: (json) => json as Map<String, dynamic>);
+    try {
+      final response = await handleRequest<AuthModel>(
+        () => dio.post(ApiConstants.register, data: requestData),
+        fromJson: _parseAuthModel,
+      );
 
-    if (response.success && response.data != null) {
-      final map = Map<String, dynamic>.from(response.data!);
-      if (!map.containsKey('access_token') && map.containsKey('token')) {
-        map['access_token'] = map['token'];
+      if (response.success && response.data != null) {
+        final authModel = response.data!;
+        if (authModel.message == null && response.message != null) {
+          return authModel.copyWith(message: response.message);
+        }
+        return authModel;
+      } else {
+        throw Exception(response.message ?? 'Registrasi gagal');
       }
-      if (!map.containsKey('message') && response.message != null) {
-        map['message'] = response.message;
-      }
-      return AuthModel.fromJson(map);
-    } else {
-      throw Exception(response.message ?? 'Registrasi gagal');
+    } on DioException catch (e) {
+      AppLogger.e('[AUTH_DS] DioException: ${e.message}', e, e.stackTrace);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    } catch (e, s) {
+      AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
     }
+  }
+
+  AuthModel _parseAuthModel(dynamic json) {
+    final map = Map<String, dynamic>.from(json as Map);
+    if (!map.containsKey('access_token') && map.containsKey('token')) {
+      map['access_token'] = map['token'];
+    }
+    return AuthModel.fromJson(map);
   }
 }

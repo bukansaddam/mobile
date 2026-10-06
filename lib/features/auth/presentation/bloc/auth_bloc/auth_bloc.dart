@@ -3,8 +3,10 @@ import 'package:equatable/equatable.dart';
 import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
-import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 
 part 'auth_event.dart';
@@ -13,37 +15,31 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUsecase loginUsecase;
   final RegisterUsecase registerUsecase;
-  final AuthRepository repository;
+  final GetSavedUserUsecase getSavedUserUsecase;
+  final GetSavedTokenUsecase getSavedTokenUsecase;
+  final LogoutUsecase logoutUsecase;
   final FirebaseNotificationService? notificationService;
 
   AuthBloc({
     required this.loginUsecase,
     required this.registerUsecase,
-    required this.repository,
+    required this.getSavedUserUsecase,
+    required this.getSavedTokenUsecase,
+    required this.logoutUsecase,
     this.notificationService,
   }) : super(AuthInitial()) {
     on<CheckAuthStatusEvent>((event, emit) async {
       emit(AuthChecking());
 
-      final tokenResult = await repository.getSavedToken();
-      final userResult = await repository.getSavedUser();
+      final tokenResult = await getSavedTokenUsecase();
+      final userResult = await getSavedUserUsecase();
 
-      String? token;
-      UserEntity? currentUser;
+      final token = tokenResult.fold((_) => null, (val) => val);
+      final currentUser = userResult.fold((_) => null, (val) => val);
 
-      tokenResult.fold(
-        (failure) => token = null,
-        (savedToken) => token = savedToken,
-      );
-
-      userResult.fold(
-        (failure) => currentUser = null,
-        (savedUser) => currentUser = savedUser,
-      );
-
-      if (token != null && token!.isNotEmpty && currentUser != null) {
+      if (token != null && token.isNotEmpty && currentUser != null) {
         DioClient.instance.options.headers['Authorization'] = 'Bearer $token';
-        emit(AuthAuthenticated(user: currentUser!, token: token!));
+        emit(AuthAuthenticated(user: currentUser, token: token));
       } else {
         DioClient.instance.options.headers.remove('Authorization');
         emit(const AuthUnauthenticated());
@@ -53,14 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LoginEvent>((event, emit) async {
       emit(AuthLoading());
 
-      // Resolve FCM device token (device_id) to store in database
-      String? deviceId = event.deviceId;
-      if (deviceId == null || deviceId.isEmpty) {
-        try {
-          deviceId = await notificationService?.getToken();
-        } catch (_) {}
-      }
-
+      final deviceId = await _resolveDeviceId(event.deviceId);
       final result = await loginUsecase(
         username: event.username,
         password: event.password,
@@ -85,14 +74,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<RegisterEvent>((event, emit) async {
       emit(AuthLoading());
 
-      // Resolve FCM device token (device_id)
-      String? deviceId = event.deviceId;
-      if (deviceId == null || deviceId.isEmpty) {
-        try {
-          deviceId = await notificationService?.getToken();
-        } catch (_) {}
-      }
-
+      final deviceId = await _resolveDeviceId(event.deviceId);
       final result = await registerUsecase(
         name: event.name,
         phoneNumber: event.phoneNumber,
@@ -132,9 +114,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<LogoutEvent>((event, emit) async {
       emit(AuthLoading());
-      await repository.logout();
+      await logoutUsecase();
       DioClient.instance.options.headers.remove('Authorization');
       emit(const AuthUnauthenticated(message: 'Logout berhasil'));
     });
+  }
+
+  Future<String?> _resolveDeviceId(String? deviceId) async {
+    if (deviceId != null && deviceId.isNotEmpty) return deviceId;
+    try {
+      return await notificationService?.getToken();
+    } catch (_) {
+      return null;
+    }
   }
 }

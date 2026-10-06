@@ -1,4 +1,3 @@
-import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_model.freezed.dart';
@@ -17,13 +16,6 @@ abstract class AuthModel with _$AuthModel {
 
   factory AuthModel.fromJson(Map<String, dynamic> json) =>
       _$AuthModelFromJson(json);
-
-  AuthEntity toEntity() => AuthEntity(
-    message: message,
-    accessToken: accessToken,
-    tokenType: tokenType,
-    user: user.toEntity(),
-  );
 }
 
 Object? _readPhone(Map json, String key) {
@@ -74,36 +66,4 @@ abstract class UserModel with _$UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
-
-  UserEntity toEntity() => UserEntity(
-    id: id,
-    name: name,
-    email: email,
-    username: username,
-    phoneNumber: phoneNumber,
-    nik: nik,
-    role: role,
-    latitude: latitude,
-    longitude: longitude,
-    emailVerifiedAt: emailVerifiedAt,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-    villageMembersId: villageMembersId,
-  );
-
-  factory UserModel.fromEntity(UserEntity entity) => UserModel(
-    id: entity.id,
-    name: entity.name,
-    email: entity.email,
-    username: entity.username,
-    phoneNumber: entity.phoneNumber,
-    nik: entity.nik,
-    role: entity.role,
-    latitude: entity.latitude,
-    longitude: entity.longitude,
-    emailVerifiedAt: entity.emailVerifiedAt,
-    createdAt: entity.createdAt,
-    updatedAt: entity.updatedAt,
-    villageMembersId: entity.villageMembersId,
-  );
 }

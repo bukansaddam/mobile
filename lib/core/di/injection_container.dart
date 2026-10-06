@@ -14,7 +14,10 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
@@ -231,6 +234,13 @@ Future<void> init() async {
   // ---------------------- Use Cases ----------------------
   sl.registerLazySingleton<LoginUsecase>(() => LoginUsecase(sl()));
   sl.registerLazySingleton<RegisterUsecase>(() => RegisterUsecase(sl()));
+  sl.registerLazySingleton<GetSavedUserUsecase>(
+    () => GetSavedUserUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetSavedTokenUsecase>(
+    () => GetSavedTokenUsecase(sl()),
+  );
+  sl.registerLazySingleton<LogoutUsecase>(() => LogoutUsecase(sl()));
   sl.registerLazySingleton<SendLocationUsecase>(
     () => SendLocationUsecase(sl()),
   );
@@ -311,7 +321,9 @@ Future<void> init() async {
     () => AuthBloc(
       loginUsecase: sl(),
       registerUsecase: sl(),
-      repository: sl(),
+      getSavedUserUsecase: sl(),
+      getSavedTokenUsecase: sl(),
+      logoutUsecase: sl(),
       notificationService: sl<FirebaseNotificationService>(),
     ),
   );

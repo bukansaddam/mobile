@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/utils/app_logger.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -111,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _longController.text = position.longitude.toString();
       });
     } catch (e) {
-      debugPrint('Gagal mengambil lokasi otomatis: $e');
+      AppLogger.w('[REGISTER] Gagal mengambil lokasi otomatis: $e');
     }
   }
 

@@ -3,13 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:akar/core/di/injection_container.dart' as di;
-import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
+
+import 'package:akar/utils/app_logger.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         await Geolocator.requestPermission();
       }
     } catch (e) {
-      debugPrint('Error requesting location permission: $e');
+      AppLogger.w('[LOGIN] Gagal meminta izin lokasi: $e');
     }
   }
 
@@ -59,19 +59,11 @@ class _LoginScreenState extends State<LoginScreen> {
     FocusScope.of(context).unfocus();
     await _requestLocationPermission();
 
-    String? deviceToken;
-    try {
-      deviceToken = await di.sl<FirebaseNotificationService>().getToken();
-    } catch (e) {
-      debugPrint('Gagal mengambil FCM device token: $e');
-    }
-
     if (!mounted) return;
     context.read<AuthBloc>().add(
       LoginEvent(
         username: _usernameController.text.trim(),
         password: _passwordController.text,
-        deviceId: deviceToken,
       ),
     );
   }
