@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/features/linmas/activation/data/datasources/dummy_activation_data.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 
@@ -67,12 +66,12 @@ class NotificationModalSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<ActivationActivity> activitiesList = [];
+    List<ActivationActivity> activitiesList = const [];
     try {
       final blocState = context.read<ActivationBloc>().state;
       activitiesList = blocState.activities;
     } catch (_) {
-      activitiesList = DummyActivationData.activities;
+      activitiesList = const [];
     }
 
     final notificationItems = activitiesList.take(5).toList();
