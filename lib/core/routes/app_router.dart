@@ -215,7 +215,8 @@ class AppRouter {
         name: emergencyCall,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final event = state.extra as DisasterAlertEvent? ??
+          final event =
+              state.extra as DisasterAlertEvent? ??
               DisasterAlertEvent(
                 id: DateTime.now().millisecondsSinceEpoch.toString(),
                 title: 'PANGGILAN DARURAT: SOS',

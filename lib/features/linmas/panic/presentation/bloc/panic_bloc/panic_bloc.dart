@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:akar/features/linmas/panic/core/constants/panic_constants.dart';
 import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
 import 'package:akar/features/linmas/panic/domain/usecases/get_nearby_members_usecase.dart';
 import 'package:akar/features/linmas/panic/domain/usecases/send_panic_alert_usecase.dart';
@@ -13,29 +16,83 @@ class PanicBloc extends Bloc<PanicEvent, PanicState> {
   final GetNearbyMembersUsecase getNearbyMembersUsecase;
   final SendPanicAlertUsecase sendPanicAlertUsecase;
 
+  bool isEmergencyActive = false;
+  double userLatitude = PanicConstants.defaultLatitude;
+  double userLongitude = PanicConstants.defaultLongitude;
+  String fullAddress = PanicConstants.defaultAddress;
+
+  List<NearbyMemberEntity> nearbyMembers = [];
+  List<NearbyMemberEntity> localLeaders = [];
+  PanicAlertResultEntity? lastResult;
+
+  List<NearbyMemberEntity> get filteredMembers => nearbyMembers;
+  List<NearbyMemberEntity> get filteredLeaders => localLeaders;
+
   PanicBloc({
     required this.getNearbyMembersUsecase,
     required this.sendPanicAlertUsecase,
-  }) : super(const PanicState()) {
+  }) : super(const PanicInitial()) {
     on<InitPanicLocationEvent>(_onInitLocation);
+    on<GetPanicNearbyMembersEvent>(_onGetNearbyMembers);
+    on<RefreshPanicEvent>(_onRefreshPanic);
     on<SendPanicAlertEvent>(_onSendAlert);
-
-    add(InitPanicLocationEvent());
   }
 
-  Future<void> _onInitLocation(
-    InitPanicLocationEvent event,
-    Emitter<PanicState> emit,
-  ) async {
-    emit(state.copyWith(status: PanicStatus.loading, errorMessage: null));
+  PanicLoaded _createLoadedState() {
+    return PanicLoaded(
+      isEmergencyActive: isEmergencyActive,
+      userLatitude: userLatitude,
+      userLongitude: userLongitude,
+      fullAddress: fullAddress,
+      nearbyMembers: nearbyMembers,
+      localLeaders: localLeaders,
+      lastResult: lastResult,
+    );
+  }
 
-    double lat = -6.2088;
-    double lng = 106.8456;
-    String fullAddress =
-        'Jl. Medan Merdeka Barat No. 12, Gambir, Jakarta Pusat, DKI Jakarta';
+  PanicLoading _createLoadingState() {
+    return PanicLoading(
+      isEmergencyActive: isEmergencyActive,
+      userLatitude: userLatitude,
+      userLongitude: userLongitude,
+      fullAddress: fullAddress,
+      nearbyMembers: nearbyMembers,
+      localLeaders: localLeaders,
+      lastResult: lastResult,
+    );
+  }
 
+  PanicFailure _createFailureState(String message) {
+    return PanicFailure(
+      message,
+      isEmergencyActive: isEmergencyActive,
+      userLatitude: userLatitude,
+      userLongitude: userLongitude,
+      fullAddress: fullAddress,
+      nearbyMembers: nearbyMembers,
+      localLeaders: localLeaders,
+      lastResult: lastResult,
+    );
+  }
+
+  Future<void> _fetchMembers(Emitter<PanicState> emit) async {
+    emit(_createLoadingState());
+
+    final result = await getNearbyMembersUsecase(
+      latitude: userLatitude,
+      longitude: userLongitude,
+    );
+
+    result.fold((failure) => emit(_createFailureState(failure.message)), (
+      members,
+    ) {
+      nearbyMembers = members;
+      emit(_createLoadedState());
+    });
+  }
+
+  Future<void> _resolveUserLocation() async {
     try {
-      Position? position;
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (serviceEnabled) {
         LocationPermission permission = await Geolocator.checkPermission();
@@ -44,25 +101,23 @@ class PanicBloc extends Bloc<PanicEvent, PanicState> {
         }
         if (permission != LocationPermission.denied &&
             permission != LocationPermission.deniedForever) {
-          position = await Geolocator.getLastKnownPosition();
+          Position? position = await Geolocator.getLastKnownPosition();
           position ??= await Geolocator.getCurrentPosition(
             locationSettings: const LocationSettings(
               accuracy: LocationAccuracy.high,
             ),
           ).timeout(const Duration(seconds: 5));
-        }
-      }
 
-      if (position != null) {
-        lat = position.latitude;
-        lng = position.longitude;
+          userLatitude = position.latitude;
+          userLongitude = position.longitude;
+        }
       }
 
       try {
         final geocoding = Geocoding();
         List<Placemark> placemarks = await geocoding.placemarkFromCoordinates(
-          lat,
-          lng,
+          userLatitude,
+          userLongitude,
         );
         if (placemarks.isNotEmpty) {
           final place = placemarks.first;
@@ -90,96 +145,120 @@ class PanicBloc extends Bloc<PanicEvent, PanicState> {
           }
         }
       } catch (_) {}
+    } catch (_) {}
 
-      final members = await getNearbyMembersUsecase.call(
-        latitude: lat,
-        longitude: lng,
-      );
+    localLeaders = [
+      NearbyMemberEntity(
+        id: 'tokoh_kades',
+        name: 'Bpk. H. Sudirman, S.E.',
+        role: 'Kepala Desa / Lurah',
+        distanceText: '120m',
+        latitude: userLatitude + 0.0012,
+        longitude: userLongitude + 0.0009,
+        phone: '081298765432',
+        isOnline: true,
+      ),
+      NearbyMemberEntity(
+        id: 'tokoh_babinsa',
+        name: 'Sertu Bambang Wijaya',
+        role: 'Babinsa (TNI AD)',
+        distanceText: '210m',
+        latitude: userLatitude - 0.0015,
+        longitude: userLongitude + 0.0011,
+        phone: '081388776655',
+        isOnline: true,
+      ),
+      NearbyMemberEntity(
+        id: 'tokoh_babinkamtibmas',
+        name: 'Aiptu Hendra Kurniawan',
+        role: 'Bhabinkamtibmas (Polri)',
+        distanceText: '340m',
+        latitude: userLatitude + 0.0021,
+        longitude: userLongitude - 0.0018,
+        phone: '081577665544',
+        isOnline: true,
+      ),
+    ];
+  }
 
-      final leaders = [
-        NearbyMemberEntity(
-          id: 'tokoh_kades',
-          name: 'Bpk. H. Sudirman, S.E.',
-          role: 'Kepala Desa / Lurah',
-          distanceText: '120m',
-          latitude: lat + 0.0012,
-          longitude: lng + 0.0009,
-          phone: '081298765432',
-          isOnline: true,
-        ),
-        NearbyMemberEntity(
-          id: 'tokoh_babinsa',
-          name: 'Sertu Bambang Wijaya',
-          role: 'Babinsa (TNI AD)',
-          distanceText: '210m',
-          latitude: lat - 0.0015,
-          longitude: lng + 0.0011,
-          phone: '081388776655',
-          isOnline: true,
-        ),
-        NearbyMemberEntity(
-          id: 'tokoh_babinkamtibmas',
-          name: 'Aiptu Hendra Kurniawan',
-          role: 'Bhabinkamtibmas (Polri)',
-          distanceText: '340m',
-          latitude: lat + 0.0021,
-          longitude: lng - 0.0018,
-          phone: '081577665544',
-          isOnline: true,
-        ),
-      ];
+  Future<void> _onInitLocation(
+    InitPanicLocationEvent event,
+    Emitter<PanicState> emit,
+  ) async {
+    emit(_createLoadingState());
+    await _resolveUserLocation();
+    await _fetchMembers(emit);
+  }
 
-      emit(
-        state.copyWith(
-          status: PanicStatus.loaded,
-          userLatitude: lat,
-          userLongitude: lng,
-          fullAddress: fullAddress,
-          nearbyMembers: members,
-          localLeaders: leaders,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: PanicStatus.loaded,
-          userLatitude: lat,
-          userLongitude: lng,
-          fullAddress: fullAddress,
-        ),
-      );
-    }
+  Future<void> _onGetNearbyMembers(
+    GetPanicNearbyMembersEvent event,
+    Emitter<PanicState> emit,
+  ) async {
+    await _fetchMembers(emit);
+  }
+
+  Future<void> _onRefreshPanic(
+    RefreshPanicEvent event,
+    Emitter<PanicState> emit,
+  ) async {
+    add(const InitPanicLocationEvent());
   }
 
   Future<void> _onSendAlert(
     SendPanicAlertEvent event,
     Emitter<PanicState> emit,
   ) async {
-    emit(state.copyWith(status: PanicStatus.sending, errorMessage: null));
+    emit(
+      PanicActionLoading(
+        isEmergencyActive: isEmergencyActive,
+        userLatitude: userLatitude,
+        userLongitude: userLongitude,
+        fullAddress: fullAddress,
+        nearbyMembers: nearbyMembers,
+        localLeaders: localLeaders,
+        lastResult: lastResult,
+      ),
+    );
 
-    try {
-      final result = await sendPanicAlertUsecase.call(
-        latitude: state.userLatitude,
-        longitude: state.userLongitude,
-        isEmergency: event.isEmergency,
-        selectedMemberId: event.selectedMemberId,
-        note: event.note,
-      );
+    final result = await sendPanicAlertUsecase.call(
+      latitude: userLatitude,
+      longitude: userLongitude,
+      isEmergency: event.isEmergency,
+      selectedMemberId: event.selectedMemberId,
+      note: event.note,
+    );
 
-      emit(
-        state.copyWith(
-          status: PanicStatus.success,
-          isEmergencyActive: event.isEmergency,
-          lastResult: result,
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: PanicStatus.error,
-          errorMessage: 'Gagal memperbarui status darurat: $e',
-        ),
-      );
-    }
+    result.fold(
+      (failure) {
+        emit(
+          PanicActionFailure(
+            failure.message,
+            isEmergencyActive: isEmergencyActive,
+            userLatitude: userLatitude,
+            userLongitude: userLongitude,
+            fullAddress: fullAddress,
+            nearbyMembers: nearbyMembers,
+            localLeaders: localLeaders,
+            lastResult: lastResult,
+          ),
+        );
+      },
+      (alertResult) {
+        isEmergencyActive = event.isEmergency;
+        lastResult = alertResult;
+        emit(
+          PanicActionSuccess(
+            message: alertResult.message,
+            isEmergencyActive: isEmergencyActive,
+            userLatitude: userLatitude,
+            userLongitude: userLongitude,
+            fullAddress: fullAddress,
+            nearbyMembers: nearbyMembers,
+            localLeaders: localLeaders,
+            lastResult: lastResult,
+          ),
+        );
+      },
+    );
   }
 }

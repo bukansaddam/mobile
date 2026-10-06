@@ -28,10 +28,12 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     );
 
     final data = message.data;
-    final title = message.notification?.title ??
+    final title =
+        message.notification?.title ??
         data['title'] ??
         'PERINGATAN DARURAT: Panggilan SOS';
-    final body = message.notification?.body ??
+    final body =
+        message.notification?.body ??
         data['body'] ??
         data['message'] ??
         'Panggilan darurat masuk, segera buka aplikasi.';
@@ -368,8 +370,7 @@ class FirebaseNotificationService {
     final data = message.data;
 
     final title = notification?.title ?? data['title'] ?? 'Notifikasi AKAR';
-    final body =
-        notification?.body ?? data['body'] ?? data['message'] ?? '';
+    final body = notification?.body ?? data['body'] ?? data['message'] ?? '';
 
     if (title.isEmpty && body.isEmpty) return;
 
@@ -432,8 +433,9 @@ class FirebaseNotificationService {
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      interruptionLevel:
-          isEmergency ? InterruptionLevel.critical : InterruptionLevel.active,
+      interruptionLevel: isEmergency
+          ? InterruptionLevel.critical
+          : InterruptionLevel.active,
     );
 
     final notificationDetails = NotificationDetails(
@@ -444,10 +446,9 @@ class FirebaseNotificationService {
     // Use stable notification ID to prevent duplicate stacked notifications
     final notificationId = isEmergency
         ? 999
-        : ((message.messageId ?? data['id'] ?? data['alert_id'] ?? '')
-                .hashCode
-                .abs() &
-            0x7FFFFFFF);
+        : ((message.messageId ?? data['id'] ?? data['alert_id'] ?? '').hashCode
+                  .abs() &
+              0x7FFFFFFF);
 
     await _localNotifications.show(
       id: notificationId,
@@ -458,14 +459,16 @@ class FirebaseNotificationService {
     );
 
     if (isEmergency) {
-      final senderName = data['sender_name']?.toString() ??
+      final senderName =
+          data['sender_name']?.toString() ??
           data['caller_name']?.toString() ??
           data['name']?.toString() ??
           data['member_name']?.toString() ??
           data['user_name']?.toString() ??
           (title.isNotEmpty ? title : 'Anggota / Petugas Linmas');
 
-      final senderPhone = data['sender_phone']?.toString() ??
+      final senderPhone =
+          data['sender_phone']?.toString() ??
           data['phone']?.toString() ??
           data['phone_number']?.toString() ??
           data['no_hp']?.toString();
@@ -481,14 +484,16 @@ class FirebaseNotificationService {
           data['note']?.toString() ?? data['pesan']?.toString() ?? body;
 
       final alertEvent = DisasterAlertEvent(
-        id: data['id']?.toString() ??
+        id:
+            data['id']?.toString() ??
             data['alert_id']?.toString() ??
             message.messageId ??
             DateTime.now().millisecondsSinceEpoch.toString(),
         title: senderName,
         type: 'Panggilan Darurat SOS Anggota',
         description: note,
-        location: data['location']?.toString() ??
+        location:
+            data['location']?.toString() ??
             data['address']?.toString() ??
             (lat != null && lng != null
                 ? 'Koordinat: $lat, $lng'
@@ -572,7 +577,8 @@ class FirebaseNotificationService {
         case 'disaster':
         case 'darurat':
         case 'sos':
-          final senderName = data['sender_name']?.toString() ??
+          final senderName =
+              data['sender_name']?.toString() ??
               data['caller_name']?.toString() ??
               data['name']?.toString() ??
               data['member_name']?.toString() ??
@@ -580,7 +586,8 @@ class FirebaseNotificationService {
               data['title']?.toString() ??
               'Anggota / Petugas Linmas';
 
-          final senderPhone = data['sender_phone']?.toString() ??
+          final senderPhone =
+              data['sender_phone']?.toString() ??
               data['phone']?.toString() ??
               data['phone_number']?.toString() ??
               data['no_hp']?.toString();
@@ -592,22 +599,26 @@ class FirebaseNotificationService {
             data['longitude']?.toString() ?? data['lng']?.toString() ?? '',
           );
 
-          final note = data['note']?.toString() ??
+          final note =
+              data['note']?.toString() ??
               data['pesan']?.toString() ??
               data['body']?.toString() ??
               data['message']?.toString() ??
               'Laporan panggilan darurat.';
 
           final alertEvent = DisasterAlertEvent(
-            id: data['id']?.toString() ??
+            id:
+                data['id']?.toString() ??
                 data['alert_id']?.toString() ??
                 DateTime.now().millisecondsSinceEpoch.toString(),
             title: senderName,
-            type: data['disaster_type']?.toString() ??
+            type:
+                data['disaster_type']?.toString() ??
                 data['type']?.toString() ??
                 'Panggilan Darurat SOS Anggota',
             description: note,
-            location: data['location']?.toString() ??
+            location:
+                data['location']?.toString() ??
                 data['address']?.toString() ??
                 (lat != null && lng != null
                     ? 'Koordinat: $lat, $lng'
@@ -661,7 +672,9 @@ class FirebaseNotificationService {
       await _fcm.unsubscribeFromTopic(topic);
       AppLogger.i('🔥 [FCM Service] Unsubscribed from topic: $topic');
     } catch (e) {
-      AppLogger.e('🔥 [FCM Service] Failed to unsubscribe from topic $topic: $e');
+      AppLogger.e(
+        '🔥 [FCM Service] Failed to unsubscribe from topic $topic: $e',
+      );
     }
   }
 
@@ -725,8 +738,9 @@ class FirebaseNotificationService {
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      interruptionLevel:
-          isEmergency ? InterruptionLevel.critical : InterruptionLevel.active,
+      interruptionLevel: isEmergency
+          ? InterruptionLevel.critical
+          : InterruptionLevel.active,
     );
 
     await _localNotifications.show(
@@ -785,8 +799,11 @@ class FirebaseNotificationService {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: const Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
-                color: Color(0xFFEF4444), size: 28),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Color(0xFFEF4444),
+              size: 28,
+            ),
             SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -811,8 +828,11 @@ class FirebaseNotificationService {
             SizedBox(height: 12),
             Row(
               children: [
-                Icon(Icons.check_circle_outline,
-                    color: Color(0xFF10B981), size: 18),
+                Icon(
+                  Icons.check_circle_outline,
+                  color: Color(0xFF10B981),
+                  size: 18,
+                ),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -830,8 +850,10 @@ class FirebaseNotificationService {
               _prefs.setBool(prefsKey, true);
               Navigator.pop(ctx, false);
             },
-            child: const Text('NANTI SAJA',
-                style: TextStyle(color: Color(0xFF94A3B8))),
+            child: const Text(
+              'NANTI SAJA',
+              style: TextStyle(color: Color(0xFF94A3B8)),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(

@@ -65,8 +65,8 @@ class DisasterAlertBanner extends StatelessWidget {
                     'Salin token unik HP ini untuk test notifikasi dari Firebase Console',
                 onTap: () async {
                   Navigator.pop(context);
-                  final token =
-                      await sl<FirebaseNotificationService>().getToken();
+                  final token = await sl<FirebaseNotificationService>()
+                      .getToken();
                   if (token != null && token.isNotEmpty) {
                     await Clipboard.setData(ClipboardData(text: token));
                     if (context.mounted) {
@@ -78,10 +78,15 @@ class DisasterAlertBanner extends StatelessWidget {
                           ),
                           title: const Row(
                             children: [
-                              Icon(Icons.check_circle, color: Color(0xFF10B981)),
+                              Icon(
+                                Icons.check_circle,
+                                color: Color(0xFF10B981),
+                              ),
                               SizedBox(width: 8),
-                              Text('Token FCM Berhasil Disalin',
-                                  style: TextStyle(fontSize: 16)),
+                              Text(
+                                'Token FCM Berhasil Disalin',
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ],
                           ),
                           content: Column(
@@ -149,7 +154,10 @@ class DisasterAlertBanner extends StatelessWidget {
                 onTap: () async {
                   Navigator.pop(context);
                   await sl<FirebaseNotificationService>()
-                      .checkAndPromptOverlayPermission(context, forcePrompt: true);
+                      .checkAndPromptOverlayPermission(
+                        context,
+                        forcePrompt: true,
+                      );
                 },
               ),
               const SizedBox(height: 10),

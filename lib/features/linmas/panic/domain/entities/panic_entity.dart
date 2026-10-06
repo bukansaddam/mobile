@@ -1,35 +1,31 @@
-class NearbyMemberEntity {
-  final String id;
-  final String name;
-  final String role;
-  final String distanceText;
-  final double latitude;
-  final double longitude;
-  final String phone;
-  final bool isOnline;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const NearbyMemberEntity({
-    required this.id,
-    required this.name,
-    required this.role,
-    required this.distanceText,
-    required this.latitude,
-    required this.longitude,
-    required this.phone,
-    required this.isOnline,
-  });
+part 'panic_entity.freezed.dart';
+
+@freezed
+abstract class NearbyMemberEntity with _$NearbyMemberEntity {
+  const NearbyMemberEntity._();
+
+  const factory NearbyMemberEntity({
+    required String id,
+    required String name,
+    required String role,
+    @Default('') String distanceText,
+    @Default(0.0) double latitude,
+    @Default(0.0) double longitude,
+    @Default('') String phone,
+    @Default(true) bool isOnline,
+  }) = _NearbyMemberEntity;
 }
 
-class PanicAlertResultEntity {
-  final bool isSuccess;
-  final String alertId;
-  final DateTime timestamp;
-  final String message;
+@freezed
+abstract class PanicAlertResultEntity with _$PanicAlertResultEntity {
+  const PanicAlertResultEntity._();
 
-  const PanicAlertResultEntity({
-    required this.isSuccess,
-    required this.alertId,
-    required this.timestamp,
-    required this.message,
-  });
+  const factory PanicAlertResultEntity({
+    @Default(true) bool isSuccess,
+    required String alertId,
+    required DateTime timestamp,
+    required String message,
+  }) = _PanicAlertResultEntity;
 }

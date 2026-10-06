@@ -7,7 +7,17 @@ abstract class PanicEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class InitPanicLocationEvent extends PanicEvent {}
+class InitPanicLocationEvent extends PanicEvent {
+  const InitPanicLocationEvent();
+}
+
+class GetPanicNearbyMembersEvent extends PanicEvent {
+  const GetPanicNearbyMembersEvent();
+}
+
+class RefreshPanicEvent extends PanicEvent {
+  const RefreshPanicEvent();
+}
 
 class SendPanicAlertEvent extends PanicEvent {
   final bool isEmergency;

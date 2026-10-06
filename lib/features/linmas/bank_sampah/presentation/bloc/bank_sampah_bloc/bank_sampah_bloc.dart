@@ -223,8 +223,9 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     page = 1;
     listReports.clear();
 
-    if (event.jenisSampah != null)
+    if (event.jenisSampah != null) {
       selectedJenisSampahFilter = event.jenisSampah;
+    }
     if (event.bankId != null) selectedBankId = event.bankId;
     if (event.bankSampahNama != null) {
       selectedBankSampahFilter = event.bankSampahNama;

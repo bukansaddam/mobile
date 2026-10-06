@@ -1,12 +1,13 @@
+import 'package:akar/core/errors/failures.dart';
 import '../entities/panic_entity.dart';
 
 abstract class PanicRepository {
-  Future<List<NearbyMemberEntity>> getNearbyMembers({
+  Future<Either<Failure, List<NearbyMemberEntity>>> getNearbyMembers({
     required double latitude,
     required double longitude,
   });
 
-  Future<PanicAlertResultEntity> sendPanicAlert({
+  Future<Either<Failure, PanicAlertResultEntity>> sendPanicAlert({
     required double latitude,
     required double longitude,
     bool isEmergency = true,

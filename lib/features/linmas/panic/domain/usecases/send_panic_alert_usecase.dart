@@ -1,3 +1,4 @@
+import 'package:akar/core/errors/failures.dart';
 import '../entities/panic_entity.dart';
 import '../repositories/panic_repository.dart';
 
@@ -6,19 +7,17 @@ class SendPanicAlertUsecase {
 
   SendPanicAlertUsecase(this.repository);
 
-  Future<PanicAlertResultEntity> call({
+  Future<Either<Failure, PanicAlertResultEntity>> call({
     required double latitude,
     required double longitude,
     bool isEmergency = true,
     String? selectedMemberId,
     String? note,
-  }) async {
-    return await repository.sendPanicAlert(
-      latitude: latitude,
-      longitude: longitude,
-      isEmergency: isEmergency,
-      selectedMemberId: selectedMemberId,
-      note: note,
-    );
-  }
+  }) => repository.sendPanicAlert(
+    latitude: latitude,
+    longitude: longitude,
+    isEmergency: isEmergency,
+    selectedMemberId: selectedMemberId,
+    note: note,
+  );
 }

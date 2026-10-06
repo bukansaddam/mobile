@@ -1,9 +1,6 @@
 part of 'panic_bloc.dart';
 
-enum PanicStatus { initial, loading, loaded, sending, success, error }
-
-class PanicState extends Equatable {
-  final PanicStatus status;
+abstract class PanicState extends Equatable {
   final bool isEmergencyActive;
   final double userLatitude;
   final double userLongitude;
@@ -14,45 +11,18 @@ class PanicState extends Equatable {
   final String? errorMessage;
 
   const PanicState({
-    this.status = PanicStatus.initial,
     this.isEmergencyActive = false,
-    this.userLatitude = -6.2088,
-    this.userLongitude = 106.8456,
-    this.fullAddress =
-        'Jl. Medan Merdeka Barat No. 12, Gambir, Jakarta Pusat, DKI Jakarta',
+    this.userLatitude = PanicConstants.defaultLatitude,
+    this.userLongitude = PanicConstants.defaultLongitude,
+    this.fullAddress = PanicConstants.defaultAddress,
     this.nearbyMembers = const [],
     this.localLeaders = const [],
     this.lastResult,
     this.errorMessage,
   });
 
-  PanicState copyWith({
-    PanicStatus? status,
-    bool? isEmergencyActive,
-    double? userLatitude,
-    double? userLongitude,
-    String? fullAddress,
-    List<NearbyMemberEntity>? nearbyMembers,
-    List<NearbyMemberEntity>? localLeaders,
-    PanicAlertResultEntity? lastResult,
-    String? errorMessage,
-  }) {
-    return PanicState(
-      status: status ?? this.status,
-      isEmergencyActive: isEmergencyActive ?? this.isEmergencyActive,
-      userLatitude: userLatitude ?? this.userLatitude,
-      userLongitude: userLongitude ?? this.userLongitude,
-      fullAddress: fullAddress ?? this.fullAddress,
-      nearbyMembers: nearbyMembers ?? this.nearbyMembers,
-      localLeaders: localLeaders ?? this.localLeaders,
-      lastResult: lastResult ?? this.lastResult,
-      errorMessage: errorMessage,
-    );
-  }
-
   @override
   List<Object?> get props => [
-    status,
     isEmergencyActive,
     userLatitude,
     userLongitude,
@@ -62,4 +32,100 @@ class PanicState extends Equatable {
     lastResult,
     errorMessage,
   ];
+}
+
+class PanicInitial extends PanicState {
+  const PanicInitial() : super();
+}
+
+class PanicLoading extends PanicState {
+  const PanicLoading({
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  });
+}
+
+class PanicLoaded extends PanicState {
+  const PanicLoaded({
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  });
+}
+
+class PanicFailure extends PanicState {
+  @override
+  final String errorMessage;
+
+  const PanicFailure(
+    this.errorMessage, {
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  }) : super(errorMessage: errorMessage);
+
+  @override
+  List<Object?> get props => [...super.props, errorMessage];
+}
+
+class PanicActionLoading extends PanicState {
+  const PanicActionLoading({
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  });
+}
+
+class PanicActionSuccess extends PanicState {
+  final String message;
+
+  const PanicActionSuccess({
+    required this.message,
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  }) : super(errorMessage: null);
+
+  @override
+  List<Object?> get props => [...super.props, message];
+}
+
+class PanicActionFailure extends PanicState {
+  @override
+  final String errorMessage;
+
+  const PanicActionFailure(
+    this.errorMessage, {
+    super.isEmergencyActive,
+    super.userLatitude,
+    super.userLongitude,
+    super.fullAddress,
+    super.nearbyMembers,
+    super.localLeaders,
+    super.lastResult,
+  }) : super(errorMessage: errorMessage);
+
+  @override
+  List<Object?> get props => [...super.props, errorMessage];
 }

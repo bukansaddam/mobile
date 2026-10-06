@@ -68,9 +68,10 @@ class _DisasterEmergencyWarningPageState
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _waveAnimation = Tween<double>(begin: 1.0, end: 1.35).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOut),
-    );
+    _waveAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.35,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
 
     _isRinging = sl<AudioAlarmService>().isPlaying;
   }
@@ -191,7 +192,10 @@ class _DisasterEmergencyWarningPageState
                 const SizedBox(height: 6),
                 Text(
                   phone,
-                  style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
+                  style: const TextStyle(
+                    color: Color(0xFF94A3B8),
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 ListTile(
@@ -261,7 +265,8 @@ class _DisasterEmergencyWarningPageState
   @override
   Widget build(BuildContext context) {
     final callerName =
-        widget.event.senderName ?? widget.event.title.replaceAll('🚨', '').trim();
+        widget.event.senderName ??
+        widget.event.title.replaceAll('🚨', '').trim();
     final phone = widget.event.senderPhone;
     final locationText = widget.event.location;
 
@@ -297,7 +302,10 @@ class _DisasterEmergencyWarningPageState
 
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 10),

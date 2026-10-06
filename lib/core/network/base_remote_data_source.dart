@@ -66,9 +66,7 @@ abstract class BaseRemoteDataSource {
         final payload = dataMap != null ? (dataMap['data'] ?? dataMap) : data;
         return ApiResponse<T>(
           success: true,
-          data: payload != null && fromJson != null
-              ? fromJson(payload)
-              : null,
+          data: payload != null && fromJson != null ? fromJson(payload) : null,
           message: message,
           statusCode: response.statusCode,
         );

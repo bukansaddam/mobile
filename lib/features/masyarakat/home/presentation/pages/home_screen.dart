@@ -55,8 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
 
       if (mounted) {
-        await sl<FirebaseNotificationService>()
-            .checkAndPromptOverlayPermission(context);
+        await sl<FirebaseNotificationService>().checkAndPromptOverlayPermission(
+          context,
+        );
       }
     } catch (_) {}
   }
