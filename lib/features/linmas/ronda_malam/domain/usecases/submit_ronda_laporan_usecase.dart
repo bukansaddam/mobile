@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
-import '../entities/ronda_laporan_entity.dart';
-import '../repositories/ronda_repository.dart';
+import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_entity.dart';
+import 'package:akar/features/linmas/ronda_malam/domain/repositories/ronda_repository.dart';
 
 class SubmitRondaLaporanUsecase {
   final RondaRepository repository;
@@ -9,7 +9,5 @@ class SubmitRondaLaporanUsecase {
 
   Future<Either<Failure, RondaLaporanEntity>> call(
     RondaLaporanEntity data,
-  ) async {
-    return await repository.submitLaporan(data);
-  }
+  ) => repository.submitLaporan(data);
 }

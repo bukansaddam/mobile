@@ -1,217 +1,92 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class RondaLaporanEntity extends Equatable {
-  final String? id;
+part 'ronda_laporan_entity.freezed.dart';
+part 'ronda_laporan_entity.g.dart';
 
-  // Lingkungan
-  final int sampahMenumpuk;
-  final int selokanMampet;
-  final int fasilitasRusak;
-  final int kegiatanMengganggu;
-  final int potensiBahaya;
-  final int jalanBerlubang;
-  final int lampuMati;
+@freezed
+abstract class RondaLaporanEntity with _$RondaLaporanEntity {
+  const RondaLaporanEntity._();
 
-  // Keamanan
-  final int laporanKeamanan;
-  final int wargaBertengkar;
-  final int tempatKurangAman;
-  final int kerumunanTidakTertib;
-  final int perluBantuanPetugas;
-  final int gangguanKamtibmas;
-  final int aktivitasMencurigakan;
-  final int kehilanganLingkungan;
+  const factory RondaLaporanEntity({
+    String? id,
 
-  // Sosial
-  final int wargaButuhBantuan;
-  final int kelompokBerselisih;
-  final int keluhanWarga;
-  final int kejadianMenggangguWarga;
-  final int perluTerusanRTRW;
-  final int permasalahanSosial;
-  final int kasusPerzinahan;
-  final int orangTerlantar;
+    // Lingkungan
+    @Default(1) int sampahMenumpuk,
+    @Default(1) int selokanMampet,
+    @Default(1) int fasilitasRusak,
+    @Default(1) int kegiatanMengganggu,
+    @Default(1) int potensiBahaya,
+    @Default(1) int jalanBerlubang,
+    @Default(1) int lampuMati,
 
-  // Detail Sampah
-  final bool adaSampahMenumpuk;
-  final String? waktuSampahMenumpuk;
-  final String? lokasiSampahMenumpuk;
-  final String? jenisSampahDominan;
-  final bool pengangkutanSesuaiJadwal;
-  final String? alasanPengangkutan;
-  final bool adaPembakaranSampah;
-  final String? waktuPembakaran;
-  final String? lokasiPembakaran;
-  final String? pembakaranDiberiTindakan;
+    // Keamanan
+    @Default(1) int laporanKeamanan,
+    @Default(1) int wargaBertengkar,
+    @Default(1) int tempatKurangAman,
+    @Default(1) int kerumunanTidakTertib,
+    @Default(1) int perluBantuanPetugas,
+    @Default(1) int gangguanKamtibmas,
+    @Default(1) int aktivitasMencurigakan,
+    @Default(1) int kehilanganLingkungan,
 
-  // Detail Keamanan
-  final bool adaPencurian;
-  final String? waktuPencurian;
-  final String? lokasiPencurian;
-  final String? pelakuPencurianDiketahui;
-  final String? pencurianDilaporkanAparat;
-  final bool adaTawuran;
-  final String? waktuTawuran;
-  final String? lokasiTawuran;
-  final String? pelakuTawuranDiketahui;
-  final String? tawuranDilaporkanAparat;
-  final bool adaNarkoba;
-  final String? narkobaDilaporkanAparat;
+    // Sosial
+    @Default(1) int wargaButuhBantuan,
+    @Default(1) int kelompokBerselisih,
+    @Default(1) int keluhanWarga,
+    @Default(1) int kejadianMenggangguWarga,
+    @Default(1) int perluTerusanRTRW,
+    @Default(1) int permasalahanSosial,
+    @Default(1) int kasusPerzinahan,
+    @Default(1) int orangTerlantar,
 
-  // Detail Lingkungan
-  final bool adaSelokanTersumbat;
-  final String? waktuSelokanTersumbat;
-  final String? lokasiSelokanTersumbat;
-  final String? resikoSelokanTersumbat;
-  final bool adaJalanRusak;
-  final String? lokasiJalanRusakGps;
-  final double? latitudeJalanRusak;
-  final double? longitudeJalanRusak;
-  final String? resikoJalanRusak;
-  final bool adaLampuMati;
-  final String? lokasiLampuMatiGps;
-  final double? latitudeLampuMati;
-  final double? longitudeLampuMati;
-  final String? resikoLampuMati;
+    // Detail Sampah
+    @Default(false) bool adaSampahMenumpuk,
+    String? waktuSampahMenumpuk,
+    String? lokasiSampahMenumpuk,
+    String? jenisSampahDominan,
+    @Default(true) bool pengangkutanSesuaiJadwal,
+    String? alasanPengangkutan,
+    @Default(false) bool adaPembakaranSampah,
+    String? waktuPembakaran,
+    String? lokasiPembakaran,
+    String? pembakaranDiberiTindakan,
 
-  final String? patrolTime;
-  final String? waktuKejadian;
+    // Detail Keamanan
+    @Default(false) bool adaPencurian,
+    String? waktuPencurian,
+    String? lokasiPencurian,
+    String? pelakuPencurianDiketahui,
+    String? pencurianDilaporkanAparat,
+    @Default(false) bool adaTawuran,
+    String? waktuTawuran,
+    String? lokasiTawuran,
+    String? pelakuTawuranDiketahui,
+    String? tawuranDilaporkanAparat,
+    @Default(false) bool adaNarkoba,
+    String? narkobaDilaporkanAparat,
 
-  final String keterangan;
-  final DateTime? timestamp;
+    // Detail Lingkungan
+    @Default(false) bool adaSelokanTersumbat,
+    String? waktuSelokanTersumbat,
+    String? lokasiSelokanTersumbat,
+    String? resikoSelokanTersumbat,
+    @Default(false) bool adaJalanRusak,
+    String? lokasiJalanRusakGps,
+    double? latitudeJalanRusak,
+    double? longitudeJalanRusak,
+    String? resikoJalanRusak,
+    @Default(false) bool adaLampuMati,
+    String? lokasiLampuMatiGps,
+    double? latitudeLampuMati,
+    double? longitudeLampuMati,
+    String? resikoLampuMati,
 
-  const RondaLaporanEntity({
-    this.id,
-    this.patrolTime,
-    this.waktuKejadian,
-    this.sampahMenumpuk = 1,
-    this.selokanMampet = 1,
-    this.fasilitasRusak = 1,
-    this.kegiatanMengganggu = 1,
-    this.potensiBahaya = 1,
-    this.jalanBerlubang = 1,
-    this.lampuMati = 1,
-    this.laporanKeamanan = 1,
-    this.wargaBertengkar = 1,
-    this.tempatKurangAman = 1,
-    this.kerumunanTidakTertib = 1,
-    this.perluBantuanPetugas = 1,
-    this.gangguanKamtibmas = 1,
-    this.aktivitasMencurigakan = 1,
-    this.kehilanganLingkungan = 1,
-    this.wargaButuhBantuan = 1,
-    this.kelompokBerselisih = 1,
-    this.keluhanWarga = 1,
-    this.kejadianMenggangguWarga = 1,
-    this.perluTerusanRTRW = 1,
-    this.permasalahanSosial = 1,
-    this.kasusPerzinahan = 1,
-    this.orangTerlantar = 1,
-    this.adaSampahMenumpuk = false,
-    this.waktuSampahMenumpuk,
-    this.lokasiSampahMenumpuk,
-    this.jenisSampahDominan,
-    this.pengangkutanSesuaiJadwal = true,
-    this.alasanPengangkutan,
-    this.adaPembakaranSampah = false,
-    this.waktuPembakaran,
-    this.lokasiPembakaran,
-    this.pembakaranDiberiTindakan,
-    this.adaPencurian = false,
-    this.waktuPencurian,
-    this.lokasiPencurian,
-    this.pelakuPencurianDiketahui,
-    this.pencurianDilaporkanAparat,
-    this.adaTawuran = false,
-    this.waktuTawuran,
-    this.lokasiTawuran,
-    this.pelakuTawuranDiketahui,
-    this.tawuranDilaporkanAparat,
-    this.adaNarkoba = false,
-    this.narkobaDilaporkanAparat,
-    this.adaSelokanTersumbat = false,
-    this.waktuSelokanTersumbat,
-    this.lokasiSelokanTersumbat,
-    this.resikoSelokanTersumbat,
-    this.adaJalanRusak = false,
-    this.lokasiJalanRusakGps,
-    this.latitudeJalanRusak,
-    this.longitudeJalanRusak,
-    this.resikoJalanRusak,
-    this.adaLampuMati = false,
-    this.lokasiLampuMatiGps,
-    this.latitudeLampuMati,
-    this.longitudeLampuMati,
-    this.resikoLampuMati,
-    this.keterangan = '',
-    this.timestamp,
-  });
+    String? patrolTime,
+    String? waktuKejadian,
+    @Default('') String keterangan,
+    DateTime? timestamp,
+  }) = _RondaLaporanEntity;
 
-  @override
-  List<Object?> get props => [
-    id,
-    sampahMenumpuk,
-    selokanMampet,
-    fasilitasRusak,
-    kegiatanMengganggu,
-    potensiBahaya,
-    jalanBerlubang,
-    lampuMati,
-    laporanKeamanan,
-    wargaBertengkar,
-    tempatKurangAman,
-    kerumunanTidakTertib,
-    perluBantuanPetugas,
-    gangguanKamtibmas,
-    aktivitasMencurigakan,
-    kehilanganLingkungan,
-    wargaButuhBantuan,
-    kelompokBerselisih,
-    keluhanWarga,
-    kejadianMenggangguWarga,
-    perluTerusanRTRW,
-    permasalahanSosial,
-    kasusPerzinahan,
-    orangTerlantar,
-    adaSampahMenumpuk,
-    waktuSampahMenumpuk,
-    lokasiSampahMenumpuk,
-    jenisSampahDominan,
-    pengangkutanSesuaiJadwal,
-    alasanPengangkutan,
-    adaPembakaranSampah,
-    waktuPembakaran,
-    lokasiPembakaran,
-    pembakaranDiberiTindakan,
-    adaPencurian,
-    waktuPencurian,
-    lokasiPencurian,
-    pelakuPencurianDiketahui,
-    pencurianDilaporkanAparat,
-    adaTawuran,
-    waktuTawuran,
-    lokasiTawuran,
-    pelakuTawuranDiketahui,
-    tawuranDilaporkanAparat,
-    adaNarkoba,
-    narkobaDilaporkanAparat,
-    adaSelokanTersumbat,
-    waktuSelokanTersumbat,
-    lokasiSelokanTersumbat,
-    resikoSelokanTersumbat,
-    adaJalanRusak,
-    lokasiJalanRusakGps,
-    latitudeJalanRusak,
-    longitudeJalanRusak,
-    resikoJalanRusak,
-    adaLampuMati,
-    lokasiLampuMatiGps,
-    latitudeLampuMati,
-    longitudeLampuMati,
-    resikoLampuMati,
-    patrolTime,
-    waktuKejadian,
-    keterangan,
-    timestamp,
-  ];
+  factory RondaLaporanEntity.fromJson(Map<String, dynamic> json) =>
+      _$RondaLaporanEntityFromJson(json);
 }

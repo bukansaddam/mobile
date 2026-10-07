@@ -320,14 +320,15 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
       await subscription.cancel();
 
-      expect(states.any((s) => s.status == RondaStatus.submitting), isTrue);
-      final successState = states.firstWhere((s) => s.status == RondaStatus.success);
-      expect(successState.lastResult?.id, 'RND-12345');
+      expect(states.any((s) => s is RondaActionLoading), isTrue);
+      final successState =
+          states.firstWhere((s) => s is RondaActionSuccess) as RondaActionSuccess;
+      expect(successState.laporan.id, 'RND-12345');
       final now = DateTime.now();
       final expectedTime =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-      expect(successState.lastResult?.patrolTime, expectedTime);
-      expect(successState.lastResult?.waktuKejadian, expectedTime);
+      expect(successState.laporan.patrolTime, expectedTime);
+      expect(successState.laporan.waktuKejadian, expectedTime);
     });
 
     test('SubmitRondaLaporanEvent emits failure on server error', () async {
@@ -341,9 +342,10 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 50));
       await subscription.cancel();
 
-      expect(states.any((s) => s.status == RondaStatus.submitting), isTrue);
-      final failureState = states.firstWhere((s) => s.status == RondaStatus.failure);
-      expect(failureState.errorMessage, isNotNull);
+      expect(states.any((s) => s is RondaActionLoading), isTrue);
+      final failureState =
+          states.firstWhere((s) => s is RondaActionFailure) as RondaActionFailure;
+      expect(failureState.message, isNotEmpty);
     });
   });
 }

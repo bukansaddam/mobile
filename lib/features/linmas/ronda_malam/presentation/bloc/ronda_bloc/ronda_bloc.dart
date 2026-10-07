@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_entity.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/usecases/submit_ronda_laporan_usecase.dart';
+import 'package:akar/utils/app_logger.dart';
 
 part 'ronda_event.dart';
 part 'ronda_state.dart';
@@ -10,7 +11,7 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
   final SubmitRondaLaporanUsecase submitRondaLaporanUsecase;
 
   RondaBloc({required this.submitRondaLaporanUsecase})
-    : super(const RondaState()) {
+    : super(const RondaInitial()) {
     on<SetRondaStepEvent>(_onSetStep);
     on<NextRondaStepEvent>(_onNextStep);
     on<PreviousRondaStepEvent>(_onPreviousStep);
@@ -107,99 +108,40 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
   }
 
   void _onResetForm(ResetRondaFormEvent event, Emitter<RondaState> emit) {
-    emit(const RondaState());
+    emit(const RondaInitial());
   }
 
   Future<void> _onSubmitLaporan(
     SubmitRondaLaporanEvent event,
     Emitter<RondaState> emit,
   ) async {
-    emit(state.copyWith(status: RondaStatus.submitting, errorMessage: null));
+    emit(state.toActionLoading());
 
     final now = DateTime.now();
     final timeNowStr =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    final dataEntity = RondaLaporanEntity(
-      sampahMenumpuk: state.sampahMenumpuk,
-      selokanMampet: state.selokanMampet,
-      fasilitasRusak: state.fasilitasRusak,
-      kegiatanMengganggu: state.kegiatanMengganggu,
-      potensiBahaya: state.potensiBahaya,
-      jalanBerlubang: state.jalanBerlubang,
-      lampuMati: state.lampuMati,
-      laporanKeamanan: state.laporanKeamanan,
-      wargaBertengkar: state.wargaBertengkar,
-      tempatKurangAman: state.tempatKurangAman,
-      kerumunanTidakTertib: state.kerumunanTidakTertib,
-      perluBantuanPetugas: state.perluBantuanPetugas,
-      gangguanKamtibmas: state.gangguanKamtibmas,
-      aktivitasMencurigakan: state.aktivitasMencurigakan,
-      kehilanganLingkungan: state.kehilanganLingkungan,
-      wargaButuhBantuan: state.wargaButuhBantuan,
-      kelompokBerselisih: state.kelompokBerselisih,
-      keluhanWarga: state.keluhanWarga,
-      kejadianMenggangguWarga: state.kejadianMenggangguWarga,
-      perluTerusanRTRW: state.perluTerusanRTRW,
-      permasalahanSosial: state.permasalahanSosial,
-      kasusPerzinahan: state.kasusPerzinahan,
-      orangTerlantar: state.orangTerlantar,
-      adaSampahMenumpuk: state.adaSampahMenumpuk,
-      waktuSampahMenumpuk: state.waktuSampahMenumpuk,
-      lokasiSampahMenumpuk: state.lokasiSampahMenumpuk,
-      jenisSampahDominan: state.jenisSampahDominan,
-      pengangkutanSesuaiJadwal: state.pengangkutanSesuaiJadwal,
-      alasanPengangkutan: state.alasanPengangkutan,
-      adaPembakaranSampah: state.adaPembakaranSampah,
-      waktuPembakaran: state.waktuPembakaran,
-      lokasiPembakaran: state.lokasiPembakaran,
-      pembakaranDiberiTindakan: state.pembakaranDiberiTindakan,
-      adaPencurian: state.adaPencurian,
-      waktuPencurian: state.waktuPencurian,
-      lokasiPencurian: state.lokasiPencurian,
-      pelakuPencurianDiketahui: state.pelakuPencurianDiketahui,
-      pencurianDilaporkanAparat: state.pencurianDilaporkanAparat,
-      adaTawuran: state.adaTawuran,
-      waktuTawuran: state.waktuTawuran,
-      lokasiTawuran: state.lokasiTawuran,
-      pelakuTawuranDiketahui: state.pelakuTawuranDiketahui,
-      tawuranDilaporkanAparat: state.tawuranDilaporkanAparat,
-      adaNarkoba: state.adaNarkoba,
-      narkobaDilaporkanAparat: state.narkobaDilaporkanAparat,
-      adaSelokanTersumbat: state.adaSelokanTersumbat,
-      waktuSelokanTersumbat: state.waktuSelokanTersumbat,
-      lokasiSelokanTersumbat: state.lokasiSelokanTersumbat,
-      resikoSelokanTersumbat: state.resikoSelokanTersumbat,
-      adaJalanRusak: state.adaJalanRusak,
-      lokasiJalanRusakGps: state.lokasiJalanRusakGps,
-      latitudeJalanRusak: state.latitudeJalanRusak,
-      longitudeJalanRusak: state.longitudeJalanRusak,
-      resikoJalanRusak: state.resikoJalanRusak,
-      adaLampuMati: state.adaLampuMati,
-      lokasiLampuMatiGps: state.lokasiLampuMatiGps,
-      latitudeLampuMati: state.latitudeLampuMati,
-      longitudeLampuMati: state.longitudeLampuMati,
-      resikoLampuMati: state.resikoLampuMati,
-      patrolTime: timeNowStr,
-      waktuKejadian: timeNowStr,
-      keterangan: state.keterangan,
-      timestamp: now,
-    );
+    final dataEntity = event.laporan ??
+        state.toEntity(
+          patrolTime: timeNowStr,
+          waktuKejadian: timeNowStr,
+          timestamp: now,
+        );
 
-    final result = await submitRondaLaporanUsecase.call(dataEntity);
+    final result = await submitRondaLaporanUsecase(dataEntity);
 
     result.fold(
       (failure) {
-        emit(
-          state.copyWith(
-            status: RondaStatus.failure,
-            errorMessage: failure.message,
-          ),
-        );
+        AppLogger.e('[RONDA_BLOC] Submit laporan failed: ${failure.message}');
+        emit(state.toActionFailure(failure.message));
       },
       (dataResult) {
+        AppLogger.i('[RONDA_BLOC] Submit laporan succeeded: ${dataResult.id}');
         emit(
-          state.copyWith(status: RondaStatus.success, lastResult: dataResult),
+          state.toActionSuccess(
+            laporan: dataResult,
+            message: 'Laporan ronda malam berhasil dikirim',
+          ),
         );
       },
     );

@@ -222,4 +222,10 @@ class UpdateRondaFieldEvent extends RondaEvent {
 
 class ResetRondaFormEvent extends RondaEvent {}
 
-class SubmitRondaLaporanEvent extends RondaEvent {}
+class SubmitRondaLaporanEvent extends RondaEvent {
+  final RondaLaporanEntity? laporan;
+  const SubmitRondaLaporanEvent([this.laporan]);
+
+  @override
+  List<Object?> get props => [laporan];
+}
