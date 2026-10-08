@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/linmas/panic/core/constants/panic_constants.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 import '../widgets/panic_bottom_panel.dart';
 import '../widgets/panic_dialogs.dart';
@@ -199,6 +200,21 @@ class _PanicScreenState extends State<PanicScreen> {
           }),
         };
 
+        final circleColor = state.isEmergencyActive
+            ? AppColors.error
+            : AppColors.primary;
+
+        final Set<Circle> circles = {
+          Circle(
+            circleId: const CircleId('sos_radius_500m'),
+            center: userLatLng,
+            radius: PanicConstants.defaultRadiusMeters,
+            fillColor: circleColor.withValues(alpha: 0.12),
+            strokeColor: circleColor,
+            strokeWidth: 2,
+          ),
+        };
+
         return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
@@ -280,6 +296,7 @@ class _PanicScreenState extends State<PanicScreen> {
                         _recenterMap(userLat, userLng);
                       },
                       markers: markers,
+                      circles: circles,
                       myLocationEnabled: true,
                       myLocationButtonEnabled: false,
                       zoomControlsEnabled: false,

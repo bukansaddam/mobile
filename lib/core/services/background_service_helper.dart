@@ -191,9 +191,8 @@ class BackgroundServiceHelper {
         if (service is AndroidServiceInstance) {
           if (await service.isForegroundService()) {
             service.setForegroundNotificationInfo(
-              title: 'AKAR Location Tracking (${currentIntervalSeconds}s)',
-              content:
-                  'Terkirim: ${position.latitude.toStringAsFixed(5)}, ${position.longitude.toStringAsFixed(5)}',
+              title: 'AKAR Location Tracking',
+              content: 'Pelacakan lokasi aktif di latar belakang',
             );
           }
         }
