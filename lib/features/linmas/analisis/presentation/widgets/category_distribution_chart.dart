@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';

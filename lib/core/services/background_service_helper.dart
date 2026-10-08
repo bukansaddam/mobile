@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:dio/dio.dart';
+
 import '../network/logging_interceptor.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';

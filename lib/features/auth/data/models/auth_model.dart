@@ -11,6 +11,8 @@ abstract class AuthModel with _$AuthModel {
     @JsonKey(name: "message") String? message,
     @JsonKey(name: "access_token") required String accessToken,
     @JsonKey(name: "token_type") String? tokenType,
+    @JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,
+    @JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,
     @JsonKey(name: "user") required UserModel user,
   }) = _AuthModel;
 
@@ -62,6 +64,8 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "created_at") DateTime? createdAt,
     @JsonKey(name: "updated_at") DateTime? updatedAt,
     @JsonKey(name: "village_members_id") int? villageMembersId,
+    @JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,
+    @JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

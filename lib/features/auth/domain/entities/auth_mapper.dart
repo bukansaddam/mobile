@@ -5,11 +5,18 @@ export 'package:akar/features/auth/domain/entities/auth_entity.dart';
 
 extension AuthModelMapper on AuthModel {
   AuthEntity toDomain() {
+    final quizCompleted = isInitialQuizCompleted ?? user.isInitialQuizCompleted;
+    final quizFilled = isInitialQuizFilled ?? user.isInitialQuizFilled;
     return AuthEntity(
       message: message,
       accessToken: accessToken,
       tokenType: tokenType,
-      user: user.toDomain(),
+      isInitialQuizCompleted: quizCompleted,
+      isInitialQuizFilled: quizFilled,
+      user: user.toDomain().copyWith(
+        isInitialQuizCompleted: user.isInitialQuizCompleted ?? quizCompleted,
+        isInitialQuizFilled: user.isInitialQuizFilled ?? quizFilled,
+      ),
     );
   }
 }
@@ -30,6 +37,8 @@ extension UserModelMapper on UserModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
       villageMembersId: villageMembersId,
+      isInitialQuizCompleted: isInitialQuizCompleted,
+      isInitialQuizFilled: isInitialQuizFilled,
     );
   }
 }
@@ -50,6 +59,8 @@ extension UserEntityMapper on UserEntity {
       createdAt: createdAt,
       updatedAt: updatedAt,
       villageMembersId: villageMembersId,
+      isInitialQuizCompleted: isInitialQuizCompleted,
+      isInitialQuizFilled: isInitialQuizFilled,
     );
   }
 }
@@ -60,6 +71,8 @@ extension AuthEntityMapper on AuthEntity {
       message: message,
       accessToken: accessToken,
       tokenType: tokenType,
+      isInitialQuizCompleted: isInitialQuizCompleted,
+      isInitialQuizFilled: isInitialQuizFilled,
       user: user.toModel(),
     );
   }

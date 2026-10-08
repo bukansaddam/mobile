@@ -1,5 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../domain/entities/location_suggestion.dart';
 import '../../domain/repositories/location_repository.dart';
 import '../datasources/location_native_datasource.dart';

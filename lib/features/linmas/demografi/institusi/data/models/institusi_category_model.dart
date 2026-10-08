@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/institusi_category_entity.dart';
 
 part 'institusi_category_model.freezed.dart';

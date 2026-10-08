@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 
@@ -8,6 +9,20 @@ abstract class SurveyState {
 class SurveyInitialState extends SurveyState {}
 
 class SurveyLoadingState extends SurveyState {}
+
+class InitialQuizLoadedState extends SurveyState {
+  final InitialQuizResponseEntity quiz;
+
+  const InitialQuizLoadedState({required this.quiz});
+}
+
+class InitialQuizAlreadyCompletedState extends SurveyState {
+  final String message;
+
+  const InitialQuizAlreadyCompletedState({
+    this.message = 'Survey profil sudah pernah diisi.',
+  });
+}
 
 class SurveyStatusLoadedState extends SurveyState {
   final String periodKey;

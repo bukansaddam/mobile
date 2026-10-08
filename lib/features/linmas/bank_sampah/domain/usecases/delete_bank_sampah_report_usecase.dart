@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../repositories/bank_sampah_repository.dart';
 
 class DeleteBankSampahReportUsecase {

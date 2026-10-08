@@ -24,6 +24,24 @@ class SubmitInitialSurveyEvent extends SurveyEvent {
   const SubmitInitialSurveyEvent({required this.userId, required this.survey});
 }
 
+class GetInitialQuizEvent extends SurveyEvent {
+  final int? userId;
+
+  const GetInitialQuizEvent({this.userId});
+}
+
+class SubmitInitialQuizAnswersEvent extends SurveyEvent {
+  final int userId;
+  final dynamic answers;
+  final InitialSurveyEntity? legacySurvey;
+
+  const SubmitInitialQuizAnswersEvent({
+    required this.userId,
+    required this.answers,
+    this.legacySurvey,
+  });
+}
+
 class LoadDynamicMonthlyFormEvent extends SurveyEvent {
   final String? periodKey;
 

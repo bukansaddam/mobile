@@ -1,7 +1,9 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+
 import '../models/bank_sampah_location_model.dart';
 import '../models/bank_sampah_report_model.dart';
 
@@ -86,15 +88,13 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     } else if (rawData is List) {
       list = rawData;
     }
-    if (list != null) {
-      return list
-          .map(
-            (item) => BankSampahLocationModel.fromJson(
-              Map<String, dynamic>.from(item as Map),
-            ),
-          )
-          .toList();
-    }
+    return list
+        .map(
+          (item) => BankSampahLocationModel.fromJson(
+            Map<String, dynamic>.from(item as Map),
+          ),
+        )
+        .toList();
     return [];
   }
 

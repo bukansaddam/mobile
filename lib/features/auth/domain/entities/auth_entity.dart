@@ -8,6 +8,8 @@ abstract class AuthEntity with _$AuthEntity {
     String? message,
     required String accessToken,
     String? tokenType,
+    bool? isInitialQuizCompleted,
+    bool? isInitialQuizFilled,
     required UserEntity user,
   }) = _AuthEntity;
 }
@@ -28,10 +30,15 @@ abstract class UserEntity with _$UserEntity {
     DateTime? createdAt,
     DateTime? updatedAt,
     int? villageMembersId,
+    bool? isInitialQuizCompleted,
+    bool? isInitialQuizFilled,
   }) = _UserEntity;
 }
 
 extension UserEntityRoleExt on UserEntity {
+  bool get hasCompletedInitialQuiz =>
+      (isInitialQuizCompleted == true) || (isInitialQuizFilled == true);
+
   bool get isOfficer {
     final u = (username ?? '').trim().toLowerCase();
     if (u == 'officer') return true;
@@ -44,4 +51,11 @@ extension UserEntityRoleExt on UserEntity {
   }
 
   bool get isMember => !isOfficer;
+}
+
+extension AuthEntityExt on AuthEntity {
+  bool get hasCompletedInitialQuiz =>
+      (isInitialQuizCompleted == true) ||
+      (isInitialQuizFilled == true) ||
+      user.hasCompletedInitialQuiz;
 }

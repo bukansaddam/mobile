@@ -1,3 +1,4 @@
+import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 
@@ -5,6 +6,12 @@ abstract class SurveyRepository {
   bool isInitialSurveyCompletedSync(int userId);
   Future<void> saveInitialSurvey(int userId, InitialSurveyEntity survey);
   Future<InitialSurveyEntity?> getInitialSurvey(int userId);
+  Future<InitialQuizResponseEntity?> getInitialQuiz();
+  Future<void> submitInitialQuiz({
+    required int userId,
+    required dynamic answers,
+    InitialSurveyEntity? legacySurvey,
+  });
 
   Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(String periodKey);
   Future<SurveyItemEntity?> getActiveMonthlySurveyFromApi(String periodKey);

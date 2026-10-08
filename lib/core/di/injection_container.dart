@@ -117,9 +117,11 @@ import 'package:akar/features/survey/data/datasources/survey_remote_datasource.d
 import 'package:akar/features/survey/data/repositories/survey_repository_impl.dart';
 import 'package:akar/features/survey/domain/repositories/survey_repository.dart';
 import 'package:akar/features/survey/domain/usecases/get_active_monthly_survey_usecase.dart';
+import 'package:akar/features/survey/domain/usecases/get_initial_quiz_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/get_monthly_survey_status_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/get_survey_history_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/submit_api_survey_answers_usecase.dart';
+import 'package:akar/features/survey/domain/usecases/submit_initial_quiz_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/submit_monthly_survey_usecase.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 
@@ -190,9 +192,12 @@ Future<void> init() async {
     () => LocationNativeDataSourceImpl(),
   );
 
-  // ---------------------- Repositories ----------------------
   sl.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(remoteDatasource: sl(), localDatasource: sl()),
+    () => AuthRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      surveyLocalDatasource: sl(),
+    ),
   );
   sl.registerLazySingleton<TrackingRepository>(
     () => TrackingRepositoryImpl(remoteDatasource: sl()),
@@ -431,6 +436,12 @@ Future<void> init() async {
   sl.registerLazySingleton<SubmitApiSurveyAnswersUsecase>(
     () => SubmitApiSurveyAnswersUsecase(sl()),
   );
+  sl.registerLazySingleton<GetInitialQuizUsecase>(
+    () => GetInitialQuizUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitInitialQuizUsecase>(
+    () => SubmitInitialQuizUsecase(sl()),
+  );
   sl.registerLazySingleton<GetSurveyHistoryUsecase>(
     () => GetSurveyHistoryUsecase(sl()),
   );
@@ -440,6 +451,8 @@ Future<void> init() async {
       submitMonthlySurveyUsecase: sl(),
       getSurveyHistoryUsecase: sl(),
       submitApiSurveyAnswersUsecase: sl(),
+      getInitialQuizUsecase: sl(),
+      submitInitialQuizUsecase: sl(),
     ),
   );
 }

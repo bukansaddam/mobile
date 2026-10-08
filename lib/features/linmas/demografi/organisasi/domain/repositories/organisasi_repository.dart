@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/organisasi_entity.dart';
 
 abstract class OrganisasiRepository {

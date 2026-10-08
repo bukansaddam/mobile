@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/member_dashboard_entity.dart';
 import '../repositories/member_dashboard_repository.dart';
 

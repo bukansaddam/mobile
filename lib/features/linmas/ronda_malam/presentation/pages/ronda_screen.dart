@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
@@ -115,7 +116,9 @@ class _RondaScreenState extends State<RondaScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Izin mikrofon dibutuhkan untuk fitur dikte suara.'),
+            content: const Text(
+              'Izin mikrofon dibutuhkan untuk fitur dikte suara.',
+            ),
             backgroundColor: AppColors.warning,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(

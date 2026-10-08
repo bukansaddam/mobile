@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/core/theme/app_colors.dart';

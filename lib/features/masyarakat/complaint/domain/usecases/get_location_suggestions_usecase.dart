@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/location_suggestion.dart';
 import '../repositories/location_repository.dart';
 

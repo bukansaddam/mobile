@@ -220,7 +220,7 @@ return $default(_that.id,_that.title,_that.slug,_that.category,_that.summary,_th
 
 
 class _AnnouncementEntity extends AnnouncementEntity {
-  const _AnnouncementEntity({required this.id, required this.title, this.slug, this.category, this.summary, this.content, this.coverImage, final  List<String> images = const [], this.authorName, this.status, this.isPinned = false, this.viewsCount = 0, this.publishedAt, this.createdAt, this.updatedAt}): _images = images,super._();
+  const _AnnouncementEntity({required this.id, required this.title, this.slug, this.category, this.summary, this.content, this.coverImage,  List<String> images = const [], this.authorName, this.status, this.isPinned = false, this.viewsCount = 0, this.publishedAt, this.createdAt, this.updatedAt}): _images = images,super._();
   
 
 @override final  int id;
@@ -517,7 +517,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _AnnouncementPaginatedEntity implements AnnouncementPaginatedEntity {
-  const _AnnouncementPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<AnnouncementEntity> data = const [], this.message}): _data = data;
+  const _AnnouncementPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<AnnouncementEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;

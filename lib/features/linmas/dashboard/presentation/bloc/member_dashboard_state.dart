@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/member_dashboard_entity.dart';
 
 abstract class MemberDashboardState extends Equatable {

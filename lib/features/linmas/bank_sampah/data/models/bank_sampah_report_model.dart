@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:akar/core/constants/api_constants.dart';
+
 import '../../domain/entities/bank_sampah_report_entity.dart';
 
 part 'bank_sampah_report_model.freezed.dart';

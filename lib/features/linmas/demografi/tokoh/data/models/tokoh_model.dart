@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/tokoh_entity.dart';
 
 part 'tokoh_model.freezed.dart';

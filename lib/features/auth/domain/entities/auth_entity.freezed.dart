@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthEntity {
 
- String? get message; String get accessToken; String? get tokenType; UserEntity get user;
+ String? get message; String get accessToken; String? get tokenType; bool? get isInitialQuizCompleted; bool? get isInitialQuizFilled; UserEntity get user;
 /// Create a copy of AuthEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AuthEntityCopyWith<AuthEntity> get copyWith => _$AuthEntityCopyWithImpl<AuthEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEntity&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEntity&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthEntity(message: $message, accessToken: $accessToken, tokenType: $tokenType, user: $user)';
+  return 'AuthEntity(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AuthEntityCopyWith<$Res>  {
   factory $AuthEntityCopyWith(AuthEntity value, $Res Function(AuthEntity) _then) = _$AuthEntityCopyWithImpl;
 @useResult
 $Res call({
- String? message, String accessToken, String? tokenType, UserEntity user
+ String? message, String accessToken, String? tokenType, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, UserEntity user
 });
 
 
@@ -62,12 +62,14 @@ class _$AuthEntityCopyWithImpl<$Res>
 
 /// Create a copy of AuthEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_self.copyWith(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
-as String?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserEntity,
   ));
 }
@@ -162,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? message,  String accessToken,  String? tokenType,  UserEntity user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? message,  String accessToken,  String? tokenType,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  UserEntity user)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthEntity() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return orElse();
 
 }
@@ -183,10 +185,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? message,  String accessToken,  String? tokenType,  UserEntity user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? message,  String accessToken,  String? tokenType,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  UserEntity user)  $default,) {final _that = this;
 switch (_that) {
 case _AuthEntity():
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +205,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? message,  String accessToken,  String? tokenType,  UserEntity user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? message,  String accessToken,  String? tokenType,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  UserEntity user)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthEntity() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return null;
 
 }
@@ -218,12 +220,14 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 
 
 class _AuthEntity implements AuthEntity {
-  const _AuthEntity({this.message, required this.accessToken, this.tokenType, required this.user});
+  const _AuthEntity({this.message, required this.accessToken, this.tokenType, this.isInitialQuizCompleted, this.isInitialQuizFilled, required this.user});
   
 
 @override final  String? message;
 @override final  String accessToken;
 @override final  String? tokenType;
+@override final  bool? isInitialQuizCompleted;
+@override final  bool? isInitialQuizFilled;
 @override final  UserEntity user;
 
 /// Create a copy of AuthEntity
@@ -236,16 +240,16 @@ _$AuthEntityCopyWith<_AuthEntity> get copyWith => __$AuthEntityCopyWithImpl<_Aut
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthEntity&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthEntity&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthEntity(message: $message, accessToken: $accessToken, tokenType: $tokenType, user: $user)';
+  return 'AuthEntity(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -256,7 +260,7 @@ abstract mixin class _$AuthEntityCopyWith<$Res> implements $AuthEntityCopyWith<$
   factory _$AuthEntityCopyWith(_AuthEntity value, $Res Function(_AuthEntity) _then) = __$AuthEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String? message, String accessToken, String? tokenType, UserEntity user
+ String? message, String accessToken, String? tokenType, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, UserEntity user
 });
 
 
@@ -273,12 +277,14 @@ class __$AuthEntityCopyWithImpl<$Res>
 
 /// Create a copy of AuthEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_AuthEntity(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
-as String?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserEntity,
   ));
 }
@@ -298,7 +304,7 @@ $UserEntityCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserEntity {
 
- int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; String? get role; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId;
+ int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; String? get role; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId; bool? get isInitialQuizCompleted; bool? get isInitialQuizFilled;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -309,16 +315,16 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
 }
 
 
@@ -329,7 +335,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled
 });
 
 
@@ -346,7 +352,7 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -361,7 +367,9 @@ as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt :
 as dynamic,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -446,10 +454,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   return orElse();
 
 }
@@ -467,10 +475,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -487,10 +495,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   return null;
 
 }
@@ -502,7 +510,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 
 
 class _UserEntity implements UserEntity {
-  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.role, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId});
+  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.role, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId, this.isInitialQuizCompleted, this.isInitialQuizFilled});
   
 
 @override final  int id;
@@ -518,6 +526,8 @@ class _UserEntity implements UserEntity {
 @override final  DateTime? createdAt;
 @override final  DateTime? updatedAt;
 @override final  int? villageMembersId;
+@override final  bool? isInitialQuizCompleted;
+@override final  bool? isInitialQuizFilled;
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -529,16 +539,16 @@ _$UserEntityCopyWith<_UserEntity> get copyWith => __$UserEntityCopyWithImpl<_Use
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
 
 @override
 String toString() {
-  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
 }
 
 
@@ -549,7 +559,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled
 });
 
 
@@ -566,7 +576,7 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
   return _then(_UserEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -581,7 +591,9 @@ as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt :
 as dynamic,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

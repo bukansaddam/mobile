@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/tokoh_entity.dart';
 
 abstract class TokohRepository {

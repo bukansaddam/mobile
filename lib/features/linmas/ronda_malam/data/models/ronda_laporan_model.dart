@@ -25,40 +25,57 @@ abstract class RondaLaporanModel with _$RondaLaporanModel {
     @JsonKey(name: 'laporan_keamanan') @Default(1) int laporanKeamanan,
     @JsonKey(name: 'warga_bertengkar') @Default(1) int wargaBertengkar,
     @JsonKey(name: 'tempat_kurang_aman') @Default(1) int tempatKurangAman,
-    @JsonKey(name: 'kerumunan_tidak_tertib') @Default(1) int kerumunanTidakTertib,
+    @JsonKey(name: 'kerumunan_tidak_tertib')
+    @Default(1)
+    int kerumunanTidakTertib,
     @JsonKey(name: 'perlu_bantuan_petugas') @Default(1) int perluBantuanPetugas,
     @JsonKey(name: 'gangguan_kamtibmas') @Default(1) int gangguanKamtibmas,
-    @JsonKey(name: 'aktivitas_mencurigakan') @Default(1) int aktivitasMencurigakan,
-    @JsonKey(name: 'kehilangan_lingkungan') @Default(1) int kehilanganLingkungan,
+    @JsonKey(name: 'aktivitas_mencurigakan')
+    @Default(1)
+    int aktivitasMencurigakan,
+    @JsonKey(name: 'kehilangan_lingkungan')
+    @Default(1)
+    int kehilanganLingkungan,
 
     // Sosial
     @JsonKey(name: 'warga_butuh_bantuan') @Default(1) int wargaButuhBantuan,
     @JsonKey(name: 'kelompok_berselisih') @Default(1) int kelompokBerselisih,
     @JsonKey(name: 'keluhan_warga') @Default(1) int keluhanWarga,
-    @JsonKey(name: 'kejadian_mengganggu_warga') @Default(1) int kejadianMenggangguWarga,
+    @JsonKey(name: 'kejadian_mengganggu_warga')
+    @Default(1)
+    int kejadianMenggangguWarga,
     @JsonKey(name: 'perlu_terusan_rt_rw') @Default(1) int perluTerusanRTRW,
     @JsonKey(name: 'permasalahan_sosial') @Default(1) int permasalahanSosial,
     @JsonKey(name: 'kasus_perzinahan') @Default(1) int kasusPerzinahan,
     @JsonKey(name: 'orang_terlantar') @Default(1) int orangTerlantar,
 
     // Detail Sampah
-    @JsonKey(name: 'ada_sampah_menumpuk') @Default(false) bool adaSampahMenumpuk,
+    @JsonKey(name: 'ada_sampah_menumpuk')
+    @Default(false)
+    bool adaSampahMenumpuk,
     @JsonKey(name: 'waktu_sampah_menumpuk') String? waktuSampahMenumpuk,
     @JsonKey(name: 'lokasi_sampah_menumpuk') String? lokasiSampahMenumpuk,
     @JsonKey(name: 'jenis_sampah_dominan') String? jenisSampahDominan,
-    @JsonKey(name: 'pengangkutan_sesuai_jadwal') @Default(true) bool pengangkutanSesuaiJadwal,
+    @JsonKey(name: 'pengangkutan_sesuai_jadwal')
+    @Default(true)
+    bool pengangkutanSesuaiJadwal,
     @JsonKey(name: 'alasan_pengangkutan') String? alasanPengangkutan,
-    @JsonKey(name: 'ada_pembakaran_sampah') @Default(false) bool adaPembakaranSampah,
+    @JsonKey(name: 'ada_pembakaran_sampah')
+    @Default(false)
+    bool adaPembakaranSampah,
     @JsonKey(name: 'waktu_pembakaran') String? waktuPembakaran,
     @JsonKey(name: 'lokasi_pembakaran') String? lokasiPembakaran,
-    @JsonKey(name: 'pembakaran_diberi_tindakan') String? pembakaranDiberiTindakan,
+    @JsonKey(name: 'pembakaran_diberi_tindakan')
+    String? pembakaranDiberiTindakan,
 
     // Detail Keamanan
     @JsonKey(name: 'ada_pencurian') @Default(false) bool adaPencurian,
     @JsonKey(name: 'waktu_pencurian') String? waktuPencurian,
     @JsonKey(name: 'lokasi_pencurian') String? lokasiPencurian,
-    @JsonKey(name: 'pelaku_pencurian_diketahui') String? pelakuPencurianDiketahui,
-    @JsonKey(name: 'pencurian_dilaporkan_aparat') String? pencurianDilaporkanAparat,
+    @JsonKey(name: 'pelaku_pencurian_diketahui')
+    String? pelakuPencurianDiketahui,
+    @JsonKey(name: 'pencurian_dilaporkan_aparat')
+    String? pencurianDilaporkanAparat,
     @JsonKey(name: 'ada_tawuran') @Default(false) bool adaTawuran,
     @JsonKey(name: 'waktu_tawuran') String? waktuTawuran,
     @JsonKey(name: 'lokasi_tawuran') String? lokasiTawuran,
@@ -68,7 +85,9 @@ abstract class RondaLaporanModel with _$RondaLaporanModel {
     @JsonKey(name: 'narkoba_dilaporkan_aparat') String? narkobaDilaporkanAparat,
 
     // Detail Lingkungan
-    @JsonKey(name: 'ada_selokan_tersumbat') @Default(false) bool adaSelokanTersumbat,
+    @JsonKey(name: 'ada_selokan_tersumbat')
+    @Default(false)
+    bool adaSelokanTersumbat,
     @JsonKey(name: 'waktu_selokan_tersumbat') String? waktuSelokanTersumbat,
     @JsonKey(name: 'lokasi_selokan_tersumbat') String? lokasiSelokanTersumbat,
     @JsonKey(name: 'resiko_selokan_tersumbat') String? resikoSelokanTersumbat,

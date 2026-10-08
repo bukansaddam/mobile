@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:akar/core/theme/app_colors.dart';
+
 import '../../domain/entities/location_suggestion.dart';
 
 class LocationSearchBarWidget extends StatelessWidget {

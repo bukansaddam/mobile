@@ -873,7 +873,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _OrganisasiPaginatedEntity implements OrganisasiPaginatedEntity {
-  const _OrganisasiPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<OrganisasiEntity> data = const [], this.message}): _data = data;
+  const _OrganisasiPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<OrganisasiEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;

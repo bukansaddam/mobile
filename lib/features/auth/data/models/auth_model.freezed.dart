@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthModel {
 
-@JsonKey(name: "message") String? get message;@JsonKey(name: "access_token") String get accessToken;@JsonKey(name: "token_type") String? get tokenType;@JsonKey(name: "user") UserModel get user;
+@JsonKey(name: "message") String? get message;@JsonKey(name: "access_token") String get accessToken;@JsonKey(name: "token_type") String? get tokenType;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;@JsonKey(name: "user") UserModel get user;
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AuthModelCopyWith<AuthModel> get copyWith => _$AuthModelCopyWithImpl<AuthModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, user: $user)';
+  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AuthModelCopyWith<$Res>  {
   factory $AuthModelCopyWith(AuthModel value, $Res Function(AuthModel) _then) = _$AuthModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "user") UserModel user
+@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
 });
 
 
@@ -65,12 +65,14 @@ class _$AuthModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_self.copyWith(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
-as String?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserModel,
   ));
 }
@@ -165,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "user")  UserModel user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthModel() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return orElse();
 
 }
@@ -186,10 +188,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "user")  UserModel user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)  $default,) {final _that = this;
 switch (_that) {
 case _AuthModel():
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +208,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "user")  UserModel user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthModel() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return null;
 
 }
@@ -221,12 +223,14 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.user);case
 @JsonSerializable()
 
 class _AuthModel extends AuthModel {
-  const _AuthModel({@JsonKey(name: "message") this.message, @JsonKey(name: "access_token") required this.accessToken, @JsonKey(name: "token_type") this.tokenType, @JsonKey(name: "user") required this.user}): super._();
+  const _AuthModel({@JsonKey(name: "message") this.message, @JsonKey(name: "access_token") required this.accessToken, @JsonKey(name: "token_type") this.tokenType, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled, @JsonKey(name: "user") required this.user}): super._();
   factory _AuthModel.fromJson(Map<String, dynamic> json) => _$AuthModelFromJson(json);
 
 @override@JsonKey(name: "message") final  String? message;
 @override@JsonKey(name: "access_token") final  String accessToken;
 @override@JsonKey(name: "token_type") final  String? tokenType;
+@override@JsonKey(name: "is_initial_quiz_completed") final  bool? isInitialQuizCompleted;
+@override@JsonKey(name: "is_initial_quiz_filled") final  bool? isInitialQuizFilled;
 @override@JsonKey(name: "user") final  UserModel user;
 
 /// Create a copy of AuthModel
@@ -242,16 +246,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, user: $user)';
+  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -262,7 +266,7 @@ abstract mixin class _$AuthModelCopyWith<$Res> implements $AuthModelCopyWith<$Re
   factory _$AuthModelCopyWith(_AuthModel value, $Res Function(_AuthModel) _then) = __$AuthModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "user") UserModel user
+@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
 });
 
 
@@ -279,12 +283,14 @@ class __$AuthModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_AuthModel(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
 as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
-as String?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
 as UserModel,
   ));
 }
@@ -305,7 +311,7 @@ $UserModelCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserModel {
 
-@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone", readValue: _readPhone) String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "role", readValue: _readRole) String? get role;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;
+@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone", readValue: _readPhone) String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "role", readValue: _readRole) String? get role;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -318,16 +324,16 @@ $UserModelCopyWith<UserModel> get copyWith => _$UserModelCopyWithImpl<UserModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
 }
 
 
@@ -338,7 +344,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled
 });
 
 
@@ -355,7 +361,7 @@ class _$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -370,7 +376,9 @@ as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt :
 as dynamic,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -455,10 +463,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   return orElse();
 
 }
@@ -476,10 +484,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -496,10 +504,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
   return null;
 
 }
@@ -511,7 +519,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 @JsonSerializable()
 
 class _UserModel extends UserModel {
-  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone", readValue: _readPhone) this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "role", readValue: _readRole) this.role, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId}): super._();
+  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone", readValue: _readPhone) this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "role", readValue: _readRole) this.role, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled}): super._();
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -527,6 +535,8 @@ class _UserModel extends UserModel {
 @override@JsonKey(name: "created_at") final  DateTime? createdAt;
 @override@JsonKey(name: "updated_at") final  DateTime? updatedAt;
 @override@JsonKey(name: "village_members_id") final  int? villageMembersId;
+@override@JsonKey(name: "is_initial_quiz_completed") final  bool? isInitialQuizCompleted;
+@override@JsonKey(name: "is_initial_quiz_filled") final  bool? isInitialQuizFilled;
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
@@ -541,16 +551,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId)';
+  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
 }
 
 
@@ -561,7 +571,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled
 });
 
 
@@ -578,7 +588,7 @@ class __$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
   return _then(_UserModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -593,7 +603,9 @@ as double?,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt :
 as dynamic,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
+as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 

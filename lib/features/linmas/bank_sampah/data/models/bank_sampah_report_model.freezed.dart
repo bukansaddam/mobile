@@ -1095,7 +1095,7 @@ return $default(_that.success,_that.message,_that.data,_that.summary,_that.meta)
 @JsonSerializable()
 
 class _BankSampahMyDepositsResponseModel extends BankSampahMyDepositsResponseModel {
-  const _BankSampahMyDepositsResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data') final  List<BankSampahReportModel> data = const [], @JsonKey(name: 'summary') this.summary, @JsonKey(name: 'meta') this.meta}): _data = data,super._();
+  const _BankSampahMyDepositsResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data')  List<BankSampahReportModel> data = const [], @JsonKey(name: 'summary') this.summary, @JsonKey(name: 'meta') this.meta}): _data = data,super._();
   factory _BankSampahMyDepositsResponseModel.fromJson(Map<String, dynamic> json) => _$BankSampahMyDepositsResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;

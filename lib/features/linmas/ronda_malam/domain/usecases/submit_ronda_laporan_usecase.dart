@@ -7,7 +7,6 @@ class SubmitRondaLaporanUsecase {
 
   SubmitRondaLaporanUsecase(this.repository);
 
-  Future<Either<Failure, RondaLaporanEntity>> call(
-    RondaLaporanEntity data,
-  ) => repository.submitLaporan(data);
+  Future<Either<Failure, RondaLaporanEntity>> call(RondaLaporanEntity data) =>
+      repository.submitLaporan(data);
 }

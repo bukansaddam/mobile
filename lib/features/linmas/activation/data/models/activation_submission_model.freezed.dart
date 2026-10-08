@@ -502,7 +502,7 @@ return $default(_that.id,_that.receiverNik,_that.receiverName,_that.notes,_that.
 @JsonSerializable()
 
 class _ActivationSubmissionDataModel extends ActivationSubmissionDataModel {
-  const _ActivationSubmissionDataModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "receiver_nik") this.receiverNik, @JsonKey(name: "receiver_name") this.receiverName, @JsonKey(name: "notes") this.notes, @JsonKey(name: "creator") this.creator, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "attachments") final  List<ActivationAttachmentModel> attachments = const []}): _attachments = attachments,super._();
+  const _ActivationSubmissionDataModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "receiver_nik") this.receiverNik, @JsonKey(name: "receiver_name") this.receiverName, @JsonKey(name: "notes") this.notes, @JsonKey(name: "creator") this.creator, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "attachments")  List<ActivationAttachmentModel> attachments = const []}): _attachments = attachments,super._();
   factory _ActivationSubmissionDataModel.fromJson(Map<String, dynamic> json) => _$ActivationSubmissionDataModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_detail_screen.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -135,18 +136,15 @@ class AppRouter {
       }
 
       if (isLoggedIn) {
-        // Checking initial onboarding baseline survey for Linmas
-        if (!isMember && currentUser != null) {
-          final isInitialDone = sl<SurveyLocalDatasource>()
-              .isInitialSurveyCompletedSync(currentUser.id);
-          if (!isInitialDone) {
-            if (location != initialSurveyPath) {
-              return initialSurveyPath;
-            }
-            return null;
-          } else if (location == initialSurveyPath) {
-            return mainPath;
-          }
+        // Dari splash tidak perlu mengecek survey (langsung ke home).
+        // Pengecekan survey hanya saat login. Jika sudah selesai dan membuka rute survey awal, redirect ke main.
+        if (location == initialSurveyPath &&
+            currentUser != null &&
+            (currentUser.hasCompletedInitialQuiz ||
+                sl<SurveyLocalDatasource>().isInitialSurveyCompletedSync(
+                  currentUser.id,
+                ))) {
+          return mainPath;
         }
 
         final defaultHome = isMember ? masyarakatMainPath : mainPath;

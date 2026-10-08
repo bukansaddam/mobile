@@ -1,7 +1,10 @@
+import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
+import 'package:akar/features/survey/domain/usecases/get_initial_quiz_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/get_monthly_survey_status_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/get_survey_history_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/submit_api_survey_answers_usecase.dart';
+import 'package:akar/features/survey/domain/usecases/submit_initial_quiz_usecase.dart';
 import 'package:akar/features/survey/domain/usecases/submit_monthly_survey_usecase.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
@@ -12,16 +15,22 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
   final SubmitMonthlySurveyUsecase submitMonthlySurveyUsecase;
   final GetSurveyHistoryUsecase getSurveyHistoryUsecase;
   final SubmitApiSurveyAnswersUsecase? submitApiSurveyAnswersUsecase;
+  final GetInitialQuizUsecase? getInitialQuizUsecase;
+  final SubmitInitialQuizUsecase? submitInitialQuizUsecase;
 
   SurveyBloc({
     required this.getMonthlySurveyStatusUsecase,
     required this.submitMonthlySurveyUsecase,
     required this.getSurveyHistoryUsecase,
     this.submitApiSurveyAnswersUsecase,
+    this.getInitialQuizUsecase,
+    this.submitInitialQuizUsecase,
   }) : super(SurveyInitialState()) {
     on<CheckSurveyStatusEvent>(_onCheckSurveyStatus);
     on<SubmitSurveyEvent>(_onSubmitSurvey);
     on<SubmitInitialSurveyEvent>(_onSubmitInitialSurvey);
+    on<GetInitialQuizEvent>(_onGetInitialQuiz);
+    on<SubmitInitialQuizAnswersEvent>(_onSubmitInitialQuizAnswers);
     on<LoadDynamicMonthlyFormEvent>(_onLoadDynamicMonthlyForm);
     on<SubmitDynamicMonthlySurveyEvent>(_onSubmitDynamicMonthlySurvey);
     on<SubmitApiSurveyAnswersEvent>(_onSubmitApiSurveyAnswers);
@@ -48,6 +57,88 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     } catch (e) {
       emit(
         SurveyFailureState('Gagal menyimpan survey profil: ${e.toString()}'),
+      );
+    }
+  }
+
+  Future<void> _onGetInitialQuiz(
+    GetInitialQuizEvent event,
+    Emitter<SurveyState> emit,
+  ) async {
+    emit(SurveyLoadingState());
+    try {
+      final repository = getMonthlySurveyStatusUsecase.repository;
+      final InitialQuizResponseEntity? quiz;
+      if (getInitialQuizUsecase != null) {
+        quiz = await getInitialQuizUsecase!();
+      } else {
+        quiz = await repository.getInitialQuiz();
+      }
+
+      if (quiz == null) {
+        emit(const SurveyFailureState('Gagal memuat survey profil'));
+        return;
+      }
+
+      if (quiz.isAlreadyCompleted) {
+        if (event.userId != null) {
+          await repository.saveInitialSurvey(
+            event.userId!,
+            InitialSurveyEntity(
+              id: 'api_completed',
+              isMemilahSampah: false,
+              tujuanSampahOrganik: 'TPS',
+              hasBankSampah: false,
+              hasMesinPengolahOrganik: false,
+              hasAslinmas: false,
+              hasRonda: false,
+              submittedAt: DateTime.now(),
+            ),
+          );
+        }
+        emit(
+          InitialQuizAlreadyCompletedState(
+            message: quiz.message ?? 'Survey profil sudah pernah diisi.',
+          ),
+        );
+        return;
+      }
+
+      emit(InitialQuizLoadedState(quiz: quiz));
+    } catch (e) {
+      emit(SurveyFailureState('Gagal memuat survey profil: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onSubmitInitialQuizAnswers(
+    SubmitInitialQuizAnswersEvent event,
+    Emitter<SurveyState> emit,
+  ) async {
+    emit(SurveySubmittingState());
+    try {
+      final repository = getMonthlySurveyStatusUsecase.repository;
+      if (submitInitialQuizUsecase != null) {
+        await submitInitialQuizUsecase!(
+          userId: event.userId,
+          answers: event.answers,
+          legacySurvey: event.legacySurvey,
+        );
+      } else {
+        await repository.submitInitialQuiz(
+          userId: event.userId,
+          answers: event.answers,
+          legacySurvey: event.legacySurvey,
+        );
+      }
+
+      emit(
+        const InitialSurveySuccessState(
+          message: 'Survey Profil Berhasil Disimpan!',
+        ),
+      );
+    } catch (e) {
+      emit(
+        SurveyFailureState('Gagal mengirim jawaban survey: ${e.toString()}'),
       );
     }
   }

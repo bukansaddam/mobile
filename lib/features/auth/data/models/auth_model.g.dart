@@ -10,6 +10,8 @@ _AuthModel _$AuthModelFromJson(Map<String, dynamic> json) => _AuthModel(
   message: json['message'] as String?,
   accessToken: json['access_token'] as String,
   tokenType: json['token_type'] as String?,
+  isInitialQuizCompleted: json['is_initial_quiz_completed'] as bool?,
+  isInitialQuizFilled: json['is_initial_quiz_filled'] as bool?,
   user: UserModel.fromJson(json['user'] as Map<String, dynamic>),
 );
 
@@ -18,6 +20,8 @@ Map<String, dynamic> _$AuthModelToJson(_AuthModel instance) =>
       'message': instance.message,
       'access_token': instance.accessToken,
       'token_type': instance.tokenType,
+      'is_initial_quiz_completed': instance.isInitialQuizCompleted,
+      'is_initial_quiz_filled': instance.isInitialQuizFilled,
       'user': instance.user,
     };
 
@@ -39,6 +43,8 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
       ? null
       : DateTime.parse(json['updated_at'] as String),
   villageMembersId: (json['village_members_id'] as num?)?.toInt(),
+  isInitialQuizCompleted: json['is_initial_quiz_completed'] as bool?,
+  isInitialQuizFilled: json['is_initial_quiz_filled'] as bool?,
 );
 
 Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
@@ -56,4 +62,6 @@ Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
       'created_at': instance.createdAt?.toIso8601String(),
       'updated_at': instance.updatedAt?.toIso8601String(),
       'village_members_id': instance.villageMembersId,
+      'is_initial_quiz_completed': instance.isInitialQuizCompleted,
+      'is_initial_quiz_filled': instance.isInitialQuizFilled,
     };

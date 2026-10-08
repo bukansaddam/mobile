@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../../domain/entities/location_suggestion.dart';
 import '../../domain/usecases/get_address_from_latlng_usecase.dart';
 import '../../domain/usecases/get_current_location_usecase.dart';

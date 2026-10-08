@@ -121,7 +121,8 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
     final timeNowStr =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    final dataEntity = event.laporan ??
+    final dataEntity =
+        event.laporan ??
         state.toEntity(
           patrolTime: timeNowStr,
           waktuKejadian: timeNowStr,

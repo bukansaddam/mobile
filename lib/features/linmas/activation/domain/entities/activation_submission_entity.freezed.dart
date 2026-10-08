@@ -488,7 +488,7 @@ return $default(_that.id,_that.receiverNik,_that.receiverName,_that.notes,_that.
 
 
 class _ActivationSubmissionEntity extends ActivationSubmissionEntity {
-  const _ActivationSubmissionEntity({required this.id, this.receiverNik, this.receiverName, this.notes, this.createdAt, final  List<ActivationAttachmentEntity> attachments = const [], this.totalTarget, this.targetDone}): _attachments = attachments,super._();
+  const _ActivationSubmissionEntity({required this.id, this.receiverNik, this.receiverName, this.notes, this.createdAt,  List<ActivationAttachmentEntity> attachments = const [], this.totalTarget, this.targetDone}): _attachments = attachments,super._();
   
 
 @override final  int id;

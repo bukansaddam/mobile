@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:flutter/material.dart';

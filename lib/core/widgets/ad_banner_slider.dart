@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:flutter/material.dart';

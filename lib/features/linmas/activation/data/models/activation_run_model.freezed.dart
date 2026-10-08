@@ -873,7 +873,7 @@ return $default(_that.success,_that.data,_that.meta,_that.message);case _:
 @JsonSerializable()
 
 class _ActivationRunResponseModel extends ActivationRunResponseModel {
-  const _ActivationRunResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data") final  List<ActivationRunModel> data = const [], @JsonKey(name: "meta") this.meta, @JsonKey(name: "message") this.message}): _data = data,super._();
+  const _ActivationRunResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data")  List<ActivationRunModel> data = const [], @JsonKey(name: "meta") this.meta, @JsonKey(name: "message") this.message}): _data = data,super._();
   factory _ActivationRunResponseModel.fromJson(Map<String, dynamic> json) => _$ActivationRunResponseModelFromJson(json);
 
 @override@JsonKey(name: "success") final  bool success;

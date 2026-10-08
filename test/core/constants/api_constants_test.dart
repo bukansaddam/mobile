@@ -18,6 +18,7 @@ void main() {
 
     test('surveys endpoint decodes accurately', () {
       expect(ApiConstants.surveys, '/api/surveys');
+      expect(ApiConstants.initialQuiz, '/api/initial-quiz');
     });
 
     test('activation runs endpoint decodes accurately', () {

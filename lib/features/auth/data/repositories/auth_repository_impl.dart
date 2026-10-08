@@ -4,14 +4,17 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
+import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDatasource remoteDatasource;
   final AuthLocalDatasource localDatasource;
+  final SurveyLocalDatasource? surveyLocalDatasource;
 
   AuthRepositoryImpl({
     required this.remoteDatasource,
     required this.localDatasource,
+    this.surveyLocalDatasource,
   });
 
   @override
@@ -29,6 +32,18 @@ class AuthRepositoryImpl implements AuthRepository {
 
       await localDatasource.saveToken(authModel.accessToken);
       await localDatasource.saveUser(authModel.user);
+
+      final isQuizCompleted =
+          (authModel.isInitialQuizCompleted == true) ||
+          (authModel.user.isInitialQuizCompleted == true) ||
+          (authModel.isInitialQuizFilled == true) ||
+          (authModel.user.isInitialQuizFilled == true);
+      if (surveyLocalDatasource != null) {
+        await surveyLocalDatasource!.setInitialSurveyCompleted(
+          authModel.user.id,
+          isQuizCompleted,
+        );
+      }
 
       return Right(authModel.toDomain());
     } catch (e) {
@@ -78,6 +93,15 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity?>> getSavedUser() async {
     try {
       final userModel = await localDatasource.getUser();
+      if (userModel != null && surveyLocalDatasource != null) {
+        final isQuizCompleted =
+            (userModel.isInitialQuizCompleted == true) ||
+            (userModel.isInitialQuizFilled == true);
+        await surveyLocalDatasource!.setInitialSurveyCompleted(
+          userModel.id,
+          isQuizCompleted,
+        );
+      }
       return Right(userModel?.toDomain());
     } catch (e) {
       return Left(CacheFailure("Failed to retrieve cached user data"));

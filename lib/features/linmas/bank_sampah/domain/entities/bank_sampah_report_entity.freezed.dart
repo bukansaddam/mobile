@@ -799,7 +799,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _BankSampahPaginatedEntity extends BankSampahPaginatedEntity {
-  const _BankSampahPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<BankSampahReportEntity> data = const [], this.summary, this.message}): _data = data,super._();
+  const _BankSampahPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<BankSampahReportEntity> data = const [], this.summary, this.message}): _data = data,super._();
   
 
 @override@JsonKey() final  bool success;

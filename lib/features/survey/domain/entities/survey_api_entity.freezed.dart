@@ -210,7 +210,7 @@ return $default(_that.id,_that.label,_that.type,_that.value,_that.options);case 
 
 
 class _SurveyConditionalFieldEntity extends SurveyConditionalFieldEntity {
-  const _SurveyConditionalFieldEntity({required this.id, this.label, this.type, this.value, final  List<String> options = const []}): _options = options,super._();
+  const _SurveyConditionalFieldEntity({required this.id, this.label, this.type, this.value,  List<String> options = const []}): _options = options,super._();
   
 
 @override final  int id;
@@ -486,7 +486,7 @@ return $default(_that.id,_that.text,_that.type,_that.options,_that.showFieldsWhe
 
 
 class _SurveyQuestionEntity extends SurveyQuestionEntity {
-  const _SurveyQuestionEntity({required this.id, required this.text, required this.type, final  List<String> options = const [], this.showFieldsWhen, final  List<SurveyConditionalFieldEntity> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
+  const _SurveyQuestionEntity({required this.id, required this.text, required this.type,  List<String> options = const [], this.showFieldsWhen,  List<SurveyConditionalFieldEntity> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
   
 
 @override final  int id;
@@ -777,7 +777,7 @@ return $default(_that.id,_that.title,_that.description,_that.period,_that.deadli
 
 
 class _SurveyItemEntity extends SurveyItemEntity {
-  const _SurveyItemEntity({required this.id, required this.title, this.description, this.period, this.deadline, this.status, this.requireAllQuestions = true, this.estimatedMinutes, this.questionsCount, this.respondentsCount, this.createdAt, this.publishedAt, final  List<SurveyQuestionEntity> questions = const []}): _questions = questions,super._();
+  const _SurveyItemEntity({required this.id, required this.title, this.description, this.period, this.deadline, this.status, this.requireAllQuestions = true, this.estimatedMinutes, this.questionsCount, this.respondentsCount, this.createdAt, this.publishedAt,  List<SurveyQuestionEntity> questions = const []}): _questions = questions,super._();
   
 
 @override final  int id;
@@ -1326,7 +1326,7 @@ return $default(_that.questionId,_that.value,_that.fields);case _:
 
 
 class _SurveyQuestionAnswerEntity extends SurveyQuestionAnswerEntity {
-  const _SurveyQuestionAnswerEntity({required this.questionId, required this.value, final  List<SurveyFieldAnswerEntity> fields = const []}): _fields = fields,super._();
+  const _SurveyQuestionAnswerEntity({required this.questionId, required this.value,  List<SurveyFieldAnswerEntity> fields = const []}): _fields = fields,super._();
   
 
 @override final  int questionId;
@@ -1593,7 +1593,7 @@ return $default(_that.answers);case _:
 
 
 class _SurveySubmitRequestEntity extends SurveySubmitRequestEntity {
-  const _SurveySubmitRequestEntity({final  List<SurveyQuestionAnswerEntity> answers = const []}): _answers = answers,super._();
+  const _SurveySubmitRequestEntity({ List<SurveyQuestionAnswerEntity> answers = const []}): _answers = answers,super._();
   
 
  final  List<SurveyQuestionAnswerEntity> _answers;

@@ -514,7 +514,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _TokohPaginatedEntity implements TokohPaginatedEntity {
-  const _TokohPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<TokohEntity> data = const [], this.message}): _data = data;
+  const _TokohPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<TokohEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;

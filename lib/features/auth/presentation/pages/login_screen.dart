@@ -106,7 +106,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
 
                   if (isOfficer) {
-                    context.goNamed('main');
+                    if (state.user.hasCompletedInitialQuiz) {
+                      context.goNamed('main');
+                    } else {
+                      context.goNamed('initialSurvey');
+                    }
                   } else {
                     context.goNamed('masyarakatMain');
                   }

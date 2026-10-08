@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/panic_entity.dart';
 import '../repositories/panic_repository.dart';
 

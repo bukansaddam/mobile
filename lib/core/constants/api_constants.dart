@@ -87,6 +87,25 @@ class ApiConstants {
     187,
     231,
   ]);
+  static final String initialQuiz = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    40,
+    99,
+    140,
+    187,
+    65,
+    163,
+    248,
+    114,
+    104,
+    142,
+    232,
+    48,
+  ]);
 
   // Activations / Penugasan
   static final String activationRuns = EndpointSecurity.decode(const <int>[

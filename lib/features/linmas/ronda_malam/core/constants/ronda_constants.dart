@@ -8,9 +8,13 @@ class RondaConstants {
     'Pasar',
     'Permukiman',
     'Selokan',
+    'SPPG',
   ];
 
-  static const List<String> jenisSampahDominanOptions = ['Organik', 'Anorganik'];
+  static const List<String> jenisSampahDominanOptions = [
+    'Organik',
+    'Anorganik',
+  ];
 
   static const List<String> alasanPengangkutanOptions = [
     'Terlambat dari jadwal',

@@ -1,4 +1,5 @@
 import 'package:akar/core/errors/failures.dart';
+
 import '../entities/institusi_category_entity.dart';
 import '../repositories/institusi_repository.dart';
 

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/organisasi_entity.dart';
 
 part 'organisasi_model.freezed.dart';

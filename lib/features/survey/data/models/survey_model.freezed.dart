@@ -213,7 +213,7 @@ return $default(_that.id,_that.label,_that.type,_that.value,_that.options);case 
 @JsonSerializable()
 
 class _SurveyConditionalFieldModel extends SurveyConditionalFieldModel {
-  const _SurveyConditionalFieldModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "label") this.label, @JsonKey(name: "type") this.type, @JsonKey(name: "value") this.value, @JsonKey(name: "options") final  List<String> options = const []}): _options = options,super._();
+  const _SurveyConditionalFieldModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "label") this.label, @JsonKey(name: "type") this.type, @JsonKey(name: "value") this.value, @JsonKey(name: "options")  List<String> options = const []}): _options = options,super._();
   factory _SurveyConditionalFieldModel.fromJson(Map<String, dynamic> json) => _$SurveyConditionalFieldModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -495,7 +495,7 @@ return $default(_that.id,_that.text,_that.type,_that.options,_that.showFieldsWhe
 @JsonSerializable()
 
 class _SurveyQuestionModel extends SurveyQuestionModel {
-  const _SurveyQuestionModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "text") required this.text, @JsonKey(name: "type") required this.type, @JsonKey(name: "options") final  List<String> options = const [], @JsonKey(name: "showFieldsWhen") this.showFieldsWhen, @JsonKey(name: "conditionalFields") final  List<SurveyConditionalFieldModel> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
+  const _SurveyQuestionModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "text") required this.text, @JsonKey(name: "type") required this.type, @JsonKey(name: "options")  List<String> options = const [], @JsonKey(name: "showFieldsWhen") this.showFieldsWhen, @JsonKey(name: "conditionalFields")  List<SurveyConditionalFieldModel> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
   factory _SurveyQuestionModel.fromJson(Map<String, dynamic> json) => _$SurveyQuestionModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -792,7 +792,7 @@ return $default(_that.id,_that.title,_that.description,_that.period,_that.deadli
 @JsonSerializable()
 
 class _SurveyItemModel extends SurveyItemModel {
-  const _SurveyItemModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "description") this.description, @JsonKey(name: "period") this.period, @JsonKey(name: "deadline") this.deadline, @JsonKey(name: "status") this.status, @JsonKey(name: "requireAllQuestions") this.requireAllQuestions = true, @JsonKey(name: "estimatedMinutes") this.estimatedMinutes, @JsonKey(name: "questionsCount") this.questionsCount, @JsonKey(name: "respondentsCount") this.respondentsCount, @JsonKey(name: "createdAt") this.createdAt, @JsonKey(name: "publishedAt") this.publishedAt, @JsonKey(name: "questions") final  List<SurveyQuestionModel> questions = const []}): _questions = questions,super._();
+  const _SurveyItemModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "description") this.description, @JsonKey(name: "period") this.period, @JsonKey(name: "deadline") this.deadline, @JsonKey(name: "status") this.status, @JsonKey(name: "requireAllQuestions") this.requireAllQuestions = true, @JsonKey(name: "estimatedMinutes") this.estimatedMinutes, @JsonKey(name: "questionsCount") this.questionsCount, @JsonKey(name: "respondentsCount") this.respondentsCount, @JsonKey(name: "createdAt") this.createdAt, @JsonKey(name: "publishedAt") this.publishedAt, @JsonKey(name: "questions")  List<SurveyQuestionModel> questions = const []}): _questions = questions,super._();
   factory _SurveyItemModel.fromJson(Map<String, dynamic> json) => _$SurveyItemModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -1087,7 +1087,7 @@ return $default(_that.success,_that.data,_that.message);case _:
 @JsonSerializable()
 
 class _SurveyListResponseModel extends SurveyListResponseModel {
-  const _SurveyListResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data") final  List<SurveyItemModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
+  const _SurveyListResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data")  List<SurveyItemModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
   factory _SurveyListResponseModel.fromJson(Map<String, dynamic> json) => _$SurveyListResponseModelFromJson(json);
 
 @override@JsonKey(name: "success") final  bool success;
@@ -1628,7 +1628,7 @@ return $default(_that.questionId,_that.value,_that.fields);case _:
 @JsonSerializable()
 
 class _SurveyQuestionAnswerModel extends SurveyQuestionAnswerModel {
-  const _SurveyQuestionAnswerModel({@JsonKey(name: "questionId") required this.questionId, @JsonKey(name: "value") required this.value, @JsonKey(name: "fields") final  List<SurveyFieldAnswerModel> fields = const []}): _fields = fields,super._();
+  const _SurveyQuestionAnswerModel({@JsonKey(name: "questionId") required this.questionId, @JsonKey(name: "value") required this.value, @JsonKey(name: "fields")  List<SurveyFieldAnswerModel> fields = const []}): _fields = fields,super._();
   factory _SurveyQuestionAnswerModel.fromJson(Map<String, dynamic> json) => _$SurveyQuestionAnswerModelFromJson(json);
 
 @override@JsonKey(name: "questionId") final  int questionId;
@@ -1901,7 +1901,7 @@ return $default(_that.answers);case _:
 @JsonSerializable()
 
 class _SurveySubmitRequestModel extends SurveySubmitRequestModel {
-  const _SurveySubmitRequestModel({@JsonKey(name: "answers") final  List<SurveyQuestionAnswerModel> answers = const []}): _answers = answers,super._();
+  const _SurveySubmitRequestModel({@JsonKey(name: "answers")  List<SurveyQuestionAnswerModel> answers = const []}): _answers = answers,super._();
   factory _SurveySubmitRequestModel.fromJson(Map<String, dynamic> json) => _$SurveySubmitRequestModelFromJson(json);
 
  final  List<SurveyQuestionAnswerModel> _answers;

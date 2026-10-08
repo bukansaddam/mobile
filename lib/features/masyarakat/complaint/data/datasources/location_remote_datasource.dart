@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+
 import '../../domain/entities/location_suggestion.dart';
 
 abstract class LocationRemoteDataSource {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:flutter/material.dart';

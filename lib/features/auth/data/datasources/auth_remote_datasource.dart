@@ -118,6 +118,20 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     if (!map.containsKey('access_token') && map.containsKey('token')) {
       map['access_token'] = map['token'];
     }
+    final rootCompleted = map['is_initial_quiz_completed'];
+    final rootFilled = map['is_initial_quiz_filled'];
+    if (map['user'] is Map) {
+      final userMap = Map<String, dynamic>.from(map['user'] as Map);
+      if (!userMap.containsKey('is_initial_quiz_completed') &&
+          rootCompleted != null) {
+        userMap['is_initial_quiz_completed'] = rootCompleted;
+      }
+      if (!userMap.containsKey('is_initial_quiz_filled') &&
+          rootFilled != null) {
+        userMap['is_initial_quiz_filled'] = rootFilled;
+      }
+      map['user'] = userMap;
+    }
     return AuthModel.fromJson(map);
   }
 }

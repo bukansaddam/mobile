@@ -1,9 +1,11 @@
 import 'dart:convert';
+
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class SurveyLocalDatasource {
   bool isInitialSurveyCompletedSync(int userId);
+  Future<void> setInitialSurveyCompleted(int userId, bool isCompleted);
   Future<void> saveInitialSurvey(int userId, InitialSurveyEntity survey);
   Future<InitialSurveyEntity?> getInitialSurvey(int userId);
 
@@ -35,28 +37,43 @@ class SurveyLocalDatasourceImpl implements SurveyLocalDatasource {
 
   @override
   bool isInitialSurveyCompletedSync(int userId) {
-    if (sharedPreferences.getBool(_keyInitialSurveyAnyCompleted) == true) {
-      return true;
+    if (userId != 0) {
+      return sharedPreferences.getBool('$_keyInitialSurveyPrefix$userId') ??
+          false;
     }
-    if (userId != 0 &&
-        sharedPreferences.getBool('$_keyInitialSurveyPrefix$userId') == true) {
-      return true;
+    return false;
+  }
+
+  @override
+  Future<void> setInitialSurveyCompleted(int userId, bool isCompleted) async {
+    if (userId != 0) {
+      await sharedPreferences.setBool(
+        '$_keyInitialSurveyPrefix$userId',
+        isCompleted,
+      );
+      if (!isCompleted) {
+        await sharedPreferences.remove(
+          '$_keyInitialSurveyPrefix${userId}_DATA',
+        );
+      }
     }
-    return sharedPreferences.getBool('${_keyInitialSurveyPrefix}0') ?? false;
+    // Hapus flag global lama agar tidak memicu false-positive antar akun
+    await sharedPreferences.remove(_keyInitialSurveyAnyCompleted);
+    await sharedPreferences.remove('${_keyInitialSurveyPrefix}0');
   }
 
   @override
   Future<void> saveInitialSurvey(int userId, InitialSurveyEntity survey) async {
-    await sharedPreferences.setBool(_keyInitialSurveyAnyCompleted, true);
-    await sharedPreferences.setBool('$_keyInitialSurveyPrefix$userId', true);
     if (userId != 0) {
-      await sharedPreferences.setBool('${_keyInitialSurveyPrefix}0', true);
+      await sharedPreferences.setBool('$_keyInitialSurveyPrefix$userId', true);
+      final encoded = json.encode(survey.toMap());
+      await sharedPreferences.setString(
+        '$_keyInitialSurveyPrefix${userId}_DATA',
+        encoded,
+      );
     }
-    final encoded = json.encode(survey.toMap());
-    await sharedPreferences.setString(
-      '$_keyInitialSurveyPrefix${userId}_DATA',
-      encoded,
-    );
+    await sharedPreferences.remove(_keyInitialSurveyAnyCompleted);
+    await sharedPreferences.remove('${_keyInitialSurveyPrefix}0');
   }
 
   @override
