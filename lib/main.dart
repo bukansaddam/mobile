@@ -28,9 +28,16 @@ import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/insti
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
+import 'package:akar/utils/app_logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Matikan semua debugPrint saat berjalan di production
+  if (AppLogger.isProduction) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
+
   await initializeDateFormatting('id_ID', null);
 
   // Initialize Firebase Core

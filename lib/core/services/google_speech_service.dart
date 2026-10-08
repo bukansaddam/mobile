@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:googleapis_auth/auth_io.dart';
-import 'package:logger/logger.dart';
+import 'package:akar/utils/app_logger.dart';
 
 import '../constants/api_constants.dart';
 
@@ -16,7 +16,6 @@ class _AuthData {
 
 class GoogleSpeechService {
   final Dio _dio;
-  final Logger _logger = Logger();
 
   static const String _credentialAssetPath =
       'lib/core/crd/akar-504702-d2d27b0e66f2.json';
@@ -39,10 +38,10 @@ class GoogleSpeechService {
       authClient.close();
       return _AuthData(token: token, projectId: projectId);
     } catch (e, stack) {
-      _logger.e(
+      AppLogger.e(
         'Failed to get Google Cloud access token',
-        error: e,
-        stackTrace: stack,
+        e,
+        stack,
       );
       rethrow;
     }
@@ -104,10 +103,10 @@ class GoogleSpeechService {
         );
       }
     } catch (e, stack) {
-      _logger.e(
+      AppLogger.e(
         'Error transcribing audio with Google Speech v2 API (Chirp 2 - Singapore)',
-        error: e,
-        stackTrace: stack,
+        e,
+        stack,
       );
       rethrow;
     }
@@ -157,10 +156,10 @@ class GoogleSpeechService {
         }
       }
     } catch (e, stack) {
-      _logger.e(
+      AppLogger.e(
         'Error streaming audio to Google Speech API',
-        error: e,
-        stackTrace: stack,
+        e,
+        stack,
       );
       rethrow;
     }

@@ -88,13 +88,15 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     } else if (rawData is List) {
       list = rawData;
     }
-    return list
-        .map(
-          (item) => BankSampahLocationModel.fromJson(
-            Map<String, dynamic>.from(item as Map),
-          ),
-        )
-        .toList();
+    if (list != null) {
+      return list
+          .map(
+            (item) => BankSampahLocationModel.fromJson(
+              Map<String, dynamic>.from(item as Map),
+            ),
+          )
+          .toList();
+    }
     return [];
   }
 

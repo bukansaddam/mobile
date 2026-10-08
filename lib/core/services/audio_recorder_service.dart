@@ -1,13 +1,12 @@
 import 'dart:io';
 
-import 'package:logger/logger.dart';
+import 'package:akar/utils/app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 
 class AudioRecorderService {
   final AudioRecorder _audioRecorder = AudioRecorder();
-  final Logger _logger = Logger();
   String? _currentPath;
 
   Future<PermissionStatus> getPermissionStatus() async {
@@ -60,9 +59,9 @@ class AudioRecorderService {
       );
 
       await _audioRecorder.start(config, path: _currentPath!);
-      _logger.i('Recording started at $_currentPath');
+      AppLogger.i('Recording started at $_currentPath');
     } catch (e, stack) {
-      _logger.e('Error starting audio recording', error: e, stackTrace: stack);
+      AppLogger.e('Error starting audio recording', e, stack);
       rethrow;
     }
   }
@@ -80,10 +79,10 @@ class AudioRecorderService {
         numChannels: 1,
       );
 
-      _logger.i('Starting audio stream...');
+      AppLogger.i('Starting audio stream...');
       return await _audioRecorder.startStream(config);
     } catch (e, stack) {
-      _logger.e('Error starting audio stream', error: e, stackTrace: stack);
+      AppLogger.e('Error starting audio stream', e, stack);
       rethrow;
     }
   }
@@ -91,7 +90,7 @@ class AudioRecorderService {
   Future<List<int>?> stopRecording() async {
     try {
       final path = await _audioRecorder.stop();
-      _logger.i('Recording stopped at $path');
+      AppLogger.i('Recording stopped at $path');
       final filePath = path ?? _currentPath;
       if (filePath == null) return null;
 
@@ -106,7 +105,7 @@ class AudioRecorderService {
       }
       return null;
     } catch (e, stack) {
-      _logger.e('Error stopping audio recording', error: e, stackTrace: stack);
+      AppLogger.e('Error stopping audio recording', e, stack);
       rethrow;
     }
   }

@@ -15,11 +15,11 @@ import 'package:akar/core/utils/app_logger.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 import 'package:akar/firebase_options.dart';
 
-/// Top-level background message handler for Firebase Messaging.
-/// Must be annotated with `@pragma('vm:entry-point')` so the Flutter engine
-/// can invoke it in a separate background isolate.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (AppLogger.isProduction) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -66,9 +66,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         bodyLower.contains('darurat') ||
         bodyLower.contains('panic');
 
-    // If the FCM payload contains a notification block, Android OS / FCM SDK
-    // has ALREADY rendered a system notification in the tray.
-    // Calling fln.show() here would create an annoying duplicate notification!
     if (message.notification != null) {
       AppLogger.i(
         '🔥 [FCM Background] Message contains notification payload; Android OS handles display. Skipping manual local notification.',
@@ -115,7 +112,6 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         iOS: darwinDetails,
       );
 
-      // Use stable ID (999 for emergency) so updates replace rather than duplicate
       const notifId = 999;
       await fln.show(
         id: notifId,
@@ -130,14 +126,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-/// Service that handles all Firebase Cloud Messaging (FCM) operations,
-/// including permissions, device token management, notification channels,
-/// foreground display via local notifications, and deep link routing on tap.
 class FirebaseNotificationService {
   static const String _prefsFcmTokenKey = 'FCM_TOKEN';
   static const String _prefsDeviceIdKey = 'DEVICE_ID';
 
-  // Android Notification Channels
   static const String defaultChannelId = 'akar_notification_channel';
   static const String defaultChannelName = 'Notifikasi AKAR';
   static const String defaultChannelDesc =
@@ -192,43 +184,33 @@ class FirebaseNotificationService {
            localNotifications ?? FlutterLocalNotificationsPlugin(),
        _disasterAlertService = disasterAlertService;
 
-  /// Stream of messages received while the app is in the foreground
   Stream<RemoteMessage> get onForegroundMessage =>
       _foregroundMessageController.stream;
 
-  /// Stream of payload data when user taps a notification
   Stream<Map<String, dynamic>> get onNotificationTap =>
       _notificationTapController.stream;
 
-  /// Stream of FCM token refresh events
   Stream<String> get onTokenRefresh => _tokenRefreshController.stream;
 
-  /// Returns cached FCM device token / device ID from local storage
   String? get cachedToken => _prefs.getString(_prefsFcmTokenKey);
   String? get deviceId => cachedToken ?? _prefs.getString(_prefsDeviceIdKey);
 
-  /// Initializes permissions, channels, local notifications, and listeners
   Future<void> initialize() async {
     if (_isInitialized) return;
 
     try {
-      // 1. Request notification permissions from user
       await _requestPermission();
 
-      // 2. Configure iOS foreground presentation options
       await _fcm.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
 
-      // 3. Initialize local notifications plugin for foreground display & click handling
       await _initLocalNotifications();
 
-      // 4. Retrieve & cache device FCM token
       await _initToken();
 
-      // 5. Setup message stream listeners (Foreground, Background opened, Initial/Terminated)
       _setupMessageListeners();
 
       _isInitialized = true;
@@ -238,7 +220,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Request permissions for iOS and Android 13+
   Future<NotificationSettings> _requestPermission() async {
     final settings = await _fcm.requestPermission(
       alert: true,
@@ -257,7 +238,6 @@ class FirebaseNotificationService {
     return settings;
   }
 
-  /// Configure Android channels and local notifications settings
   Future<void> _initLocalNotifications() async {
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
@@ -281,7 +261,6 @@ class FirebaseNotificationService {
       },
     );
 
-    // Create notification channels on Android
     final androidPlugin = _localNotifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -294,7 +273,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Retrieve FCM token and listen for future token rotations
   Future<void> _initToken() async {
     try {
       final token = await _fcm.getToken();
@@ -315,9 +293,7 @@ class FirebaseNotificationService {
     });
   }
 
-  /// Setup foreground, background open, and terminated open listeners
   void _setupMessageListeners() {
-    // 1. Foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       AppLogger.i(
         '🔥 [FCM Service] Foreground message received: ${message.messageId}',
@@ -326,7 +302,6 @@ class FirebaseNotificationService {
       _showLocalNotificationFromRemote(message);
     });
 
-    // 2. Message clicked when app is in background
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       AppLogger.i(
         '🔥 [FCM Service] Notification opened from background: ${message.messageId}',
@@ -334,20 +309,18 @@ class FirebaseNotificationService {
       _handleNotificationTap(message.data);
     });
 
-    // 3. App launched from terminated state via notification click
     _fcm.getInitialMessage().then((RemoteMessage? initialMessage) {
       if (initialMessage != null) {
         AppLogger.i(
           '🔥 [FCM Service] App launched from notification: ${initialMessage.messageId}',
         );
-        // Small delay to allow the app and router to fully mount
+
         Future.delayed(const Duration(milliseconds: 800), () {
           _handleNotificationTap(initialMessage.data);
         });
       }
     });
 
-    // 4. Check if local notification was tapped while app was terminated
     _localNotifications.getNotificationAppLaunchDetails().then((
       NotificationAppLaunchDetails? details,
     ) {
@@ -365,7 +338,6 @@ class FirebaseNotificationService {
     });
   }
 
-  /// Display a heads-up local notification when message arrives in foreground
   Future<void> _showLocalNotificationFromRemote(RemoteMessage message) async {
     final notification = message.notification;
     final data = message.data;
@@ -444,7 +416,6 @@ class FirebaseNotificationService {
       iOS: darwinDetails,
     );
 
-    // Use stable notification ID to prevent duplicate stacked notifications
     final notificationId = isEmergency
         ? 999
         : ((message.messageId ?? data['id'] ?? data['alert_id'] ?? '').hashCode
@@ -508,10 +479,8 @@ class FirebaseNotificationService {
         note: note,
       );
 
-      // Trigger continuous siren audio alarm & disaster stream
       _disasterAlertService?.triggerAlert(alertEvent, showNotification: false);
 
-      // Instantly open Full-Screen emergency call screen when in foreground!
       WidgetsBinding.instance.addPostFrameCallback((_) {
         try {
           AppRouter.router.pushNamed(
@@ -528,7 +497,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Local notification tap callback
   void _onSelectLocalNotification(NotificationResponse response) {
     final payload = response.payload;
     if (payload != null && payload.isNotEmpty) {
@@ -541,16 +509,13 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Handles notification tap and deep navigation
   void _handleNotificationTap(Map<String, dynamic> data) {
     _notificationTapController.add(data);
     handleRouting(data);
   }
 
-  /// Deep link navigation router based on notification payload data
   void handleRouting(Map<String, dynamic> data) {
     try {
-      // Direct route navigation
       if (data.containsKey('route') && data['route'] != null) {
         final route = data['route'].toString();
         AppRouter.router.push(route);
@@ -657,7 +622,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Subscribe to a specific FCM topic (e.g. 'all', 'linmas', 'masyarakat', 'bencana')
   Future<void> subscribeToTopic(String topic) async {
     try {
       await _fcm.subscribeToTopic(topic);
@@ -667,7 +631,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Unsubscribe from an FCM topic
   Future<void> unsubscribeFromTopic(String topic) async {
     try {
       await _fcm.unsubscribeFromTopic(topic);
@@ -679,7 +642,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Fetch active FCM token / device ID on demand
   Future<String?> getToken() async {
     try {
       final token = await _fcm.getToken();
@@ -694,10 +656,8 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Alias for getToken() to explicitly retrieve device ID
   Future<String?> getDeviceId() => getToken();
 
-  /// Delete FCM token (useful when logging out)
   Future<void> deleteToken() async {
     try {
       await _fcm.deleteToken();
@@ -709,7 +669,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Manually show a custom local notification from anywhere in the app
   Future<void> showLocalNotification({
     required int id,
     required String title,
@@ -756,7 +715,6 @@ class FirebaseNotificationService {
     );
   }
 
-  /// Checks whether "Display over other apps" (SYSTEM_ALERT_WINDOW) is granted
   Future<bool> isOverlayPermissionGranted() async {
     try {
       return await Permission.systemAlertWindow.isGranted;
@@ -765,7 +723,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Directs user to the "Display over other apps" system settings toggle for this app
   Future<bool> requestOverlayPermission() async {
     try {
       final status = await Permission.systemAlertWindow.request();
@@ -776,7 +733,6 @@ class FirebaseNotificationService {
     }
   }
 
-  /// Shows a friendly explanation dialog and opens the system settings toggle on confirmation
   Future<bool> checkAndPromptOverlayPermission(
     BuildContext context, {
     bool forcePrompt = false,
