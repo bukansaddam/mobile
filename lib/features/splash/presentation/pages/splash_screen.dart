@@ -177,6 +177,8 @@ class _SplashScreenState extends State<SplashScreen>
                         'assets/logo.webp',
                         width: 80,
                         height: 80,
+                        cacheWidth: 240,
+                        cacheHeight: 240,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(

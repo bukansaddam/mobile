@@ -204,6 +204,8 @@ class ProfileScreen extends StatelessWidget {
                             'assets/indonesian_headshot_portrait.jpg',
                             width: 80,
                             height: 80,
+                            cacheWidth: 240,
+                            cacheHeight: 240,
                             fit: BoxFit.cover,
                             alignment: Alignment.center,
                             errorBuilder: (context, error, stackTrace) {

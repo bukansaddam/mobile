@@ -419,6 +419,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Image.asset(
                             'assets/indonesian_user_portrait.jpg',
                             fit: BoxFit.cover,
+                            cacheWidth: 315,
+                            cacheHeight: 315,
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 color: const Color(0xFFE2E8F0),

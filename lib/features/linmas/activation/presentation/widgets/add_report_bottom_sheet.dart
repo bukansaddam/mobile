@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
@@ -149,26 +150,21 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   Widget _buildPhotoTile(String pathOrUrl, int index) {
     Widget imageWidget;
     if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
-      imageWidget = Image.network(
-        pathOrUrl,
+      imageWidget = AppNetworkImage(
+        imageUrl: pathOrUrl,
         width: 100,
         height: 100,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) => Container(
-          width: 100,
-          height: 100,
-          color: AppColors.grey200,
-          child: const Icon(
-            Icons.broken_image_rounded,
-            color: AppColors.grey500,
-          ),
-        ),
+        errorIcon: Icons.broken_image_rounded,
+        backgroundColor: AppColors.grey200,
       );
     } else {
       imageWidget = Image.file(
         File(pathOrUrl),
         width: 100,
         height: 100,
+        cacheWidth: 300,
+        cacheHeight: 300,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => Container(
           width: 100,

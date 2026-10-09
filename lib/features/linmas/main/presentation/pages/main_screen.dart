@@ -148,6 +148,8 @@ class _MainScreenState extends State<MainScreen> {
                         'assets/logo.webp',
                         width: 32,
                         height: 32,
+                        cacheWidth: 96,
+                        cacheHeight: 96,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(

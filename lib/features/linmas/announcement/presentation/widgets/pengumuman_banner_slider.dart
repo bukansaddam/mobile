@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/linmas/announcement/domain/entities/announcement_entity.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
@@ -11,16 +12,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 Widget _buildBannerImage(String path) {
   if (path.startsWith('http://') || path.startsWith('https://')) {
-    return Image.network(
-      path,
+    return AppNetworkImage(
+      imageUrl: path,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) =>
+      errorWidget: (context, url, error) =>
           Container(color: AppColors.primaryDark),
     );
   }
   return Image.asset(
     path,
     fit: BoxFit.cover,
+    cacheHeight: 510,
     errorBuilder: (context, error, stackTrace) =>
         Container(color: AppColors.primaryDark),
   );

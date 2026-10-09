@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class FullscreenImageViewer extends StatefulWidget {
@@ -73,10 +74,12 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
 
     if (imagePathOrUrl.startsWith('http://') ||
         imagePathOrUrl.startsWith('https://')) {
-      return Image.network(
-        imagePathOrUrl,
+      return CachedNetworkImage(
+        imageUrl: imagePathOrUrl,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => const Center(
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator(color: Colors.white)),
+        errorWidget: (context, url, error) => const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -121,10 +124,13 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
           imagePathOrUrl,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
-            return Image.network(
-              imagePathOrUrl,
+            return CachedNetworkImage(
+              imageUrl: imagePathOrUrl,
               fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) => const Center(
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+              errorWidget: (context, url, error) => const Center(
                 child: Icon(
                   Icons.broken_image_rounded,
                   color: Colors.white54,

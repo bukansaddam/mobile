@@ -1,6 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
@@ -24,27 +25,21 @@ import 'package:go_router/go_router.dart';
 
 Widget _buildHomeListImage(String path) {
   if (path.startsWith('http://') || path.startsWith('https://')) {
-    return Image.network(
-      path,
+    return AppNetworkImage(
+      imageUrl: path,
       width: 52,
       height: 52,
       fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Container(
-        width: 52,
-        height: 52,
-        color: AppColors.primaryLight,
-        child: const Icon(
-          Icons.campaign_outlined,
-          color: AppColors.primary,
-          size: 24,
-        ),
-      ),
+      errorIcon: Icons.campaign_outlined,
+      backgroundColor: AppColors.primaryLight,
     );
   }
   return Image.asset(
     path,
     width: 52,
     height: 52,
+    cacheWidth: 156,
+    cacheHeight: 156,
     fit: BoxFit.cover,
     errorBuilder: (context, error, stackTrace) => Container(
       width: 52,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -799,24 +800,25 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     BoxFit fit = BoxFit.cover,
   }) {
     if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
-      return Image.network(
-        pathOrUrl,
+      return AppNetworkImage(
+        imageUrl: pathOrUrl,
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => Container(
-          color: AppColors.grey200,
-          child: const Icon(
-            Icons.broken_image_rounded,
-            color: AppColors.grey500,
-          ),
-        ),
+        errorIcon: Icons.broken_image_rounded,
+        backgroundColor: AppColors.grey200,
       );
     } else {
       return Image.file(
         File(pathOrUrl),
         width: width,
         height: height,
+        cacheWidth: width != null && width > 0 && width.isFinite
+            ? (width * 3).toInt()
+            : null,
+        cacheHeight: height != null && height > 0 && height.isFinite
+            ? (height * 3).toInt()
+            : null,
         fit: fit,
         errorBuilder: (context, error, stackTrace) => Container(
           color: AppColors.grey200,

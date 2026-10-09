@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -129,6 +130,8 @@ class BankSampahCard extends StatelessWidget {
                                     File(report.fotoPath!),
                                     width: 42,
                                     height: 42,
+                                    cacheWidth: 126,
+                                    cacheHeight: 126,
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) => Icon(
@@ -137,17 +140,15 @@ class BankSampahCard extends StatelessWidget {
                                           size: 24,
                                         ),
                                   )
-                                : Image.network(
-                                    photoUrl!,
+                                : AppNetworkImage(
+                                    imageUrl: photoUrl!,
                                     width: 42,
                                     height: 42,
                                     fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Icon(
-                                          _getJenisIcon(report.jenisSampah),
-                                          color: jenisColor,
-                                          size: 24,
-                                        ),
+                                    errorIcon: _getJenisIcon(
+                                      report.jenisSampah,
+                                    ),
+                                    backgroundColor: Colors.transparent,
                                   ))
                           : Center(
                               child: Icon(

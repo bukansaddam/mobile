@@ -94,6 +94,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   child: Image.asset(
                     'assets/logo.webp',
                     fit: BoxFit.contain,
+                    cacheWidth: 114,
+                    cacheHeight: 114,
                     errorBuilder: (context, error, stackTrace) {
                       return const Icon(
                         Icons.shield_rounded,

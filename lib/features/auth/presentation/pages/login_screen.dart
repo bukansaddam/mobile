@@ -148,6 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               'assets/logo.webp',
                               width: 64,
                               height: 64,
+                              cacheWidth: 192,
+                              cacheHeight: 192,
                               fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) =>
                                   const Icon(

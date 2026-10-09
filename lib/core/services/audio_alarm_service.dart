@@ -38,7 +38,7 @@ class AudioAlarmService {
       final player = _getAudioPlayer();
       await player.setReleaseMode(ReleaseMode.loop);
       await player.setVolume(_volume);
-      await player.play(AssetSource('sounds/emergency_alarm.wav'));
+      await player.play(AssetSource('sounds/emergency_alarm.m4a'));
       debugPrint('Emergency alarm siren started ringing via AudioPlayer!');
     } catch (e) {
       debugPrint(
@@ -72,7 +72,7 @@ class AudioAlarmService {
       final player = _getAudioPlayer();
       await player.setReleaseMode(ReleaseMode.stop);
       await player.setVolume(_volume);
-      await player.play(AssetSource('sounds/emergency_alarm.wav'));
+      await player.play(AssetSource('sounds/emergency_alarm.m4a'));
       Timer(const Duration(seconds: 4), () {
         stopAlarm();
       });

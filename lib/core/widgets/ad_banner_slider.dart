@@ -140,6 +140,7 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                           Image.asset(
                             item.imagePath,
                             fit: BoxFit.cover,
+                            cacheHeight: (widget.height * 3).toInt(),
                             errorBuilder: (context, error, stackTrace) {
                               return Container(
                                 color: AppColors.primaryLight,

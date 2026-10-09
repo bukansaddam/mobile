@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -105,16 +106,13 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                     ),
                     child: ClipOval(
                       child: photoUrl != null && photoUrl.isNotEmpty
-                          ? Image.network(
-                              photoUrl,
+                          ? AppNetworkImage(
+                              imageUrl: photoUrl,
+                              width: 42,
+                              height: 42,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.person_rounded,
-                                  size: 24,
-                                  color: AppColors.primary,
-                                );
-                              },
+                              errorIcon: Icons.person_rounded,
+                              backgroundColor: Colors.transparent,
                             )
                           : const Icon(
                               Icons.person_rounded,

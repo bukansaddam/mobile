@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/announcement/domain/entities/announcement_entity.dart';
 import 'package:flutter/material.dart';
@@ -12,29 +13,25 @@ Widget _buildImageWidget(
   double iconSize = 28,
 }) {
   if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) {
-    return Image.network(
-      imgPath,
+    return AppNetworkImage(
+      imageUrl: imgPath,
       width: width,
       height: height,
       fit: fit,
-      errorBuilder: (context, error, stackTrace) => Container(
-        width: width,
-        height: height,
-        color: AppColors.primaryLight,
-        child: Center(
-          child: Icon(
-            Icons.campaign_outlined,
-            size: iconSize,
-            color: AppColors.primary,
-          ),
-        ),
-      ),
+      errorIcon: Icons.campaign_outlined,
+      backgroundColor: AppColors.primaryLight,
     );
   }
   return Image.asset(
     imgPath,
     width: width,
     height: height,
+    cacheWidth: width != null && width > 0 && width.isFinite
+        ? (width * 3).toInt()
+        : null,
+    cacheHeight: height != null && height > 0 && height.isFinite
+        ? (height * 3).toInt()
+        : null,
     fit: fit,
     errorBuilder: (context, error, stackTrace) => Container(
       width: width,

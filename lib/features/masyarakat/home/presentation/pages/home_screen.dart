@@ -160,14 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Image.asset(
                 'assets/placeholder_feature.jpeg',
                 fit: BoxFit.cover,
+                cacheHeight: 450,
                 errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/placeholder_feature.jpeg',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(color: AppColors.primaryDark);
-                    },
-                  );
+                  return Container(color: AppColors.primaryDark);
                 },
               ),
             ),

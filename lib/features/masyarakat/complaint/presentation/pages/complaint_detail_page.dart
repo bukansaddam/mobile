@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
@@ -379,16 +382,41 @@ class ComplaintDetailPage extends StatelessWidget {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
-                                    Image.asset(
-                                      imgPath,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              const Icon(
-                                                Icons.broken_image_rounded,
-                                                color: Colors.black38,
-                                              ),
-                                    ),
+                                    if (imgPath.startsWith('http://') ||
+                                        imgPath.startsWith('https://'))
+                                      AppNetworkImage(
+                                        imageUrl: imgPath,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                        errorIcon: Icons.broken_image_rounded,
+                                      )
+                                    else if (File(imgPath).existsSync())
+                                      Image.file(
+                                        File(imgPath),
+                                        fit: BoxFit.cover,
+                                        cacheWidth: 300,
+                                        cacheHeight: 300,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(
+                                                  Icons.broken_image_rounded,
+                                                  color: Colors.black38,
+                                                ),
+                                      )
+                                    else
+                                      Image.asset(
+                                        imgPath,
+                                        fit: BoxFit.cover,
+                                        cacheWidth: 300,
+                                        cacheHeight: 300,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Icon(
+                                                  Icons.broken_image_rounded,
+                                                  color: Colors.black38,
+                                                ),
+                                      ),
                                     Positioned(
                                       right: 6,
                                       bottom: 6,

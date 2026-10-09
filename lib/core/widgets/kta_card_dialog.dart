@@ -307,6 +307,8 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                   ? 'assets/indonesian_headshot_portrait.jpg'
                                   : 'assets/indonesian_user_portrait.jpg',
                               fit: BoxFit.cover,
+                              cacheWidth: 222,
+                              cacheHeight: 270,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   color: AppColors.primaryLight,
