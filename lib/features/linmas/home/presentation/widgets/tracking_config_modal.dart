@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -290,15 +291,10 @@ class TrackingConfigModal {
                           const ResetSurveyStatusEvent(),
                         );
                         Navigator.pop(modalContext);
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
+                        AppToast.showSuccess(
+                          context,
+                          message:
                               'Seluruh status survey (Baseline & Bulanan) berhasil di-reset untuk pengujian.',
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 3),
-                          ),
                         );
                       },
                       icon: const Icon(Icons.restart_alt_rounded),

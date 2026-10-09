@@ -1,5 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
@@ -126,20 +128,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
   }
 
   void _showWarningSnackBar(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: AppColors.warning,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    AppToast.showWarning(context, message: message);
   }
 
   @override
@@ -168,42 +157,15 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
             if (state is InitialQuizAlreadyCompletedState) {
               context.go('/main');
             } else if (state is InitialSurveySuccessState) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (dialogContext) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  icon: const Icon(
-                    Icons.check_circle_rounded,
-                    color: AppColors.success,
-                    size: 54,
-                  ),
-                  title: const Text('Profil Linmas Berhasil Disimpan'),
-                  content: const Text(
+              AppDialogs.showSuccess(
+                context,
+                title: 'Profil Linmas Berhasil Disimpan',
+                message:
                     'Terima kasih telah melengkapi data baseline profil lingkungan & keamanan RT Anda.',
-                    textAlign: TextAlign.center,
-                    style: AppTextStyles.bodyMedium,
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(dialogContext);
-                        context.go('/main');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
-                        minimumSize: const Size(double.infinity, 44),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const Text('Masuk ke Aplikasi'),
-                    ),
-                  ],
-                ),
+                buttonText: 'Masuk ke Aplikasi',
+                onPressed: () {
+                  context.go('/main');
+                },
               );
             } else if (state is SurveyFailureState) {
               _showWarningSnackBar(state.errorMessage);

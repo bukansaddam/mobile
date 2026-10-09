@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -159,11 +161,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
   Future<void> _pickImageFromCamera() async {
     if (_selectedImages.length >= 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Maksimal lampiran adalah 5 gambar.'),
-          backgroundColor: AppColors.warning,
-        ),
+      AppToast.showWarning(
+        context,
+        message: 'Maksimal lampiran adalah 5 gambar.',
       );
       return;
     }
@@ -196,12 +196,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
       } catch (_) {}
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Modul kamera tidak tersedia: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppToast.showError(context, message: 'Modul kamera tidak tersedia: $e');
     }
   }
 
@@ -267,80 +262,14 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         _isSubmitting = false;
       });
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 12),
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFDCFCE7),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    color: Color(0xFF16A34A),
-                    size: 40,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Pengaduan Berhasil Dikirim!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF0F172A),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Laporan Anda dengan ID $newId telah tersimpan dan sedang menunggu verifikasi petugas.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF64748B),
-                    height: 1.35,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 46,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context, true);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Kembali ke Beranda',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
+      AppDialogs.showSuccess(
+        context,
+        title: 'Pengaduan Berhasil Dikirim!',
+        message:
+            'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.',
+        buttonText: 'Kembali ke Beranda',
+        onPressed: () {
+          Navigator.pop(context, true);
         },
       );
     });

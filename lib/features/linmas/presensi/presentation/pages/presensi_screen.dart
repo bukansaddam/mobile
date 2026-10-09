@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/presensi/presentation/bloc/presensi_bloc/presensi_bloc.dart';
 
@@ -123,13 +125,7 @@ class _PresensiScreenState extends State<PresensiScreen>
           } catch (_) {}
 
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: AppColors.error,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            AppToast.showError(context, message: state.errorMessage!);
           }
         }
       },
@@ -504,168 +500,62 @@ class _PresensiScreenState extends State<PresensiScreen>
 
   void _showSuccessPresensiDialog(BuildContext context, PresensiState state) {
     final result = state.lastResult;
+    final isKeluar = state.lastSubmittedType == PresensiType.keluar;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+    final detailContent = Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.grey300),
+      ),
+      child: Column(
+        children: [
+          _buildDialogRow('Nama', result?.userName ?? '-'),
+          const SizedBox(height: 6),
+          _buildDialogRow('Tipe', state.lastSubmittedTypeTitle),
+          const SizedBox(height: 6),
+          _buildDialogRow('Lokasi', state.address),
+          const SizedBox(height: 6),
+          _buildDialogRow(
+            'Waktu',
+            DateFormat(
+              'dd MMM yyyy, HH:mm',
+            ).format(result?.timestamp ?? DateTime.now()),
           ),
-          title: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryLight,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle_rounded,
-                  color: AppColors.primary,
-                  size: 48,
-                ),
-              ),
-              const SizedBox(height: 14),
-              const Text(
-                'Posisi Berhasil Diperbarui!',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Bukti pembaharuan posisi Anda telah tercatat dengan ID ${result?.id ?? '-'} pada sistem.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.grey100,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: Column(
-                  children: [
-                    _buildDialogRow('Nama', result?.userName ?? '-'),
-                    const SizedBox(height: 6),
-                    _buildDialogRow('Tipe', state.lastSubmittedTypeTitle),
-                    const SizedBox(height: 6),
-                    _buildDialogRow('Lokasi', state.address),
-                    const SizedBox(height: 6),
-                    _buildDialogRow(
-                      'Waktu',
-                      DateFormat(
-                        'dd MMM yyyy, HH:mm',
-                      ).format(result?.timestamp ?? DateTime.now()),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          actions: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (state.lastSubmittedType == PresensiType.keluar) ...[
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(dialogContext);
-                        context.pushReplacementNamed('rondaMalam');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      icon: const Icon(Icons.assignment_outlined, size: 20),
-                      label: const Text(
-                        'ISI LAPORAN HARIAN',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 44,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(dialogContext);
-                        Navigator.pop(context);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textSecondary,
-                        side: const BorderSide(color: AppColors.grey300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text(
-                        'KEMBALI KE HALAMAN UTAMA',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                ] else ...[
-                  SizedBox(
-                    width: double.infinity,
-                    height: 46,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(dialogContext);
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text(
-                        'KEMBALI KE HALAMAN UTAMA',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
+
+    if (isKeluar) {
+      AppDialogs.showSuccess(
+        context,
+        title: 'Posisi Berhasil Diperbarui!',
+        message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
+        customContent: detailContent,
+        buttonText: 'ISI LAPORAN HARIAN',
+        buttonColor: AppColors.primary,
+        onPressed: () {
+          context.pushReplacementNamed('rondaMalam');
+        },
+        secondaryButtonText: 'KEMBALI KE HALAMAN UTAMA',
+        onSecondaryPressed: () {
+          Navigator.pop(context);
+        },
+      );
+    } else {
+      AppDialogs.showSuccess(
+        context,
+        title: 'Posisi Berhasil Diperbarui!',
+        message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
+        customContent: detailContent,
+        buttonText: 'KEMBALI KE HALAMAN UTAMA',
+        buttonColor: AppColors.primary,
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      );
+    }
   }
 
   Widget _buildDialogRow(String label, String value) {

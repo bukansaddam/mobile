@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -69,36 +70,16 @@ class _KtaCardModalState extends State<KtaCardModal> {
       if (!mounted) return;
       Navigator.pop(context);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Colors.white),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'KTA Digital berhasil diunduh!\nTersimpan: $filePath',
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ),
-            ],
-          ),
-          backgroundColor: AppColors.primary,
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
+      AppToast.showSuccess(
+        context,
+        message: 'KTA Digital berhasil diunduh!\nTersimpan: $filePath',
+        duration: const Duration(seconds: 4),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal mengunduh KTA: ${e.toString()}'),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppToast.showError(
+        context,
+        message: 'Gagal mengunduh KTA: ${e.toString()}',
       );
     } finally {
       if (mounted) {

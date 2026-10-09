@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 
 import '../../domain/entities/institusi_entity.dart';
@@ -183,39 +184,12 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
             }
           });
         } else if (state is InstitusiActionSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle_rounded, color: Colors.white),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(state.message)),
-                ],
-              ),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
+          AppToast.showSuccess(context, message: state.message);
           context.pop();
         } else if (state is InstitusiActionFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          AppToast.showError(context, message: state.message);
         } else if (state is InstitusiFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          AppToast.showError(context, message: state.message);
         }
       },
       builder: (context, state) {

@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
@@ -774,13 +775,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   void _submitForm() {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedSuku == null || _selectedSuku!.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Suku wajib dipilih'),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      AppToast.showError(context, message: 'Suku wajib dipilih');
       return;
     }
 
@@ -831,34 +826,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
         BlocListener<TokohBloc, TokohState>(
           listener: (context, state) {
             if (state is TokohActionSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Row(
-                    children: [
-                      const Icon(
-                        Icons.check_circle_rounded,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(child: Text(state.message)),
-                    ],
-                  ),
-                  backgroundColor: AppColors.success,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
+              AppToast.showSuccess(context, message: state.message);
               Navigator.pop(context);
             } else if (state is TokohActionFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: AppColors.error,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
+              AppToast.showError(context, message: state.message);
             }
           },
         ),

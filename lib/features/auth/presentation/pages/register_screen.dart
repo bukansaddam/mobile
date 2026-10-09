@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/utils/app_logger.dart';
 
@@ -58,13 +60,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Layanan lokasi (GPS) belum aktif. Aktifkan GPS Anda.',
-              ),
-              backgroundColor: AppColors.warning,
-            ),
+          AppToast.showWarning(
+            context,
+            message: 'Layanan lokasi (GPS) belum aktif. Aktifkan GPS Anda.',
           );
         }
         return;
@@ -75,12 +73,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Izin lokasi ditolak.'),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppToast.showError(context, message: 'Izin lokasi ditolak.');
           }
           return;
         }
@@ -88,13 +81,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (permission == LocationPermission.deniedForever) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
+          AppToast.showError(
+            context,
+            message:
                 'Izin lokasi ditolak secara permanen. Mohon ubah di Pengaturan.',
-              ),
-              backgroundColor: AppColors.error,
-            ),
           );
         }
         return;
@@ -158,31 +148,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
               if (state is AuthFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: AppColors.error,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
+                AppToast.showError(context, message: state.message);
               } else if (state is AuthAuthenticated) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message ?? "Registrasi berhasil!"),
-                    backgroundColor: AppColors.success,
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                AppToast.showSuccess(
+                  context,
+                  message: state.message ?? "Registrasi berhasil!",
                 );
                 context.goNamed('masyarakatMain');
               } else if (state is RegisterSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: AppColors.success,
-                    behavior: SnackBarBehavior.floating,
-                  ),
+                AppDialogs.showSuccess(
+                  context,
+                  title: 'Registrasi Berhasil',
+                  message: state.message.isNotEmpty
+                      ? state.message
+                      : 'Akun Anda telah berhasil dibuat. Silakan login untuk melanjutkan.',
+                  buttonText: 'Masuk ke Akun',
+                  onPressed: () {
+                    context.goNamed('login');
+                  },
                 );
-                context.goNamed('login');
               }
             },
             builder: (context, state) {

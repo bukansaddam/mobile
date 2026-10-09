@@ -1,5 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/kta_card_dialog.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
@@ -10,91 +12,23 @@ import 'package:go_router/go_router.dart';
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: AppColors.errorLight,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.logout_rounded,
-                color: AppColors.error,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text(
-              'Keluar Akun',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-          ],
-        ),
-        content: const Text(
-          'Apakah Anda yakin ingin keluar dari akun?',
-          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.pop(dialogContext),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textSecondary,
-                    side: const BorderSide(color: AppColors.grey300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Batal'),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(dialogContext);
-                    context.read<TrackingBloc>().add(StopTrackingEvent());
-                    context.read<AuthBloc>().add(LogoutEvent());
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Berhasil keluar dari akun'),
-                        backgroundColor: AppColors.primary,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                    context.goNamed('login');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.error,
-                    foregroundColor: AppColors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Keluar'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+  void _showLogoutDialog(BuildContext context) async {
+    final confirmed = await AppDialogs.showConfirmation(
+      context,
+      title: 'Keluar Akun',
+      message: 'Apakah Anda yakin ingin keluar dari akun?',
+      confirmText: 'Keluar',
+      cancelText: 'Batal',
+      isDestructive: true,
+      icon: Icons.logout_rounded,
     );
+
+    if (confirmed && context.mounted) {
+      context.read<TrackingBloc>().add(StopTrackingEvent());
+      context.read<AuthBloc>().add(LogoutEvent());
+      AppToast.showSuccess(context, message: 'Berhasil keluar dari akun');
+      context.goNamed('login');
+    }
   }
 
   @override

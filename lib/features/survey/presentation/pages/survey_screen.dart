@@ -1,5 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/survey/domain/entities/survey_api_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
@@ -47,20 +49,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   void _showWarningSnackBar(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: AppColors.warning,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    AppToast.showWarning(context, message: message);
   }
 
   void _submitApiForm(SurveyItemEntity survey) {
@@ -203,45 +192,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
             _isSubmitted = state.isSubmitted;
           } else if (state is DynamicSurveySuccessState) {
             _isSubmitted = true;
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (dialogContext) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                icon: const Icon(
-                  Icons.check_circle_rounded,
-                  color: AppColors.success,
-                  size: 54,
-                ),
-                title: const Text('Survey Bulanan Berhasil Dikirim'),
-                content: Text(
-                  state.message,
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.bodyMedium,
-                ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<SurveyBloc>().add(
-                        const CheckSurveyStatusEvent(),
-                      );
-                      Navigator.pop(dialogContext);
-                      context.pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
-                      minimumSize: const Size(double.infinity, 44),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text('Selesai'),
-                  ),
-                ],
-              ),
+            AppDialogs.showSuccess(
+              context,
+              title: 'Survey Bulanan Berhasil Dikirim',
+              message: state.message,
+              buttonText: 'Selesai',
+              onPressed: () {
+                context.read<SurveyBloc>().add(const CheckSurveyStatusEvent());
+                context.pop();
+              },
             );
           } else if (state is SurveyFailureState) {
             _showWarningSnackBar(state.errorMessage);

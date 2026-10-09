@@ -1,6 +1,8 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -166,18 +168,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           userPoints += 50;
                         });
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(this.context).showSnackBar(
-                          SnackBar(
-                            content: const Text(
+                        AppToast.showSuccess(
+                          this.context,
+                          message:
                               'Terima kasih! +50 Poin berhasil ditambahkan.',
-                            ),
-                            backgroundColor: const Color(0xFF16A34A),
-                            behavior: SnackBarBehavior.floating,
-                            duration: const Duration(seconds: 2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -327,18 +321,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: soundEnabled
                           ? () {
                               audioService.playTestAlarm();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
+                              AppToast.showInfo(
+                                context,
+                                message:
                                     '🔔 Memutar sampel suara alarm sirine darurat (4 detik)...',
-                                  ),
-                                  backgroundColor: const Color(0xFFDC2626),
-                                  behavior: SnackBarBehavior.floating,
-                                  duration: const Duration(seconds: 3),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
                               );
                             }
                           : null,
@@ -705,40 +691,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               textColor: const Color(0xFFDC2626),
                               iconColor: const Color(0xFFDC2626),
                               showChevron: false,
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    title: const Text('Keluar dari Akun'),
-                                    content: const Text(
+                              onTap: () async {
+                                final confirmed = await AppDialogs.showConfirmation(
+                                  context,
+                                  title: 'Keluar dari Akun',
+                                  message:
                                       'Apakah Anda yakin ingin keluar dari akun ini?',
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(ctx),
-                                        child: const Text('Batal'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(ctx);
-                                          context.read<AuthBloc>().add(
-                                            LogoutEvent(),
-                                          );
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(
-                                            0xFFDC2626,
-                                          ),
-                                          foregroundColor: Colors.white,
-                                        ),
-                                        child: const Text('Keluar'),
-                                      ),
-                                    ],
-                                  ),
+                                  confirmText: 'Keluar',
+                                  cancelText: 'Batal',
+                                  isDestructive: true,
+                                  icon: Icons.logout_rounded,
                                 );
+                                if (confirmed && context.mounted) {
+                                  context.read<AuthBloc>().add(LogoutEvent());
+                                }
                               },
                             ),
                           ],

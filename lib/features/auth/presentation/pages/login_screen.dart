@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
@@ -82,13 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
                 if (state is AuthFailure) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: AppColors.error,
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                  AppToast.showError(context, message: state.message);
                 } else if (state is AuthAuthenticated) {
                   final isOfficer = state.user.isOfficer;
                   if (isOfficer) {
@@ -97,12 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     context.read<TrackingBloc>().add(StopTrackingEvent());
                   }
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.message ?? "Login berhasil!"),
-                      backgroundColor: AppColors.success,
-                      behavior: SnackBarBehavior.floating,
-                    ),
+                  AppToast.showSuccess(
+                    context,
+                    message: state.message ?? "Login berhasil!",
                   );
 
                   if (isOfficer) {

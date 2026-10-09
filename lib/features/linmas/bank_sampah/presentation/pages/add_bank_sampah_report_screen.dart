@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/core/constants/bank_sampah_constants.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
@@ -101,12 +102,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal mengambil gambar: $e'),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppToast.showError(context, message: 'Gagal mengambil gambar: $e');
     }
   }
 
@@ -196,26 +192,19 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedLocation == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Silakan pilih Bank Sampah terlebih dahulu.'),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppToast.showError(
+        context,
+        message: 'Silakan pilih Bank Sampah terlebih dahulu.',
       );
       return;
     }
 
     final bankIdInt = int.tryParse(_selectedLocation!.id);
     if (bankIdInt == null || bankIdInt <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
+      AppToast.showError(
+        context,
+        message:
             'Lokasi Bank Sampah tidak valid. Silakan pilih unit Bank Sampah yang terdaftar.',
-          ),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
       );
       return;
     }
@@ -223,12 +212,9 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     final parsedBerat =
         double.tryParse(_beratController.text.replaceAll(',', '.')) ?? 0.0;
     if (parsedBerat <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Berat sampah harus lebih dari 0 kg.'),
-          backgroundColor: AppColors.error,
-          behavior: SnackBarBehavior.floating,
-        ),
+      AppToast.showError(
+        context,
+        message: 'Berat sampah harus lebih dari 0 kg.',
       );
       return;
     }
@@ -284,35 +270,14 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
           final parsedBerat =
               double.tryParse(_beratController.text.replaceAll(',', '.')) ??
               0.0;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Row(
-                children: [
-                  const Icon(Icons.check_circle_rounded, color: Colors.white),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Laporan Bank Sampah ($_selectedJenisSampah - ${parsedBerat}kg) berhasil ditambahkan!',
-                    ),
-                  ),
-                ],
-              ),
-              backgroundColor: AppColors.success,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+          AppToast.showSuccess(
+            context,
+            message:
+                'Laporan Bank Sampah ($_selectedJenisSampah - ${parsedBerat}kg) berhasil ditambahkan!',
           );
           context.pop();
         } else if (state is BankSampahActionFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+          AppToast.showError(context, message: state.message);
         }
       },
       builder: (context, state) {
