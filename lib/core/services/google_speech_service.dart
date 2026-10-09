@@ -38,11 +38,7 @@ class GoogleSpeechService {
       authClient.close();
       return _AuthData(token: token, projectId: projectId);
     } catch (e, stack) {
-      AppLogger.e(
-        'Failed to get Google Cloud access token',
-        e,
-        stack,
-      );
+      AppLogger.e('Failed to get Google Cloud access token', e, stack);
       rethrow;
     }
   }
@@ -156,11 +152,7 @@ class GoogleSpeechService {
         }
       }
     } catch (e, stack) {
-      AppLogger.e(
-        'Error streaming audio to Google Speech API',
-        e,
-        stack,
-      );
+      AppLogger.e('Error streaming audio to Google Speech API', e, stack);
       rethrow;
     }
   }

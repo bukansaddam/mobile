@@ -56,4 +56,3 @@ class LoggingInterceptor extends Interceptor {
     handler.next(err);
   }
 }
-

@@ -47,9 +47,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
 
-      if (isEnabled) {
-        _startTimer();
-      }
+      // Zombie GPS loop dinonaktifkan: tidak ada UI yang mengonsumsi state ini
+      // if (isEnabled) {
+      //   _startTimer();
+      // }
     } catch (e) {
       emit(
         state.copyWith(

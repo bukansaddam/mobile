@@ -13,7 +13,7 @@ part 'tracking_state.dart';
 class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
   final SendLocationUsecase sendLocationUsecase;
   final SharedPreferences sharedPreferences;
-  Timer? _statusRefreshTimer;
+  StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
 
   TrackingBloc({
     required this.sendLocationUsecase,
@@ -25,12 +25,17 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     on<ChangeTrackingIntervalEvent>(_onChangeTrackingInterval);
     on<SendLocationNowEvent>(_onSendLocationNow);
     on<SyncTrackingStatusEvent>(_onSyncTrackingStatus);
+    on<UpdateTrackingDataEvent>(_onUpdateTrackingData);
 
     add(InitTrackingEvent());
 
-    _statusRefreshTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      add(SyncTrackingStatusEvent());
-    });
+    _serviceSubscription = FlutterBackgroundService()
+        .on('locationUpdated')
+        .listen((event) {
+          if (event != null) {
+            add(UpdateTrackingDataEvent.fromMap(event));
+          }
+        });
   }
 
   Future<void> _onInitTracking(
@@ -238,9 +243,25 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     }
   }
 
+  void _onUpdateTrackingData(
+    UpdateTrackingDataEvent event,
+    Emitter<TrackingState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        isTrackingActive: event.isTrackingActive ?? state.isTrackingActive,
+        lastLatitude: event.lastLatitude ?? state.lastLatitude,
+        lastLongitude: event.lastLongitude ?? state.lastLongitude,
+        lastSentTime: event.lastSentTime ?? state.lastSentTime,
+        lastSuccess: event.lastSuccess,
+        lastMessage: event.lastMessage ?? state.lastMessage,
+      ),
+    );
+  }
+
   @override
   Future<void> close() {
-    _statusRefreshTimer?.cancel();
+    _serviceSubscription?.cancel();
     return super.close();
   }
 }

@@ -184,12 +184,20 @@ class BackgroundServiceHelper {
         await updatedPrefs.setString('LAST_TRACKING_TIME', nowStr);
         await updatedPrefs.setDouble('LAST_TRACKING_LAT', position.latitude);
         await updatedPrefs.setDouble('LAST_TRACKING_LNG', position.longitude);
-        await updatedPrefs.setString(
-          'LAST_TRACKING_MSG',
-          response.data?['message']?.toString() ??
-              'Lokasi terkirim otomatis (${currentIntervalSeconds}s)',
-        );
+        final successMsg =
+            response.data?['message']?.toString() ??
+            'Lokasi terkirim otomatis (${currentIntervalSeconds}s)';
+        await updatedPrefs.setString('LAST_TRACKING_MSG', successMsg);
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', true);
+
+        service.invoke('locationUpdated', {
+          'lastLatitude': position.latitude,
+          'lastLongitude': position.longitude,
+          'lastSentTime': nowStr,
+          'lastMessage': successMsg,
+          'lastSuccess': true,
+          'isTrackingActive': true,
+        });
 
         if (service is AndroidServiceInstance) {
           if (await service.isForegroundService()) {
@@ -206,6 +214,11 @@ class BackgroundServiceHelper {
 
         String errorMessage = ErrorUtils.parseErrorMessage(e);
         await updatedPrefs.setString('LAST_TRACKING_MSG', errorMessage);
+
+        service.invoke('locationUpdated', {
+          'lastSuccess': false,
+          'lastMessage': errorMessage,
+        });
       } finally {
         isExecRunning = false;
       }

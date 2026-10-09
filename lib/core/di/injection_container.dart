@@ -22,7 +22,6 @@ import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
 // Linmas
-import 'package:akar/features/linmas/home/presentation/bloc/home_bloc/home_bloc.dart';
 import 'package:akar/features/linmas/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/linmas/tracking/data/repositories/tracking_repository_impl.dart';
 import 'package:akar/features/linmas/tracking/domain/repositories/tracking_repository.dart';
@@ -348,7 +347,6 @@ Future<void> init() async {
     () => SubmitActivationReportUsecase(sl()),
   );
 
-  sl.registerLazySingleton<HomeBloc>(() => HomeBloc());
   sl.registerLazySingleton<ActivationBloc>(
     () => ActivationBloc(
       getActivationRunsUsecase: sl(),

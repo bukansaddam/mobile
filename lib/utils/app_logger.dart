@@ -13,7 +13,8 @@ class AppLogger {
   AppLogger._();
 
   /// Menandakan apakah aplikasi berjalan dalam mode produksi (release mode / prod).
-  static const bool isProduction = kReleaseMode ||
+  static const bool isProduction =
+      kReleaseMode ||
       String.fromEnvironment('ENV') == 'prod' ||
       String.fromEnvironment('ENV') == 'production' ||
       String.fromEnvironment('ENVIRONMENT') == 'prod' ||
@@ -62,4 +63,3 @@ class AppLogger {
     _logger.f(message, error: error, stackTrace: stackTrace);
   }
 }
-
