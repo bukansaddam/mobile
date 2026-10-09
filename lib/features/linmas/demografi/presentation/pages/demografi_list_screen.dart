@@ -823,145 +823,122 @@ class _DemografiListScreenState extends State<DemografiListScreen>
 
   @override
   Widget build(BuildContext context) {
-    final tokohBloc = context.watch<TokohBloc>();
-    final tokohState = tokohBloc.state;
-    final organisasiBloc = context.watch<OrganisasiBloc>();
-    final organisasiState = organisasiBloc.state;
-    final institusiBloc = context.watch<InstitusiBloc>();
-    final institusiState = institusiBloc.state;
-    return AnimatedBuilder(
-      animation: _tabController,
-      builder: (context, _) {
-        final activeTab = _tabController.index;
-        final isOrgTab = activeTab == 2;
-        final isInstTab = activeTab == 1;
-        final hasActiveFilter = isOrgTab
-            ? organisasiBloc.hasActiveFilter
-            : isInstTab
-            ? institusiBloc.hasActiveFilter
-            : tokohBloc.hasActiveFilter;
-
-        String fabTitle;
-        IconData fabIcon;
-        Color fabColor;
-        String searchHint;
-
-        if (activeTab == 0) {
-          fabTitle = 'Tambah Tokoh';
-          fabIcon = Icons.person_add_rounded;
-          fabColor = AppColors.primary;
-          searchHint = 'Cari nama tokoh...';
-        } else if (activeTab == 1) {
-          fabTitle = 'Tambah Institusi';
-          fabIcon = Icons.domain_add_rounded;
-          fabColor = AppColors.primary;
-          searchHint = 'Cari nama institusi...';
-        } else {
-          fabTitle = 'Tambah Organisasi';
-          fabIcon = Icons.group_add_rounded;
-          fabColor = AppColors.primary;
-          searchHint = 'Cari nama organisasi...';
-        }
-
-        return Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            centerTitle: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textPrimary,
-                    size: 22,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.grey300),
             ),
-            title: const Text(
-              'Demografi',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            child: IconButton(
+              icon: const Icon(
+                Icons.chevron_left_rounded,
                 color: AppColors.textPrimary,
+                size: 22,
               ),
-            ),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(48),
-              child: Container(
-                color: AppColors.white,
-                child: TabBar(
-                  controller: _tabController,
-                  dividerColor: Colors.transparent,
-                  dividerHeight: 0,
-                  indicatorColor: AppColors.primary,
-                  indicatorWeight: 3,
-                  labelColor: AppColors.primary,
-                  unselectedLabelColor: AppColors.textSecondary,
-                  labelStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                  unselectedLabelStyle: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                  tabs: const [
-                    Tab(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.people_alt_rounded, size: 18),
-                            SizedBox(width: 6),
-                            Text('Tokoh'),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.account_balance_rounded, size: 18),
-                            SizedBox(width: 6),
-                            Text('Institusi'),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.groups_rounded, size: 18),
-                            SizedBox(width: 6),
-                            Text('Organisasi'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
             ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
+        ),
+        title: const Text(
+          'Demografi',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            color: AppColors.white,
+            child: TabBar(
+              controller: _tabController,
+              dividerColor: Colors.transparent,
+              dividerHeight: 0,
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 3,
+              labelColor: AppColors.primary,
+              unselectedLabelColor: AppColors.textSecondary,
+              labelStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+              tabs: const [
+                Tab(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.people_alt_rounded, size: 18),
+                        SizedBox(width: 6),
+                        Text('Tokoh'),
+                      ],
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.account_balance_rounded, size: 18),
+                        SizedBox(width: 6),
+                        Text('Institusi'),
+                      ],
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.groups_rounded, size: 18),
+                        SizedBox(width: 6),
+                        Text('Organisasi'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: AnimatedBuilder(
+        animation: _tabController,
+        builder: (context, _) {
+          final activeTab = _tabController.index;
+          final String fabTitle;
+          final IconData fabIcon;
+          if (activeTab == 0) {
+            fabTitle = 'Tambah Tokoh';
+            fabIcon = Icons.person_add_rounded;
+          } else if (activeTab == 1) {
+            fabTitle = 'Tambah Institusi';
+            fabIcon = Icons.domain_add_rounded;
+          } else {
+            fabTitle = 'Tambah Organisasi';
+            fabIcon = Icons.group_add_rounded;
+          }
+
+          return FloatingActionButton.extended(
             onPressed: () {
               if (activeTab == 0) {
                 context.pushNamed('tambahTokoh');
@@ -971,7 +948,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                 context.pushNamed('tambahOrganisasi');
               }
             },
-            backgroundColor: fabColor,
+            backgroundColor: AppColors.primary,
             foregroundColor: AppColors.white,
             elevation: 4,
             icon: Icon(fabIcon),
@@ -979,755 +956,779 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               fabTitle,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
-          ),
-          body: GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.black.withValues(
-                                      alpha: 0.05,
-                                    ),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: TextField(
-                                controller: _searchController,
-                                textInputAction: TextInputAction.search,
-                                onTapOutside: (event) => FocusManager
-                                    .instance
-                                    .primaryFocus
-                                    ?.unfocus(),
-                                onChanged: (val) {
-                                  _debounceTimer?.cancel();
-                                  _debounceTimer = Timer(
-                                    const Duration(milliseconds: 500),
-                                    () {
-                                      if (!mounted) return;
-                                      final activeTab = _tabController.index;
-                                      if (activeTab == 2) {
-                                        final orgBloc = context
-                                            .read<OrganisasiBloc>();
-                                        orgBloc.add(
-                                          SetOrganisasiFilterEvent.search(
-                                            val.trim(),
-                                          ),
-                                        );
-                                      } else if (activeTab == 1) {
-                                        final instBloc = context
-                                            .read<InstitusiBloc>();
-                                        instBloc.add(
-                                          SetInstitusiFilterEvent.search(
-                                            val.trim(),
-                                          ),
-                                        );
-                                      } else {
-                                        final tokBloc = context
-                                            .read<TokohBloc>();
-                                        tokBloc.add(
-                                          SetTokohFilterEvent.search(
-                                            val.trim(),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  );
-                                },
-                                onSubmitted: (val) {
-                                  _debounceTimer?.cancel();
-                                  final activeTab = _tabController.index;
-                                  if (activeTab == 2) {
-                                    final orgBloc = context
-                                        .read<OrganisasiBloc>();
-                                    orgBloc.add(
-                                      SetOrganisasiFilterEvent.search(
-                                        val.trim(),
-                                      ),
-                                    );
-                                  } else if (activeTab == 1) {
-                                    final instBloc = context
-                                        .read<InstitusiBloc>();
-                                    instBloc.add(
-                                      SetInstitusiFilterEvent.search(
-                                        val.trim(),
-                                      ),
-                                    );
-                                  } else {
-                                    final tokBloc = context.read<TokohBloc>();
-                                    tokBloc.add(
-                                      SetTokohFilterEvent.search(val.trim()),
-                                    );
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  hintText: searchHint,
-                                  hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.grey500,
-                                  ),
-                                  prefixIcon: const Icon(
-                                    Icons.search_rounded,
-                                    color: AppColors.primary,
-                                  ),
-                                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                                    valueListenable: _searchController,
-                                    builder: (context, value, _) {
-                                      if (value.text.isEmpty) {
-                                        return const SizedBox.shrink();
-                                      }
-                                      return IconButton(
-                                        icon: const Icon(
-                                          Icons.clear_rounded,
-                                          color: AppColors.grey500,
-                                        ),
-                                        onPressed: () {
-                                          _debounceTimer?.cancel();
-                                          _searchController.clear();
-                                          final activeTab =
-                                              _tabController.index;
-                                          if (activeTab == 2) {
-                                            final orgBloc = context
-                                                .read<OrganisasiBloc>();
-                                            orgBloc.add(
-                                              const SetOrganisasiFilterEvent.search(
-                                                '',
-                                              ),
-                                            );
-                                          } else if (activeTab == 1) {
-                                            final instBloc = context
-                                                .read<InstitusiBloc>();
-                                            instBloc.add(
-                                              const SetInstitusiFilterEvent.search(
-                                                '',
-                                              ),
-                                            );
-                                          } else {
-                                            final tokBloc = context
-                                                .read<TokohBloc>();
-                                            tokBloc.add(
-                                              const SetTokohFilterEvent.search(
-                                                '',
-                                              ),
-                                            );
-                                          }
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  filled: true,
-                                  fillColor: AppColors.white,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 14,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.grey300,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.grey200,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                    borderSide: const BorderSide(
-                                      color: AppColors.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
+          );
+        },
+      ),
+      body: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Column(
+          children: [
+            _buildSearchAndFilterHeader(),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildTokohTab(),
+                  _buildInstitusiTab(),
+                  _buildOrganisasiTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                          Container(
-                            height: 52,
-                            width: 52,
-                            decoration: BoxDecoration(
-                              color: hasActiveFilter
-                                  ? AppColors.primary
-                                  : AppColors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: hasActiveFilter
-                                    ? AppColors.primary
-                                    : AppColors.grey300,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.black.withValues(
-                                    alpha: 0.05,
-                                  ),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.tune_rounded,
-                                color: hasActiveFilter
-                                    ? Colors.white
-                                    : AppColors.textPrimary,
-                                size: 22,
-                              ),
-                              tooltip: 'Filter & Urutkan',
-                              onPressed: () => _showFilterBottomSheet(context),
-                            ),
-                          ),
-                        ],
+  Widget _buildSearchAndFilterHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: AnimatedBuilder(
+                  animation: _tabController,
+                  builder: (context, _) {
+                    final activeTab = _tabController.index;
+                    final searchHint = activeTab == 0
+                        ? 'Cari nama tokoh...'
+                        : activeTab == 1
+                        ? 'Cari nama institusi...'
+                        : 'Cari nama organisasi...';
+                    return _buildSearchTextField(searchHint);
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              AnimatedBuilder(
+                animation: _tabController,
+                builder: (context, _) {
+                  final activeTab = _tabController.index;
+                  if (activeTab == 2) {
+                    return BlocBuilder<OrganisasiBloc, OrganisasiState>(
+                      builder: (context, _) {
+                        return _buildFilterButton(
+                          context.read<OrganisasiBloc>().hasActiveFilter,
+                        );
+                      },
+                    );
+                  } else if (activeTab == 1) {
+                    return BlocBuilder<InstitusiBloc, InstitusiState>(
+                      builder: (context, _) {
+                        return _buildFilterButton(
+                          context.read<InstitusiBloc>().hasActiveFilter,
+                        );
+                      },
+                    );
+                  } else {
+                    return BlocBuilder<TokohBloc, TokohState>(
+                      builder: (context, _) {
+                        return _buildFilterButton(
+                          context.read<TokohBloc>().hasActiveFilter,
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          AnimatedBuilder(
+            animation: _tabController,
+            builder: (context, _) {
+              final activeTab = _tabController.index;
+              if (activeTab == 2) {
+                return BlocBuilder<OrganisasiBloc, OrganisasiState>(
+                  builder: (context, _) => _buildOrganisasiFilterChips(),
+                );
+              } else if (activeTab == 1) {
+                return BlocBuilder<InstitusiBloc, InstitusiState>(
+                  builder: (context, _) => _buildInstitusiFilterChips(),
+                );
+              } else {
+                return BlocBuilder<TokohBloc, TokohState>(
+                  builder: (context, _) => _buildTokohFilterChips(),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchTextField(String searchHint) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        textInputAction: TextInputAction.search,
+        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+        onChanged: (val) {
+          _debounceTimer?.cancel();
+          _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+            if (!mounted) return;
+            final activeTab = _tabController.index;
+            if (activeTab == 2) {
+              final orgBloc = context.read<OrganisasiBloc>();
+              orgBloc.add(SetOrganisasiFilterEvent.search(val.trim()));
+            } else if (activeTab == 1) {
+              final instBloc = context.read<InstitusiBloc>();
+              instBloc.add(SetInstitusiFilterEvent.search(val.trim()));
+            } else {
+              final tokBloc = context.read<TokohBloc>();
+              tokBloc.add(SetTokohFilterEvent.search(val.trim()));
+            }
+          });
+        },
+        onSubmitted: (val) {
+          _debounceTimer?.cancel();
+          final activeTab = _tabController.index;
+          if (activeTab == 2) {
+            final orgBloc = context.read<OrganisasiBloc>();
+            orgBloc.add(SetOrganisasiFilterEvent.search(val.trim()));
+          } else if (activeTab == 1) {
+            final instBloc = context.read<InstitusiBloc>();
+            instBloc.add(SetInstitusiFilterEvent.search(val.trim()));
+          } else {
+            final tokBloc = context.read<TokohBloc>();
+            tokBloc.add(SetTokohFilterEvent.search(val.trim()));
+          }
+        },
+        decoration: InputDecoration(
+          hintText: searchHint,
+          hintStyle: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.grey500,
+          ),
+          prefixIcon: const Icon(
+            Icons.search_rounded,
+            color: AppColors.primary,
+          ),
+          suffixIcon: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _searchController,
+            builder: (context, value, _) {
+              if (value.text.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return IconButton(
+                icon: const Icon(Icons.clear_rounded, color: AppColors.grey500),
+                onPressed: () {
+                  _debounceTimer?.cancel();
+                  _searchController.clear();
+                  final activeTab = _tabController.index;
+                  if (activeTab == 2) {
+                    final orgBloc = context.read<OrganisasiBloc>();
+                    orgBloc.add(const SetOrganisasiFilterEvent.search(''));
+                  } else if (activeTab == 1) {
+                    final instBloc = context.read<InstitusiBloc>();
+                    instBloc.add(const SetInstitusiFilterEvent.search(''));
+                  } else {
+                    final tokBloc = context.read<TokohBloc>();
+                    tokBloc.add(const SetTokohFilterEvent.search(''));
+                  }
+                },
+              );
+            },
+          ),
+          filled: true,
+          fillColor: AppColors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.grey300),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.grey200),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(bool hasActiveFilter) {
+    return Container(
+      height: 52,
+      width: 52,
+      decoration: BoxDecoration(
+        color: hasActiveFilter ? AppColors.primary : AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: hasActiveFilter ? AppColors.primary : AppColors.grey300,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Icon(
+          Icons.tune_rounded,
+          color: hasActiveFilter ? Colors.white : AppColors.textPrimary,
+          size: 22,
+        ),
+        tooltip: 'Filter & Urutkan',
+        onPressed: () => _showFilterBottomSheet(context),
+      ),
+    );
+  }
+
+  Widget _buildTokohFilterChips() {
+    final tokohBloc = context.read<TokohBloc>();
+    if (!tokohBloc.hasActiveFilter) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _buildAppliedTag(
+                label: tokohBloc.selectedSortOption.label,
+                icon: tokohBloc.selectedSortOption.icon,
+                onTap: () => _showFilterBottomSheet(context),
+              ),
+              if (tokohBloc.selectedProfesiFilter != null) ...[
+                const SizedBox(width: 8),
+                _buildAppliedTag(
+                  label: 'Profesi: ${tokohBloc.selectedProfesiFilter}',
+                  onRemove: () => context.read<TokohBloc>().add(
+                    const SetTokohFilterEvent.professions(null),
+                  ),
+                ),
+              ],
+              if (tokohBloc.selectedAfiliasiFilter != null) ...[
+                const SizedBox(width: 8),
+                _buildAppliedTag(
+                  label: 'Afiliasi: ${tokohBloc.selectedAfiliasiFilter}',
+                  onRemove: () => context.read<TokohBloc>().add(
+                    const SetTokohFilterEvent.affiliations(null),
+                  ),
+                ),
+              ],
+              const SizedBox(width: 8),
+              _buildResetFilterChip(
+                onTap: () => context.read<TokohBloc>().add(
+                  const ResetTokohFilterEvent(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInstitusiFilterChips() {
+    final institusiBloc = context.read<InstitusiBloc>();
+    if (!institusiBloc.hasActiveFilter) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _buildAppliedTag(
+                label: institusiBloc.selectedSortOption.label,
+                icon: Icons.sort_rounded,
+                onTap: () => _showFilterBottomSheet(context),
+              ),
+              if (institusiBloc.selectedKategoriFilter != null) ...[
+                const SizedBox(width: 8),
+                _buildAppliedTag(
+                  label: 'Kategori: ${institusiBloc.selectedKategoriFilter}',
+                  icon: Icons.local_offer_outlined,
+                  onRemove: () => context.read<InstitusiBloc>().add(
+                    const SetInstitusiFilterEvent.kategori(null),
+                  ),
+                ),
+              ],
+              if (institusiBloc.selectedScopeFilter != null) ...[
+                const SizedBox(width: 8),
+                _buildAppliedTag(
+                  label: 'Scope: ${institusiBloc.selectedScopeFilter}',
+                  onRemove: () => context.read<InstitusiBloc>().add(
+                    const SetInstitusiFilterEvent.scope(null),
+                  ),
+                ),
+              ],
+              const SizedBox(width: 8),
+              _buildResetFilterChip(
+                onTap: () => context.read<InstitusiBloc>().add(
+                  const ResetInstitusiFilterEvent(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrganisasiFilterChips() {
+    final organisasiBloc = context.read<OrganisasiBloc>();
+    if (!organisasiBloc.hasActiveFilter) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _buildAppliedTag(
+                label: organisasiBloc.selectedSortOption.label,
+                icon: organisasiBloc.selectedSortOption.icon,
+                onTap: () => _showFilterBottomSheet(context),
+              ),
+              if (organisasiBloc.selectedBidangFilter != null) ...[
+                const SizedBox(width: 8),
+                _buildAppliedTag(
+                  label: 'Bidang: ${organisasiBloc.selectedBidangFilter}',
+                  onRemove: () => context.read<OrganisasiBloc>().add(
+                    const SetOrganisasiFilterEvent.field(null),
+                  ),
+                ),
+              ],
+              const SizedBox(width: 8),
+              _buildResetFilterChip(
+                onTap: () => context.read<OrganisasiBloc>().add(
+                  const ResetOrganisasiFilterEvent(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResetFilterChip({required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.error.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+        ),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.refresh_rounded, size: 14, color: AppColors.error),
+            SizedBox(width: 4),
+            Text(
+              'Reset',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: AppColors.error,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTokohTab() {
+    return BlocBuilder<TokohBloc, TokohState>(
+      builder: (context, state) {
+        final tokohBloc = context.read<TokohBloc>();
+        final list = tokohBloc.displayList;
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            tokohBloc.add(
+              RefreshTokohEvent(
+                field: tokohBloc.selectedProfesiFilter,
+                professions: tokohBloc.selectedProfesiFilter,
+                label: tokohBloc.selectedAfiliasiFilter,
+                affiliations: tokohBloc.selectedAfiliasiFilter,
+                sort: tokohBloc.selectedSortOption,
+                search: tokohBloc.searchQuery.trim().isNotEmpty
+                    ? tokohBloc.searchQuery.trim()
+                    : null,
+              ),
+            );
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Daftar Tokoh',
+                        style: AppTextStyles.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-
-                      if (hasActiveFilter) ...[
-                        const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            physics: const BouncingScrollPhysics(),
-                            child: Row(
-                              children: [
-                                _buildAppliedTag(
-                                  label: isOrgTab
-                                      ? organisasiBloc.selectedSortOption.label
-                                      : isInstTab
-                                      ? institusiBloc.selectedSortOption.label
-                                      : tokohBloc.selectedSortOption.label,
-                                  icon: isOrgTab
-                                      ? organisasiBloc.selectedSortOption.icon
-                                      : isInstTab
-                                      ? Icons.sort_rounded
-                                      : tokohBloc.selectedSortOption.icon,
-                                  onTap: () => _showFilterBottomSheet(context),
-                                ),
-
-                                if (activeTab == 0) ...[
-                                  if (tokohBloc.selectedProfesiFilter !=
-                                      null) ...[
-                                    const SizedBox(width: 8),
-                                    _buildAppliedTag(
-                                      label:
-                                          'Profesi: ${tokohBloc.selectedProfesiFilter}',
-                                      onRemove: () =>
-                                          context.read<TokohBloc>().add(
-                                            const SetTokohFilterEvent.professions(
-                                              null,
-                                            ),
-                                          ),
-                                    ),
-                                  ],
-                                  if (tokohBloc.selectedAfiliasiFilter !=
-                                      null) ...[
-                                    const SizedBox(width: 8),
-                                    _buildAppliedTag(
-                                      label:
-                                          'Afiliasi: ${tokohBloc.selectedAfiliasiFilter}',
-                                      onRemove: () =>
-                                          context.read<TokohBloc>().add(
-                                            const SetTokohFilterEvent.affiliations(
-                                              null,
-                                            ),
-                                          ),
-                                    ),
-                                  ],
-                                ],
-
-                                if (activeTab == 1) ...[
-                                  if (institusiBloc.selectedKategoriFilter !=
-                                      null) ...[
-                                    const SizedBox(width: 8),
-                                    _buildAppliedTag(
-                                      label:
-                                          'Kategori: ${institusiBloc.selectedKategoriFilter}',
-                                      icon: Icons.local_offer_outlined,
-                                      onRemove: () =>
-                                          context.read<InstitusiBloc>().add(
-                                            const SetInstitusiFilterEvent.kategori(
-                                              null,
-                                            ),
-                                          ),
-                                    ),
-                                  ],
-                                  if (institusiBloc.selectedScopeFilter !=
-                                      null) ...[
-                                    const SizedBox(width: 8),
-                                    _buildAppliedTag(
-                                      label:
-                                          'Scope: ${institusiBloc.selectedScopeFilter}',
-                                      onRemove: () =>
-                                          context.read<InstitusiBloc>().add(
-                                            const SetInstitusiFilterEvent.scope(
-                                              null,
-                                            ),
-                                          ),
-                                    ),
-                                  ],
-                                ],
-
-                                if (isOrgTab &&
-                                    organisasiBloc.selectedBidangFilter !=
-                                        null) ...[
-                                  const SizedBox(width: 8),
-                                  _buildAppliedTag(
-                                    label:
-                                        'Bidang: ${organisasiBloc.selectedBidangFilter}',
-                                    onRemove: () =>
-                                        context.read<OrganisasiBloc>().add(
-                                          const SetOrganisasiFilterEvent.field(
-                                            null,
-                                          ),
-                                        ),
-                                  ),
-                                ],
-
-                                const SizedBox(width: 8),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (isOrgTab) {
-                                      context.read<OrganisasiBloc>().add(
-                                        const ResetOrganisasiFilterEvent(),
-                                      );
-                                    } else if (activeTab == 1) {
-                                      context.read<InstitusiBloc>().add(
-                                        const ResetInstitusiFilterEvent(),
-                                      );
-                                    } else {
-                                      context.read<TokohBloc>().add(
-                                        const ResetTokohFilterEvent(),
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.error.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: AppColors.error.withValues(
-                                          alpha: 0.3,
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.refresh_rounded,
-                                          size: 14,
-                                          color: AppColors.error,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          'Reset',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.error,
-                                          ),
-                                        ),
-                                      ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${tokohBloc.total > 0 ? tokohBloc.total : list.length} Tokoh',
+                        style: AppTextStyles.labelMedium.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: state is TokohLoading && list.isEmpty
+                    ? DemografiShimmerList.tokoh()
+                    : state is TokohFailure && list.isEmpty
+                    ? _buildErrorState(
+                        context,
+                        state.message,
+                        onRetry: () {
+                          tokohBloc.add(
+                            RefreshTokohEvent(
+                              field: tokohBloc.selectedProfesiFilter,
+                              professions: tokohBloc.selectedProfesiFilter,
+                              label: tokohBloc.selectedAfiliasiFilter,
+                              affiliations: tokohBloc.selectedAfiliasiFilter,
+                              sort: tokohBloc.selectedSortOption,
+                              search: tokohBloc.searchQuery.trim().isNotEmpty
+                                  ? tokohBloc.searchQuery.trim()
+                                  : null,
+                            ),
+                          );
+                        },
+                      )
+                    : list.isEmpty
+                    ? _buildEmptyState(
+                        title: 'Belum Ada Data Tokoh',
+                        message:
+                            'Tekan tombol "Tambah Tokoh" di bawah untuk mendaftarkan tokoh di sekitar Anda.',
+                        icon: Icons.person_search_rounded,
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _tokohScrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                        itemCount:
+                            list.length + (tokohBloc.page != null ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == list.length && tokohBloc.page != null) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.primary,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildTokohTab(context, tokohState),
-                      _buildInstitusiTab(context, institusiState),
-                      _buildOrganisasiTab(context, organisasiState),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+                              ),
+                            );
+                          }
+                          return _buildTokohCard(list[index]);
+                        },
+                      ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildTokohTab(BuildContext context, TokohState state) {
-    final tokohBloc = context.watch<TokohBloc>();
-    final list = tokohBloc.displayList;
+  Widget _buildInstitusiTab() {
+    return BlocBuilder<InstitusiBloc, InstitusiState>(
+      builder: (context, state) {
+        final institusiBloc = context.read<InstitusiBloc>();
+        final list = institusiBloc.displayList;
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        tokohBloc.add(
-          RefreshTokohEvent(
-            field: tokohBloc.selectedProfesiFilter,
-            professions: tokohBloc.selectedProfesiFilter,
-            label: tokohBloc.selectedAfiliasiFilter,
-            affiliations: tokohBloc.selectedAfiliasiFilter,
-            sort: tokohBloc.selectedSortOption,
-            search: tokohBloc.searchQuery.trim().isNotEmpty
-                ? tokohBloc.searchQuery.trim()
-                : null,
+        return RefreshIndicator(
+          onRefresh: () async {
+            institusiBloc.add(
+              RefreshInstitusiEvent(
+                scope: institusiBloc.selectedScopeFilter,
+                kategori: institusiBloc.selectedKategoriFilter,
+                sort: institusiBloc.selectedSortOption,
+                search: institusiBloc.searchQuery.trim().isNotEmpty
+                    ? institusiBloc.searchQuery.trim()
+                    : null,
+              ),
+            );
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Daftar Institusi',
+                        style: AppTextStyles.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${institusiBloc.total > 0 ? institusiBloc.total : list.length} Institusi',
+                        style: AppTextStyles.labelMedium.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: state is InstitusiLoading && list.isEmpty
+                    ? DemografiShimmerList.institusi()
+                    : state is InstitusiFailure && list.isEmpty
+                    ? _buildErrorState(
+                        context,
+                        state.message,
+                        onRetry: () {
+                          institusiBloc.add(
+                            RefreshInstitusiEvent(
+                              scope: institusiBloc.selectedScopeFilter,
+                              sort: institusiBloc.selectedSortOption,
+                              search:
+                                  institusiBloc.searchQuery.trim().isNotEmpty
+                                  ? institusiBloc.searchQuery.trim()
+                                  : null,
+                            ),
+                          );
+                        },
+                      )
+                    : list.isEmpty
+                    ? _buildEmptyState(
+                        title: 'Belum Ada Data Institusi',
+                        message:
+                            'Tekan tombol "Tambah Institusi" di bawah untuk mendaftarkan institusi baru.',
+                        icon: Icons.domain_outlined,
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _institusiScrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                        itemCount:
+                            list.length + (institusiBloc.page != null ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == list.length &&
+                              institusiBloc.page != null) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return _buildInstitusiCard(list[index]);
+                        },
+                      ),
+              ),
+            ],
           ),
         );
       },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Daftar Tokoh',
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${tokohBloc.total > 0 ? tokohBloc.total : list.length} Tokoh',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: state is TokohLoading && list.isEmpty
-                ? DemografiShimmerList.tokoh()
-                : state is TokohFailure && list.isEmpty
-                ? _buildErrorState(
-                    context,
-                    state.message,
-                    onRetry: () {
-                      tokohBloc.add(
-                        RefreshTokohEvent(
-                          field: tokohBloc.selectedProfesiFilter,
-                          professions: tokohBloc.selectedProfesiFilter,
-                          label: tokohBloc.selectedAfiliasiFilter,
-                          affiliations: tokohBloc.selectedAfiliasiFilter,
-                          sort: tokohBloc.selectedSortOption,
-                          search: tokohBloc.searchQuery.trim().isNotEmpty
-                              ? tokohBloc.searchQuery.trim()
-                              : null,
-                        ),
-                      );
-                    },
-                  )
-                : list.isEmpty
-                ? _buildEmptyState(
-                    title: 'Belum Ada Data Tokoh',
-                    message:
-                        'Tekan tombol "Tambah Tokoh" di bawah untuk mendaftarkan tokoh di sekitar Anda.',
-                    icon: Icons.person_search_rounded,
-                  )
-                : ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _tokohScrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
-                    itemCount: list.length + (tokohBloc.page != null ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == list.length && tokohBloc.page != null) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return _buildTokohCard(list[index]);
-                    },
-                  ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildInstitusiTab(BuildContext context, InstitusiState state) {
-    final institusiBloc = context.watch<InstitusiBloc>();
-    final list = institusiBloc.displayList;
+  Widget _buildOrganisasiTab() {
+    return BlocBuilder<OrganisasiBloc, OrganisasiState>(
+      builder: (context, state) {
+        final organisasiBloc = context.read<OrganisasiBloc>();
+        final list = organisasiBloc.displayList;
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        institusiBloc.add(
-          RefreshInstitusiEvent(
-            scope: institusiBloc.selectedScopeFilter,
-            kategori: institusiBloc.selectedKategoriFilter,
-            sort: institusiBloc.selectedSortOption,
-            search: institusiBloc.searchQuery.trim().isNotEmpty
-                ? institusiBloc.searchQuery.trim()
-                : null,
+        return RefreshIndicator(
+          onRefresh: () async {
+            organisasiBloc.add(
+              RefreshOrganisasiEvent(
+                field: organisasiBloc.selectedBidangFilter,
+                sort: organisasiBloc.selectedSortOption,
+                search: organisasiBloc.searchQuery.trim().isNotEmpty
+                    ? organisasiBloc.searchQuery.trim()
+                    : null,
+              ),
+            );
+          },
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Daftar Organisasi',
+                        style: AppTextStyles.titleLarge.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.textPrimary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${organisasiBloc.total > 0 ? organisasiBloc.total : list.length} Organisasi',
+                        style: AppTextStyles.labelMedium.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: state is OrganisasiLoading && list.isEmpty
+                    ? DemografiShimmerList.organisasi()
+                    : state is OrganisasiFailure && list.isEmpty
+                    ? _buildErrorState(
+                        context,
+                        state.message,
+                        onRetry: () {
+                          organisasiBloc.add(
+                            RefreshOrganisasiEvent(
+                              field: organisasiBloc.selectedBidangFilter,
+                              sort: organisasiBloc.selectedSortOption,
+                              search:
+                                  organisasiBloc.searchQuery.trim().isNotEmpty
+                                  ? organisasiBloc.searchQuery.trim()
+                                  : null,
+                            ),
+                          );
+                        },
+                      )
+                    : list.isEmpty
+                    ? _buildEmptyState(
+                        title: 'Belum Ada Data Organisasi',
+                        message:
+                            'Tekan tombol "Tambah Organisasi" di bawah untuk mendaftarkan organisasi baru.',
+                        icon: Icons.groups_outlined,
+                      )
+                    : ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _organisasiScrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                        itemCount:
+                            list.length + (organisasiBloc.page != null ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (index == list.length &&
+                              organisasiBloc.page != null) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return _buildOrganisasiCard(list[index]);
+                        },
+                      ),
+              ),
+            ],
           ),
         );
       },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Daftar Institusi',
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${institusiBloc.total > 0 ? institusiBloc.total : list.length} Institusi',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: state is InstitusiLoading && list.isEmpty
-                ? DemografiShimmerList.institusi()
-                : state is InstitusiFailure && list.isEmpty
-                ? _buildErrorState(
-                    context,
-                    state.message,
-                    onRetry: () {
-                      institusiBloc.add(
-                        RefreshInstitusiEvent(
-                          scope: institusiBloc.selectedScopeFilter,
-                          sort: institusiBloc.selectedSortOption,
-                          search: institusiBloc.searchQuery.trim().isNotEmpty
-                              ? institusiBloc.searchQuery.trim()
-                              : null,
-                        ),
-                      );
-                    },
-                  )
-                : list.isEmpty
-                ? _buildEmptyState(
-                    title: 'Belum Ada Data Institusi',
-                    message:
-                        'Tekan tombol "Tambah Institusi" di bawah untuk mendaftarkan institusi baru.',
-                    icon: Icons.domain_outlined,
-                  )
-                : ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _institusiScrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
-                    itemCount:
-                        list.length + (institusiBloc.page != null ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == list.length && institusiBloc.page != null) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return _buildInstitusiCard(list[index]);
-                    },
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOrganisasiTab(BuildContext context, OrganisasiState state) {
-    final organisasiBloc = context.watch<OrganisasiBloc>();
-    final list = organisasiBloc.displayList;
-
-    return RefreshIndicator(
-      onRefresh: () async {
-        organisasiBloc.add(
-          RefreshOrganisasiEvent(
-            field: organisasiBloc.selectedBidangFilter,
-            sort: organisasiBloc.selectedSortOption,
-            search: organisasiBloc.searchQuery.trim().isNotEmpty
-                ? organisasiBloc.searchQuery.trim()
-                : null,
-          ),
-        );
-      },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Daftar Organisasi',
-                    style: AppTextStyles.titleLarge.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.textPrimary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${organisasiBloc.total > 0 ? organisasiBloc.total : list.length} Organisasi',
-                    style: AppTextStyles.labelMedium.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: state is OrganisasiLoading && list.isEmpty
-                ? DemografiShimmerList.organisasi()
-                : state is OrganisasiFailure && list.isEmpty
-                ? _buildErrorState(
-                    context,
-                    state.message,
-                    onRetry: () {
-                      organisasiBloc.add(
-                        RefreshOrganisasiEvent(
-                          field: organisasiBloc.selectedBidangFilter,
-                          sort: organisasiBloc.selectedSortOption,
-                          search: organisasiBloc.searchQuery.trim().isNotEmpty
-                              ? organisasiBloc.searchQuery.trim()
-                              : null,
-                        ),
-                      );
-                    },
-                  )
-                : list.isEmpty
-                ? _buildEmptyState(
-                    title: 'Belum Ada Data Organisasi',
-                    message:
-                        'Tekan tombol "Tambah Organisasi" di bawah untuk mendaftarkan organisasi baru.',
-                    icon: Icons.groups_outlined,
-                  )
-                : ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _organisasiScrollController,
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
-                    itemCount:
-                        list.length + (organisasiBloc.page != null ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == list.length && organisasiBloc.page != null) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      return _buildOrganisasiCard(list[index]);
-                    },
-                  ),
-          ),
-        ],
-      ),
     );
   }
 

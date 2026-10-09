@@ -273,82 +273,69 @@ class _PanicScreenState extends State<PanicScreen> {
               ),
             ],
           ),
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              final double bodyHeight = constraints.maxHeight;
-              final double bottomSheetHeight = _isExpanded
-                  ? (bodyHeight * 0.52).clamp(380.0, 480.0)
-                  : 240.0;
-
-              return Stack(
-                children: [
-                  AnimatedPadding(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    padding: EdgeInsets.only(bottom: bottomSheetHeight),
-                    child: GoogleMap(
-                      key: const ValueKey('panic_google_map'),
-                      initialCameraPosition: CameraPosition(
-                        target: userLatLng,
-                        zoom: 15.5,
-                      ),
-                      onMapCreated: (controller) {
-                        _mapController = controller;
-                        _recenterMap(userLat, userLng);
-                      },
-                      markers: markers,
-                      circles: circles,
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                    ),
+          body: Stack(
+            children: [
+              GoogleMap(
+                key: const ValueKey('panic_google_map'),
+                padding: const EdgeInsets.only(bottom: 240.0),
+                initialCameraPosition: CameraPosition(
+                  target: userLatLng,
+                  zoom: 15.5,
+                ),
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                  _recenterMap(userLat, userLng);
+                },
+                markers: markers,
+                circles: circles,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+              ),
+              if (state is PanicLoading && state.nearbyMembers.isEmpty)
+                const Positioned.fill(child: PanicShimmerLoading())
+              else ...[
+                Positioned(
+                  top: 12,
+                  left: 14,
+                  right: 14,
+                  child: PanicStatusBanner(
+                    isEmergencyActive: state.isEmergencyActive,
+                    activeMemberCount: filteredMembers.length,
                   ),
-                  if (state is PanicLoading && state.nearbyMembers.isEmpty)
-                    const Positioned.fill(child: PanicShimmerLoading())
-                  else ...[
-                    Positioned(
-                      top: 12,
-                      left: 14,
-                      right: 14,
-                      child: PanicStatusBanner(
-                        isEmergencyActive: state.isEmergencyActive,
-                        activeMemberCount: filteredMembers.length,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: PanicBottomPanel(
-                        fullAddress: state.fullAddress,
-                        isEmergencyActive: state.isEmergencyActive,
-                        isActionLoading: state is PanicActionLoading,
-                        tapCount: _tapCount,
-                        isExpanded: _isExpanded,
-                        filteredMembers: filteredMembers,
-                        filteredLeaders: filteredLeaders,
-                        onToggleExpanded: () {
-                          setState(() {
-                            _isExpanded = !_isExpanded;
-                          });
-                        },
-                        onEmergencyButtonPressed: () =>
-                            _handleEmergencyButtonTap(state),
-                        onDeactivateButtonPressed: _confirmDeactivateEmergency,
-                        onMemberTapped: (member, isLeader) {
-                          _recenterMap(member.latitude, member.longitude);
-                          PanicMemberDetailSheet.show(
-                            context,
-                            member,
-                            isLeader: isLeader,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ],
-              );
-            },
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: PanicBottomPanel(
+                    fullAddress: state.fullAddress,
+                    isEmergencyActive: state.isEmergencyActive,
+                    isActionLoading: state is PanicActionLoading,
+                    tapCount: _tapCount,
+                    isExpanded: _isExpanded,
+                    filteredMembers: filteredMembers,
+                    filteredLeaders: filteredLeaders,
+                    onToggleExpanded: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
+                    onEmergencyButtonPressed: () =>
+                        _handleEmergencyButtonTap(state),
+                    onDeactivateButtonPressed: _confirmDeactivateEmergency,
+                    onMemberTapped: (member, isLeader) {
+                      _recenterMap(member.latitude, member.longitude);
+                      PanicMemberDetailSheet.show(
+                        context,
+                        member,
+                        isLeader: isLeader,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ],
           ),
         );
       },

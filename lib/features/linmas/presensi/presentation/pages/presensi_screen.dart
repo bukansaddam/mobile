@@ -25,7 +25,9 @@ class _PresensiScreenState extends State<PresensiScreen>
   bool _isCameraError = false;
 
   Timer? _timer;
-  DateTime _currentTime = DateTime.now();
+  final ValueNotifier<DateTime> _currentTimeNotifier = ValueNotifier<DateTime>(
+    DateTime.now(),
+  );
 
   @override
   void initState() {
@@ -49,9 +51,7 @@ class _PresensiScreenState extends State<PresensiScreen>
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) {
-        setState(() {
-          _currentTime = DateTime.now();
-        });
+        _currentTimeNotifier.value = DateTime.now();
       }
     });
   }
@@ -67,7 +67,7 @@ class _PresensiScreenState extends State<PresensiScreen>
 
         _cameraController = CameraController(
           frontCam,
-          ResolutionPreset.veryHigh,
+          ResolutionPreset.high,
           enableAudio: false,
         );
 
@@ -103,6 +103,7 @@ class _PresensiScreenState extends State<PresensiScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
+    _currentTimeNotifier.dispose();
     _cameraController?.dispose();
     super.dispose();
   }
@@ -264,21 +265,26 @@ class _PresensiScreenState extends State<PresensiScreen>
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      DateFormat('HH:mm').format(_currentTime),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 6,
-                            color: Colors.black54,
-                            offset: Offset(0, 1),
+                    ValueListenableBuilder<DateTime>(
+                      valueListenable: _currentTimeNotifier,
+                      builder: (context, currentTime, _) {
+                        return Text(
+                          DateFormat('HH:mm').format(currentTime),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 6,
+                                color: Colors.black54,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),

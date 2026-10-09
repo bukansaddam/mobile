@@ -29,7 +29,7 @@ class _RondaScreenState extends State<RondaScreen> {
   final TextEditingController _keteranganController = TextEditingController();
   SttMode _sttMode = SttMode.none;
   bool _isTranscribing = false;
-  int _recordDurationSeconds = 0;
+  final ValueNotifier<int> _recordDurationNotifier = ValueNotifier<int>(0);
   Timer? _recordingTimer;
 
   @override
@@ -54,6 +54,7 @@ class _RondaScreenState extends State<RondaScreen> {
   void dispose() {
     _keteranganController.removeListener(_onKeteranganChanged);
     _recordingTimer?.cancel();
+    _recordDurationNotifier.dispose();
     _keteranganController.dispose();
     super.dispose();
   }
@@ -65,16 +66,14 @@ class _RondaScreenState extends State<RondaScreen> {
     if (status.isGranted) {
       try {
         await audioRecorder.startRecording();
+        _recordDurationNotifier.value = 0;
         setState(() {
           _sttMode = SttMode.regular;
-          _recordDurationSeconds = 0;
         });
         _recordingTimer?.cancel();
         _recordingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
           if (mounted) {
-            setState(() {
-              _recordDurationSeconds++;
-            });
+            _recordDurationNotifier.value++;
           }
         });
       } catch (e) {
@@ -219,9 +218,9 @@ class _RondaScreenState extends State<RondaScreen> {
       }
     } finally {
       if (mounted) {
+        _recordDurationNotifier.value = 0;
         setState(() {
           _isTranscribing = false;
-          _recordDurationSeconds = 0;
         });
       }
     }
@@ -1080,13 +1079,18 @@ class _RondaScreenState extends State<RondaScreen> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          'Mendengarkan... ${_formatDuration(_recordDurationSeconds)}',
-                          style: const TextStyle(
-                            color: AppColors.error,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11,
-                          ),
+                        child: ValueListenableBuilder<int>(
+                          valueListenable: _recordDurationNotifier,
+                          builder: (context, duration, _) {
+                            return Text(
+                              'Mendengarkan... ${_formatDuration(duration)}',
+                              style: const TextStyle(
+                                color: AppColors.error,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            );
+                          },
                         ),
                       ),
                       ElevatedButton.icon(
