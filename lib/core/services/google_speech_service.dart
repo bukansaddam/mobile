@@ -11,7 +11,17 @@ import '../constants/api_constants.dart';
 class _AuthData {
   final String token;
   final String projectId;
-  _AuthData({required this.token, required this.projectId});
+  final DateTime expiry;
+
+  _AuthData({
+    required this.token,
+    required this.projectId,
+    required this.expiry,
+  });
+
+  /// Token is valid if current time is before expiry minus 5 minutes safety margin
+  bool get isValid =>
+      DateTime.now().isBefore(expiry.subtract(const Duration(minutes: 5)));
 }
 
 class GoogleSpeechService {
@@ -20,11 +30,21 @@ class GoogleSpeechService {
   static const String _credentialAssetPath =
       'lib/core/crd/akar-504702-d2d27b0e66f2.json';
 
+  _AuthData? _cachedAuthData;
+  String? _cachedCredentialJson;
+  ServiceAccount? _cachedServiceAccount;
+
   GoogleSpeechService({Dio? dio}) : _dio = dio ?? Dio();
 
   Future<_AuthData> _getAuthData() async {
+    if (_cachedAuthData != null && _cachedAuthData!.isValid) {
+      return _cachedAuthData!;
+    }
+
     try {
-      final jsonString = await rootBundle.loadString(_credentialAssetPath);
+      final jsonString = _cachedCredentialJson ??= await rootBundle.loadString(
+        _credentialAssetPath,
+      );
       final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
       final accountCredentials = ServiceAccountCredentials.fromJson(jsonMap);
       final projectId = jsonMap['project_id'] as String? ?? 'akar-504702';
@@ -35,8 +55,15 @@ class GoogleSpeechService {
       );
 
       final token = authClient.credentials.accessToken.data;
+      final expiry = authClient.credentials.accessToken.expiry;
       authClient.close();
-      return _AuthData(token: token, projectId: projectId);
+
+      _cachedAuthData = _AuthData(
+        token: token,
+        projectId: projectId,
+        expiry: expiry,
+      );
+      return _cachedAuthData!;
     } catch (e, stack) {
       AppLogger.e('Failed to get Google Cloud access token', e, stack);
       rethrow;
@@ -113,8 +140,11 @@ class GoogleSpeechService {
     int sampleRateHertz = 16000,
   }) async* {
     try {
-      final jsonString = await rootBundle.loadString(_credentialAssetPath);
-      final serviceAccount = ServiceAccount.fromString(jsonString);
+      final jsonString = _cachedCredentialJson ??= await rootBundle.loadString(
+        _credentialAssetPath,
+      );
+      final serviceAccount = _cachedServiceAccount ??=
+          ServiceAccount.fromString(jsonString);
       final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
 
       final config = RecognitionConfig(

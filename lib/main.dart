@@ -48,10 +48,14 @@ void main() async {
   // Initialize dependency injection
   await di.init();
 
-  // Initialize Firebase Push Notification Service
-  await di.sl<FirebaseNotificationService>().initialize();
-
   runApp(const MyApp());
+
+  // Initialize Firebase Push Notification Service in background
+  unawaited(
+    di.sl<FirebaseNotificationService>().initialize().catchError((e) {
+      debugPrint('Error initializing notification service: $e');
+    }),
+  );
 
   unawaited(
     BackgroundServiceHelper.initializeService().catchError((e) {

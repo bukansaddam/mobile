@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+import 'package:akar/core/utils/image_compress_helper.dart';
 
 import '../models/bank_sampah_location_model.dart';
 import '../models/bank_sampah_report_model.dart';
@@ -119,9 +120,10 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
       map['notes'] = notes.trim();
     }
     if (photo != null) {
-      final fileName = photo.path.split('/').last;
+      final compressedPhoto = await ImageCompressHelper.compressToWebp(photo);
+      final fileName = compressedPhoto.path.split('/').last;
       map['photo'] = await MultipartFile.fromFile(
-        photo.path,
+        compressedPhoto.path,
         filename: fileName,
       );
     }
