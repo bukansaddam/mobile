@@ -85,7 +85,7 @@ class LocationSearchBarWidget extends StatelessWidget {
                             ),
                             onPressed: onClear,
                           )
-                        : SizedBox.shrink()),
+                        : const SizedBox.shrink()),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,

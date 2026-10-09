@@ -794,7 +794,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : Text(
+                  : const Text(
                       'KIRIM',
                       style: TextStyle(
                         color: Colors.white,

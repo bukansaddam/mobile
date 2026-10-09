@@ -63,10 +63,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
                               'Mini Survey Warga',
                               style: TextStyle(
@@ -225,8 +225,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Icon(
                         Icons.notifications_active_rounded,
                         color: Color(0xFFDC2626),
@@ -512,7 +512,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                       width: 1,
                                     ),
-                                    boxShadow: [
+                                    boxShadow: const [
                                       BoxShadow(
                                         color: AppColors.primary,
                                         blurRadius: 6,
@@ -600,11 +600,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
-                                    Expanded(
+                                    const Expanded(
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Text(
                                             'Isi Mini Survey Warga',
                                             style: TextStyle(

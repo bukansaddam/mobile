@@ -597,8 +597,8 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
                       'Sesuaikan kriteria pengurutan dan filter data',
                       style: TextStyle(

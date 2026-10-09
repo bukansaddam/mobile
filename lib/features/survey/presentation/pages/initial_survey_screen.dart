@@ -181,7 +181,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                     size: 54,
                   ),
                   title: const Text('Profil Linmas Berhasil Disimpan'),
-                  content: Text(
+                  content: const Text(
                     'Terima kasih telah melengkapi data baseline profil lingkungan & keamanan RT Anda.',
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodyMedium,

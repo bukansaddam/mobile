@@ -475,11 +475,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       fillColor: AppColors.grey50,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColors.grey300),
+        borderSide: const BorderSide(color: AppColors.grey300),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppColors.grey300),
+        borderSide: const BorderSide(color: AppColors.grey300),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

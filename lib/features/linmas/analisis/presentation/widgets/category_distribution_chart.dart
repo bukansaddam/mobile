@@ -131,7 +131,7 @@ class _DonutChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final outerRadius = size.width / 2;
-    final strokeWidth = 36.0;
+    const strokeWidth = 36.0;
     final chartRadius = outerRadius - (strokeWidth / 2);
 
     final totalValue = categoryData.fold<double>(
@@ -153,7 +153,7 @@ class _DonutChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
 
-    final labelSpan = const TextSpan(
+    const labelSpan = TextSpan(
       text: 'Kegiatan',
       style: TextStyle(
         color: AppColors.textSecondary,

@@ -1189,11 +1189,11 @@ class _RondaScreenState extends State<RondaScreen> {
                 ),
               ],
               const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 2, top: 2),
+              const Padding(
+                padding: EdgeInsets.only(left: 2, top: 2),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.info_outline_rounded,
                       size: 13,
@@ -2016,7 +2016,7 @@ class _RondaScreenState extends State<RondaScreen> {
         return;
       }
     }
-    context.read<RondaBloc>().add(SubmitRondaLaporanEvent());
+    context.read<RondaBloc>().add(const SubmitRondaLaporanEvent());
   }
 
   void _showSuccessDialog(BuildContext context, RondaLaporanEntity? result) {

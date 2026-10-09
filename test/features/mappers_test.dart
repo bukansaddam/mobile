@@ -147,7 +147,7 @@ void main() {
 
   group('Panic Mapper Tests', () {
     test('NearbyMemberModel & PanicAlertResultModel toDomain & toModel', () {
-      final memberModel = NearbyMemberModel(
+      const memberModel = NearbyMemberModel(
         id: 'mem_1',
         name: 'Agus',
         role: 'Linmas',
@@ -221,7 +221,7 @@ void main() {
     });
 
     test('InstitusiModel toApiJson matches required payload format', () {
-      final model = InstitusiModel(
+      const model = InstitusiModel(
         nama: 'Kantor Kelurahan Menteng',
         scope: 'Kelurahan',
         categoryId: 13,
@@ -237,7 +237,7 @@ void main() {
       });
 
       // Also verify fallback when categoryId and alamat are null
-      final fallbackModel = InstitusiModel(
+      const fallbackModel = InstitusiModel(
         nama: 'Polsek Sukamaju',
         scope: 'Kecamatan',
       );
@@ -249,14 +249,14 @@ void main() {
       });
 
       // Verify kabupaten/kota produces kabupaten_kota in payload
-      final kabKotaModel = InstitusiModel(
+      const kabKotaModel = InstitusiModel(
         nama: 'Dinas Sosial',
         scope: 'Kabupaten/Kota',
         categoryId: 13,
       );
       expect(kabKotaModel.toApiJson()['scope'], 'kabupaten_kota');
 
-      final kabKotaModel2 = InstitusiModel(
+      const kabKotaModel2 = InstitusiModel(
         nama: 'Dinas Kesehatan',
         scope: 'kabupaten_kota',
         categoryId: 14,
@@ -490,7 +490,7 @@ void main() {
     });
 
     test('BankSampahLocationModel toDomain & toModel mapping', () {
-      final model = BankSampahLocationModel(
+      const model = BankSampahLocationModel(
         id: 'LOC-01',
         nama: 'Bank Sampah Asri',
         alamat: 'Jl. Asri No. 10',

@@ -634,7 +634,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     : RefreshIndicator(
                         onRefresh: () async {
                           context.read<ActivationBloc>().add(
-                            LoadActivationActivitiesEvent(),
+                            const LoadActivationActivitiesEvent(),
                           );
                         },
                         child: filteredList.isEmpty

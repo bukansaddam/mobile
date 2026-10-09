@@ -478,8 +478,8 @@ class _DisasterEmergencyWarningPageState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: const [
+                          const Row(
+                            children: [
                               Icon(
                                 Icons.location_on_rounded,
                                 color: Color(0xFFEF4444),

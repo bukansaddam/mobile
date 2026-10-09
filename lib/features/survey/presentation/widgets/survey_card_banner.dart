@@ -130,7 +130,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.calendar_today_rounded,
                               size: 12,
                               color: AppColors.white,

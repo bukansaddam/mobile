@@ -47,7 +47,7 @@ class LocationRepositoryImpl implements LocationRepository {
       );
       return Right(coordinates);
     } catch (e) {
-      return Left(Failure('Lokasi tidak ditemukan'));
+      return const Left(Failure('Lokasi tidak ditemukan'));
     }
   }
 

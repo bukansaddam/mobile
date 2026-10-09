@@ -24,7 +24,7 @@ class FakeRondaRemoteDatasource implements RondaRemoteDatasource {
 void main() {
   group('RondaLaporanModel Payload & Mapping', () {
     test('toDailyReportPayload produces exact expected JSON schema', () {
-      final model = RondaLaporanModel(
+      const model = RondaLaporanModel(
         patrolTime: '16:00',
         waktuKejadian: '15:30',
         adaSampahMenumpuk: true,
@@ -114,7 +114,7 @@ void main() {
     });
 
     test('toDailyReportPayload handles affirmative security and environment flags', () {
-      final model = RondaLaporanModel(
+      const model = RondaLaporanModel(
         patrolTime: '21:00',
         waktuKejadian: '20:30',
         adaPencurian: true,
@@ -176,7 +176,7 @@ void main() {
     });
 
     test('toDailyReportPayload includes explicit coordinates for jalan_rusak and lampu_mati', () {
-      final model = RondaLaporanModel(
+      const model = RondaLaporanModel(
         adaJalanRusak: true,
         lokasiJalanRusakGps: 'Jl. Melati No. 5',
         latitudeJalanRusak: -6.237643,
@@ -206,7 +206,7 @@ void main() {
     });
 
     test('fromApiResponse extracts ID and fallback values properly', () {
-      final fallback = const RondaLaporanModel(
+      const fallback = RondaLaporanModel(
         patrolTime: '10:00',
         keterangan: 'Test notes',
       );
@@ -239,7 +239,7 @@ void main() {
     });
 
     test('submitLaporan calls datasource and returns Right(RondaLaporanEntity)', () async {
-      final entity = const RondaLaporanEntity(
+      const entity = RondaLaporanEntity(
         patrolTime: '16:00',
         waktuKejadian: '15:30',
         keterangan: 'Aman',
@@ -260,7 +260,7 @@ void main() {
 
     test('submitLaporan returns Left(ServerFailure) on datasource exception', () async {
       fakeDatasource.shouldThrow = true;
-      final entity = const RondaLaporanEntity(keterangan: 'Aman');
+      const entity = RondaLaporanEntity(keterangan: 'Aman');
 
       final result = await repository.submitLaporan(entity);
 
@@ -312,7 +312,7 @@ void main() {
       ));
       await Future.delayed(const Duration(milliseconds: 10));
 
-      bloc.add(SubmitRondaLaporanEvent());
+      bloc.add(const SubmitRondaLaporanEvent());
 
       final states = <RondaState>[];
       final subscription = bloc.stream.listen(states.add);
@@ -334,7 +334,7 @@ void main() {
     test('SubmitRondaLaporanEvent emits failure on server error', () async {
       fakeDatasource.shouldThrow = true;
 
-      bloc.add(SubmitRondaLaporanEvent());
+      bloc.add(const SubmitRondaLaporanEvent());
 
       final states = <RondaState>[];
       final subscription = bloc.stream.listen(states.add);

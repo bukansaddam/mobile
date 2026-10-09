@@ -96,7 +96,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     final namaController = TextEditingController(text: initialName ?? '');
     final alamatController = TextEditingController();
     String selectedScope = DemografiConstants.defaultInstitusiScope;
-    final scopeOptions = DemografiConstants.institusiScopeOptions;
+    const scopeOptions = DemografiConstants.institusiScopeOptions;
 
     showModalBottomSheet(
       context: parentContext,
@@ -276,7 +276,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     final jumlahAnggotaController = TextEditingController(text: '0');
     final alamatController = TextEditingController();
     String selectedBidang = DemografiConstants.defaultOrganisasiBidang;
-    final bidangOptions = DemografiConstants.organisasiBidangOptions;
+    const bidangOptions = DemografiConstants.organisasiBidangOptions;
 
     showModalBottomSheet(
       context: parentContext,
@@ -551,14 +551,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   onAddNew(searchController.text.trim());
                                 },
                                 borderRadius: BorderRadius.circular(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
-                                    children: const [
+                                    children: [
                                       Icon(
                                         Icons.add_circle_outline_rounded,
                                         size: 18,

@@ -104,7 +104,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       return Right(userModel?.toDomain());
     } catch (e) {
-      return Left(CacheFailure("Failed to retrieve cached user data"));
+      return const Left(CacheFailure("Failed to retrieve cached user data"));
     }
   }
 
@@ -114,7 +114,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final token = await localDatasource.getToken();
       return Right(token);
     } catch (e) {
-      return Left(CacheFailure("Failed to retrieve cached token"));
+      return const Left(CacheFailure("Failed to retrieve cached token"));
     }
   }
 
@@ -124,7 +124,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await localDatasource.clearSession();
       return const Right(null);
     } catch (e) {
-      return Left(CacheFailure("Failed to clear local session"));
+      return const Left(CacheFailure("Failed to clear local session"));
     }
   }
 }

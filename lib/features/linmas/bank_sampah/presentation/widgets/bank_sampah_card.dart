@@ -238,7 +238,7 @@ class BankSampahCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text(
+                            const Text(
                               '•',
                               style: TextStyle(
                                 color: AppColors.grey400,

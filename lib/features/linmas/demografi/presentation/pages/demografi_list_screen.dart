@@ -746,7 +746,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final activeColor = AppColors.primary;
+    const activeColor = AppColors.primary;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

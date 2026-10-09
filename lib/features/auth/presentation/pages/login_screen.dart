@@ -215,13 +215,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fillColor: AppColors.grey50,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: AppColors.grey300,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: AppColors.grey300,
                                     ),
                                   ),
@@ -280,13 +280,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fillColor: AppColors.grey50,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: AppColors.grey300,
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
+                                    borderSide: const BorderSide(
                                       color: AppColors.grey300,
                                     ),
                                   ),

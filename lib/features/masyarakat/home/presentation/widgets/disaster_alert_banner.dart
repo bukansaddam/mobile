@@ -35,8 +35,8 @@ class DisasterAlertBanner extends StatelessWidget {
                   ),
                 ),
               ),
-              Row(
-                children: const [
+              const Row(
+                children: [
                   Icon(
                     Icons.notifications_active_rounded,
                     color: Color(0xFFDC2626),

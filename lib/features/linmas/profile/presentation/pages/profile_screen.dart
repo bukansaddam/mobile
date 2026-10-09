@@ -118,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
                       color: AppColors.grey400,
                     ),
                     const SizedBox(height: 16),
-                    Text(
+                    const Text(
                       'Sesi Pengguna Tidak Ditemukan',
                       style: AppTextStyles.headlineSmall,
                     ),
@@ -305,10 +305,10 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 14),
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
                               'KTA Digital Linmas',
                               style: TextStyle(

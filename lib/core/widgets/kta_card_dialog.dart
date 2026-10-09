@@ -221,10 +221,10 @@ class _KtaCardModalState extends State<KtaCardModal> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                 'AKAR',
                                 style: TextStyle(
@@ -369,10 +369,10 @@ class _KtaCardModalState extends State<KtaCardModal> {
                       ),
                       child: Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
+                              children: [
                                 Text(
                                   'Diterbitkan oleh Sistem AKAR',
                                   style: TextStyle(
@@ -407,15 +407,15 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.qr_code_2_rounded,
                                   size: 22,
                                   color: AppColors.primaryDark,
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(width: 4),
                                 Text(
                                   'VALID',
                                   style: TextStyle(

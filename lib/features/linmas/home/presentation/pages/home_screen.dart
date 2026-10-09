@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ..add(const FetchAnnouncements())
                     ..add(const FetchBannerAnnouncements());
                   context.read<BankSampahBloc>().add(
-                    RefreshBankSampahDataEvent(),
+                    const RefreshBankSampahDataEvent(),
                   );
                 },
                 child: SingleChildScrollView(

@@ -123,7 +123,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   ),
                   Text(
                     widget.subtitle ?? 'Pengaduan Masyarakat',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.primary,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,

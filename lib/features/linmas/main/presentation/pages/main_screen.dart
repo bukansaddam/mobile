@@ -305,7 +305,7 @@ class _MainScreenState extends State<MainScreen> {
                               color: AppColors.grey400,
                             ),
                             const SizedBox(height: 16),
-                            Text(
+                            const Text(
                               'Sesi Pengguna Tidak Ditemukan',
                               style: AppTextStyles.headlineSmall,
                             ),
