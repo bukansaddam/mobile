@@ -271,7 +271,7 @@ class ProfileScreen extends StatelessWidget {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          minimumSize: const Size(0, 38),
+                          minimumSize: const Size(0, 44),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 14,
                             vertical: 8,
@@ -402,7 +402,7 @@ class ProfileScreen extends StatelessWidget {
                     'AKAR • versi 1.0.0',
                     style: TextStyle(
                       fontSize: 11,
-                      color: AppColors.grey500,
+                      color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -3,7 +3,7 @@ part of 'ronda_bloc.dart';
 abstract class RondaState extends Equatable {
   final int currentStep;
 
-  // Step 1: Lingkungan
+  // Lingkungan
   final int sampahMenumpuk;
   final int selokanMampet;
   final int fasilitasRusak;
@@ -12,7 +12,7 @@ abstract class RondaState extends Equatable {
   final int jalanBerlubang;
   final int lampuMati;
 
-  // Step 2: Keamanan
+  // Keamanan
   final int laporanKeamanan;
   final int wargaBertengkar;
   final int tempatKurangAman;
@@ -22,7 +22,7 @@ abstract class RondaState extends Equatable {
   final int aktivitasMencurigakan;
   final int kehilanganLingkungan;
 
-  // Step 3: Sosial
+  // Sosial
   final int wargaButuhBantuan;
   final int kelompokBerselisih;
   final int keluhanWarga;
@@ -32,7 +32,7 @@ abstract class RondaState extends Equatable {
   final int kasusPerzinahan;
   final int orangTerlantar;
 
-  // Step 1 Sampah Detailed Fields
+  // Detail Sampah
   final bool adaSampahMenumpuk;
   final String? waktuSampahMenumpuk;
   final String? lokasiSampahMenumpuk;
@@ -44,7 +44,7 @@ abstract class RondaState extends Equatable {
   final String? lokasiPembakaran;
   final String? pembakaranDiberiTindakan;
 
-  // Step 2 Keamanan Detailed Fields
+  // Detail Keamanan
   final bool adaPencurian;
   final String? waktuPencurian;
   final String? lokasiPencurian;
@@ -58,7 +58,7 @@ abstract class RondaState extends Equatable {
   final bool adaNarkoba;
   final String? narkobaDilaporkanAparat;
 
-  // Step 3 Lingkungan Detailed Fields
+  // Detail Fasilitas & Lingkungan
   final bool adaSelokanTersumbat;
   final String? waktuSelokanTersumbat;
   final String? lokasiSelokanTersumbat;
@@ -77,7 +77,7 @@ abstract class RondaState extends Equatable {
   final String? patrolTime;
   final String? waktuKejadian;
 
-  // Step 4: Tambahan
+  // Keterangan Tambahan
   final String keterangan;
 
   const RondaState({

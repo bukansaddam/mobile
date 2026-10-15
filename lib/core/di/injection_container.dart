@@ -127,7 +127,7 @@ import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.d
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // ---------------------- Core & External ----------------------
+  // Core & External
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
@@ -147,7 +147,7 @@ Future<void> init() async {
     ),
   );
 
-  // ---------------------- Data Sources ----------------------
+  // Data Sources
   sl.registerLazySingleton<AuthLocalDatasource>(
     () => AuthLocalDatasourceImpl(sharedPreferences: sl()),
   );
@@ -235,7 +235,7 @@ Future<void> init() async {
     ),
   );
 
-  // ---------------------- Use Cases ----------------------
+  // Use Cases
   sl.registerLazySingleton<LoginUsecase>(() => LoginUsecase(sl()));
   sl.registerLazySingleton<RegisterUsecase>(() => RegisterUsecase(sl()));
   sl.registerLazySingleton<GetSavedUserUsecase>(
@@ -320,7 +320,7 @@ Future<void> init() async {
     () => GetCurrentLocationUseCase(sl<LocationRepository>()),
   );
 
-  // ---------------------- BLoCs & Cubits ----------------------
+  // BLoCs & Cubits
   sl.registerLazySingleton<AuthBloc>(
     () => AuthBloc(
       loginUsecase: sl(),
@@ -412,7 +412,7 @@ Future<void> init() async {
     ),
   );
 
-  // ---------------------- Survey ----------------------
+  // Survey
   sl.registerLazySingleton<SurveyLocalDatasource>(
     () => SurveyLocalDatasourceImpl(sharedPreferences: sl()),
   );

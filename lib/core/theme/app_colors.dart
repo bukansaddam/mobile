@@ -10,7 +10,6 @@ class AppColors {
   static const Color accent = Color(0xFF4B2E0E);
   static const Color secondary = Color(0xFF1E293B);
 
-  // GRADIENT HELPER
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -55,7 +54,7 @@ class AppColors {
 
   // Text
   static const Color textPrimary = Color(0xFF1A1A2E);
-  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textSecondary = Color(0xFF4B5563);
   static const Color textHint = Color(0xFF9CA3AF);
   static const Color textDisabled = Color(0xFFBDBDBD);
 }

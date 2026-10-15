@@ -32,25 +32,20 @@ import 'package:akar/utils/app_logger.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Matikan semua debugPrint saat berjalan di production
   if (AppLogger.isProduction) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
 
   await initializeDateFormatting('id_ID', null);
 
-  // Initialize Firebase Core
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Set background messaging handler before runApp
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  // Initialize dependency injection
   await di.init();
 
   runApp(const MyApp());
 
-  // Initialize Firebase Push Notification Service in background
   unawaited(
     di.sl<FirebaseNotificationService>().initialize().catchError((e) {
       debugPrint('Error initializing notification service: $e');

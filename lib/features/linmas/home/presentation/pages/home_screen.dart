@@ -456,14 +456,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               const Icon(
                                 Icons.access_time_rounded,
                                 size: 11,
-                                color: AppColors.grey500,
+                                color: AppColors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 item.date,
                                 style: const TextStyle(
                                   fontSize: 10.5,
-                                  color: AppColors.grey500,
+                                  color: AppColors.textSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

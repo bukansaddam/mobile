@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-/// Komponen badge berbentuk rosette (stempel 8 sisi melengkung)
-/// sesuai dengan desain referensi modern.
 class RosetteBadge extends StatelessWidget {
   final IconData icon;
   final Color badgeColor;
@@ -32,7 +30,6 @@ class RosetteBadge extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Soft ambient glow shadow under the badge
           Container(
             width: boxSize * 0.9,
             height: boxSize * 0.9,
@@ -74,14 +71,9 @@ class RosetteBadge extends StatelessWidget {
   }
 }
 
-/// Standarisasi Dialog Interaktif (ADA AKSI lanjutan) di aplikasi AKAR NARADATA.
-/// Tampilan mengikuti floating bottom sheet: berada di bawah dengan margin, sudut membulat lebar,
-/// dan tombol berbentuk pill (kapsul).
 class AppDialogs {
   AppDialogs._();
 
-  /// Menampilkan Success Dialog seperti pada referensi desain.
-  /// Cocok untuk aksi berhasil yang membutuhkan tombol tindakan (misal: "Selesai", "Kembali ke Beranda", dll).
   static Future<T?> showSuccess<T>(
     BuildContext context, {
     String title = 'Berhasil',
@@ -137,8 +129,6 @@ class AppDialogs {
     );
   }
 
-  /// Menampilkan Failed / Error Dialog.
-  /// Cocok saat operasi gagal dan butuh perhatian user (misal: opsi "Coba Lagi" atau "Tutup").
   static Future<T?> showFailed<T>(
     BuildContext context, {
     String title = 'Terjadi Kesalahan',
@@ -211,8 +201,6 @@ class AppDialogs {
     );
   }
 
-  /// Menampilkan Confirmation Dialog sebelum melakukan aksi penting.
-  /// Mengembalikan Future<bool?>: `true` jika user konfirmasi, `false` jika batal.
   static Future<bool> showConfirmation(
     BuildContext context, {
     required String title,
@@ -286,8 +274,6 @@ class AppDialogs {
     return true;
   }
 
-  /// Menampilkan Alert / Info Dialog.
-  /// Cocok untuk pemberitahuan penting yang wajib dibaca dan ditutup dengan tombol konfirmasi.
   static Future<T?> showAlert<T>(
     BuildContext context, {
     String title = 'Informasi',
@@ -327,8 +313,6 @@ class AppDialogs {
     );
   }
 
-  /// Helper untuk animasi transisi slide-up lembut dari bawah + fade + backdrop blur
-  /// dengan tata letak floating bottom sheet (di bawah dengan margin).
   static Future<T?> _showAnimatedDialog<T>({
     required BuildContext context,
     required bool barrierDismissible,
@@ -362,7 +346,6 @@ class AppDialogs {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 440),
                     child: GestureDetector(
-                      // Mencegah klik di dalam kartu dialog menutup dialog
                       behavior: HitTestBehavior.opaque,
                       onTap: () {},
                       child: builder(ctx),
@@ -402,7 +385,6 @@ class AppDialogs {
   }
 }
 
-/// Container kartu dialog bersih, melayang (floating bottom sheet) dengan rounded sudut besar.
 class _AppDialogCard extends StatelessWidget {
   final Widget badge;
   final String title;

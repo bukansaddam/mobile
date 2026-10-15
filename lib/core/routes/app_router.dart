@@ -182,7 +182,7 @@ class AppRouter {
       return null;
     },
     routes: [
-      // ----------------- Common -----------------
+      // Common
       GoRoute(
         path: splashPath,
         name: splash,
@@ -228,7 +228,7 @@ class AppRouter {
         },
       ),
 
-      // ----------------- Linmas (Officer) -----------------
+      // Linmas (Officer)
       GoRoute(
         path: mainPath,
         name: main,
@@ -333,7 +333,7 @@ class AppRouter {
         },
       ),
 
-      // ----------------- Masyarakat (Member / Dumas) -----------------
+      // Masyarakat (Member / Dumas)
       GoRoute(
         path: masyarakatMainPath,
         name: masyarakatMain,
@@ -443,7 +443,7 @@ class AppRouter {
     ],
   );
 
-  // Helper Navigation Methods
+  // Navigation shortcuts
   static void toHome(BuildContext context) {
     final authState = sl<AuthBloc>().state;
     final isMember = authState is AuthAuthenticated
