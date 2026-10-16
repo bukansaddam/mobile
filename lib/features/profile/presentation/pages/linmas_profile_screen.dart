@@ -5,6 +5,7 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/kta_card_dialog.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
@@ -157,10 +158,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                           ),
                           child: ClipOval(
                             child:
-                                (user.profilePic != null &&
-                                    user.profilePic!.trim().isNotEmpty)
+                                (user.displayProfilePic != null)
                                 ? AppNetworkImage(
-                                    imageUrl: user.profilePic!.trim(),
+                                    imageUrl: user.displayProfilePic!,
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.cover,

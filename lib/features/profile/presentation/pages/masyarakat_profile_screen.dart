@@ -5,6 +5,7 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
@@ -236,7 +237,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
                     child: Column(
                       children: [
-                        _buildAvatar(userName, currentUser?.profilePic),
+                        _buildAvatar(userName, currentUser?.displayProfilePic),
 
                         const SizedBox(height: 16),
 

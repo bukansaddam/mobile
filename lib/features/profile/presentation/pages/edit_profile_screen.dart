@@ -690,10 +690,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         height: 104,
                         fit: BoxFit.cover,
                       )
-                    : (currentUser?.profilePic != null &&
-                          currentUser!.profilePic!.trim().isNotEmpty)
+                    : (currentUser?.displayProfilePic != null)
                     ? AppNetworkImage(
-                        imageUrl: currentUser.profilePic!.trim(),
+                        imageUrl: currentUser!.displayProfilePic!,
                         width: 104,
                         height: 104,
                         fit: BoxFit.cover,

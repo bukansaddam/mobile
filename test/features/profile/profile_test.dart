@@ -110,4 +110,32 @@ void main() {
       expect(result.left.message, 'Gagal memperbarui profil');
     });
   });
+
+  group('UserEntity displayProfilePic resolution tests', () {
+    test('returns null when profilePic is null or empty', () {
+      const userWithoutPic = UserEntity(id: 1, profilePic: null);
+      expect(userWithoutPic.displayProfilePic, isNull);
+
+      const userWithEmptyPic = UserEntity(id: 1, profilePic: '   ');
+      expect(userWithEmptyPic.displayProfilePic, isNull);
+    });
+
+    test('preserves full http/https URLs as-is', () {
+      const user = UserEntity(id: 1, profilePic: 'https://cdn.example.com/avatars/1.png');
+      expect(user.displayProfilePic, 'https://cdn.example.com/avatars/1.png');
+    });
+
+    test('prepends baseUrl and storage for relative paths', () {
+      const user1 = UserEntity(id: 1, profilePic: 'profile_pictures/avatar.jpg');
+      expect(user1.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+
+      const user2 = UserEntity(id: 1, profilePic: '/storage/profile_pictures/avatar.jpg');
+      expect(user2.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+      expect(user2.displayProfilePic, isNot(contains('/storage/storage/')));
+
+      const user3 = UserEntity(id: 1, profilePic: 'storage/profile_pictures/avatar.jpg');
+      expect(user3.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+      expect(user3.displayProfilePic, isNot(contains('/storage/storage/')));
+    });
+  });
 }
