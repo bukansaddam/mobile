@@ -765,7 +765,7 @@ return $default(_that.success,_that.message,_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _InstitusiResponseModel extends InstitusiResponseModel {
-  const _InstitusiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data')  List<InstitusiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
+  const _InstitusiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data') final  List<InstitusiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
   factory _InstitusiResponseModel.fromJson(Map<String, dynamic> json) => _$InstitusiResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;

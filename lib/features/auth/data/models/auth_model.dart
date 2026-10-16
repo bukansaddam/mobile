@@ -46,6 +46,31 @@ Object? _readRole(Map json, String key) {
   return null;
 }
 
+Object? _readAddress(Map json, String key) {
+  return json['address'] ??
+      json['alamat'] ??
+      (json['public_member'] is Map ? json['public_member']['address'] : null);
+}
+
+Object? _readBirthDate(Map json, String key) {
+  return json['birth_date'] ??
+      json['birthdate'] ??
+      json['tanggal_lahir'] ??
+      (json['public_member'] is Map
+          ? json['public_member']['birth_date']
+          : null);
+}
+
+Object? _readProfilePic(Map json, String key) {
+  return json['profile_pic'] ??
+      json['profile_photo'] ??
+      json['avatar'] ??
+      json['photo'] ??
+      (json['public_member'] is Map
+          ? json['public_member']['profile_pic']
+          : null);
+}
+
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();
@@ -66,6 +91,10 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "village_members_id") int? villageMembersId,
     @JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,
     @JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,
+    @JsonKey(name: "birth_date", readValue: _readBirthDate) String? birthDate,
+    @JsonKey(name: "address", readValue: _readAddress) String? address,
+    @JsonKey(name: "profile_pic", readValue: _readProfilePic)
+    String? profilePic,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

@@ -1,0 +1,673 @@
+import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/routes/app_router.dart';
+import 'package:akar/core/services/audio_alarm_service.dart';
+import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
+import 'package:akar/core/widgets/app_toast.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
+import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class MasyarakatProfileScreen extends StatefulWidget {
+  const MasyarakatProfileScreen({super.key});
+
+  @override
+  State<MasyarakatProfileScreen> createState() =>
+      _MasyarakatProfileScreenState();
+}
+
+class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ProfileBloc>().add(GetProfileEvent());
+      }
+    });
+  }
+
+  void _showNotificationSettingsSheet(BuildContext context) {
+    final audioService = sl<AudioAlarmService>();
+    bool soundEnabled = audioService.soundEnabled;
+    double volume = audioService.volume;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Material(
+              color: Colors.white,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.notifications_active_rounded,
+                          color: Color(0xFFDC2626),
+                          size: 24,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Notifikasi & Alarm Dering Bencana',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0F172A),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Atur peringatan darurat berdering ketika ada potensi bencana alam di sekitar Anda.',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: Color(0xFF64748B),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    SwitchListTile(
+                      value: soundEnabled,
+                      onChanged: (val) {
+                        setModalState(() {
+                          soundEnabled = val;
+                        });
+                        audioService.setSoundEnabled(val);
+                      },
+                      activeTrackColor: const Color(0xFFDC2626),
+                      title: const Text(
+                        'Dering Sirine Bencana Alam',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Memutar sirine berdurasi kontinu saat ada bahaya gempa/banjir.',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xFF64748B),
+                        ),
+                      ),
+                    ),
+
+                    const Divider(height: 20),
+
+                    const Text(
+                      'Volume Suara Sirine Alarm',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF334155),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.volume_down_rounded,
+                          color: Color(0xFF64748B),
+                        ),
+                        Expanded(
+                          child: Slider(
+                            value: volume,
+                            min: 0.1,
+                            max: 1.0,
+                            activeColor: const Color(0xFFDC2626),
+                            onChanged: soundEnabled
+                                ? (val) {
+                                    setModalState(() {
+                                      volume = val;
+                                    });
+                                    audioService.setVolume(val);
+                                  }
+                                : null,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.volume_up_rounded,
+                          color: Color(0xFFDC2626),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: OutlinedButton.icon(
+                        onPressed: soundEnabled
+                            ? () {
+                                audioService.playTestAlarm();
+                                AppToast.showInfo(
+                                  context,
+                                  message:
+                                      '🔔 Memutar sampel suara alarm sirine darurat (4 detik)...',
+                                );
+                              }
+                            : null,
+                        icon: const Icon(
+                          Icons.play_arrow_rounded,
+                          color: Color(0xFFDC2626),
+                        ),
+                        label: const Text(
+                          'Uji Dering Sirine (Sound Test)',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFDC2626),
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFFCA5A5)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+    final currentUser = authState is AuthAuthenticated ? authState.user : null;
+    final userName = currentUser?.name ?? 'Warga Masyarakat';
+    final userContact =
+        currentUser?.email ?? currentUser?.phoneNumber ?? 'Warga Terdaftar';
+
+    final totalLaporanCount = dummyMyComplaints.length;
+    final inProgressCount = dummyMyComplaints
+        .where(
+          (c) =>
+              c.status == ComplaintStatus.inProgress ||
+              c.status == ComplaintStatus.received ||
+              c.status == ComplaintStatus.pending,
+        )
+        .length;
+    final completedCount = dummyMyComplaints
+        .where((c) => c.status == ComplaintStatus.completed)
+        .length;
+
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          context.read<ProfileBloc>().add(GetProfileEvent());
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          child: Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.topCenter,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+                    child: Column(
+                      children: [
+                        _buildAvatar(userName, currentUser?.profilePic),
+
+                        const SizedBox(height: 16),
+
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x0D0F172A),
+                                blurRadius: 20,
+                                offset: Offset(0, 8),
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          userName,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w800,
+                                            color: Color(0xFF0F172A),
+                                            letterSpacing: -0.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          userContact,
+                                          style: const TextStyle(
+                                            fontSize: 12.5,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF64748B),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryLight,
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: AppColors.primary.withAlpha(40),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.verified_user_rounded,
+                                          color: AppColors.primaryDark,
+                                          size: 15,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'Warga Terdaftar',
+                                          style: TextStyle(
+                                            color: AppColors.primaryDark,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 20),
+
+                              Row(
+                                children: [
+                                  _buildStatCard(
+                                    number: '$totalLaporanCount',
+                                    label: 'Laporan',
+                                  ),
+                                  const SizedBox(width: 10),
+                                  _buildStatCard(
+                                    number: '$inProgressCount',
+                                    label: 'Proses',
+                                  ),
+                                  const SizedBox(width: 10),
+                                  _buildStatCard(
+                                    number: '$completedCount',
+                                    label: 'Selesai',
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              Container(
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: const Color(0xFFE2E8F0),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    _buildProfileDetailItem(
+                                      icon: Icons.badge_outlined,
+                                      label: 'NIK',
+                                      value: currentUser?.nik ?? '-',
+                                    ),
+                                    const Divider(
+                                      height: 16,
+                                      color: Color(0xFFE2E8F0),
+                                    ),
+                                    _buildProfileDetailItem(
+                                      icon: Icons.phone_outlined,
+                                      label: 'No. Telepon',
+                                      value: currentUser?.phoneNumber ?? '-',
+                                    ),
+                                    const Divider(
+                                      height: 16,
+                                      color: Color(0xFFE2E8F0),
+                                    ),
+                                    _buildProfileDetailItem(
+                                      icon: Icons.email_outlined,
+                                      label: 'Email',
+                                      value: currentUser?.email ?? '-',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x080F172A),
+                                blurRadius: 14,
+                                offset: Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              _buildMenuItem(
+                                icon: Icons.person_outline_rounded,
+                                title: 'Edit Profil Saya',
+                                onTap: () => AppRouter.toEditProfile(context),
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: Color(0xFFF1F5F9),
+                              ),
+                              _buildMenuItem(
+                                icon: Icons.notifications_none_rounded,
+                                title: 'Pengaturan Notifikasi & Alarm Bencana',
+                                onTap: () =>
+                                    _showNotificationSettingsSheet(context),
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: Color(0xFFF1F5F9),
+                              ),
+                              _buildMenuItem(
+                                icon: Icons.lock_outline_rounded,
+                                title: 'Ubah Kata Sandi',
+                                onTap: () => AppRouter.toEditProfile(context),
+                              ),
+                              const Divider(
+                                height: 1,
+                                color: Color(0xFFF1F5F9),
+                              ),
+                              _buildMenuItem(
+                                icon: Icons.logout_rounded,
+                                title: 'Keluar dari Akun',
+                                textColor: const Color(0xFFDC2626),
+                                iconColor: const Color(0xFFDC2626),
+                                showChevron: false,
+                                onTap: () async {
+                                  final confirmed =
+                                      await AppDialogs.showConfirmation(
+                                        context,
+                                        title: 'Keluar dari Akun',
+                                        message:
+                                            'Apakah Anda yakin ingin keluar dari akun ini?',
+                                        confirmText: 'Keluar',
+                                        cancelText: 'Batal',
+                                        isDestructive: true,
+                                        icon: Icons.logout_rounded,
+                                      );
+                                  if (confirmed && context.mounted) {
+                                    context.read<AuthBloc>().add(LogoutEvent());
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatar(String name, String? profilePic) {
+    final initials = name.trim().isNotEmpty
+        ? name
+              .trim()
+              .split(' ')
+              .where((w) => w.isNotEmpty)
+              .map((w) => w[0])
+              .take(2)
+              .join()
+              .toUpperCase()
+        : 'W';
+
+    return Container(
+      width: 105,
+      height: 105,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.primaryLight,
+        border: Border.all(color: Colors.white, width: 4),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1F0F172A),
+            blurRadius: 18,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: (profilePic != null && profilePic.trim().isNotEmpty)
+            ? AppNetworkImage(
+                imageUrl: profilePic.trim(),
+                width: 105,
+                height: 105,
+                fit: BoxFit.cover,
+                borderRadius: BorderRadius.circular(52.5),
+              )
+            : Center(
+                child: Text(
+                  initials,
+                  style: const TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primaryDark,
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildStatCard({required String number, required String label}) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+        ),
+        child: Column(
+          children: [
+            Text(
+              number,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0F172A),
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileDetailItem({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 18, color: AppColors.textSecondary),
+        const SizedBox(width: 10),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0F172A),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    String? badge,
+    Color? textColor,
+    Color? iconColor,
+    bool showChevron = true,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: (iconColor ?? const Color(0xFF64748B)).withAlpha(20),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 18,
+                color: iconColor ?? const Color(0xFF475569),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w600,
+                        color: textColor ?? const Color(0xFF1E293B),
+                      ),
+                    ),
+                  ),
+                  if (badge != null) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        badge,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (showChevron)
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: Color(0xFF94A3B8),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef ProfilePage = MasyarakatProfileScreen;

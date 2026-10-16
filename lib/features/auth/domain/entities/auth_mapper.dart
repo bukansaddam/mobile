@@ -39,6 +39,9 @@ extension UserModelMapper on UserModel {
       villageMembersId: villageMembersId,
       isInitialQuizCompleted: isInitialQuizCompleted,
       isInitialQuizFilled: isInitialQuizFilled,
+      birthDate: birthDate,
+      address: address,
+      profilePic: profilePic,
     );
   }
 }
@@ -61,6 +64,9 @@ extension UserEntityMapper on UserEntity {
       villageMembersId: villageMembersId,
       isInitialQuizCompleted: isInitialQuizCompleted,
       isInitialQuizFilled: isInitialQuizFilled,
+      birthDate: birthDate,
+      address: address,
+      profilePic: profilePic,
     );
   }
 }

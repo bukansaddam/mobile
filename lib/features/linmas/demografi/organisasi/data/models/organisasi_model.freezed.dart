@@ -765,7 +765,7 @@ return $default(_that.success,_that.message,_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _OrganisasiResponseModel extends OrganisasiResponseModel {
-  const _OrganisasiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data')  List<OrganisasiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
+  const _OrganisasiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data') final  List<OrganisasiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
   factory _OrganisasiResponseModel.fromJson(Map<String, dynamic> json) => _$OrganisasiResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;

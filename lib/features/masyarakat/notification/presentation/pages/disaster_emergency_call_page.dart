@@ -176,86 +176,90 @@ class _DisasterEmergencyWarningPageState
       ),
       builder: (ctx) {
         final phone = widget.event.senderPhone ?? '';
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Hubungi Pemanggil (${widget.event.senderName ?? "Anggota"})',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  phone,
-                  style: const TextStyle(
-                    color: Color(0xFF94A3B8),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF25D366).withAlpha(40),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.chat_bubble_rounded,
-                      color: Color(0xFF25D366),
-                    ),
-                  ),
-                  title: const Text(
-                    'Chat via WhatsApp',
-                    style: TextStyle(
+        return Material(
+          color: const Color(0xFF1E293B),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Hubungi Pemanggil (${widget.event.senderName ?? "Anggota"})',
+                    style: const TextStyle(
                       color: Colors.white,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  subtitle: const Text(
-                    'Kirim konfirmasi respon cepat',
-                    style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _openWhatsApp();
-                  },
-                ),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF38BDF8).withAlpha(40),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.phone_in_talk_rounded,
-                      color: Color(0xFF38BDF8),
+                  const SizedBox(height: 6),
+                  Text(
+                    phone,
+                    style: const TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontSize: 14,
                     ),
                   ),
-                  title: const Text(
-                    'Panggil Telepon Langsung',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                  const SizedBox(height: 20),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF25D366).withAlpha(40),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.chat_bubble_rounded,
+                        color: Color(0xFF25D366),
+                      ),
                     ),
+                    title: const Text(
+                      'Chat via WhatsApp',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Kirim konfirmasi respon cepat',
+                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _openWhatsApp();
+                    },
                   ),
-                  subtitle: const Text(
-                    'Panggilan suara biasa (GSM)',
-                    style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF38BDF8).withAlpha(40),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.phone_in_talk_rounded,
+                        color: Color(0xFF38BDF8),
+                      ),
+                    ),
+                    title: const Text(
+                      'Panggil Telepon Langsung',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      'Panggilan suara biasa (GSM)',
+                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      _openDialer();
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _openDialer();
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

@@ -32,6 +32,9 @@ abstract class UserEntity with _$UserEntity {
     int? villageMembersId,
     bool? isInitialQuizCompleted,
     bool? isInitialQuizFilled,
+    String? birthDate,
+    String? address,
+    String? profilePic,
   }) = _UserEntity;
 }
 

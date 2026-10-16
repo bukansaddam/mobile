@@ -21,6 +21,14 @@ import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
+// Profile
+import 'package:akar/features/profile/data/datasources/profile_remote_datasource.dart';
+import 'package:akar/features/profile/data/repositories/profile_repository_impl.dart';
+import 'package:akar/features/profile/domain/repositories/profile_repository.dart';
+import 'package:akar/features/profile/domain/usecases/get_profile_usecase.dart';
+import 'package:akar/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
+
 // Linmas
 import 'package:akar/features/linmas/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/linmas/tracking/data/repositories/tracking_repository_impl.dart';
@@ -154,6 +162,9 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<ProfileRemoteDatasource>(
+    () => ProfileRemoteDatasourceImpl(),
+  );
   sl.registerLazySingleton<TrackingRemoteDatasource>(
     () => TrackingRemoteDatasourceImpl(),
   );
@@ -193,6 +204,13 @@ Future<void> init() async {
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
+      remoteDatasource: sl(),
+      localDatasource: sl(),
+      surveyLocalDatasource: sl(),
+    ),
+  );
+  sl.registerLazySingleton<ProfileRepository>(
+    () => ProfileRepositoryImpl(
       remoteDatasource: sl(),
       localDatasource: sl(),
       surveyLocalDatasource: sl(),
@@ -243,6 +261,10 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetSavedTokenUsecase>(
     () => GetSavedTokenUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetProfileUsecase>(() => GetProfileUsecase(sl()));
+  sl.registerLazySingleton<UpdateProfileUsecase>(
+    () => UpdateProfileUsecase(sl()),
   );
   sl.registerLazySingleton<LogoutUsecase>(() => LogoutUsecase(sl()));
   sl.registerLazySingleton<SendLocationUsecase>(
@@ -329,6 +351,13 @@ Future<void> init() async {
       getSavedTokenUsecase: sl(),
       logoutUsecase: sl(),
       notificationService: sl<FirebaseNotificationService>(),
+    ),
+  );
+  sl.registerLazySingleton<ProfileBloc>(
+    () => ProfileBloc(
+      getProfileUsecase: sl(),
+      updateProfileUsecase: sl(),
+      authBloc: sl<AuthBloc>(),
     ),
   );
   sl.registerLazySingleton<TrackingBloc>(

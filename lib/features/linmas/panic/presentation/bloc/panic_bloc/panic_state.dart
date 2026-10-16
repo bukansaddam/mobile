@@ -63,11 +63,8 @@ class PanicLoaded extends PanicState {
 }
 
 class PanicFailure extends PanicState {
-  @override
-  final String errorMessage;
-
   const PanicFailure(
-    this.errorMessage, {
+    String errorMessage, {
     super.isEmergencyActive,
     super.userLatitude,
     super.userLongitude,
@@ -112,11 +109,8 @@ class PanicActionSuccess extends PanicState {
 }
 
 class PanicActionFailure extends PanicState {
-  @override
-  final String errorMessage;
-
   const PanicActionFailure(
-    this.errorMessage, {
+    String errorMessage, {
     super.isEmergencyActive,
     super.userLatitude,
     super.userLongitude,

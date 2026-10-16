@@ -311,7 +311,7 @@ $UserModelCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserModel {
 
-@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone", readValue: _readPhone) String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "role", readValue: _readRole) String? get role;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;
+@JsonKey(name: "id") int get id;@JsonKey(name: "name") String? get name;@JsonKey(name: "email") String? get email;@JsonKey(name: "username") String? get username;@JsonKey(name: "phone", readValue: _readPhone) String? get phoneNumber;@JsonKey(name: "nik") String? get nik;@JsonKey(name: "role", readValue: _readRole) String? get role;@JsonKey(name: "latitude") double? get latitude;@JsonKey(name: "longitude") double? get longitude;@JsonKey(name: "email_verified_at") dynamic get emailVerifiedAt;@JsonKey(name: "created_at") DateTime? get createdAt;@JsonKey(name: "updated_at") DateTime? get updatedAt;@JsonKey(name: "village_members_id") int? get villageMembersId;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;@JsonKey(name: "birth_date", readValue: _readBirthDate) String? get birthDate;@JsonKey(name: "address", readValue: _readAddress) String? get address;@JsonKey(name: "profile_pic", readValue: _readProfilePic) String? get profilePic;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -324,16 +324,16 @@ $UserModelCopyWith<UserModel> get copyWith => _$UserModelCopyWithImpl<UserModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address)&&(identical(other.profilePic, profilePic) || other.profilePic == profilePic));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled,birthDate,address,profilePic);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
+  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, birthDate: $birthDate, address: $address, profilePic: $profilePic)';
 }
 
 
@@ -344,7 +344,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "birth_date", readValue: _readBirthDate) String? birthDate,@JsonKey(name: "address", readValue: _readAddress) String? address,@JsonKey(name: "profile_pic", readValue: _readProfilePic) String? profilePic
 });
 
 
@@ -361,7 +361,7 @@ class _$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -378,7 +378,10 @@ as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ig
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
 as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
 as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,address: freezed == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
+as String?,profilePic: freezed == profilePic ? _self.profilePic : profilePic // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -463,10 +466,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "birth_date", readValue: _readBirthDate)  String? birthDate, @JsonKey(name: "address", readValue: _readAddress)  String? address, @JsonKey(name: "profile_pic", readValue: _readProfilePic)  String? profilePic)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
   return orElse();
 
 }
@@ -484,10 +487,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "birth_date", readValue: _readBirthDate)  String? birthDate, @JsonKey(name: "address", readValue: _readAddress)  String? address, @JsonKey(name: "profile_pic", readValue: _readProfilePic)  String? profilePic)  $default,) {final _that = this;
 switch (_that) {
 case _UserModel():
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -504,10 +507,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "id")  int id, @JsonKey(name: "name")  String? name, @JsonKey(name: "email")  String? email, @JsonKey(name: "username")  String? username, @JsonKey(name: "phone", readValue: _readPhone)  String? phoneNumber, @JsonKey(name: "nik")  String? nik, @JsonKey(name: "role", readValue: _readRole)  String? role, @JsonKey(name: "latitude")  double? latitude, @JsonKey(name: "longitude")  double? longitude, @JsonKey(name: "email_verified_at")  dynamic emailVerifiedAt, @JsonKey(name: "created_at")  DateTime? createdAt, @JsonKey(name: "updated_at")  DateTime? updatedAt, @JsonKey(name: "village_members_id")  int? villageMembersId, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "birth_date", readValue: _readBirthDate)  String? birthDate, @JsonKey(name: "address", readValue: _readAddress)  String? address, @JsonKey(name: "profile_pic", readValue: _readProfilePic)  String? profilePic)?  $default,) {final _that = this;
 switch (_that) {
 case _UserModel() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
   return null;
 
 }
@@ -519,7 +522,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 @JsonSerializable()
 
 class _UserModel extends UserModel {
-  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone", readValue: _readPhone) this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "role", readValue: _readRole) this.role, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled}): super._();
+  const _UserModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "name") this.name, @JsonKey(name: "email") this.email, @JsonKey(name: "username") this.username, @JsonKey(name: "phone", readValue: _readPhone) this.phoneNumber, @JsonKey(name: "nik") this.nik, @JsonKey(name: "role", readValue: _readRole) this.role, @JsonKey(name: "latitude") this.latitude, @JsonKey(name: "longitude") this.longitude, @JsonKey(name: "email_verified_at") this.emailVerifiedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt, @JsonKey(name: "village_members_id") this.villageMembersId, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled, @JsonKey(name: "birth_date", readValue: _readBirthDate) this.birthDate, @JsonKey(name: "address", readValue: _readAddress) this.address, @JsonKey(name: "profile_pic", readValue: _readProfilePic) this.profilePic}): super._();
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -537,6 +540,9 @@ class _UserModel extends UserModel {
 @override@JsonKey(name: "village_members_id") final  int? villageMembersId;
 @override@JsonKey(name: "is_initial_quiz_completed") final  bool? isInitialQuizCompleted;
 @override@JsonKey(name: "is_initial_quiz_filled") final  bool? isInitialQuizFilled;
+@override@JsonKey(name: "birth_date", readValue: _readBirthDate) final  String? birthDate;
+@override@JsonKey(name: "address", readValue: _readAddress) final  String? address;
+@override@JsonKey(name: "profile_pic", readValue: _readProfilePic) final  String? profilePic;
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
@@ -551,16 +557,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address)&&(identical(other.profilePic, profilePic) || other.profilePic == profilePic));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled);
+int get hashCode => Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled,birthDate,address,profilePic);
 
 @override
 String toString() {
-  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled)';
+  return 'UserModel(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, birthDate: $birthDate, address: $address, profilePic: $profilePic)';
 }
 
 
@@ -571,7 +577,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled
+@JsonKey(name: "id") int id,@JsonKey(name: "name") String? name,@JsonKey(name: "email") String? email,@JsonKey(name: "username") String? username,@JsonKey(name: "phone", readValue: _readPhone) String? phoneNumber,@JsonKey(name: "nik") String? nik,@JsonKey(name: "role", readValue: _readRole) String? role,@JsonKey(name: "latitude") double? latitude,@JsonKey(name: "longitude") double? longitude,@JsonKey(name: "email_verified_at") dynamic emailVerifiedAt,@JsonKey(name: "created_at") DateTime? createdAt,@JsonKey(name: "updated_at") DateTime? updatedAt,@JsonKey(name: "village_members_id") int? villageMembersId,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "birth_date", readValue: _readBirthDate) String? birthDate,@JsonKey(name: "address", readValue: _readAddress) String? address,@JsonKey(name: "profile_pic", readValue: _readProfilePic) String? profilePic
 });
 
 
@@ -588,7 +594,7 @@ class __$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,}) {
   return _then(_UserModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -605,7 +611,10 @@ as DateTime?,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ig
 as DateTime?,villageMembersId: freezed == villageMembersId ? _self.villageMembersId : villageMembersId // ignore: cast_nullable_to_non_nullable
 as int?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
 as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
-as bool?,
+as bool?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,address: freezed == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
+as String?,profilePic: freezed == profilePic ? _self.profilePic : profilePic // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -7,7 +7,7 @@ import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen
 import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/tracking_config_modal.dart';
-import 'package:akar/features/linmas/profile/presentation/pages/profile_screen.dart';
+import 'package:akar/features/profile/presentation/pages/linmas_profile_screen.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -376,7 +376,7 @@ class _MainScreenState extends State<MainScreen> {
                           },
                         ),
                         const ActivationScreen(),
-                        const ProfileScreen(),
+                        const LinmasProfileScreen(),
                       ],
                     ),
             ),

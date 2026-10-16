@@ -115,7 +115,7 @@ class _PanicScreenState extends State<PanicScreen> {
         } else if (state is PanicActionFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage),
+              content: Text(state.errorMessage ?? 'Terjadi kesalahan'),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
             ),
@@ -123,7 +123,7 @@ class _PanicScreenState extends State<PanicScreen> {
         } else if (state is PanicFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage),
+              content: Text(state.errorMessage ?? 'Terjadi kesalahan'),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
             ),

@@ -18,6 +18,7 @@ import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
+import 'package:akar/features/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -55,6 +56,7 @@ class AppRouter {
   static const String splash = 'splash';
   static const String login = 'login';
   static const String register = 'register';
+  static const String editProfile = 'editProfile';
   static const String main = 'main';
   static const String survey = 'survey';
   static const String initialSurvey = 'initialSurvey';
@@ -83,6 +85,7 @@ class AppRouter {
   static const String splashPath = '/';
   static const String loginPath = '/login';
   static const String registerPath = '/register';
+  static const String editProfilePath = '/edit-profile';
   static const String mainPath = '/main';
   static const String panicPath = '/panic';
   static const String presensiPath = '/presensi';
@@ -197,6 +200,11 @@ class AppRouter {
         path: registerPath,
         name: register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: editProfilePath,
+        name: editProfile,
+        builder: (context, state) => const EditProfileScreen(),
       ),
       GoRoute(
         path: surveyPath,
@@ -469,5 +477,18 @@ class AppRouter {
 
   static Future<bool?> toCreateComplaint(BuildContext context) {
     return context.pushNamed<bool>(createComplaint);
+  }
+
+  static bool _isNavigatingToEditProfile = false;
+
+  static Future<void> toEditProfile(BuildContext context) async {
+    if (_isNavigatingToEditProfile) return;
+    _isNavigatingToEditProfile = true;
+    try {
+      await context.pushNamed(editProfile);
+    } finally {
+      await Future.delayed(const Duration(milliseconds: 600));
+      _isNavigatingToEditProfile = false;
+    }
   }
 }

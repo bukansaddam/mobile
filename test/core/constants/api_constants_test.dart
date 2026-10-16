@@ -10,6 +10,7 @@ void main() {
     test('auth endpoints decode accurately', () {
       expect(ApiConstants.login, '/api/login');
       expect(ApiConstants.register, '/api/register');
+      expect(ApiConstants.me, '/api/auth/me');
     });
 
     test('news endpoint decodes accurately', () {

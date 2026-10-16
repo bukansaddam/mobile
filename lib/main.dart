@@ -15,6 +15,7 @@ import 'package:akar/core/routes/app_router.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
@@ -67,6 +68,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (_) => di.sl<AuthBloc>()),
+        BlocProvider<ProfileBloc>(create: (_) => di.sl<ProfileBloc>()),
         BlocProvider<TrackingBloc>(create: (_) => di.sl<TrackingBloc>()),
         BlocProvider<ActivationBloc>(create: (_) => di.sl<ActivationBloc>()),
         BlocProvider<AnalisisBloc>(create: (_) => di.sl<AnalisisBloc>()),

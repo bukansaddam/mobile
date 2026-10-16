@@ -496,7 +496,7 @@ return $default(_that.success,_that.message,_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _TokohResponseModel extends TokohResponseModel {
-  const _TokohResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data', readValue: _readDataList)  List<TokohModel> data = const [], @JsonKey(name: 'meta', readValue: _readMeta) this.meta}): _data = data,super._();
+  const _TokohResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data', readValue: _readDataList) final  List<TokohModel> data = const [], @JsonKey(name: 'meta', readValue: _readMeta) this.meta}): _data = data,super._();
   factory _TokohResponseModel.fromJson(Map<String, dynamic> json) => _$TokohResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;

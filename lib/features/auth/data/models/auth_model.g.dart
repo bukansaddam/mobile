@@ -45,6 +45,9 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
   villageMembersId: (json['village_members_id'] as num?)?.toInt(),
   isInitialQuizCompleted: json['is_initial_quiz_completed'] as bool?,
   isInitialQuizFilled: json['is_initial_quiz_filled'] as bool?,
+  birthDate: _readBirthDate(json, 'birth_date') as String?,
+  address: _readAddress(json, 'address') as String?,
+  profilePic: _readProfilePic(json, 'profile_pic') as String?,
 );
 
 Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
@@ -64,4 +67,7 @@ Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
       'village_members_id': instance.villageMembersId,
       'is_initial_quiz_completed': instance.isInitialQuizCompleted,
       'is_initial_quiz_filled': instance.isInitialQuizFilled,
+      'birth_date': instance.birthDate,
+      'address': instance.address,
+      'profile_pic': instance.profilePic,
     };

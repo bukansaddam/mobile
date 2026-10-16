@@ -223,7 +223,7 @@ return $default(_that.id,_that.title,_that.slug,_that.category,_that.summary,_th
 @JsonSerializable()
 
 class _AnnouncementModel extends AnnouncementModel {
-  const _AnnouncementModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "slug") this.slug, @JsonKey(name: "category") this.category, @JsonKey(name: "summary") this.summary, @JsonKey(name: "content") this.content, @JsonKey(name: "cover_image") this.coverImage, @JsonKey(name: "images")  List<String>? images, @JsonKey(name: "author_name") this.authorName, @JsonKey(name: "status") this.status, @JsonKey(name: "is_pinned", readValue: _readBool) this.isPinned = false, @JsonKey(name: "views_count") this.viewsCount, @JsonKey(name: "published_at") this.publishedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt}): _images = images,super._();
+  const _AnnouncementModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "slug") this.slug, @JsonKey(name: "category") this.category, @JsonKey(name: "summary") this.summary, @JsonKey(name: "content") this.content, @JsonKey(name: "cover_image") this.coverImage, @JsonKey(name: "images") final  List<String>? images, @JsonKey(name: "author_name") this.authorName, @JsonKey(name: "status") this.status, @JsonKey(name: "is_pinned", readValue: _readBool) this.isPinned = false, @JsonKey(name: "views_count") this.viewsCount, @JsonKey(name: "published_at") this.publishedAt, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "updated_at") this.updatedAt}): _images = images,super._();
   factory _AnnouncementModel.fromJson(Map<String, dynamic> json) => _$AnnouncementModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -528,7 +528,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 @JsonSerializable()
 
 class _AnnouncementResponseModel extends AnnouncementResponseModel {
-  const _AnnouncementResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "total") this.total = 0, @JsonKey(name: "current_page") this.currentPage = 1, @JsonKey(name: "last_page") this.lastPage = 1, @JsonKey(name: "per_page") this.perPage = 10, @JsonKey(name: "data")  List<AnnouncementModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
+  const _AnnouncementResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "total") this.total = 0, @JsonKey(name: "current_page") this.currentPage = 1, @JsonKey(name: "last_page") this.lastPage = 1, @JsonKey(name: "per_page") this.perPage = 10, @JsonKey(name: "data") final  List<AnnouncementModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
   factory _AnnouncementResponseModel.fromJson(Map<String, dynamic> json) => _$AnnouncementResponseModelFromJson(json);
 
 @override@JsonKey(name: "success") final  bool success;

@@ -118,6 +118,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       DioClient.instance.options.headers.remove('Authorization');
       emit(const AuthUnauthenticated(message: 'Logout berhasil'));
     });
+
+    on<UpdateAuthUserEvent>((event, emit) {
+      final currentState = state;
+      if (currentState is AuthAuthenticated) {
+        emit(currentState.copyWith(user: event.user));
+      }
+    });
   }
 
   Future<String?> _resolveDeviceId(String? deviceId) async {

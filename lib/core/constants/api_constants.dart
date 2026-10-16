@@ -58,6 +58,20 @@ class ApiConstants {
     241,
     45,
   ]);
+  static final String me = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    120,
+    145,
+    167,
+    7,
+    175,
+    241,
+  ]);
 
   // News / Announcement
   static final String news = EndpointSecurity.decode(const <int>[

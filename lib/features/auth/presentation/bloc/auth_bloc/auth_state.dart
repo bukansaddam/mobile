@@ -34,6 +34,18 @@ class AuthAuthenticated extends AuthState {
     this.message,
   });
 
+  AuthAuthenticated copyWith({
+    UserEntity? user,
+    String? token,
+    String? message,
+  }) {
+    return AuthAuthenticated(
+      user: user ?? this.user,
+      token: token ?? this.token,
+      message: message ?? this.message,
+    );
+  }
+
   @override
   List<Object?> get props => [user, token, message];
 }

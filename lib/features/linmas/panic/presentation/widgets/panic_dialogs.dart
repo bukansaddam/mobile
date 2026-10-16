@@ -66,7 +66,7 @@ class PanicDialogs {
     BuildContext context, {
     required VoidCallback onConfirm,
   }) async {
-    final confirmed = await AppDialogs.showConfirmation(
+    await AppDialogs.showConfirmation(
       context,
       title: 'Matikan Sinyal SOS?',
       message:

@@ -8,7 +8,7 @@ import 'package:akar/features/masyarakat/main/presentation/bloc/main_state.dart'
 import 'package:akar/features/masyarakat/main/presentation/widgets/custom_bottom_navbar.dart';
 import 'package:akar/features/masyarakat/notification/data/dummy_notifications.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/notification_page.dart';
-import 'package:akar/features/masyarakat/profile/presentation/pages/profile_page.dart';
+import 'package:akar/features/profile/presentation/pages/masyarakat_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -50,7 +50,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
               ComplaintListPage(),
               SizedBox.shrink(),
               MyComplaintHistoryPage(),
-              ProfilePage(),
+              MasyarakatProfileScreen(),
             ],
           ),
           bottomNavigationBar: CustomBottomNavBar(

@@ -65,3 +65,12 @@ class RegisterEvent extends AuthEvent {
 }
 
 class LogoutEvent extends AuthEvent {}
+
+class UpdateAuthUserEvent extends AuthEvent {
+  final UserEntity user;
+
+  const UpdateAuthUserEvent(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
