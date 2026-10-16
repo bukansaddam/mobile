@@ -8,12 +8,12 @@ import 'package:akar/utils/app_logger.dart';
 
 import '../constants/api_constants.dart';
 
-class _AuthData {
+class GoogleSpeechAuthData {
   final String token;
   final String projectId;
   final DateTime expiry;
 
-  _AuthData({
+  GoogleSpeechAuthData({
     required this.token,
     required this.projectId,
     required this.expiry,
@@ -23,6 +23,9 @@ class _AuthData {
   bool get isValid =>
       DateTime.now().isBefore(expiry.subtract(const Duration(minutes: 5)));
 }
+
+typedef _AuthData = GoogleSpeechAuthData;
+
 
 class GoogleSpeechService {
   final Dio _dio;
