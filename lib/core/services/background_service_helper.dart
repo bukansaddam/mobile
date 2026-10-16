@@ -162,6 +162,25 @@ class BackgroundServiceHelper {
           ),
         );
 
+        // Security Check: Deteksi Fake GPS / Mock Location
+        if (position.isMocked) {
+          AppLogger.w(
+            '⚠️ [Background Service] Posisi terdeteksi palsu (Mock Location / Fake GPS). '
+            'Pengiriman koordinat dibatalkan.',
+          );
+          await updatedPrefs.setBool('LAST_TRACKING_MOCKED', true);
+          await updatedPrefs.setString(
+            'LAST_TRACKING_MSG',
+            'Peringatan: Lokasi tiruan (Fake GPS) terdeteksi.',
+          );
+          await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
+          service.invoke('mockLocationDetected', {
+            'latitude': position.latitude,
+            'longitude': position.longitude,
+          });
+          return;
+        }
+
         final token = updatedPrefs.getString('CACHED_AUTH_TOKEN');
         final Map<String, String> headers = {
           'Content-Type': 'application/json',

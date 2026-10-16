@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/profile/domain/entities/update_profile_params.dart';
@@ -77,6 +78,7 @@ class ProfileRemoteDatasourceImpl extends BaseRemoteDataSource
       }
 
       if (params.profilePic != null) {
+        FileSecurityUtils.validateImageFile(params.profilePic!);
         final compressed = await ImageCompressHelper.compressToWebp(
           params.profilePic!,
         );

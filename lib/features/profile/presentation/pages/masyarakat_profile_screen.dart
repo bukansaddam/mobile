@@ -2,6 +2,7 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/utils/data_masking_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -365,7 +366,9 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     _buildProfileDetailItem(
                                       icon: Icons.badge_outlined,
                                       label: 'NIK',
-                                      value: currentUser?.nik ?? '-',
+                                      value: DataMaskingUtils.maskNikOrKk(
+                                        currentUser?.nik,
+                                      ),
                                     ),
                                     const Divider(
                                       height: 16,

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/features/linmas/activation/data/models/activation_run_model.dart';
 import 'package:akar/features/linmas/activation/data/models/activation_submission_model.dart';
@@ -113,6 +114,9 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     String? receiverName,
   }) async {
     try {
+      // Security Check: Validasi tipe format dan ukuran maksimal berkas
+      FileSecurityUtils.validateImageFile(file);
+
       final webpFile = await ImageCompressHelper.compressToWebp(file);
       final rawName = webpFile.path.split('/').last;
       final webpName = rawName.endsWith('.webp')

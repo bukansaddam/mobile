@@ -202,6 +202,21 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         ),
       );
 
+      // Security Check: Deteksi Fake GPS / Mock Location
+      if (position.isMocked) {
+        emit(
+          state.copyWith(
+            isSending: false,
+            lastSuccess: false,
+            lastMessage:
+                'Terdeteksi penggunaan lokasi palsu (Fake GPS). Pengiriman posisi dibatalkan demi integritas data patroli.',
+            lastLatitude: position.latitude,
+            lastLongitude: position.longitude,
+          ),
+        );
+        return;
+      }
+
       final result = await sendLocationUsecase(
         latitude: position.latitude,
         longitude: position.longitude,

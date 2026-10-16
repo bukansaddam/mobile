@@ -25,6 +25,7 @@ class PresensiState extends Equatable {
   final String rw;
   final String locationName;
   final bool isInsideWorkingArea;
+  final bool isLocationMocked;
   final String? errorMessage;
   final PresensiDataEntity? lastResult;
 
@@ -42,6 +43,7 @@ class PresensiState extends Equatable {
     this.rw = '002',
     this.locationName = 'PT Semesta Mahadata Indonesia',
     this.isInsideWorkingArea = true,
+    this.isLocationMocked = false,
     this.errorMessage,
     this.lastResult,
   });
@@ -70,6 +72,7 @@ class PresensiState extends Equatable {
     String? rw,
     String? locationName,
     bool? isInsideWorkingArea,
+    bool? isLocationMocked,
     String? errorMessage,
     PresensiDataEntity? lastResult,
   }) {
@@ -87,6 +90,7 @@ class PresensiState extends Equatable {
       rw: rw ?? this.rw,
       locationName: locationName ?? this.locationName,
       isInsideWorkingArea: isInsideWorkingArea ?? this.isInsideWorkingArea,
+      isLocationMocked: isLocationMocked ?? this.isLocationMocked,
       errorMessage: errorMessage,
       lastResult: lastResult ?? this.lastResult,
     );
@@ -107,6 +111,7 @@ class PresensiState extends Equatable {
     rw,
     locationName,
     isInsideWorkingArea,
+    isLocationMocked,
     errorMessage,
     lastResult,
   ];

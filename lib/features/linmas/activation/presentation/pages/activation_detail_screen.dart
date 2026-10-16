@@ -11,6 +11,7 @@ import 'package:akar/features/linmas/activation/presentation/widgets/activation_
 import 'package:akar/features/linmas/activation/presentation/widgets/add_report_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:akar/core/utils/data_masking_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -1059,7 +1060,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           if (report.recipientKk != null &&
                               report.recipientKk!.isNotEmpty)
                             Text(
-                              'KK Penerima: ${report.recipientKk}',
+                              'KK Penerima: ${DataMaskingUtils.maskNikOrKk(report.recipientKk)}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
@@ -1067,7 +1068,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           if (report.recipientNik != null &&
                               report.recipientNik!.isNotEmpty)
                             Text(
-                              'NIK Penerima: ${report.recipientNik}',
+                              'NIK Penerima: ${DataMaskingUtils.maskNikOrKk(report.recipientNik)}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),

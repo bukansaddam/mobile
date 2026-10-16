@@ -26,7 +26,6 @@ class GoogleSpeechAuthData {
 
 typedef _AuthData = GoogleSpeechAuthData;
 
-
 class GoogleSpeechService {
   final Dio _dio;
 

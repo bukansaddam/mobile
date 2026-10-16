@@ -65,9 +65,11 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
         }
       } catch (_) {}
 
+      bool isMocked = false;
       if (pos != null) {
         lat = pos.latitude;
         lng = pos.longitude;
+        isMocked = pos.isMocked;
       }
 
       try {
@@ -124,6 +126,7 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
           status: PresensiStatus.loaded,
           userLatitude: lat,
           userLongitude: lng,
+          isLocationMocked: isMocked,
           kecamatan: kecamatan,
           kelurahan: kelurahan,
           address: address,
@@ -162,6 +165,40 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
     Emitter<PresensiState> emit,
   ) async {
     final currentType = state.presensiType;
+
+    // Security Check: Validasi deteksi lokasi tiruan (Fake GPS / Mock Location)
+    if (state.isLocationMocked) {
+      emit(
+        state.copyWith(
+          status: PresensiStatus.failure,
+          errorMessage:
+              'Presensi ditolak. Terdeteksi penggunaan aplikasi Lokasi Tiruan (Fake GPS / Mock Location). Harap matikan mock location untuk melanjutkan.',
+        ),
+      );
+      return;
+    }
+
+    try {
+      final livePos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 5),
+        ),
+      );
+      if (livePos.isMocked) {
+        emit(
+          state.copyWith(
+            status: PresensiStatus.failure,
+            isLocationMocked: true,
+            errorMessage:
+                'Presensi ditolak. Terdeteksi penggunaan aplikasi Lokasi Tiruan (Fake GPS / Mock Location). Harap matikan mock location untuk melanjutkan.',
+          ),
+        );
+        return;
+      }
+    } catch (_) {
+      // Abaikan timeout, lanjutkan dengan data posisi state yang sudah divalidasi
+    }
 
     emit(state.copyWith(status: PresensiStatus.submitting, errorMessage: null));
 
