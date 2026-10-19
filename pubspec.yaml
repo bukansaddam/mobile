@@ -54,7 +54,6 @@ flutter:
   assets:
     - assets/
     - assets/sounds/
-    - lib/core/crd/akar-504702-d2d27b0e66f2.json
 
 flutter_launcher_icons:
   android: "ic_launcher"

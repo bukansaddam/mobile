@@ -159,6 +159,7 @@ class AppRouter {
         // Guard: Jika Member mencoba mengakses rute khusus Linmas
         final linmasOnlyPrefixes = [
           '/main',
+          '/panic',
           '/presensi',
           '/ronda-malam',
           '/demografi',
@@ -168,11 +169,19 @@ class AppRouter {
           '/bank-sampah',
           '/tambah-bank-sampah',
           '/activation-detail',
+          '/activation_detail',
           '/survey',
           '/initial-survey',
         ];
 
-        if (isMember && linmasOnlyPrefixes.contains(location)) {
+        final isAttemptingLinmasRoute = linmasOnlyPrefixes.any(
+          (prefix) =>
+              location == prefix ||
+              location.startsWith('$prefix/') ||
+              location.startsWith('$prefix?'),
+        );
+
+        if (isMember && isAttemptingLinmasRoute) {
           return masyarakatMainPath;
         }
 
