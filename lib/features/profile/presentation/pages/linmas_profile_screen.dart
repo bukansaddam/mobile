@@ -158,34 +158,28 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             ],
                           ),
                           child: ClipOval(
-                            child: (user.displayProfilePic != null)
+                            child: (user.displayProfilePic != null &&
+                                    user.displayProfilePic!.trim().isNotEmpty)
                                 ? AppNetworkImage(
-                                    imageUrl: user.displayProfilePic!,
+                                    imageUrl: user.displayProfilePic!.trim(),
                                     width: 80,
                                     height: 80,
                                     fit: BoxFit.cover,
                                     borderRadius: BorderRadius.circular(40),
                                   )
-                                : Image.asset(
-                                    'assets/indonesian_headshot_portrait.jpg',
+                                : Container(
                                     width: 80,
                                     height: 80,
-                                    cacheWidth: 240,
-                                    cacheHeight: 240,
-                                    fit: BoxFit.cover,
+                                    color: AppColors.primaryLight,
                                     alignment: Alignment.center,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Text(
-                                          initialLetter,
-                                          style: const TextStyle(
-                                            fontSize: 34,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                    child: Text(
+                                      initialLetter,
+                                      style: const TextStyle(
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                    ),
                                   ),
                           ),
                         ),

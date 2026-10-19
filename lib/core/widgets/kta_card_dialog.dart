@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:flutter/material.dart';
@@ -283,29 +284,41 @@ class _KtaCardModalState extends State<KtaCardModal> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(9),
-                            child: Image.asset(
-                              user.isOfficer
-                                  ? 'assets/indonesian_headshot_portrait.jpg'
-                                  : 'assets/indonesian_user_portrait.jpg',
-                              fit: BoxFit.cover,
-                              cacheWidth: 222,
-                              cacheHeight: 270,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: AppColors.primaryLight,
-                                  child: Center(
-                                    child: Text(
-                                      initialLetter,
-                                      style: const TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
+                            child: user.displayProfilePic != null
+                                ? AppNetworkImage(
+                                    imageUrl: user.displayProfilePic!,
+                                    width: 74,
+                                    height: 90,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (context, url, error) {
+                                      return Container(
+                                        color: AppColors.primaryLight,
+                                        child: Center(
+                                          child: Text(
+                                            initialLetter,
+                                            style: const TextStyle(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    color: AppColors.primaryLight,
+                                    child: Center(
+                                      child: Text(
+                                        initialLetter,
+                                        style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                            ),
                           ),
                         ),
                         const SizedBox(width: 14),
