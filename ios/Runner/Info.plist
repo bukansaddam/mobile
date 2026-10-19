@@ -51,7 +51,6 @@
 		<array>
 			<string>whatsapp</string>
 			<string>https</string>
-			<string>http</string>
 			<string>tel</string>
 		</array>
 		<key>UIApplicationSupportsIndirectInputEvents</key>

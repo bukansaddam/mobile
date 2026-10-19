@@ -49,7 +49,12 @@ app.*.map.json
 
 ios/Flutter/Secrets.xcconfig
 
-/lib/core/crd
+# Universal Key & Credentials Rule
+**/crd/*.json
+lib/core/crd/**
+*.keystore
+*.jks
+key.properties
 
 # Environment & Secret Variables
 .env
@@ -61,5 +66,4 @@ tool/encrypt_endpoint.*
 
 .vscode
 
-# Local Planning & Optimization Documentation
-PERFORMANCE_OPTIMIZATION_PLAN.md
+SECURITY_AUDIT_REPORT.md

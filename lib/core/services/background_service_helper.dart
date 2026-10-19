@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 
 import '../network/logging_interceptor.dart';
