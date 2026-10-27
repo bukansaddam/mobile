@@ -323,7 +323,10 @@ class _MainScreenState extends State<MainScreen> {
                               children: [
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () => context.goNamed('login'),
+                                    onPressed: () => context.goNamed(
+                                      'login',
+                                      queryParameters: {'role': 'linmas'},
+                                    ),
                                     icon: const Icon(Icons.login),
                                     label: const Text('Masuk'),
                                     style: ElevatedButton.styleFrom(

@@ -4,10 +4,11 @@ abstract class AuthState extends Equatable {
   const AuthState();
 
   UserEntity? get user {
-    if (this is AuthAuthenticated) {
-      return (this as AuthAuthenticated).user;
-    } else if (this is RegisterSuccess) {
-      return (this as RegisterSuccess).user;
+    final s = this;
+    if (s is AuthAuthenticated) {
+      return s.user;
+    } else if (s is RegisterSuccess) {
+      return s.user;
     }
     return null;
   }
@@ -16,11 +17,17 @@ abstract class AuthState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthInitial extends AuthState {}
+class AuthInitial extends AuthState {
+  const AuthInitial();
+}
 
-class AuthChecking extends AuthState {}
+class AuthChecking extends AuthState {
+  const AuthChecking();
+}
 
-class AuthLoading extends AuthState {}
+class AuthLoading extends AuthState {
+  const AuthLoading();
+}
 
 class AuthAuthenticated extends AuthState {
   @override

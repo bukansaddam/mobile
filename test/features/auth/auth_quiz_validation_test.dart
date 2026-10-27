@@ -3,6 +3,12 @@ import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart'
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -85,7 +91,9 @@ class MemorySurveyLocalDatasource implements SurveyLocalDatasource {
   Future<void> clearAllSurveys() async => _quizStatus.clear();
 
   @override
-  Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(String periodKey) async {
+  Future<MonthlySurveyFormEntity> getActiveMonthlySurveyForm(
+    String periodKey,
+  ) async {
     throw UnimplementedError();
   }
 
@@ -96,10 +104,13 @@ class MemorySurveyLocalDatasource implements SurveyLocalDatasource {
   Future<InitialSurveyEntity?> getInitialSurvey(int userId) async => null;
 
   @override
-  Future<DynamicMonthlySurveyEntity?> getLatestDynamicSurveyForPeriod(String periodKey) async => null;
+  Future<DynamicMonthlySurveyEntity?> getLatestDynamicSurveyForPeriod(
+    String periodKey,
+  ) async => null;
 
   @override
-  Future<SurveyEntity?> getLatestSurveyForPeriod(String periodKey) async => null;
+  Future<SurveyEntity?> getLatestSurveyForPeriod(String periodKey) async =>
+      null;
 
   @override
   Future<bool> isSurveyDismissedForPeriod(String periodKey) async => false;
@@ -108,7 +119,9 @@ class MemorySurveyLocalDatasource implements SurveyLocalDatasource {
   Future<bool> isSurveySubmittedForPeriod(String periodKey) async => false;
 
   @override
-  Future<void> saveDynamicMonthlySurvey(DynamicMonthlySurveyEntity survey) async {}
+  Future<void> saveDynamicMonthlySurvey(
+    DynamicMonthlySurveyEntity survey,
+  ) async {}
 
   @override
   Future<void> saveSurvey(SurveyEntity survey) async {}
@@ -134,8 +147,8 @@ void main() {
         "role": "officer",
         "village_members_id": 5714542,
         "is_initial_quiz_completed": false,
-        "is_initial_quiz_filled": false
-      }
+        "is_initial_quiz_filled": false,
+      },
     };
 
     final Map<String, dynamic> rawLoginJsonCompleted = {
@@ -153,78 +166,178 @@ void main() {
         "role": "officer",
         "village_members_id": 5714542,
         "is_initial_quiz_completed": true,
-        "is_initial_quiz_filled": true
-      }
+        "is_initial_quiz_filled": true,
+      },
     };
 
-    test('AuthModel.fromJson parses is_initial_quiz_completed and is_initial_quiz_filled accurately', () {
-      final modelUncompleted = AuthModel.fromJson(rawLoginJsonUncompleted);
-      expect(modelUncompleted.isInitialQuizCompleted, isFalse);
-      expect(modelUncompleted.isInitialQuizFilled, isFalse);
-      expect(modelUncompleted.user.isInitialQuizCompleted, isFalse);
-      expect(modelUncompleted.user.isInitialQuizFilled, isFalse);
+    test(
+      'AuthModel.fromJson parses is_initial_quiz_completed and is_initial_quiz_filled accurately',
+      () {
+        final modelUncompleted = AuthModel.fromJson(rawLoginJsonUncompleted);
+        expect(modelUncompleted.isInitialQuizCompleted, isFalse);
+        expect(modelUncompleted.isInitialQuizFilled, isFalse);
+        expect(modelUncompleted.user.isInitialQuizCompleted, isFalse);
+        expect(modelUncompleted.user.isInitialQuizFilled, isFalse);
 
-      final domainUncompleted = modelUncompleted.toDomain();
-      expect(domainUncompleted.hasCompletedInitialQuiz, isFalse);
-      expect(domainUncompleted.user.hasCompletedInitialQuiz, isFalse);
+        final domainUncompleted = modelUncompleted.toDomain();
+        expect(domainUncompleted.hasCompletedInitialQuiz, isFalse);
+        expect(domainUncompleted.user.hasCompletedInitialQuiz, isFalse);
 
-      final modelCompleted = AuthModel.fromJson(rawLoginJsonCompleted);
-      expect(modelCompleted.isInitialQuizCompleted, isTrue);
-      expect(modelCompleted.isInitialQuizFilled, isTrue);
-      expect(modelCompleted.user.isInitialQuizCompleted, isTrue);
-      expect(modelCompleted.user.isInitialQuizFilled, isTrue);
+        final modelCompleted = AuthModel.fromJson(rawLoginJsonCompleted);
+        expect(modelCompleted.isInitialQuizCompleted, isTrue);
+        expect(modelCompleted.isInitialQuizFilled, isTrue);
+        expect(modelCompleted.user.isInitialQuizCompleted, isTrue);
+        expect(modelCompleted.user.isInitialQuizFilled, isTrue);
 
-      final domainCompleted = modelCompleted.toDomain();
-      expect(domainCompleted.hasCompletedInitialQuiz, isTrue);
-      expect(domainCompleted.user.hasCompletedInitialQuiz, isTrue);
+        final domainCompleted = modelCompleted.toDomain();
+        expect(domainCompleted.hasCompletedInitialQuiz, isTrue);
+        expect(domainCompleted.user.hasCompletedInitialQuiz, isTrue);
+      },
+    );
+
+    test(
+      'AuthRepositoryImpl.login syncs initial survey completion false to SurveyLocalDatasource',
+      () async {
+        final fakeRemote = FakeAuthRemoteDatasource();
+        final fakeLocal = FakeAuthLocalDatasource();
+        final surveyLocal = MemorySurveyLocalDatasource();
+
+        fakeRemote.fakeResponse = AuthModel.fromJson(rawLoginJsonUncompleted);
+
+        final repository = AuthRepositoryImpl(
+          remoteDatasource: fakeRemote,
+          localDatasource: fakeLocal,
+          surveyLocalDatasource: surveyLocal,
+        );
+
+        final result = await repository.login(
+          username: 'agusunandar',
+          password: 'password',
+        );
+
+        expect(result.isRight, isTrue);
+        expect(surveyLocal.isInitialSurveyCompletedSync(250420), isFalse);
+        final user = result.right.user;
+        expect(user.hasCompletedInitialQuiz, isFalse);
+      },
+    );
+
+    test(
+      'AuthRepositoryImpl.login syncs initial survey completion true to SurveyLocalDatasource',
+      () async {
+        final fakeRemote = FakeAuthRemoteDatasource();
+        final fakeLocal = FakeAuthLocalDatasource();
+        final surveyLocal = MemorySurveyLocalDatasource();
+
+        fakeRemote.fakeResponse = AuthModel.fromJson(rawLoginJsonCompleted);
+
+        final repository = AuthRepositoryImpl(
+          remoteDatasource: fakeRemote,
+          localDatasource: fakeLocal,
+          surveyLocalDatasource: surveyLocal,
+        );
+
+        final result = await repository.login(
+          username: 'agusunandar',
+          password: 'password',
+        );
+
+        expect(result.isRight, isTrue);
+        expect(surveyLocal.isInitialSurveyCompletedSync(250420), isTrue);
+        final user = result.right.user;
+        expect(user.hasCompletedInitialQuiz, isTrue);
+      },
+    );
+  });
+
+  group('Login role validation', () {
+    AuthBloc buildBloc(
+      FakeAuthRemoteDatasource remote,
+      FakeAuthLocalDatasource local,
+    ) {
+      final repository = AuthRepositoryImpl(
+        remoteDatasource: remote,
+        localDatasource: local,
+      );
+      return AuthBloc(
+        loginUsecase: LoginUsecase(repository),
+        registerUsecase: RegisterUsecase(repository),
+        getSavedUserUsecase: GetSavedUserUsecase(repository),
+        getSavedTokenUsecase: GetSavedTokenUsecase(repository),
+        logoutUsecase: LogoutUsecase(repository),
+      );
+    }
+
+    final memberLoginJson = {
+      "success": true,
+      "message": "Login berhasil",
+      "access_token": "477|member-token",
+      "token_type": "Bearer",
+      "user": {
+        "id": 250421,
+        "name": "Warga",
+        "username": "warga",
+        "role": "member",
+        "village_members_id": null,
+      },
+    };
+
+    test('menolak login Linmas untuk akun masyarakat', () async {
+      final remote = FakeAuthRemoteDatasource()
+        ..fakeResponse = AuthModel.fromJson(memberLoginJson);
+      final local = FakeAuthLocalDatasource();
+      final bloc = buildBloc(remote, local);
+
+      final emissions = expectLater(
+        bloc.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
+      );
+      bloc.add(
+        const LoginEvent(
+          username: 'warga',
+          password: 'password',
+          expectOfficer: true,
+        ),
+      );
+      await emissions;
+
+      expect((bloc.state as AuthFailure).message, 'Akun tidak ditemukan');
+      expect(local.cachedToken, isNull);
+      await bloc.close();
     });
 
-    test('AuthRepositoryImpl.login syncs initial survey completion false to SurveyLocalDatasource', () async {
-      final fakeRemote = FakeAuthRemoteDatasource();
-      final fakeLocal = FakeAuthLocalDatasource();
-      final surveyLocal = MemorySurveyLocalDatasource();
+    test('menerima login Linmas untuk akun officer', () async {
+      final remote = FakeAuthRemoteDatasource()
+        ..fakeResponse = AuthModel.fromJson({
+          "success": true,
+          "message": "Login berhasil",
+          "access_token": "478|officer-token",
+          "token_type": "Bearer",
+          "user": {
+            "id": 250422,
+            "name": "Petugas",
+            "username": "petugas",
+            "role": "linmas",
+          },
+        });
+      final local = FakeAuthLocalDatasource();
+      final bloc = buildBloc(remote, local);
 
-      fakeRemote.fakeResponse = AuthModel.fromJson(rawLoginJsonUncompleted);
-
-      final repository = AuthRepositoryImpl(
-        remoteDatasource: fakeRemote,
-        localDatasource: fakeLocal,
-        surveyLocalDatasource: surveyLocal,
+      final emissions = expectLater(
+        bloc.stream,
+        emitsInOrder([isA<AuthLoading>(), isA<AuthAuthenticated>()]),
       );
-
-      final result = await repository.login(
-        username: 'agusunandar',
-        password: 'password',
+      bloc.add(
+        const LoginEvent(
+          username: 'petugas',
+          password: 'password',
+          expectOfficer: true,
+        ),
       );
+      await emissions;
 
-      expect(result.isRight, isTrue);
-      expect(surveyLocal.isInitialSurveyCompletedSync(250420), isFalse);
-      final user = result.right.user;
-      expect(user.hasCompletedInitialQuiz, isFalse);
-    });
-
-    test('AuthRepositoryImpl.login syncs initial survey completion true to SurveyLocalDatasource', () async {
-      final fakeRemote = FakeAuthRemoteDatasource();
-      final fakeLocal = FakeAuthLocalDatasource();
-      final surveyLocal = MemorySurveyLocalDatasource();
-
-      fakeRemote.fakeResponse = AuthModel.fromJson(rawLoginJsonCompleted);
-
-      final repository = AuthRepositoryImpl(
-        remoteDatasource: fakeRemote,
-        localDatasource: fakeLocal,
-        surveyLocalDatasource: surveyLocal,
-      );
-
-      final result = await repository.login(
-        username: 'agusunandar',
-        password: 'password',
-      );
-
-      expect(result.isRight, isTrue);
-      expect(surveyLocal.isInitialSurveyCompletedSync(250420), isTrue);
-      final user = result.right.user;
-      expect(user.hasCompletedInitialQuiz, isTrue);
+      expect(local.cachedToken, isNotNull);
+      await bloc.close();
     });
   });
 }

@@ -13,84 +13,121 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final LoginUsecase loginUsecase;
-  final RegisterUsecase registerUsecase;
-  final GetSavedUserUsecase getSavedUserUsecase;
-  final GetSavedTokenUsecase getSavedTokenUsecase;
-  final LogoutUsecase logoutUsecase;
-  final FirebaseNotificationService? notificationService;
+  final LoginUsecase _loginUsecase;
+  final RegisterUsecase _registerUsecase;
+  final GetSavedUserUsecase _getSavedUserUsecase;
+  final GetSavedTokenUsecase _getSavedTokenUsecase;
+  final LogoutUsecase _logoutUsecase;
+  final FirebaseNotificationService? _notificationService;
 
   AuthBloc({
-    required this.loginUsecase,
-    required this.registerUsecase,
-    required this.getSavedUserUsecase,
-    required this.getSavedTokenUsecase,
-    required this.logoutUsecase,
-    this.notificationService,
-  }) : super(AuthInitial()) {
-    on<CheckAuthStatusEvent>((event, emit) async {
-      emit(AuthChecking());
+    required LoginUsecase loginUsecase,
+    required RegisterUsecase registerUsecase,
+    required GetSavedUserUsecase getSavedUserUsecase,
+    required GetSavedTokenUsecase getSavedTokenUsecase,
+    required LogoutUsecase logoutUsecase,
+    FirebaseNotificationService? notificationService,
+  })  : _loginUsecase = loginUsecase,
+        _registerUsecase = registerUsecase,
+        _getSavedUserUsecase = getSavedUserUsecase,
+        _getSavedTokenUsecase = getSavedTokenUsecase,
+        _logoutUsecase = logoutUsecase,
+        _notificationService = notificationService,
+        super(const AuthInitial()) {
+    on<CheckAuthStatusEvent>(_onCheckAuthStatus);
+    on<LoginEvent>(_onLogin);
+    on<RegisterEvent>(_onRegister);
+    on<LogoutEvent>(_onLogout);
+    on<UpdateAuthUserEvent>(_onUpdateAuthUser);
+  }
 
-      final tokenResult = await getSavedTokenUsecase();
-      final userResult = await getSavedUserUsecase();
+  Future<void> _onCheckAuthStatus(
+    CheckAuthStatusEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthChecking());
 
-      final token = tokenResult.fold((_) => null, (val) => val);
-      final currentUser = userResult.fold((_) => null, (val) => val);
+    final tokenResult = await _getSavedTokenUsecase();
+    final userResult = await _getSavedUserUsecase();
 
-      if (token != null && token.isNotEmpty && currentUser != null) {
-        DioClient.instance.options.headers['Authorization'] = 'Bearer $token';
-        emit(AuthAuthenticated(user: currentUser, token: token));
-      } else {
-        DioClient.instance.options.headers.remove('Authorization');
-        emit(const AuthUnauthenticated());
-      }
-    });
+    final token = tokenResult.fold((_) => null, (val) => val);
+    final currentUser = userResult.fold((_) => null, (val) => val);
 
-    on<LoginEvent>((event, emit) async {
-      emit(AuthLoading());
+    if (token != null && token.isNotEmpty && currentUser != null) {
+      DioClient.instance.options.headers['Authorization'] = 'Bearer $token';
+      emit(AuthAuthenticated(user: currentUser, token: token));
+    } else {
+      DioClient.instance.options.headers.remove('Authorization');
+      emit(const AuthUnauthenticated());
+    }
+  }
 
-      final deviceId = await _resolveDeviceId(event.deviceId);
-      final result = await loginUsecase(
-        username: event.username,
-        password: event.password,
-        deviceId: deviceId,
-      );
+  Future<void> _onLogin(
+    LoginEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state is AuthLoading) return;
+    emit(const AuthLoading());
 
-      result.fold((failure) => emit(AuthFailure(failure.message)), (
-        authEntity,
-      ) {
-        DioClient.instance.options.headers['Authorization'] =
-            'Bearer ${authEntity.accessToken}';
-        emit(
-          AuthAuthenticated(
-            user: authEntity.user,
-            token: authEntity.accessToken,
-            message: authEntity.message ?? 'Login berhasil',
-          ),
-        );
-      });
-    });
+    final deviceId = await _resolveDeviceId(event.deviceId);
+    final result = await _loginUsecase(
+      username: event.username,
+      password: event.password,
+      deviceId: deviceId,
+    );
 
-    on<RegisterEvent>((event, emit) async {
-      emit(AuthLoading());
+    AuthEntity? loggedIn;
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (entity) => loggedIn = entity,
+    );
 
-      final deviceId = await _resolveDeviceId(event.deviceId);
-      final result = await registerUsecase(
-        name: event.name,
-        phoneNumber: event.phoneNumber,
-        nik: event.nik,
-        longitude: event.longitude,
-        latitude: event.latitude,
-        username: event.username,
-        email: event.email,
-        password: event.password,
-        passwordConfirmation: event.passwordConfirmation,
-        deviceId: deviceId,
-      );
+    final authEntity = loggedIn;
+    if (authEntity == null) return;
 
-      result.fold((failure) => emit(AuthFailure(failure.message)), (
-        authEntity,
-      ) {
+    final isOfficer = authEntity.user.isOfficer;
+    if (event.expectOfficer != null && event.expectOfficer != isOfficer) {
+      await _logoutUsecase();
+      DioClient.instance.options.headers.remove('Authorization');
+      emit(const AuthFailure('Akun tidak ditemukan'));
+      return;
+    }
+
+    DioClient.instance.options.headers['Authorization'] =
+        'Bearer ${authEntity.accessToken}';
+    emit(
+      AuthAuthenticated(
+        user: authEntity.user,
+        token: authEntity.accessToken,
+        message: authEntity.message ?? 'Login berhasil',
+      ),
+    );
+  }
+
+  Future<void> _onRegister(
+    RegisterEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state is AuthLoading) return;
+    emit(const AuthLoading());
+
+    final deviceId = await _resolveDeviceId(event.deviceId);
+    final result = await _registerUsecase(
+      name: event.name,
+      phoneNumber: event.phoneNumber,
+      nik: event.nik,
+      longitude: event.longitude,
+      latitude: event.latitude,
+      username: event.username,
+      email: event.email,
+      password: event.password,
+      passwordConfirmation: event.passwordConfirmation,
+      deviceId: deviceId,
+    );
+
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (authEntity) {
         if (authEntity.accessToken.isNotEmpty) {
           DioClient.instance.options.headers['Authorization'] =
               'Bearer ${authEntity.accessToken}';
@@ -109,28 +146,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         }
-      });
-    });
+      },
+    );
+  }
 
-    on<LogoutEvent>((event, emit) async {
-      emit(AuthLoading());
-      await logoutUsecase();
-      DioClient.instance.options.headers.remove('Authorization');
-      emit(const AuthUnauthenticated(message: 'Logout berhasil'));
-    });
+  Future<void> _onLogout(
+    LogoutEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (state is AuthLoading) return;
+    emit(const AuthLoading());
+    await _logoutUsecase();
+    DioClient.instance.options.headers.remove('Authorization');
+    emit(const AuthUnauthenticated(message: 'Logout berhasil'));
+  }
 
-    on<UpdateAuthUserEvent>((event, emit) {
-      final currentState = state;
-      if (currentState is AuthAuthenticated) {
-        emit(currentState.copyWith(user: event.user));
-      }
-    });
+  void _onUpdateAuthUser(
+    UpdateAuthUserEvent event,
+    Emitter<AuthState> emit,
+  ) {
+    final currentState = state;
+    if (currentState is AuthAuthenticated) {
+      emit(currentState.copyWith(user: event.user));
+    }
   }
 
   Future<String?> _resolveDeviceId(String? deviceId) async {
     if (deviceId != null && deviceId.isNotEmpty) return deviceId;
     try {
-      return await notificationService?.getToken();
+      return await _notificationService?.getToken();
     } catch (_) {
       return null;
     }

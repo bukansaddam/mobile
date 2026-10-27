@@ -4,6 +4,7 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_detail_screen.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/pages/login_screen.dart';
+import 'package:akar/features/auth/presentation/pages/welcome_screen.dart';
 import 'package:akar/features/linmas/panic/presentation/pages/panic_screen.dart';
 import 'package:akar/features/linmas/presensi/presentation/pages/presensi_screen.dart';
 import 'package:akar/features/linmas/ronda_malam/presentation/pages/ronda_screen.dart';
@@ -54,6 +55,7 @@ class GoRouterRefreshStream extends ChangeNotifier {
 class AppRouter {
   // Common
   static const String splash = 'splash';
+  static const String welcome = 'welcome';
   static const String login = 'login';
   static const String register = 'register';
   static const String editProfile = 'editProfile';
@@ -83,6 +85,7 @@ class AppRouter {
 
   // Paths
   static const String splashPath = '/';
+  static const String welcomePath = '/welcome';
   static const String loginPath = '/login';
   static const String registerPath = '/register';
   static const String editProfilePath = '/edit-profile';
@@ -128,29 +131,37 @@ class AppRouter {
 
       final isSplash = location == splashPath;
       final isEmergencyCall = location == emergencyCallPath;
-      final isAuthRoute = location == loginPath || location == registerPath;
+      final isAuthRoute =
+          location == welcomePath ||
+          location == loginPath ||
+          location == registerPath;
 
       if (isSplash || isEmergencyCall) {
         return null;
       }
 
       if (!isLoggedIn && !isAuthRoute) {
-        return loginPath;
+        return welcomePath;
       }
 
       if (isLoggedIn) {
-        // Dari splash tidak perlu mengecek survey (langsung ke home).
-        // Pengecekan survey hanya saat login. Jika sudah selesai dan membuka rute survey awal, redirect ke main.
-        if (location == initialSurveyPath &&
+        final hasCompletedSurvey =
             currentUser != null &&
             (currentUser.hasCompletedInitialQuiz ||
                 sl<SurveyLocalDatasource>().isInitialSurveyCompletedSync(
                   currentUser.id,
-                ))) {
+                ));
+
+        // Pengecekan survey hanya saat login. Jika sudah selesai dan membuka rute survey awal, redirect ke main.
+        if (location == initialSurveyPath && hasCompletedSurvey) {
           return mainPath;
         }
 
-        final defaultHome = isMember ? masyarakatMainPath : mainPath;
+        final defaultHome = isMember
+            ? masyarakatMainPath
+            : hasCompletedSurvey
+            ? mainPath
+            : initialSurveyPath;
 
         if (isAuthRoute) {
           return defaultHome;
@@ -201,9 +212,27 @@ class AppRouter {
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
+        path: welcomePath,
+        name: welcome,
+        builder: (context, state) => const WelcomeScreen(),
+      ),
+      GoRoute(
         path: loginPath,
         name: login,
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: LoginScreen(role: state.uri.queryParameters['role']),
+          transitionDuration: const Duration(milliseconds: 420),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            final curved = CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutCubic,
+              reverseCurve: Curves.easeInCubic,
+            );
+            return FadeTransition(opacity: curved, child: child);
+          },
+        ),
       ),
       GoRoute(
         path: registerPath,

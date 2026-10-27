@@ -47,7 +47,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
       context.read<TrackingBloc>().add(StopTrackingEvent());
       context.read<AuthBloc>().add(LogoutEvent());
       AppToast.showSuccess(context, message: 'Berhasil keluar dari akun');
-      context.goNamed('login');
+      context.goNamed('login', queryParameters: {'role': 'linmas'});
     }
   }
 
@@ -86,7 +86,10 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     ),
                     const SizedBox(height: 24),
                     ElevatedButton.icon(
-                      onPressed: () => context.goNamed('login'),
+                      onPressed: () => context.goNamed(
+                        'login',
+                        queryParameters: {'role': 'linmas'},
+                      ),
                       icon: const Icon(Icons.login),
                       label: const Text('Masuk'),
                       style: ElevatedButton.styleFrom(
@@ -158,7 +161,8 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             ],
                           ),
                           child: ClipOval(
-                            child: (user.displayProfilePic != null &&
+                            child:
+                                (user.displayProfilePic != null &&
                                     user.displayProfilePic!.trim().isNotEmpty)
                                 ? AppNetworkImage(
                                     imageUrl: user.displayProfilePic!.trim(),

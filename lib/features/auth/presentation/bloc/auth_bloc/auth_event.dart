@@ -7,21 +7,27 @@ abstract class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CheckAuthStatusEvent extends AuthEvent {}
+class CheckAuthStatusEvent extends AuthEvent {
+  const CheckAuthStatusEvent();
+}
 
 class LoginEvent extends AuthEvent {
   final String username;
   final String password;
   final String? deviceId;
 
+  /// Role chosen on the welcome page. When set, the account must match it.
+  final bool? expectOfficer;
+
   const LoginEvent({
     required this.username,
     required this.password,
     this.deviceId,
+    this.expectOfficer,
   });
 
   @override
-  List<Object?> get props => [username, password, deviceId];
+  List<Object?> get props => [username, password, deviceId, expectOfficer];
 }
 
 class RegisterEvent extends AuthEvent {
@@ -64,7 +70,9 @@ class RegisterEvent extends AuthEvent {
   ];
 }
 
-class LogoutEvent extends AuthEvent {}
+class LogoutEvent extends AuthEvent {
+  const LogoutEvent();
+}
 
 class UpdateAuthUserEvent extends AuthEvent {
   final UserEntity user;

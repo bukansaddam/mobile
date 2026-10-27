@@ -8,6 +8,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/auth/presentation/widgets/auth_form_label.dart';
 import 'package:akar/utils/app_logger.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -144,6 +145,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.all(20.0),
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
@@ -188,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _buildTextFieldLabel('Nama Lengkap'),
+                            const AuthFormLabel('Nama Lengkap'),
                             TextFormField(
                               controller: _nameController,
                               onTapOutside: (event) =>
@@ -205,7 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel('Nomor Telepon'),
+                            const AuthFormLabel('Nomor Telepon'),
                             TextFormField(
                               controller: _phoneController,
                               onTapOutside: (event) =>
@@ -222,7 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel(
+                            const AuthFormLabel(
                               'NIK (Nomor Induk Kependudukan)',
                             ),
                             TextFormField(
@@ -246,7 +248,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel('Username'),
+                            const AuthFormLabel('Username'),
                             TextFormField(
                               controller: _usernameController,
                               onTapOutside: (event) =>
@@ -262,7 +264,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel('Email'),
+                            const AuthFormLabel('Email'),
                             TextFormField(
                               controller: _emailController,
                               onTapOutside: (event) =>
@@ -284,7 +286,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel('Kata Sandi'),
+                            const AuthFormLabel('Kata Sandi'),
                             TextFormField(
                               controller: _passwordController,
                               onTapOutside: (event) =>
@@ -322,7 +324,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             const SizedBox(height: 16),
 
-                            _buildTextFieldLabel('Konfirmasi Kata Sandi'),
+                            const AuthFormLabel('Konfirmasi Kata Sandi'),
                             TextFormField(
                               controller: _confirmPasswordController,
                               onTapOutside: (event) =>
@@ -437,16 +439,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
             },
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextFieldLabel(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0),
-      child: Text(
-        text,
-        style: AppTextStyles.labelLarge.copyWith(color: AppColors.textPrimary),
       ),
     );
   }
