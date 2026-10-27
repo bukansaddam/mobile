@@ -21,7 +21,7 @@ class AuthInterceptor extends Interceptor {
           'AuthInterceptor: Sesi dibatalkan karena kode HTTP $statusCode ($path). Memicu Logout.',
         );
         if (sl.isRegistered<AuthBloc>()) {
-          sl<AuthBloc>().add(LogoutEvent());
+          sl<AuthBloc>().add(const LogoutEvent());
         }
       }
     }

@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Trigger check auth
     if (authBloc.state is AuthInitial) {
-      authBloc.add(CheckAuthStatusEvent());
+      authBloc.add(const CheckAuthStatusEvent());
     }
 
     // Pastikan splash setidaknya tampil 2.5 detik untuk animasi yang halus

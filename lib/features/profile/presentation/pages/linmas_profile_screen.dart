@@ -45,7 +45,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
 
     if (confirmed && context.mounted) {
       context.read<TrackingBloc>().add(StopTrackingEvent());
-      context.read<AuthBloc>().add(LogoutEvent());
+      context.read<AuthBloc>().add(const LogoutEvent());
       AppToast.showSuccess(context, message: 'Berhasil keluar dari akun');
       context.goNamed('login', queryParameters: {'role': 'linmas'});
     }

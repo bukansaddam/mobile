@@ -458,7 +458,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                         icon: Icons.logout_rounded,
                                       );
                                   if (confirmed && context.mounted) {
-                                    context.read<AuthBloc>().add(LogoutEvent());
+                                    context.read<AuthBloc>().add(const LogoutEvent());
                                   }
                                 },
                               ),
