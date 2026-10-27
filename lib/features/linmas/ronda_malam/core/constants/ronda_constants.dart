@@ -9,6 +9,9 @@ class RondaConstants {
     'Permukiman',
     'Selokan',
     'SPPG',
+    'TPA',
+    'TPST',
+    'TP3R',
   ];
 
   static const List<String> jenisSampahDominanOptions = [
