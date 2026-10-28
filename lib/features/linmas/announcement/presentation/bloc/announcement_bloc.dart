@@ -8,6 +8,11 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
 
   final String audience;
 
+  /// Naik setiap kali list di-fetch ulang dari halaman 1, supaya hasil
+  /// load-more/fetch lama yang telat datang tidak menimpa state baru.
+  int _generation = 0;
+  bool _isLoadingMore = false;
+
   AnnouncementBloc({
     required this.getAnnouncementsUsecase,
     required this.audience,
@@ -21,6 +26,8 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     FetchAnnouncements event,
     Emitter<AnnouncementState> emit,
   ) async {
+    final generation = ++_generation;
+
     if (!event.isRefresh) {
       emit(
         state.copyWith(
@@ -39,11 +46,14 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
       audience: audience,
     );
 
+    if (generation != _generation) return;
+
     result.fold(
       (failure) => emit(
         state.copyWith(
           status: AnnouncementStatus.error,
           errorMessage: failure.message,
+          isLoadingMore: false,
         ),
       ),
       (paginated) => emit(
@@ -88,31 +98,40 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
     LoadMoreAnnouncements event,
     Emitter<AnnouncementState> emit,
   ) async {
-    if (state.hasReachedMax || state.isLoadingMore) return;
+    if (_isLoadingMore || state.hasReachedMax) return;
 
+    final generation = _generation;
+    _isLoadingMore = true;
     emit(state.copyWith(isLoadingMore: true));
 
-    final nextPage = state.currentPage + 1;
-    final result = await getAnnouncementsUsecase(
-      category: state.selectedCategory,
-      isPinned: state.isPinnedFilter,
-      page: nextPage,
-      perPage: 10,
-      audience: audience,
-    );
+    try {
+      final nextPage = state.currentPage + 1;
+      final result = await getAnnouncementsUsecase(
+        category: state.selectedCategory,
+        isPinned: state.isPinnedFilter,
+        page: nextPage,
+        perPage: 10,
+        audience: audience,
+      );
 
-    result.fold(
-      (failure) => emit(state.copyWith(isLoadingMore: false)),
-      (paginated) => emit(
-        state.copyWith(
-          status: AnnouncementStatus.loaded,
-          announcements: List.of(state.announcements)..addAll(paginated.data),
-          currentPage: paginated.currentPage,
-          lastPage: paginated.lastPage,
-          hasReachedMax: paginated.currentPage >= paginated.lastPage,
-          isLoadingMore: false,
+      // List sudah di-fetch ulang dari halaman 1; hasil halaman lama dibuang.
+      if (generation != _generation) return;
+
+      result.fold(
+        (failure) => emit(state.copyWith(isLoadingMore: false)),
+        (paginated) => emit(
+          state.copyWith(
+            status: AnnouncementStatus.loaded,
+            announcements: List.of(state.announcements)..addAll(paginated.data),
+            currentPage: paginated.currentPage,
+            lastPage: paginated.lastPage,
+            hasReachedMax: paginated.currentPage >= paginated.lastPage,
+            isLoadingMore: false,
+          ),
         ),
-      ),
-    );
+      );
+    } finally {
+      _isLoadingMore = false;
+    }
   }
 }

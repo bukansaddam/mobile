@@ -83,10 +83,15 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >=
+    if (!_scrollController.hasClients) return;
+    if (_scrollController.position.pixels <
         _scrollController.position.maxScrollExtent - 200) {
-      context.read<AnnouncementBloc>().add(const LoadMoreAnnouncements());
+      return;
     }
+
+    final bloc = context.read<AnnouncementBloc>();
+    if (bloc.state.isLoadingMore || bloc.state.hasReachedMax) return;
+    bloc.add(const LoadMoreAnnouncements());
   }
 
   Future<void> _onRefresh() async {
