@@ -58,6 +58,25 @@ class ApiConstants {
     241,
     45,
   ]);
+  static final String refreshToken = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    120,
+    145,
+    167,
+    7,
+    176,
+    241,
+    57,
+    107,
+    158,
+    242,
+    34,
+  ]);
   static final String me = EndpointSecurity.decode(const <int>[
     117,
     79,

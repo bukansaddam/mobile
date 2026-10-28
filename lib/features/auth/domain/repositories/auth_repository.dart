@@ -21,5 +21,6 @@ abstract class AuthRepository {
   });
   Future<Either<Failure, UserEntity?>> getSavedUser();
   Future<Either<Failure, String?>> getSavedToken();
+  Future<Either<Failure, AuthEntity>> refreshToken();
   Future<Either<Failure, void>> logout();
 }

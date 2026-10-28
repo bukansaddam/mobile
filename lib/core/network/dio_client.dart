@@ -5,6 +5,7 @@ import '../constants/api_constants.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'auth_interceptor.dart';
 import 'logging_interceptor.dart';
+import 'token_refresh_interceptor.dart';
 
 class DioClient {
   DioClient._();
@@ -38,6 +39,7 @@ class DioClient {
     if (!AppLogger.isProduction) {
       dio.interceptors.add(LoggingInterceptor());
     }
+    dio.interceptors.add(TokenRefreshInterceptor(dio: dio));
     dio.interceptors.add(AuthInterceptor());
 
     return dio;

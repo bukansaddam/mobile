@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthModel {
 
-@JsonKey(name: "message") String? get message;@JsonKey(name: "access_token") String get accessToken;@JsonKey(name: "token_type") String? get tokenType;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;@JsonKey(name: "user") UserModel get user;
+@JsonKey(name: "message") String? get message;@JsonKey(name: "access_token") String get accessToken;@JsonKey(name: "refresh_token") String? get refreshToken;@JsonKey(name: "token_type") String? get tokenType;@JsonKey(name: "is_initial_quiz_completed") bool? get isInitialQuizCompleted;@JsonKey(name: "is_initial_quiz_filled") bool? get isInitialQuizFilled;@JsonKey(name: "user") UserModel get user;
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AuthModelCopyWith<AuthModel> get copyWith => _$AuthModelCopyWithImpl<AuthModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,refreshToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
+  return 'AuthModel(message: $message, accessToken: $accessToken, refreshToken: $refreshToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AuthModelCopyWith<$Res>  {
   factory $AuthModelCopyWith(AuthModel value, $Res Function(AuthModel) _then) = _$AuthModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
+@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "refresh_token") String? refreshToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
 });
 
 
@@ -65,11 +65,12 @@ class _$AuthModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = freezed,Object? accessToken = null,Object? refreshToken = freezed,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_self.copyWith(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
+as String,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
+as String?,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
 as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
 as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
 as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
@@ -167,10 +168,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "refresh_token")  String? refreshToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthModel() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.refreshToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return orElse();
 
 }
@@ -188,10 +189,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQ
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "refresh_token")  String? refreshToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)  $default,) {final _that = this;
 switch (_that) {
 case _AuthModel():
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.refreshToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -208,10 +209,10 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQ
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: "message")  String? message, @JsonKey(name: "access_token")  String accessToken, @JsonKey(name: "refresh_token")  String? refreshToken, @JsonKey(name: "token_type")  String? tokenType, @JsonKey(name: "is_initial_quiz_completed")  bool? isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled")  bool? isInitialQuizFilled, @JsonKey(name: "user")  UserModel user)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthModel() when $default != null:
-return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
+return $default(_that.message,_that.accessToken,_that.refreshToken,_that.tokenType,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.user);case _:
   return null;
 
 }
@@ -223,11 +224,12 @@ return $default(_that.message,_that.accessToken,_that.tokenType,_that.isInitialQ
 @JsonSerializable()
 
 class _AuthModel extends AuthModel {
-  const _AuthModel({@JsonKey(name: "message") this.message, @JsonKey(name: "access_token") required this.accessToken, @JsonKey(name: "token_type") this.tokenType, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled, @JsonKey(name: "user") required this.user}): super._();
+  const _AuthModel({@JsonKey(name: "message") this.message, @JsonKey(name: "access_token") required this.accessToken, @JsonKey(name: "refresh_token") this.refreshToken, @JsonKey(name: "token_type") this.tokenType, @JsonKey(name: "is_initial_quiz_completed") this.isInitialQuizCompleted, @JsonKey(name: "is_initial_quiz_filled") this.isInitialQuizFilled, @JsonKey(name: "user") required this.user}): super._();
   factory _AuthModel.fromJson(Map<String, dynamic> json) => _$AuthModelFromJson(json);
 
 @override@JsonKey(name: "message") final  String? message;
 @override@JsonKey(name: "access_token") final  String accessToken;
+@override@JsonKey(name: "refresh_token") final  String? refreshToken;
 @override@JsonKey(name: "token_type") final  String? tokenType;
 @override@JsonKey(name: "is_initial_quiz_completed") final  bool? isInitialQuizCompleted;
 @override@JsonKey(name: "is_initial_quiz_filled") final  bool? isInitialQuizFilled;
@@ -246,16 +248,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthModel&&(identical(other.message, message) || other.message == message)&&(identical(other.accessToken, accessToken) || other.accessToken == accessToken)&&(identical(other.refreshToken, refreshToken) || other.refreshToken == refreshToken)&&(identical(other.tokenType, tokenType) || other.tokenType == tokenType)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.user, user) || other.user == user));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,accessToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
+int get hashCode => Object.hash(runtimeType,message,accessToken,refreshToken,tokenType,isInitialQuizCompleted,isInitialQuizFilled,user);
 
 @override
 String toString() {
-  return 'AuthModel(message: $message, accessToken: $accessToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
+  return 'AuthModel(message: $message, accessToken: $accessToken, refreshToken: $refreshToken, tokenType: $tokenType, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, user: $user)';
 }
 
 
@@ -266,7 +268,7 @@ abstract mixin class _$AuthModelCopyWith<$Res> implements $AuthModelCopyWith<$Re
   factory _$AuthModelCopyWith(_AuthModel value, $Res Function(_AuthModel) _then) = __$AuthModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
+@JsonKey(name: "message") String? message,@JsonKey(name: "access_token") String accessToken,@JsonKey(name: "refresh_token") String? refreshToken,@JsonKey(name: "token_type") String? tokenType,@JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,@JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,@JsonKey(name: "user") UserModel user
 });
 
 
@@ -283,11 +285,12 @@ class __$AuthModelCopyWithImpl<$Res>
 
 /// Create a copy of AuthModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = freezed,Object? accessToken = null,Object? refreshToken = freezed,Object? tokenType = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? user = null,}) {
   return _then(_AuthModel(
 message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,accessToken: null == accessToken ? _self.accessToken : accessToken // ignore: cast_nullable_to_non_nullable
-as String,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
+as String,refreshToken: freezed == refreshToken ? _self.refreshToken : refreshToken // ignore: cast_nullable_to_non_nullable
+as String?,tokenType: freezed == tokenType ? _self.tokenType : tokenType // ignore: cast_nullable_to_non_nullable
 as String?,isInitialQuizCompleted: freezed == isInitialQuizCompleted ? _self.isInitialQuizCompleted : isInitialQuizCompleted // ignore: cast_nullable_to_non_nullable
 as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQuizFilled : isInitialQuizFilled // ignore: cast_nullable_to_non_nullable
 as bool?,user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable

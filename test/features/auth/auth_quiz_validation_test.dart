@@ -7,6 +7,7 @@ import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart'
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
@@ -22,6 +23,11 @@ class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
     required String password,
     String? deviceId,
   }) async {
+    return fakeResponse;
+  }
+
+  @override
+  Future<AuthModel> refreshToken(String refreshToken) async {
     return fakeResponse;
   }
 
@@ -44,11 +50,15 @@ class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
 
 class FakeAuthLocalDatasource implements AuthLocalDatasource {
   String? cachedToken;
+  DateTime? cachedLastActivityAt;
+  String? cachedRefreshToken;
   UserModel? cachedUser;
 
   @override
   Future<void> clearSession() async {
     cachedToken = null;
+    cachedLastActivityAt = null;
+    cachedRefreshToken = null;
     cachedUser = null;
   }
 
@@ -56,11 +66,28 @@ class FakeAuthLocalDatasource implements AuthLocalDatasource {
   Future<String?> getToken() async => cachedToken;
 
   @override
+  Future<DateTime?> getLastActivityAt() async => cachedLastActivityAt;
+
+  @override
+  Future<void> touchActivity() async {
+    cachedLastActivityAt = DateTime.now();
+  }
+
+  @override
+  Future<void> saveRefreshToken(String token) async {
+    cachedRefreshToken = token;
+  }
+
+  @override
+  Future<String?> getRefreshToken() async => cachedRefreshToken;
+
+  @override
   Future<UserModel?> getUser() async => cachedUser;
 
   @override
   Future<void> saveToken(String token) async {
     cachedToken = token;
+    await touchActivity();
   }
 
   @override
@@ -136,6 +163,7 @@ void main() {
       "success": true,
       "message": "Login berhasil",
       "access_token": "476|JljwCyy1dZQ5W0KPNeAByhskJRI2ATmwJWnyGk3md7248bb1",
+      "refresh_token": "refresh-476",
       "token_type": "Bearer",
       "is_initial_quiz_completed": false,
       "is_initial_quiz_filled": false,
@@ -155,6 +183,7 @@ void main() {
       "success": true,
       "message": "Login berhasil",
       "access_token": "476|JljwCyy1dZQ5W0KPNeAByhskJRI2ATmwJWnyGk3md7248bb1",
+      "refresh_token": "refresh-476",
       "token_type": "Bearer",
       "is_initial_quiz_completed": true,
       "is_initial_quiz_filled": true,
@@ -248,6 +277,22 @@ void main() {
         expect(user.hasCompletedInitialQuiz, isTrue);
       },
     );
+
+    test('AuthRepositoryImpl.login menyimpan refresh token', () async {
+      final fakeRemote = FakeAuthRemoteDatasource();
+      final fakeLocal = FakeAuthLocalDatasource();
+      fakeRemote.fakeResponse = AuthModel.fromJson(rawLoginJsonUncompleted);
+
+      final repository = AuthRepositoryImpl(
+        remoteDatasource: fakeRemote,
+        localDatasource: fakeLocal,
+      );
+
+      await repository.login(username: 'agusunandar', password: 'password');
+
+      expect(fakeLocal.cachedToken, isNotEmpty);
+      expect(fakeLocal.cachedRefreshToken, 'refresh-476');
+    });
   });
 
   group('Login role validation', () {
@@ -265,6 +310,7 @@ void main() {
         getSavedUserUsecase: GetSavedUserUsecase(repository),
         getSavedTokenUsecase: GetSavedTokenUsecase(repository),
         logoutUsecase: LogoutUsecase(repository),
+        refreshTokenUsecase: RefreshTokenUsecase(repository),
       );
     }
 

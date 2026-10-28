@@ -19,6 +19,7 @@ import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart'
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
@@ -268,6 +269,9 @@ Future<void> init() async {
     () => UpdateProfileUsecase(sl()),
   );
   sl.registerLazySingleton<LogoutUsecase>(() => LogoutUsecase(sl()));
+  sl.registerLazySingleton<RefreshTokenUsecase>(
+    () => RefreshTokenUsecase(sl()),
+  );
   sl.registerLazySingleton<SendLocationUsecase>(
     () => SendLocationUsecase(sl()),
   );
@@ -351,6 +355,7 @@ Future<void> init() async {
       getSavedUserUsecase: sl(),
       getSavedTokenUsecase: sl(),
       logoutUsecase: sl(),
+      refreshTokenUsecase: sl(),
       notificationService: sl<FirebaseNotificationService>(),
     ),
   );

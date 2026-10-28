@@ -10,6 +10,7 @@ abstract class AuthModel with _$AuthModel {
   const factory AuthModel({
     @JsonKey(name: "message") String? message,
     @JsonKey(name: "access_token") required String accessToken,
+    @JsonKey(name: "refresh_token") String? refreshToken,
     @JsonKey(name: "token_type") String? tokenType,
     @JsonKey(name: "is_initial_quiz_completed") bool? isInitialQuizCompleted,
     @JsonKey(name: "is_initial_quiz_filled") bool? isInitialQuizFilled,

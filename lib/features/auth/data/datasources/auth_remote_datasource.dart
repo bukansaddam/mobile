@@ -11,6 +11,7 @@ abstract class AuthRemoteDatasource {
     required String password,
     String? deviceId,
   });
+  Future<AuthModel> refreshToken(String refreshToken);
   Future<AuthModel> register({
     required String name,
     required String phoneNumber,
@@ -59,6 +60,34 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
       throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<AuthModel> refreshToken(String refreshToken) async {
+    try {
+      final response = await handleRequest<AuthModel>(
+        () => dio.post(
+          ApiConstants.refreshToken,
+          data: {'refresh_token': refreshToken},
+        ),
+        fromJson: _parseAuthModel,
+      );
+
+      if (response.success && response.data != null) {
+        return response.data!;
+      }
+      throw Exception(response.message ?? 'Refresh token gagal');
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[AUTH_DS] Refresh DioException: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    } catch (e, s) {
+      AppLogger.e('[AUTH_DS] Refresh unexpected error: $e', e, s);
       throw Exception(ErrorUtils.parseErrorMessage(e));
     }
   }

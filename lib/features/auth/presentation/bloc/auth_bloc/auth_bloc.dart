@@ -7,6 +7,7 @@ import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart'
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 
 part 'auth_event.dart';
@@ -18,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetSavedUserUsecase _getSavedUserUsecase;
   final GetSavedTokenUsecase _getSavedTokenUsecase;
   final LogoutUsecase _logoutUsecase;
+  final RefreshTokenUsecase _refreshTokenUsecase;
   final FirebaseNotificationService? _notificationService;
 
   AuthBloc({
@@ -26,12 +28,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required GetSavedUserUsecase getSavedUserUsecase,
     required GetSavedTokenUsecase getSavedTokenUsecase,
     required LogoutUsecase logoutUsecase,
+    required RefreshTokenUsecase refreshTokenUsecase,
     FirebaseNotificationService? notificationService,
   })  : _loginUsecase = loginUsecase,
         _registerUsecase = registerUsecase,
         _getSavedUserUsecase = getSavedUserUsecase,
         _getSavedTokenUsecase = getSavedTokenUsecase,
         _logoutUsecase = logoutUsecase,
+        _refreshTokenUsecase = refreshTokenUsecase,
         _notificationService = notificationService,
         super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
@@ -54,8 +58,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final currentUser = userResult.fold((_) => null, (val) => val);
 
     if (token != null && token.isNotEmpty && currentUser != null) {
-      DioClient.instance.options.headers['Authorization'] = 'Bearer $token';
-      emit(AuthAuthenticated(user: currentUser, token: token));
+      final refreshResult = await _refreshTokenUsecase();
+      final refreshed = refreshResult.fold((_) => null, (val) => val);
+
+      if (refreshed == null || refreshed.accessToken.isEmpty) {
+        await _logoutUsecase();
+        DioClient.instance.options.headers.remove('Authorization');
+        emit(const AuthUnauthenticated());
+        return;
+      }
+
+      DioClient.instance.options.headers['Authorization'] =
+          'Bearer ${refreshed.accessToken}';
+      emit(
+        AuthAuthenticated(user: refreshed.user, token: refreshed.accessToken),
+      );
     } else {
       DioClient.instance.options.headers.remove('Authorization');
       emit(const AuthUnauthenticated());

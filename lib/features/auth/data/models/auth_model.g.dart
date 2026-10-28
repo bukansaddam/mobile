@@ -9,6 +9,7 @@ part of 'auth_model.dart';
 _AuthModel _$AuthModelFromJson(Map<String, dynamic> json) => _AuthModel(
   message: json['message'] as String?,
   accessToken: json['access_token'] as String,
+  refreshToken: json['refresh_token'] as String?,
   tokenType: json['token_type'] as String?,
   isInitialQuizCompleted: json['is_initial_quiz_completed'] as bool?,
   isInitialQuizFilled: json['is_initial_quiz_filled'] as bool?,
@@ -19,6 +20,7 @@ Map<String, dynamic> _$AuthModelToJson(_AuthModel instance) =>
     <String, dynamic>{
       'message': instance.message,
       'access_token': instance.accessToken,
+      'refresh_token': instance.refreshToken,
       'token_type': instance.tokenType,
       'is_initial_quiz_completed': instance.isInitialQuizCompleted,
       'is_initial_quiz_filled': instance.isInitialQuizFilled,

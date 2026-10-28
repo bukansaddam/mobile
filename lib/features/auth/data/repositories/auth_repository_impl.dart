@@ -2,11 +2,14 @@ import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
+  static const Duration _sessionLifetime = Duration(hours: 12);
+
   final AuthRemoteDatasource remoteDatasource;
   final AuthLocalDatasource localDatasource;
   final SurveyLocalDatasource? surveyLocalDatasource;
@@ -30,8 +33,7 @@ class AuthRepositoryImpl implements AuthRepository {
         deviceId: deviceId,
       );
 
-      await localDatasource.saveToken(authModel.accessToken);
-      await localDatasource.saveUser(authModel.user);
+      await _saveSession(authModel);
 
       final isQuizCompleted =
           (authModel.isInitialQuizCompleted == true) ||
@@ -79,8 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       if (authModel.accessToken.isNotEmpty) {
-        await localDatasource.saveToken(authModel.accessToken);
-        await localDatasource.saveUser(authModel.user);
+        await _saveSession(authModel);
       }
 
       return Right(authModel.toDomain());
@@ -119,6 +120,36 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, AuthEntity>> refreshToken() async {
+    try {
+      final refreshToken = await localDatasource.getRefreshToken();
+      final lastActivity = await localDatasource.getLastActivityAt();
+      final expired =
+          lastActivity == null ||
+          DateTime.now().difference(lastActivity) >= _sessionLifetime;
+
+      // Server memperpanjang sesi tiap request, jadi refresh hanya saat idle 12 jam.
+      if (!expired || refreshToken == null || refreshToken.isEmpty) {
+        final user = await localDatasource.getUser();
+        final token = await localDatasource.getToken();
+        if (user == null || token == null) {
+          return const Left(CacheFailure('Sesi tersimpan tidak lengkap'));
+        }
+        return Right(AuthEntity(user: user.toDomain(), accessToken: token));
+      }
+
+      final authModel = await remoteDatasource
+          .refreshToken(refreshToken)
+          // Batasi agar splash tidak menunggu melewati batas waktunya.
+          .timeout(const Duration(seconds: 8));
+      await _saveSession(authModel);
+      return Right(authModel.toDomain());
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> logout() async {
     try {
       await localDatasource.clearSession();
@@ -126,5 +157,14 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       return const Left(CacheFailure("Failed to clear local session"));
     }
+  }
+
+  Future<void> _saveSession(AuthModel authModel) async {
+    await localDatasource.saveToken(authModel.accessToken);
+    final refreshToken = authModel.refreshToken;
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await localDatasource.saveRefreshToken(refreshToken);
+    }
+    await localDatasource.saveUser(authModel.user);
   }
 }

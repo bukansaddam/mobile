@@ -94,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
             .firstWhere(
               (state) => state is! AuthInitial && state is! AuthChecking,
             )
-            .timeout(const Duration(seconds: 5));
+            .timeout(const Duration(seconds: 10));
       } catch (_) {
         // Fallback jika timeout
       }
