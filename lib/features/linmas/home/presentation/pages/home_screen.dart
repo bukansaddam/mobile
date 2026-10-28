@@ -162,15 +162,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       _buildMenuUtamaSection(context),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
                       const PengumumanBannerSlider(),
-
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 8),
                       _buildPengumumanHeader(context),
                       const SizedBox(height: 12),
                       _buildPengumumanListTileSection(context),
 
-                      const SizedBox(height: 80),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),

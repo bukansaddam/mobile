@@ -6,8 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
   final GetAnnouncementsUsecase getAnnouncementsUsecase;
 
-  AnnouncementBloc({required this.getAnnouncementsUsecase})
-    : super(const AnnouncementState()) {
+  final String audience;
+
+  AnnouncementBloc({
+    required this.getAnnouncementsUsecase,
+    required this.audience,
+  }) : super(const AnnouncementState()) {
     on<FetchAnnouncements>(_onFetchAnnouncements);
     on<FetchBannerAnnouncements>(_onFetchBannerAnnouncements);
     on<LoadMoreAnnouncements>(_onLoadMoreAnnouncements);
@@ -32,6 +36,7 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
       isPinned: event.isPinned ?? state.isPinnedFilter,
       page: 1,
       perPage: 10,
+      audience: audience,
     );
 
     result.fold(
@@ -65,6 +70,7 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
       isPinned: true,
       page: 1,
       perPage: 10,
+      audience: audience,
     );
 
     result.fold(
@@ -92,6 +98,7 @@ class AnnouncementBloc extends Bloc<AnnouncementEvent, AnnouncementState> {
       isPinned: state.isPinnedFilter,
       page: nextPage,
       perPage: 10,
+      audience: audience,
     );
 
     result.fold(

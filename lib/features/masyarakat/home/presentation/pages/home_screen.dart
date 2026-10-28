@@ -71,9 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<AnnouncementBloc>().add(
       const FetchAnnouncements(isRefresh: true),
     );
-    context.read<AnnouncementBloc>().add(
-      const FetchBannerAnnouncements(),
-    );
+    context.read<AnnouncementBloc>().add(const FetchBannerAnnouncements());
   }
 
   @override

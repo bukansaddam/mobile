@@ -46,9 +46,21 @@ class HomeAnnouncementSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        const PengumumanBannerSlider(height: 165.0),
+        BlocBuilder<AnnouncementBloc, AnnouncementState>(
+          builder: (context, state) {
+            final hasBanner =
+                state.bannerStatus == AnnouncementStatus.loading ||
+                state.bannerAnnouncements.isNotEmpty ||
+                state.announcements.any((item) => item.isPinned);
 
-        const SizedBox(height: 16),
+            return Column(
+              children: [
+                const PengumumanBannerSlider(height: 165.0),
+                if (hasBanner) const SizedBox(height: 16),
+              ],
+            );
+          },
+        ),
 
         BlocBuilder<AnnouncementBloc, AnnouncementState>(
           builder: (context, state) {
@@ -100,7 +112,10 @@ class HomeAnnouncementSection extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.refresh_rounded, size: 16),
-                      label: const Text('Coba Lagi', style: TextStyle(fontSize: 12)),
+                      label: const Text(
+                        'Coba Lagi',
+                        style: TextStyle(fontSize: 12),
+                      ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         side: const BorderSide(color: AppColors.primary),
@@ -117,7 +132,10 @@ class HomeAnnouncementSection extends StatelessWidget {
             if (announcements.isEmpty) {
               return Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),

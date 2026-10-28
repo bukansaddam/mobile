@@ -291,25 +291,30 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
           ),
         ),
 
-        const SizedBox(height: 10),
-
         if (items.length > 1)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(items.length, (idx) {
-              final isActive = idx == _currentPage;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: isActive ? 20 : 7,
-                height: 7,
-                decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : AppColors.grey300,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              );
-            }),
-          ),
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(items.length, (idx) {
+                  final isActive = idx == _currentPage;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: isActive ? 20 : 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: isActive ? AppColors.primary : AppColors.grey300,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
+            ],
+          )
+        else
+          const SizedBox(height: 8),
       ],
     );
   }

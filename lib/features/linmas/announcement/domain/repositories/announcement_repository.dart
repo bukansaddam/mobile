@@ -7,5 +7,6 @@ abstract class AnnouncementRepository {
     bool? isPinned,
     int? page,
     int? perPage,
+    String? audience,
   });
 }

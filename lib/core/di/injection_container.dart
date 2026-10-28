@@ -13,6 +13,7 @@ import 'package:akar/core/services/google_speech_service.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
@@ -426,9 +427,15 @@ Future<void> init() async {
   sl.registerFactory<MemberDashboardBloc>(
     () => MemberDashboardBloc(getMemberDashboardUsecase: sl()),
   );
-  sl.registerFactory<AnnouncementBloc>(
-    () => AnnouncementBloc(getAnnouncementsUsecase: sl()),
-  );
+  sl.registerFactory<AnnouncementBloc>(() {
+    final authState = sl<AuthBloc>().state;
+    final isOfficer =
+        authState is AuthAuthenticated && authState.user.isOfficer;
+    return AnnouncementBloc(
+      getAnnouncementsUsecase: sl(),
+      audience: isOfficer ? 'officers' : 'public',
+    );
+  });
 
   // Dumas Cubits (Factory)
   sl.registerFactory<MainCubit>(() => MainCubit());

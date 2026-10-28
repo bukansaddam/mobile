@@ -15,6 +15,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository {
     bool? isPinned,
     int? page,
     int? perPage,
+    String? audience,
   }) async {
     try {
       final responseModel = await remoteDatasource.getAnnouncements(
@@ -22,6 +23,7 @@ class AnnouncementRepositoryImpl implements AnnouncementRepository {
         isPinned: isPinned,
         page: page,
         perPage: perPage,
+        audience: audience,
       );
       return Right(responseModel.toDomain());
     } catch (e) {

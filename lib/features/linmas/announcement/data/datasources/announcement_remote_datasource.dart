@@ -8,6 +8,7 @@ abstract class AnnouncementRemoteDatasource {
     bool? isPinned,
     int? page,
     int? perPage,
+    String? audience,
   });
 }
 
@@ -19,10 +20,14 @@ class AnnouncementRemoteDatasourceImpl extends BaseRemoteDataSource
     bool? isPinned,
     int? page,
     int? perPage,
+    String? audience,
   }) async {
     final queryParams = <String, dynamic>{};
     if (category != null && category.isNotEmpty) {
       queryParams['category'] = category;
+    }
+    if (audience != null && audience.isNotEmpty) {
+      queryParams['audience'] = audience;
     }
     if (isPinned != null) {
       queryParams['is_pinned'] = isPinned ? 1 : 0;

@@ -70,3 +70,4 @@ SECURITY_AUDIT_REPORT.md
 
 # AI Skills (Individual Mode)
 .agents/skills/*
+anti-slop/*

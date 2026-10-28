@@ -12,12 +12,14 @@ class GetAnnouncementsUsecase {
     bool? isPinned,
     int? page,
     int? perPage,
+    String? audience,
   }) {
     return repository.getAnnouncements(
       category: category,
       isPinned: isPinned,
       page: page,
       perPage: perPage,
+      audience: audience,
     );
   }
 }
