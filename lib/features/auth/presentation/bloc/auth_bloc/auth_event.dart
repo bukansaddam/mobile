@@ -34,6 +34,9 @@ class RegisterEvent extends AuthEvent {
   final String name;
   final String phoneNumber;
   final String nik;
+  final String birthPlace;
+  final String birthDate;
+  final String address;
   final double longitude;
   final double latitude;
   final String username;
@@ -46,6 +49,9 @@ class RegisterEvent extends AuthEvent {
     required this.name,
     required this.phoneNumber,
     required this.nik,
+    this.birthPlace = '',
+    this.birthDate = '',
+    this.address = '',
     required this.longitude,
     required this.latitude,
     required this.username,
@@ -60,6 +66,9 @@ class RegisterEvent extends AuthEvent {
     name,
     phoneNumber,
     nik,
+    birthPlace,
+    birthDate,
+    address,
     longitude,
     latitude,
     username,

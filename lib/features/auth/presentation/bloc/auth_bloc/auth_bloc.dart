@@ -27,13 +27,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required GetSavedTokenUsecase getSavedTokenUsecase,
     required LogoutUsecase logoutUsecase,
     FirebaseNotificationService? notificationService,
-  })  : _loginUsecase = loginUsecase,
-        _registerUsecase = registerUsecase,
-        _getSavedUserUsecase = getSavedUserUsecase,
-        _getSavedTokenUsecase = getSavedTokenUsecase,
-        _logoutUsecase = logoutUsecase,
-        _notificationService = notificationService,
-        super(const AuthInitial()) {
+  }) : _loginUsecase = loginUsecase,
+       _registerUsecase = registerUsecase,
+       _getSavedUserUsecase = getSavedUserUsecase,
+       _getSavedTokenUsecase = getSavedTokenUsecase,
+       _logoutUsecase = logoutUsecase,
+       _notificationService = notificationService,
+       super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<LoginEvent>(_onLogin);
     on<RegisterEvent>(_onRegister);
@@ -62,10 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLogin(
-    LoginEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
 
@@ -104,10 +101,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onRegister(
-    RegisterEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
 
@@ -116,6 +110,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       name: event.name,
       phoneNumber: event.phoneNumber,
       nik: event.nik,
+      birthPlace: event.birthPlace,
+      birthDate: event.birthDate,
+      address: event.address,
       longitude: event.longitude,
       latitude: event.latitude,
       username: event.username,
@@ -125,35 +122,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       deviceId: deviceId,
     );
 
-    result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
-      (authEntity) {
-        if (authEntity.accessToken.isNotEmpty) {
-          DioClient.instance.options.headers['Authorization'] =
-              'Bearer ${authEntity.accessToken}';
-          emit(
-            AuthAuthenticated(
-              user: authEntity.user,
-              token: authEntity.accessToken,
-              message: authEntity.message ?? 'Registrasi berhasil',
-            ),
-          );
-        } else {
-          emit(
-            RegisterSuccess(
-              message: authEntity.message ?? 'Registrasi berhasil',
-              user: authEntity.user,
-            ),
-          );
-        }
-      },
-    );
+    result.fold((failure) => emit(AuthFailure(failure.message)), (authEntity) {
+      if (authEntity.accessToken.isNotEmpty) {
+        DioClient.instance.options.headers['Authorization'] =
+            'Bearer ${authEntity.accessToken}';
+        emit(
+          AuthAuthenticated(
+            user: authEntity.user,
+            token: authEntity.accessToken,
+            message: authEntity.message ?? 'Registrasi berhasil',
+          ),
+        );
+      } else {
+        emit(
+          RegisterSuccess(
+            message: authEntity.message ?? 'Registrasi berhasil',
+            user: authEntity.user,
+          ),
+        );
+      }
+    });
   }
 
-  Future<void> _onLogout(
-    LogoutEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
     await _logoutUsecase();
@@ -161,10 +152,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthUnauthenticated(message: 'Logout berhasil'));
   }
 
-  void _onUpdateAuthUser(
-    UpdateAuthUserEvent event,
-    Emitter<AuthState> emit,
-  ) {
+  void _onUpdateAuthUser(UpdateAuthUserEvent event, Emitter<AuthState> emit) {
     final currentState = state;
     if (currentState is AuthAuthenticated) {
       emit(currentState.copyWith(user: event.user));
