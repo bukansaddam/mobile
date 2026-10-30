@@ -120,11 +120,15 @@ import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint
 import 'package:akar/features/masyarakat/complaint/domain/repositories/location_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/create_complaint_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_address_from_latlng_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_location_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordinates_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 
 // Survey
@@ -362,6 +366,12 @@ Future<void> init() async {
   sl.registerLazySingleton<CreateComplaintUsecase>(
     () => CreateComplaintUsecase(sl()),
   );
+  sl.registerLazySingleton<GetMyComplaintsUsecase>(
+    () => GetMyComplaintsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetComplaintDetailUsecase>(
+    () => GetComplaintDetailUsecase(sl()),
+  );
 
   // BLoCs & Cubits
   sl.registerLazySingleton<AuthBloc>(
@@ -471,6 +481,12 @@ Future<void> init() async {
   sl.registerFactory<MainCubit>(() => MainCubit());
   sl.registerFactory<CreateComplaintBloc>(
     () => CreateComplaintBloc(createComplaint: sl()),
+  );
+  sl.registerFactory<MyComplaintListBloc>(
+    () => MyComplaintListBloc(getMyComplaints: sl()),
+  );
+  sl.registerFactory<ComplaintDetailBloc>(
+    () => ComplaintDetailBloc(getComplaintDetail: sl()),
   );
   sl.registerFactory<LocationPickerCubit>(
     () => LocationPickerCubit(

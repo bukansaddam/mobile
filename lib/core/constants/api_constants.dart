@@ -120,6 +120,24 @@ class ApiConstants {
     182,
     231,
   ]);
+  static final String reportsMe = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    51,
+    104,
+    149,
+    160,
+    90,
+    182,
+    231,
+    112,
+    116,
+    158,
+  ]);
+  static String reportDetail(dynamic id) => '$reports/$id';
 
   // Surveys
   static final String surveys = EndpointSecurity.decode(const <int>[

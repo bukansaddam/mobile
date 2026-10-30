@@ -1,0 +1,115 @@
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "complaint": {
+      "id": 1251,
+      "ticketNumber": "PGD-2026-01251",
+      "title": "Jalan Berlubang",
+      "description": "Jalan berlubang sedalam 90m",
+      "category": { "id": 6, "label": "Bencana Alam", "color": "#6B7280" },
+      "status": "completed",
+      "statusLabel": "Selesai",
+      "statusColor": "#2563EB",
+      "reportedAt": "2026-10-30T03:51:02+00:00",
+      "updatedAt": "2026-10-30T08:02:33+00:00",
+      "agency": null,
+      "assignedOfficer": { "id": 1, "name": "Admin AKAR" }
+    },
+    "reporter": {
+      "id": 504363,
+      "name": "Budi Devano",
+      "username": "budidev",
+      "nik": "3174010101010021",
+      "phone": "081298765430",
+      "email": "budi@example.dev",
+      "address": "Jl. Merdeka No. 1",
+      "avatarUrl": "/storage/avatars/c73b8a9b-b935-45a6-a0c2-43ac7aa733ab.webp"
+    },
+    "location": {
+      "address": "Jl. Keselamatan 2 No.2 11",
+      "village": null,
+      "district": null,
+      "regency": null,
+      "province": null,
+      "latitude": -6.2216891,
+      "longitude": 106.8486735
+    },
+    "attachments": [
+      {
+        "id": 2430,
+        "file_name": "Gemini_Generated_Image_ue9p38ue9p38ue9p.webp",
+        "fileName": "Gemini_Generated_Image_ue9p38ue9p38ue9p.webp",
+        "mime_type": "image/webp",
+        "mimeType": "image/webp",
+        "size": 645582,
+        "sizeBytes": 645582,
+        "file_url": "/api/reports/attachments/2430/file"
+      }
+    ],
+    "activationRuns": [
+      {
+        "id": 130,
+        "title": "Tindak lanjut: Jalan Berlubang",
+        "owner": "Agus Sunandar",
+        "dueDate": "2026-10-30",
+        "status": "completed"
+      }
+    ],
+    "timeline": [
+      {
+        "id": "7791",
+        "type": "completed",
+        "actor": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T08:02:33+00:00",
+        "description": "Laporan selesai ditindaklanjuti dan ditutup."
+      },
+      {
+        "id": "7790",
+        "type": "note",
+        "actor": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T07:58:41+00:00",
+        "description": "Catatan internal ditambahkan."
+      },
+      {
+        "id": "7789",
+        "type": "assigned",
+        "actor": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T07:58:28+00:00",
+        "description": "Laporan diteruskan kepada instansi terkait dan ditugaskan ke Linmas Admin AKAR."
+      },
+      {
+        "id": "7788",
+        "type": "verified",
+        "actor": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T07:52:24+00:00",
+        "description": "Kajari memverifikasi kelengkapan data laporan."
+      },
+      {
+        "id": "7787",
+        "type": "comment",
+        "actor": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T07:50:48+00:00",
+        "description": "Kategori diubah dari  menjadi Bencana Alam."
+      },
+      {
+        "id": "7781",
+        "type": "created",
+        "actor": { "id": 504363, "name": "Budi Devano", "role": "member" },
+        "createdAt": "2026-10-30T03:51:02+00:00",
+        "description": "Laporan dibuat."
+      }
+    ],
+    "internalNotes": [
+      {
+        "id": "1788",
+        "body": "segera",
+        "author": { "id": 1, "name": "Admin AKAR", "role": "admin" },
+        "createdAt": "2026-10-30T07:58:41+00:00",
+        "updatedAt": "2026-10-30T07:58:41+00:00"
+      }
+    ],
+    "availableActions": [],
+    "sla": null
+  }
+}

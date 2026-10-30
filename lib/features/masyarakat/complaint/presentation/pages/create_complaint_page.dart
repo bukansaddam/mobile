@@ -8,7 +8,6 @@ import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
-import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
@@ -51,7 +50,6 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
 
-  String? _selectedCategory;
   bool _isFetchingLocation = false;
   double? _latitude;
   double? _longitude;
@@ -63,9 +61,6 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   void initState() {
     super.initState();
     _bloc = sl<CreateComplaintBloc>();
-    if (widget.initialCategory != null) {
-      _selectedCategory = widget.initialCategory!.label;
-    }
     _fetchCurrentLocation();
   }
 
@@ -245,52 +240,15 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   }
 
   void _handleSuccess(ComplaintReportEntity report) {
-    final now = report.createdAt ?? DateTime.now();
-    final categoryName =
-        _selectedCategory ??
-        widget.initialCategory?.label ??
-        'Belum Dikategori';
-
-    // shortcut: riwayat pengaduan masih dummy lokal sampai GET /api/reports tersedia.
-    final localId = report.ticketNumber.isNotEmpty
-        ? report.ticketNumber
-        : report.id.isNotEmpty
-        ? report.id
-        : 'PGD-${now.year}-${(dummyMyComplaints.length + 1).toString().padLeft(3, '0')}';
-    final newComplaint = ComplaintItem(
-      id: localId,
-      title: _titleController.text.trim(),
-      category: categoryName,
-      dateTime: now,
-      description: _descriptionController.text.trim(),
-      location: _locationController.text.trim(),
-      attachments: List.of(_attachments),
-      status: ComplaintStatus.received,
-      icon: ComplaintCategory.getIconFor(categoryName),
-      statusHistory: [
-        ComplaintStatusHistory(
-          status: ComplaintStatus.received,
-          dateTime: now,
-          note: 'Laporan pengaduan berhasil masuk ke sistem DUMAS.',
-        ),
-      ],
-    );
-
-    dummyMyComplaints.insert(0, newComplaint);
-    dummyMyComplaints.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-
-    dummyPublicComplaints.insert(0, newComplaint);
-    dummyPublicComplaints.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-
+    final ticket = report.ticketNumber;
     AppDialogs.showSuccess(
       context,
       title: 'Pengaduan Berhasil Dikirim!',
-      message:
-          'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.',
+      message: ticket.isEmpty
+          ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
+          : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.',
       buttonText: 'Kembali ke Beranda',
-      onPressed: () {
-        Navigator.pop(context, true);
-      },
+      onPressed: () => Navigator.pop(context, true),
     );
   }
 
@@ -671,11 +629,6 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                 ),
                               )
                             : null,
-                        // const Icon(
-                        //     Icons.map_rounded,
-                        //     color: Color(0xFF2563EB),
-                        //     size: 22,
-                        //   ),
                         filled: true,
                         fillColor: AppColors.white,
                         disabledBorder: OutlineInputBorder(

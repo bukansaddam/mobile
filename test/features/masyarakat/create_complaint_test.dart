@@ -18,6 +18,21 @@ class _FakeRepository implements ComplaintRepository {
   int calls = 0;
 
   @override
+  Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
+    int page = 1,
+    int perPage = 15,
+  }) async {
+    return const Right(ComplaintPaginatedEntity());
+  }
+
+  @override
+  Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(
+    String id,
+  ) async {
+    return const Right(ComplaintReportEntity(id: '9'));
+  }
+
+  @override
   Future<Either<Failure, ComplaintReportEntity>> createComplaint({
     required String title,
     required String description,
@@ -42,6 +57,19 @@ class _ThrowingDatasource implements ComplaintRemoteDatasource {
     required List<File> attachments,
   }) async {
     throw const FileSecurityException('Berkas tidak valid');
+  }
+
+  @override
+  Future<ComplaintPaginatedModel> getMyComplaints({
+    int page = 1,
+    int perPage = 15,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ComplaintReportDetailModel> getComplaintDetail(String id) {
+    throw UnimplementedError();
   }
 }
 
@@ -89,9 +117,9 @@ void main() {
 
   test('model membaca response kosong tanpa error', () {
     final model = ComplaintReportModel.fromJson(const {});
-    expect(model.id, '');
+    expect(model.id, isNull);
     expect(model.ticketNumber, '');
-    expect(model.createdAt, isNull);
+    expect(model.reportedAt, isNull);
   });
 
   test('model membaca response 201 tanpa wrapper data', () {
@@ -102,7 +130,7 @@ void main() {
       'success': true,
     });
 
-    expect(model.id, '1251');
+    expect(model.id, 1251);
     expect(model.ticketNumber, 'PGD-2026-01251');
   });
 

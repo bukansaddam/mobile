@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
-
-import '../entities/complaint_report_entity.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 
 abstract class ComplaintRepository {
   Future<Either<Failure, ComplaintReportEntity>> createComplaint({
@@ -13,4 +12,11 @@ abstract class ComplaintRepository {
     required double longitude,
     required List<File> attachments,
   });
+
+  Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
+    int page = 1,
+    int perPage = 15,
+  });
+
+  Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(String id);
 }

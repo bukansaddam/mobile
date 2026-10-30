@@ -1,5 +1,7 @@
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_list_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
@@ -35,69 +37,76 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
     }
   }
 
-  Future<void> _openCreateComplaint() async {
+  Future<void> _openCreateComplaint(BuildContext context) async {
     final result = await CreateComplaintPage.show(context);
-    if (result == true && mounted) {
+    if (result == true && context.mounted) {
       context.read<MainCubit>().changeTab(0);
+      context.read<MyComplaintListBloc>().add(
+        const FetchMyComplaintsEvent(isRefresh: true),
+      );
       setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MainCubit, MainState>(
-      builder: (context, state) {
-        return Scaffold(
-          appBar: CustomAppBar(
-            unreadCount: _unreadCount,
-            onNotificationPressed: _handleNotificationTap,
-          ),
-          body: IndexedStack(
-            index: state.selectedIndex,
-            children: const [
-              HomeScreen(),
-              ComplaintListPage(),
-              SizedBox.shrink(),
-              MyComplaintHistoryPage(),
-              MasyarakatProfileScreen(),
-            ],
-          ),
-          floatingActionButton: GestureDetector(
-            onTap: _openCreateComplaint,
-            child: Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-                gradient: AppColors.primaryGradient,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withAlpha(100),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.add_rounded,
-                color: AppColors.white,
-                size: 32,
+    return BlocProvider(
+      create: (_) =>
+          sl<MyComplaintListBloc>()..add(const FetchMyComplaintsEvent()),
+      child: BlocBuilder<MainCubit, MainState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: CustomAppBar(
+              unreadCount: _unreadCount,
+              onNotificationPressed: _handleNotificationTap,
+            ),
+            body: IndexedStack(
+              index: state.selectedIndex,
+              children: const [
+                HomeScreen(),
+                ComplaintListPage(),
+                SizedBox.shrink(),
+                MyComplaintHistoryPage(),
+                MasyarakatProfileScreen(),
+              ],
+            ),
+            floatingActionButton: GestureDetector(
+              onTap: () => _openCreateComplaint(context),
+              child: Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  shape: BoxShape.circle,
+                  gradient: AppColors.primaryGradient,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withAlpha(100),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: AppColors.white,
+                  size: 32,
+                ),
               ),
             ),
-          ),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: CustomBottomNavBar(
-            currentIndex: state.selectedIndex,
-            onTapTab: (index) {
-              if (index == 0 || index == 1 || index == 3 || index == 4) {
-                context.read<MainCubit>().changeTab(index);
-              }
-            },
-          ),
-        );
-      },
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            bottomNavigationBar: CustomBottomNavBar(
+              currentIndex: state.selectedIndex,
+              onTapTab: (index) {
+                if (index == 0 || index == 1 || index == 3 || index == 4) {
+                  context.read<MainCubit>().changeTab(index);
+                }
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

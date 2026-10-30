@@ -11,7 +11,8 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
-import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/widgets/complaint_list_widget.dart';
@@ -72,6 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
       const FetchAnnouncements(isRefresh: true),
     );
     context.read<AnnouncementBloc>().add(const FetchBannerAnnouncements());
+    context.read<MyComplaintListBloc>().add(
+      const FetchMyComplaintsEvent(isRefresh: true),
+    );
   }
 
   @override
@@ -104,6 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                             if (result == true && context.mounted) {
                               context.read<MainCubit>().changeTab(0);
+                              context.read<MyComplaintListBloc>().add(
+                                const FetchMyComplaintsEvent(isRefresh: true),
+                              );
                             }
                           },
                         ),
@@ -139,10 +146,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         const SizedBox(height: 12),
 
-                        ComplaintListWidget(
-                          items: dummyMyComplaints.take(3).toList(),
-                          onItemTap: (item) =>
-                              ComplaintDetailPage.show(context, item),
+                        BlocBuilder<MyComplaintListBloc, MyComplaintListState>(
+                          builder: (context, state) {
+                            final items = state.items
+                                .take(3)
+                                .map(ComplaintItem.fromReport)
+                                .toList();
+                            if (items.isEmpty &&
+                                state.status == MyComplaintListStatus.loading) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return ComplaintListWidget(
+                              items: items,
+                              onItemTap: (item) =>
+                                  ComplaintDetailPage.show(context, item),
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 20),

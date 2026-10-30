@@ -18,6 +18,13 @@ abstract class ComplaintRemoteDatasource {
     required double longitude,
     required List<File> attachments,
   });
+
+  Future<ComplaintPaginatedModel> getMyComplaints({
+    int page = 1,
+    int perPage = 15,
+  });
+
+  Future<ComplaintReportDetailModel> getComplaintDetail(String id);
 }
 
 class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
@@ -73,6 +80,45 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       AppLogger.e('[COMPLAINT_DS] Error in createComplaint: $e', e, s);
       rethrow;
     }
+  }
+
+  @override
+  Future<ComplaintPaginatedModel> getMyComplaints({
+    int page = 1,
+    int perPage = 15,
+  }) async {
+    try {
+      final response = await dio.get(
+        ApiConstants.reportsMe,
+        queryParameters: {'page': page, 'per_page': perPage},
+      );
+      final body = response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{};
+      return ComplaintPaginatedModel.fromJson(body);
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[COMPLAINT_DS] DioException in getMyComplaints: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<ComplaintReportDetailModel> getComplaintDetail(String id) async {
+    final response = await handleRequest<ComplaintReportDetailModel>(
+      () => dio.get(ApiConstants.reportDetail(id)),
+      fromJson: (json) => ComplaintReportDetailModel.fromJson(
+        json is Map ? Map<String, dynamic>.from(json) : const {},
+      ),
+    );
+
+    if (!response.success) {
+      throw Exception(response.message ?? 'Gagal memuat detail pengaduan');
+    }
+    return response.data ?? const ComplaintReportDetailModel();
   }
 
   Future<List<File>> _prepareAttachments(List<File> attachments) async {

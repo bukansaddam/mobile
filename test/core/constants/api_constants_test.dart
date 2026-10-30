@@ -25,6 +25,8 @@ void main() {
 
     test('reports endpoint decodes accurately', () {
       expect(ApiConstants.reports, '/api/reports');
+      expect(ApiConstants.reportsMe, '/api/reports/me');
+      expect(ApiConstants.reportDetail(1256), '/api/reports/1256');
     });
 
     test('activation runs endpoint decodes accurately', () {

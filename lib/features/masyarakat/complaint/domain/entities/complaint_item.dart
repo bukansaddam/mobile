@@ -1,3 +1,6 @@
+import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -55,6 +58,34 @@ enum ComplaintStatus {
   const ComplaintStatus(this.label, this.textColor, this.bgColor, this.icon);
 }
 
+ComplaintStatus complaintStatusFromCode(String code) {
+  switch (code.toLowerCase()) {
+    case 'new':
+    case 'created':
+      return ComplaintStatus.received;
+    case 'pending':
+      return ComplaintStatus.pending;
+    case 'verification':
+    case 'verified':
+    case 'in_review':
+      return ComplaintStatus.verified;
+    case 'in_progress':
+    case 'processing':
+      return ComplaintStatus.inProgress;
+    case 'resolved':
+    case 'completed':
+    case 'done':
+      return ComplaintStatus.completed;
+    case 'rejected':
+      return ComplaintStatus.rejected;
+    case 'cancelled':
+    case 'canceled':
+      return ComplaintStatus.cancelled;
+    default:
+      return ComplaintStatus.received;
+  }
+}
+
 class ComplaintStatusHistory {
   final ComplaintStatus status;
   final DateTime dateTime;
@@ -81,28 +112,84 @@ class ComplaintStatusHistory {
 
 class ComplaintItem {
   final String id;
+  final String? reportId;
   final String title;
   final String category;
   final DateTime dateTime;
   final String description;
   final String location;
   final List<String> attachments;
+  final Set<String> videoUrls;
   final ComplaintStatus status;
+  final String statusLabel;
   final List<ComplaintStatusHistory> statusHistory;
   final IconData icon;
 
   const ComplaintItem({
     required this.id,
+    this.reportId,
     required this.title,
     required this.category,
     required this.dateTime,
     required this.description,
     required this.location,
     required this.attachments,
+    this.videoUrls = const {},
     required this.status,
+    this.statusLabel = '',
     required this.statusHistory,
     required this.icon,
   });
+
+  factory ComplaintItem.fromReport(ComplaintReportEntity report) {
+    final status = complaintStatusFromCode(report.status);
+    final dateTime = report.reportedAt ?? DateTime.now();
+    final attachments = report.attachments
+        .map((attachment) => attachment.url)
+        .where((url) => url.isNotEmpty)
+        .toList();
+
+    return ComplaintItem(
+      id: report.ticketNumber.isNotEmpty ? report.ticketNumber : report.id,
+      reportId: report.id.isNotEmpty ? report.id : null,
+      title: report.title,
+      category: report.category.isNotEmpty ? report.category : 'Umum',
+      dateTime: dateTime,
+      description: report.description,
+      location: report.address,
+      attachments: attachments,
+      videoUrls: report.attachments
+          .where((attachment) => attachment.isVideo)
+          .map((attachment) => attachment.url)
+          .toSet(),
+      status: status,
+      statusLabel: report.statusLabel,
+      icon: ComplaintCategory.getIconFor(report.category),
+      statusHistory: report.timeline.isEmpty
+          ? [
+              ComplaintStatusHistory(
+                status: status,
+                dateTime: dateTime,
+                note: report.statusLabel.isNotEmpty
+                    ? report.statusLabel
+                    : 'Laporan dibuat.',
+              ),
+            ]
+          // API mengirim timeline terbaru-dulu; UI butuh urutan kronologis.
+          : report.timeline.reversed
+                .map(
+                  (entry) => ComplaintStatusHistory(
+                    status: status,
+                    dateTime: entry.createdAt ?? dateTime,
+                    note: entry.description,
+                  ),
+                )
+                .toList(),
+    );
+  }
+
+  bool isVideoAttachment(String path) =>
+      videoUrls.contains(path) || FileSecurityUtils.isVideoPath(path);
 
   String get timeAgo {
     final now = DateTime.now();
