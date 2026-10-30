@@ -1,3 +1,4 @@
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -6,8 +7,10 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/kta_card_dialog.dart';
+import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/linmas/activation/data/datasources/activation_pending_report_local_datasource.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:flutter/material.dart';
@@ -32,11 +35,18 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
     });
   }
 
-  void _showLogoutDialog(BuildContext context) async {
+  Future<void> _showLogoutDialog(BuildContext context) async {
+    final unsentReports = await _countUnsentReports();
+    if (!context.mounted) return;
+
     final confirmed = await AppDialogs.showConfirmation(
       context,
       title: 'Keluar Akun',
-      message: 'Apakah Anda yakin ingin keluar dari akun?',
+      message: unsentReports > 0
+          ? 'Masih ada $unsentReports laporan yang belum terkirim. Laporan '
+                'tetap tersimpan di perangkat dan hanya dikirim saat akun ini '
+                'masuk kembali.\n\nTetap keluar?'
+          : 'Apakah Anda yakin ingin keluar dari akun?',
       confirmText: 'Keluar',
       cancelText: 'Batal',
       isDestructive: true,
@@ -48,6 +58,20 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
       context.read<AuthBloc>().add(const LogoutEvent());
       AppToast.showSuccess(context, message: 'Berhasil keluar dari akun');
       context.goNamed('login', queryParameters: {'role': 'linmas'});
+    }
+  }
+
+  Future<int> _countUnsentReports() async {
+    try {
+      final user = await sl<AuthLocalDatasource>().getUser();
+      if (user == null) return 0;
+      final reports = await sl<ActivationPendingReportLocalDatasource>()
+          .getPending();
+      return reports
+          .where((report) => report.belongsTo(user.id.toString()))
+          .length;
+    } catch (_) {
+      return 0;
     }
   }
 

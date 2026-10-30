@@ -1,10 +1,16 @@
 import 'dart:io';
 
+import 'package:akar/core/constants/api_constants.dart';
+import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
+import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
+import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_detail_modal.dart';
@@ -35,30 +41,93 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.autoShowInfo) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!_infoShown && mounted) {
-          _infoShown = true;
-          final state = context.read<ActivationBloc>().state;
-          final activity = state.getActivityById(widget.activityId);
-          if (activity != null) {
-            ActivationDetailModal.show(context, activity);
-          }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ActivationBloc>().add(
+        LoadActivationSubmissionsEvent(participantId: widget.activityId),
+      );
+
+      if (widget.autoShowInfo && !_infoShown) {
+        _infoShown = true;
+        final activity = context.read<ActivationBloc>().state.getActivityById(
+          widget.activityId,
+        );
+        if (activity != null) {
+          ActivationDetailModal.show(context, activity);
         }
-      });
-    }
+      }
+    });
   }
 
-  Future<void> _startPhotoSubmission(
+  Future<void> _startSubmission(
     BuildContext context,
     ActivationActivity activity,
   ) async {
-    final photoUrl = await CameraCaptureScreen.open(context);
-    if (photoUrl != null && context.mounted) {
+    final isVideo = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.grey300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Pilih Jenis Bukti',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Maksimal 5 lampiran: 1 video dan sisanya foto',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(
+                Icons.add_a_photo_rounded,
+                color: AppColors.primary,
+              ),
+              title: const Text('Ambil Foto'),
+              onTap: () => Navigator.pop(sheetContext, false),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.videocam_rounded,
+                color: AppColors.primary,
+              ),
+              title: const Text('Ambil Video (Maksimal 1 Menit)'),
+              onTap: () => Navigator.pop(sheetContext, true),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (isVideo == null || !context.mounted) return;
+
+    final path = isVideo
+        ? await CameraCaptureScreen.openVideo(context)
+        : await CameraCaptureScreen.open(context);
+    if (path != null && context.mounted) {
       AddReportBottomSheet.show(
         context,
         activity: activity,
-        capturedPhotoUrl: photoUrl,
+        initialAttachmentPath: path,
       );
     }
   }
@@ -156,8 +225,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                       width: double.infinity,
                       height: 52,
                       child: ElevatedButton(
-                        onPressed: () =>
-                            _startPhotoSubmission(context, activity),
+                        onPressed: () => _startSubmission(context, activity),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           shape: RoundedRectangleBorder(
@@ -166,7 +234,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           elevation: 2,
                         ),
                         child: Text(
-                          'Kirim',
+                          'Buat Laporan',
                           style: AppTextStyles.titleMedium.copyWith(
                             color: AppColors.white,
                             fontWeight: FontWeight.bold,
@@ -555,6 +623,16 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     ActivationActivity activity,
   ) {
     final timeFormat = DateFormat('dd MMM yyyy, HH:mm');
+    final pendingReports = context
+        .read<ActivationBloc>()
+        .state
+        .pendingReports
+        .where((report) => report.participantId == activity.id)
+        .toList();
+    final isLoadingReports = context
+        .read<ActivationBloc>()
+        .state
+        .isLoadingSubmissions;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,8 +664,42 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             ),
           ],
         ),
+        if (pendingReports.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.cloud_off_rounded,
+                  size: 14,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${pendingReports.length} laporan belum terkirim',
+                  style: AppTextStyles.labelSmall.copyWith(
+                    color: AppColors.warning,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
         const SizedBox(height: 12),
-        if (activity.reports.isEmpty)
+        if (isLoadingReports &&
+            activity.reports.isEmpty &&
+            pendingReports.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.grey200),
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        else if (activity.reports.isEmpty && pendingReports.isEmpty)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
@@ -632,13 +744,377 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
               mainAxisSpacing: 12,
               childAspectRatio: 0.82,
             ),
-            itemCount: activity.reports.length,
+            itemCount: pendingReports.length + activity.reports.length,
             itemBuilder: (context, idx) {
-              final report = activity.reports[idx];
+              if (idx < pendingReports.length) {
+                return _buildPendingReportCard(pendingReports[idx], timeFormat);
+              }
+              final report = activity.reports[idx - pendingReports.length];
               return _buildReportCard(context, report, activity, timeFormat);
             },
           ),
       ],
+    );
+  }
+
+  Widget _buildPendingReportCard(
+    PendingActivationReportModel pendingReport,
+    DateFormat timeFormat,
+  ) {
+    final firstAttachment = pendingReport.attachmentPaths.first;
+    final isVideo = FileSecurityUtils.isVideoPath(firstAttachment);
+    final isSyncing = context.read<ActivationBloc>().state.isSyncingPending;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _showPendingPreview(pendingReport),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: isVideo
+                            ? Container(
+                                color: AppColors.grey900,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.play_circle_fill_rounded,
+                                    color: AppColors.white,
+                                    size: 36,
+                                  ),
+                                ),
+                              )
+                            : Image.file(
+                                File(firstAttachment),
+                                fit: BoxFit.cover,
+                                cacheWidth: 400,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      color: AppColors.grey200,
+                                      child: const Icon(
+                                        Icons.broken_image_rounded,
+                                        color: AppColors.grey500,
+                                      ),
+                                    ),
+                              ),
+                      ),
+                      Positioned(
+                        top: 6,
+                        left: 6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Belum terkirim',
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        timeFormat.format(pendingReport.createdAt),
+                        style: AppTextStyles.labelSmall.copyWith(
+                          fontSize: 10,
+                          color: AppColors.grey600,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      if (pendingReport.receiverName != null &&
+                          pendingReport.receiverName!.isNotEmpty)
+                        Text(
+                          'Penerima: ${pendingReport.receiverName}',
+                          style: AppTextStyles.labelSmall.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                            fontSize: 11,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      else if (pendingReport.notes != null &&
+                          pendingReport.notes!.isNotEmpty)
+                        Text(
+                          pendingReport.notes!,
+                          style: AppTextStyles.labelSmall.copyWith(
+                            color: AppColors.textPrimary,
+                            fontSize: 11,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      if (pendingReport.lastError != null)
+                        Text(
+                          pendingReport.lastError!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: AppColors.error,
+                          ),
+                        ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 30,
+                              child: ElevatedButton(
+                                onPressed: isSyncing
+                                    ? null
+                                    : () => context.read<ActivationBloc>().add(
+                                        SyncPendingReportsEvent(
+                                          reportId: pendingReport.id,
+                                        ),
+                                      ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 30),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: VisualDensity.compact,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Kirim ulang',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          SizedBox(
+                            width: 34,
+                            height: 30,
+                            child: OutlinedButton(
+                              onPressed: isSyncing
+                                  ? null
+                                  : () => _confirmDeletePending(pendingReport),
+                              style: OutlinedButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 30),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                visualDensity: VisualDensity.compact,
+                                side: const BorderSide(color: AppColors.error),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.delete_outline_rounded,
+                                size: 16,
+                                color: AppColors.error,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeletePending(
+    PendingActivationReportModel report,
+  ) async {
+    final confirmed = await AppDialogs.showConfirmation(
+      context,
+      title: 'Hapus laporan?',
+      message:
+          'Laporan "${report.activityTitle}" akan dihapus dari perangkat '
+          'dan tidak akan pernah terkirim.',
+      confirmText: 'Hapus',
+      cancelText: 'Batal',
+      isDestructive: true,
+      icon: Icons.delete_outline_rounded,
+    );
+
+    if (confirmed && mounted) {
+      context.read<ActivationBloc>().add(DeletePendingReportEvent(report.id));
+    }
+  }
+
+  void _showPendingPreview(PendingActivationReportModel report) {
+    final imagePaths = report.attachmentPaths
+        .where((path) => !FileSecurityUtils.isVideoPath(path))
+        .toList();
+
+    if (report.attachmentPaths.length == 1 && imagePaths.isEmpty) {
+      FullscreenVideoViewer.show(
+        context,
+        pathOrUrl: report.attachmentPaths.first,
+        title: 'Video Bukti (Belum terkirim)',
+      );
+      return;
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: AppColors.white,
+        insetPadding: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Laporan Belum Terkirim',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                DateFormat('dd MMMM yyyy, HH:mm').format(report.createdAt),
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 260,
+                child: PageView.builder(
+                  itemCount: report.attachmentPaths.length,
+                  itemBuilder: (context, index) {
+                    final path = report.attachmentPaths[index];
+                    if (FileSecurityUtils.isVideoPath(path)) {
+                      return GestureDetector(
+                        onTap: () => FullscreenVideoViewer.show(
+                          context,
+                          pathOrUrl: path,
+                          title: 'Video Bukti (Belum terkirim)',
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.grey900,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.play_circle_fill_rounded,
+                                  color: AppColors.white,
+                                  size: 48,
+                                ),
+                                SizedBox(height: 6),
+                                Text(
+                                  'Putar video',
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return GestureDetector(
+                      onTap: () {
+                        final imageIndex = imagePaths.indexOf(path);
+                        FullscreenImageViewer.show(
+                          context,
+                          imagePathOrUrl: path,
+                          images: imagePaths,
+                          initialIndex: imageIndex < 0 ? 0 : imageIndex,
+                          title: 'Foto Laporan Bukti',
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          File(path),
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: AppColors.grey200,
+                                child: const Icon(
+                                  Icons.broken_image_rounded,
+                                  color: AppColors.grey500,
+                                ),
+                              ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '${report.attachmentPaths.length} lampiran',
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Tutup'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -666,7 +1142,18 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => _showPhotoPreview(context, report, activity),
+            onTap: () {
+              if (report.photoUrls.isEmpty && report.videoUrls.isNotEmpty) {
+                FullscreenVideoViewer.show(
+                  context,
+                  pathOrUrl: report.videoUrls.first,
+                  title: 'Video Laporan Bukti',
+                  httpHeaders: _apiAuthHeaders(report.videoUrls.first),
+                );
+                return;
+              }
+              _showPhotoPreview(context, report, activity);
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -674,13 +1161,23 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                   child: Stack(
                     children: [
                       Positioned.fill(
-                        child: _buildReportImage(
-                          report.photoUrl,
-                          fit: BoxFit.cover,
-                        ),
+                        child: report.photoUrls.isNotEmpty
+                            ? _buildReportImage(
+                                report.photoUrl,
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: AppColors.grey900,
+                                child: const Center(
+                                  child: Icon(
+                                    Icons.play_circle_fill_rounded,
+                                    color: AppColors.white,
+                                    size: 36,
+                                  ),
+                                ),
+                              ),
                       ),
-                      // Multi-photo count badge
-                      if (report.photoUrls.length > 1)
+                      if (report.photoUrls.length + report.videoUrls.length > 1)
                         Positioned(
                           top: 6,
                           left: 6,
@@ -702,7 +1199,9 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
-                                  '${report.photoUrls.length} Foto',
+                                  report.videoUrls.isEmpty
+                                      ? '${report.photoUrls.length} Foto'
+                                      : '${report.photoUrls.length + report.videoUrls.length} Media',
                                   style: const TextStyle(
                                     color: AppColors.white,
                                     fontSize: 9,
@@ -713,38 +1212,83 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             ),
                           ),
                         ),
-                      Positioned(
-                        left: 6,
-                        bottom: 6,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.black.withValues(alpha: 0.7),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.my_location_rounded,
-                                size: 10,
-                                color: AppColors.white,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                '${report.latitude.toStringAsFixed(3)}, ${report.longitude.toStringAsFixed(3)}',
-                                style: const TextStyle(
+                      if (report.latitude != 0 || report.longitude != 0)
+                        Positioned(
+                          left: 6,
+                          bottom: 6,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.black.withValues(alpha: 0.7),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.my_location_rounded,
+                                  size: 10,
                                   color: AppColors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 3),
+                                Text(
+                                  '${report.latitude.toStringAsFixed(3)}, ${report.longitude.toStringAsFixed(3)}',
+                                  style: const TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
+                      if (report.videoUrls.isNotEmpty &&
+                          report.photoUrls.isNotEmpty)
+                        Positioned(
+                          right: 6,
+                          bottom: 6,
+                          child: GestureDetector(
+                            onTap: () => FullscreenVideoViewer.show(
+                              context,
+                              pathOrUrl: report.videoUrls.first,
+                              title: 'Video Laporan Bukti',
+                              httpHeaders: _apiAuthHeaders(
+                                report.videoUrls.first,
+                              ),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.black.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.play_arrow_rounded,
+                                    size: 10,
+                                    color: AppColors.white,
+                                  ),
+                                  SizedBox(width: 3),
+                                  Text(
+                                    'Video',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -806,6 +1350,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         width: width,
         height: height,
         fit: fit,
+        httpHeaders: _apiAuthHeaders(pathOrUrl),
         errorIcon: Icons.broken_image_rounded,
         backgroundColor: AppColors.grey200,
       );
@@ -832,14 +1377,47 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     }
   }
 
+  Map<String, String>? _apiAuthHeaders(String url) {
+    final uri = Uri.tryParse(url);
+    final base = Uri.tryParse(ApiConstants.baseUrl);
+    if (uri == null || base == null || uri.host != base.host) return null;
+    final auth = DioClient.instance.options.headers['Authorization'];
+    return auth is String && auth.isNotEmpty ? {'Authorization': auth} : null;
+  }
+
   void _showPhotoPreview(
     BuildContext context,
     ActivationReport report,
     ActivationActivity activity,
   ) {
     final timeFormat = DateFormat('dd MMMM yyyy, HH:mm');
-    int selectedPhotoIdx = 0;
+    final photoUrls = report.photoUrls;
+    final mediaUrls = [...photoUrls, ...report.videoUrls];
+    int selectedMediaIdx = 0;
     final PageController dialogPageController = PageController();
+
+    bool isVideoIndex(int index) => index >= photoUrls.length;
+
+    void openMedia(BuildContext context, int index) {
+      final url = mediaUrls[index];
+      if (isVideoIndex(index)) {
+        FullscreenVideoViewer.show(
+          context,
+          pathOrUrl: url,
+          title: 'Video Laporan Bukti',
+          httpHeaders: _apiAuthHeaders(url),
+        );
+      } else {
+        FullscreenImageViewer.show(
+          context,
+          imagePathOrUrl: url,
+          images: photoUrls,
+          initialIndex: index,
+          title: 'Foto Laporan Bukti',
+          httpHeaders: _apiAuthHeaders(url),
+        );
+      }
+    }
 
     showDialog(
       context: context,
@@ -854,7 +1432,6 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Main Swipeable Photo View (PageView)
                   SizedBox(
                     height: 230,
                     child: Stack(
@@ -865,35 +1442,50 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           ),
                           child: PageView.builder(
                             controller: dialogPageController,
-                            itemCount: report.photoUrls.length,
+                            itemCount: mediaUrls.length,
                             onPageChanged: (idx) {
                               setDialogState(() {
-                                selectedPhotoIdx = idx;
+                                selectedMediaIdx = idx;
                               });
                             },
                             itemBuilder: (context, idx) {
-                              final photoUrl = report.photoUrls[idx];
+                              final url = mediaUrls[idx];
                               return GestureDetector(
-                                onTap: () {
-                                  FullscreenImageViewer.show(
-                                    context,
-                                    imagePathOrUrl: photoUrl,
-                                    images: report.photoUrls,
-                                    initialIndex: idx,
-                                    title: 'Foto Laporan Bukti',
-                                  );
-                                },
-                                child: _buildReportImage(
-                                  photoUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 230,
-                                ),
+                                onTap: () => openMedia(context, idx),
+                                child: isVideoIndex(idx)
+                                    ? Container(
+                                        color: AppColors.grey900,
+                                        child: const Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.play_circle_fill_rounded,
+                                                color: AppColors.white,
+                                                size: 48,
+                                              ),
+                                              SizedBox(height: 6),
+                                              Text(
+                                                'Putar video',
+                                                style: TextStyle(
+                                                  color: AppColors.white,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : _buildReportImage(
+                                        url,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: 230,
+                                      ),
                               );
                             },
                           ),
                         ),
-                        // Photo Counter Badge
                         Positioned(
                           top: 10,
                           left: 10,
@@ -907,7 +1499,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              '${selectedPhotoIdx + 1} / ${report.photoUrls.length}',
+                              '${selectedMediaIdx + 1} / ${mediaUrls.length}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
@@ -916,21 +1508,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             ),
                           ),
                         ),
-                        // Fullscreen Button Overlay
                         Positioned(
                           right: 10,
                           bottom: 10,
                           child: GestureDetector(
-                            onTap: () {
-                              FullscreenImageViewer.show(
-                                context,
-                                imagePathOrUrl:
-                                    report.photoUrls[selectedPhotoIdx],
-                                images: report.photoUrls,
-                                initialIndex: selectedPhotoIdx,
-                                title: 'Foto Laporan Bukti',
-                              );
-                            },
+                            onTap: () => openMedia(context, selectedMediaIdx),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -940,18 +1522,22 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 color: Colors.black.withValues(alpha: 0.7),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    Icons.fullscreen_rounded,
+                                    isVideoIndex(selectedMediaIdx)
+                                        ? Icons.play_arrow_rounded
+                                        : Icons.fullscreen_rounded,
                                     color: Colors.white,
                                     size: 16,
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(
-                                    'Fullscreen',
-                                    style: TextStyle(
+                                    isVideoIndex(selectedMediaIdx)
+                                        ? 'Putar'
+                                        : 'Fullscreen',
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
@@ -966,8 +1552,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                     ),
                   ),
 
-                  // Horizontal Thumbnails bar if multiple photos
-                  if (report.photoUrls.length > 1) ...[
+                  if (mediaUrls.length > 1) ...[
                     Container(
                       height: 64,
                       padding: const EdgeInsets.symmetric(
@@ -977,13 +1562,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                       color: AppColors.grey100,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: report.photoUrls.length,
+                        itemCount: mediaUrls.length,
                         itemBuilder: (context, idx) {
-                          final isSelected = idx == selectedPhotoIdx;
+                          final isSelected = idx == selectedMediaIdx;
                           return GestureDetector(
                             onTap: () {
                               setDialogState(() {
-                                selectedPhotoIdx = idx;
+                                selectedMediaIdx = idx;
                               });
                               dialogPageController.animateToPage(
                                 idx,
@@ -1004,12 +1589,23 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(6),
-                                child: _buildReportImage(
-                                  report.photoUrls[idx],
-                                  width: 48,
-                                  height: 48,
-                                  fit: BoxFit.cover,
-                                ),
+                                child: isVideoIndex(idx)
+                                    ? Container(
+                                        width: 48,
+                                        height: 48,
+                                        color: AppColors.grey900,
+                                        child: const Icon(
+                                          Icons.play_circle_fill_rounded,
+                                          color: AppColors.white,
+                                          size: 20,
+                                        ),
+                                      )
+                                    : _buildReportImage(
+                                        mediaUrls[idx],
+                                        width: 48,
+                                        height: 48,
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
                           );
@@ -1023,28 +1619,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.my_location_rounded,
-                              color: AppColors.primary,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                'GPS: ${report.latitude.toStringAsFixed(6)}, ${report.longitude.toStringAsFixed(6)}',
-                                style: AppTextStyles.labelMedium.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
                         Text(
-                          'Waktu: ${timeFormat.format(report.submittedAt)} (${report.photoUrls.length} Foto)',
+                          timeFormat.format(report.submittedAt),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                           ),

@@ -29,10 +29,6 @@ void main() {
         ApiConstants.participantSubmissions(123),
         '/api/activations/participants/123/submissions',
       );
-      expect(
-        ApiConstants.runSubmissions(123),
-        '/api/activations/runs/123/submissions',
-      );
     });
 
     test('tracking endpoint decodes accurately', () {

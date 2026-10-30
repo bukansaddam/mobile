@@ -211,33 +211,8 @@ class ApiConstants {
     172,
     231,
   ]);
-  static final String _runPrefix = EndpointSecurity.decode(const <int>[
-    117,
-    79,
-    44,
-    118,
-    230,
-    32,
-    110,
-    145,
-    166,
-    94,
-    163,
-    224,
-    54,
-    118,
-    149,
-    242,
-    101,
-    108,
-    57,
-    1,
-    170,
-    94,
-  ]);
   static String participantSubmissions(dynamic id) =>
       '$_subPrefix$id$_subSuffix';
-  static String runSubmissions(dynamic id) => '$_runPrefix$id$_subSuffix';
 
   // Tracking
   static final String position = EndpointSecurity.decode(const <int>[

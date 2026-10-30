@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_remote_datasource.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_run_mapper.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_submission_mapper.dart';
 import 'package:akar/features/linmas/activation/domain/repositories/activation_repository.dart';
+import 'package:dio/dio.dart';
 
 class ActivationRepositoryImpl implements ActivationRepository {
   final ActivationRemoteDatasource remoteDatasource;
@@ -32,9 +34,22 @@ class ActivationRepositoryImpl implements ActivationRepository {
   }
 
   @override
+  Future<Either<Failure, List<ActivationSubmissionEntity>>>
+  getActivationSubmissions({required String participantId}) async {
+    try {
+      final models = await remoteDatasource.getActivationSubmissions(
+        participantId: participantId,
+      );
+      return Right(models.map((model) => model.toDomain()).toList());
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
   Future<Either<Failure, ActivationSubmissionEntity>> submitActivationReport({
     required String participantId,
-    required File file,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,
@@ -42,12 +57,21 @@ class ActivationRepositoryImpl implements ActivationRepository {
     try {
       final responseModel = await remoteDatasource.submitActivationReport(
         participantId: participantId,
-        file: file,
+        attachments: attachments,
         notes: notes,
         receiverNik: receiverNik,
         receiverName: receiverName,
       );
       return Right(responseModel.toDomain());
+    } on FileSecurityException catch (e) {
+      return Left(ValidationFailure(e.message));
+    } on DioException catch (e) {
+      return Left(
+        ServerFailure(
+          ErrorUtils.parseErrorMessage(e),
+          statusCode: e.response?.statusCode,
+        ),
+      );
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }

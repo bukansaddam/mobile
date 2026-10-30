@@ -28,23 +28,29 @@ extension ActivationSortOptionExtension on ActivationSortOption {
 
 class ActivationState extends Equatable {
   final List<ActivationActivity> activities;
+  final List<PendingActivationReportModel> pendingReports;
   final String searchQuery;
   final ActivationCategory? selectedCategoryFilter;
   final ActivationStatus? selectedStatusFilter;
   final ActivationSortOption selectedSortOption;
   final bool isLoading;
   final bool isLoadingMore;
+  final bool isLoadingSubmissions;
+  final bool isSyncingPending;
   final int currentPage;
   final bool hasMore;
 
   const ActivationState({
     this.activities = const [],
+    this.pendingReports = const [],
     this.searchQuery = '',
     this.selectedCategoryFilter,
     this.selectedStatusFilter,
     this.selectedSortOption = ActivationSortOption.deadlineTerdekat,
     this.isLoading = false,
     this.isLoadingMore = false,
+    this.isLoadingSubmissions = false,
+    this.isSyncingPending = false,
     this.currentPage = 1,
     this.hasMore = true,
   });
@@ -104,6 +110,7 @@ class ActivationState extends Equatable {
 
   ActivationState copyWith({
     List<ActivationActivity>? activities,
+    List<PendingActivationReportModel>? pendingReports,
     String? searchQuery,
     ActivationCategory? selectedCategoryFilter,
     bool clearCategory = false,
@@ -112,11 +119,14 @@ class ActivationState extends Equatable {
     ActivationSortOption? selectedSortOption,
     bool? isLoading,
     bool? isLoadingMore,
+    bool? isLoadingSubmissions,
+    bool? isSyncingPending,
     int? currentPage,
     bool? hasMore,
   }) {
     return ActivationState(
       activities: activities ?? this.activities,
+      pendingReports: pendingReports ?? this.pendingReports,
       searchQuery: searchQuery ?? this.searchQuery,
       selectedCategoryFilter: clearCategory
           ? null
@@ -127,6 +137,8 @@ class ActivationState extends Equatable {
       selectedSortOption: selectedSortOption ?? this.selectedSortOption,
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      isLoadingSubmissions: isLoadingSubmissions ?? this.isLoadingSubmissions,
+      isSyncingPending: isSyncingPending ?? this.isSyncingPending,
       currentPage: currentPage ?? this.currentPage,
       hasMore: hasMore ?? this.hasMore,
     );
@@ -135,12 +147,15 @@ class ActivationState extends Equatable {
   @override
   List<Object?> get props => [
     activities,
+    pendingReports,
     searchQuery,
     selectedCategoryFilter,
     selectedStatusFilter,
     selectedSortOption,
     isLoading,
     isLoadingMore,
+    isLoadingSubmissions,
+    isSyncingPending,
     currentPage,
     hasMore,
   ];

@@ -17,17 +17,27 @@ extension ActivationAttachmentModelMapper on ActivationAttachmentModel {
   }
 }
 
+extension ActivationSubmissionDataModelMapper on ActivationSubmissionDataModel {
+  ActivationSubmissionEntity toDomain() {
+    return ActivationSubmissionEntity(
+      id: id,
+      receiverNik: receiverNik,
+      receiverName: receiverName,
+      notes: notes,
+      createdAt: createdAt,
+      attachments: attachments.map((a) => a.toDomain()).toList(),
+    );
+  }
+}
+
 extension ActivationSubmissionResponseModelMapper
     on ActivationSubmissionResponseModel {
   ActivationSubmissionEntity toDomain() {
     final subData = data;
-    return ActivationSubmissionEntity(
-      id: subData?.id ?? 0,
-      receiverNik: subData?.receiverNik,
-      receiverName: subData?.receiverName,
-      notes: subData?.notes,
-      createdAt: subData?.createdAt,
-      attachments: subData?.attachments.map((a) => a.toDomain()).toList() ?? [],
+    if (subData == null) {
+      return const ActivationSubmissionEntity(id: 0);
+    }
+    return subData.toDomain().copyWith(
       totalTarget: meta?.totalTarget,
       targetDone: meta?.targetDone,
     );

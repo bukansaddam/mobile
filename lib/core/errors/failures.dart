@@ -40,3 +40,8 @@ class ServerFailure extends Failure {
 class CacheFailure extends Failure {
   const CacheFailure(super.message, {super.statusCode});
 }
+
+/// Kegagalan yang tidak akan berubah bila diulang (mis. berkas tidak valid).
+class ValidationFailure extends Failure {
+  const ValidationFailure(super.message);
+}

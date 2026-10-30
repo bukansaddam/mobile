@@ -7,12 +7,14 @@ class FullscreenImageViewer extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
   final String? title;
+  final Map<String, String>? httpHeaders;
 
   const FullscreenImageViewer({
     super.key,
     required this.images,
     this.initialIndex = 0,
     this.title,
+    this.httpHeaders,
   });
 
   static Future<void> show(
@@ -21,6 +23,7 @@ class FullscreenImageViewer extends StatefulWidget {
     List<String>? images,
     int initialIndex = 0,
     String? title,
+    Map<String, String>? httpHeaders,
   }) {
     final imageList = images ?? [imagePathOrUrl];
     final startIndex = images != null && images.contains(imagePathOrUrl)
@@ -34,6 +37,7 @@ class FullscreenImageViewer extends StatefulWidget {
           images: imageList,
           initialIndex: startIndex,
           title: title,
+          httpHeaders: httpHeaders,
         ),
         fullscreenDialog: true,
       ),
@@ -76,6 +80,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         imagePathOrUrl.startsWith('https://')) {
       return CachedNetworkImage(
         imageUrl: imagePathOrUrl,
+        httpHeaders: widget.httpHeaders,
         fit: BoxFit.contain,
         placeholder: (context, url) =>
             const Center(child: CircularProgressIndicator(color: Colors.white)),
@@ -126,6 +131,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
           errorBuilder: (context, error, stackTrace) {
             return CachedNetworkImage(
               imageUrl: imagePathOrUrl,
+              httpHeaders: widget.httpHeaders,
               fit: BoxFit.contain,
               placeholder: (context, url) => const Center(
                 child: CircularProgressIndicator(color: Colors.white),

@@ -11,9 +11,12 @@ abstract class ActivationRepository {
     String? status,
   });
 
+  Future<Either<Failure, List<ActivationSubmissionEntity>>>
+  getActivationSubmissions({required String participantId});
+
   Future<Either<Failure, ActivationSubmissionEntity>> submitActivationReport({
     required String participantId,
-    required File file,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,

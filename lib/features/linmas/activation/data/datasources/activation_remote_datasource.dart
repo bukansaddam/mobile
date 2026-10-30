@@ -17,9 +17,13 @@ abstract class ActivationRemoteDatasource {
     String? status,
   });
 
+  Future<List<ActivationSubmissionDataModel>> getActivationSubmissions({
+    required String participantId,
+  });
+
   Future<ActivationSubmissionResponseModel> submitActivationReport({
     required String participantId,
-    required File file,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,
@@ -81,15 +85,23 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     }
   }
 
+  static const String _attachmentsField = 'files[]';
+
   Future<FormData> _createFormData({
-    required File webpFile,
-    required String webpName,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,
   }) async {
     final map = <String, dynamic>{
-      'file': await MultipartFile.fromFile(webpFile.path, filename: webpName),
+      _attachmentsField: [
+        for (final file in attachments)
+          await MultipartFile.fromFile(
+            file.path,
+            filename: file.path.split('/').last,
+            contentType: _mediaTypeOf(file.path),
+          ),
+      ],
     };
 
     if (notes != null && notes.trim().isNotEmpty) {
@@ -105,66 +117,146 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     return FormData.fromMap(map);
   }
 
+  DioMediaType _mediaTypeOf(String path) {
+    final extension = path.split('.').last.toLowerCase();
+    if (FileSecurityUtils.isVideoPath(path)) {
+      return DioMediaType(
+        'video',
+        extension == 'mov' ? 'quicktime' : extension,
+      );
+    }
+    return DioMediaType('image', extension == 'jpg' ? 'jpeg' : extension);
+  }
+
+  Future<List<File>> _prepareAttachments(List<File> attachments) async {
+    final prepared = <File>[];
+    for (final file in attachments) {
+      if (FileSecurityUtils.isVideoPath(file.path)) {
+        FileSecurityUtils.validateVideoFile(file);
+        prepared.add(file);
+      } else {
+        FileSecurityUtils.validateImageFile(file);
+        prepared.add(await ImageCompressHelper.compressToWebp(file));
+      }
+    }
+    return prepared;
+  }
+
+  // Unggah lampiran jauh lebih lama dari timeout default 30 detik.
+  static final Options _uploadOptions = Options(
+    sendTimeout: const Duration(minutes: 10),
+    receiveTimeout: const Duration(minutes: 3),
+  );
+
+  @override
+  Future<List<ActivationSubmissionDataModel>> getActivationSubmissions({
+    required String participantId,
+  }) async {
+    try {
+      final response = await handleRequest<List<ActivationSubmissionDataModel>>(
+        () => dio.get(ApiConstants.participantSubmissions(participantId)),
+        fromJson: _parseSubmissionList,
+      );
+
+      if (response.success) {
+        return response.data ?? const [];
+      }
+      throw Exception(response.message ?? 'Gagal mengambil daftar laporan');
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[ACTIVATION_DS] DioException in getActivationSubmissions: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    } catch (e, s) {
+      AppLogger.e(
+        '[ACTIVATION_DS] Error in getActivationSubmissions: $e',
+        e,
+        s,
+      );
+      rethrow;
+    }
+  }
+
+  List<ActivationSubmissionDataModel> _parseSubmissionList(dynamic json) {
+    dynamic payload = json;
+    if (json is Map) {
+      payload = json['data'] ?? json['items'] ?? json;
+    }
+
+    if (payload is List) {
+      return payload
+          .whereType<Map>()
+          .map(
+            (item) => ActivationSubmissionDataModel.fromJson(
+              _normalizeSubmission(Map<String, dynamic>.from(item)),
+            ),
+          )
+          .toList();
+    }
+    if (payload is Map) {
+      return [
+        ActivationSubmissionDataModel.fromJson(
+          _normalizeSubmission(Map<String, dynamic>.from(payload)),
+        ),
+      ];
+    }
+    return const [];
+  }
+
+  // Server mengirim file_url relatif (mis. /api/activations/...); jadikan absolut.
+  Map<String, dynamic> _normalizeSubmission(Map<String, dynamic> json) {
+    final attachments = json['attachments'];
+    if (attachments is! List) return json;
+
+    final baseUri = Uri.tryParse(ApiConstants.baseUrl);
+    final normalized = attachments.map<Map<String, dynamic>>((item) {
+      final map = Map<String, dynamic>.from(item as Map);
+      final fileUrl = map['file_url'];
+      if (fileUrl is String && fileUrl.startsWith('/') && baseUri != null) {
+        map['file_url'] = baseUri.resolve(fileUrl).toString();
+      }
+      return map;
+    }).toList();
+
+    return {...json, 'attachments': normalized};
+  }
+
   @override
   Future<ActivationSubmissionResponseModel> submitActivationReport({
     required String participantId,
-    required File file,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,
   }) async {
     try {
-      // Security Check: Validasi tipe format dan ukuran maksimal berkas
-      FileSecurityUtils.validateImageFile(file);
+      final prepared = await _prepareAttachments(attachments);
 
-      final webpFile = await ImageCompressHelper.compressToWebp(file);
-      final rawName = webpFile.path.split('/').last;
-      final webpName = rawName.endsWith('.webp')
-          ? rawName
-          : '${rawName.split('.').first}.webp';
-
-      var response = await handleRequest<ActivationSubmissionResponseModel>(
+      final response = await handleRequest<ActivationSubmissionResponseModel>(
         () async => dio.post(
           ApiConstants.participantSubmissions(participantId),
           data: await _createFormData(
-            webpFile: webpFile,
-            webpName: webpName,
+            attachments: prepared,
             notes: notes,
             receiverNik: receiverNik,
             receiverName: receiverName,
           ),
+          options: _uploadOptions,
         ),
         fromJson: (json) {
           if (json is Map<String, dynamic>) {
-            return ActivationSubmissionResponseModel.fromJson(json);
+            return ActivationSubmissionResponseModel(
+              success: true,
+              data: ActivationSubmissionDataModel.fromJson(
+                _normalizeSubmission(json),
+              ),
+            );
           }
           return const ActivationSubmissionResponseModel();
         },
       );
-
-      if (!response.success && response.statusCode == 404) {
-        AppLogger.w(
-          '[ACTIVATION_DS] Primary endpoint returned 404, falling back to run submissions',
-        );
-        response = await handleRequest<ActivationSubmissionResponseModel>(
-          () async => dio.post(
-            ApiConstants.runSubmissions(participantId),
-            data: await _createFormData(
-              webpFile: webpFile,
-              webpName: webpName,
-              notes: notes,
-              receiverNik: receiverNik,
-              receiverName: receiverName,
-            ),
-          ),
-          fromJson: (json) {
-            if (json is Map<String, dynamic>) {
-              return ActivationSubmissionResponseModel.fromJson(json);
-            }
-            return const ActivationSubmissionResponseModel();
-          },
-        );
-      }
 
       if (response.success && response.data != null) {
         return response.data!;

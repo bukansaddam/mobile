@@ -11,13 +11,13 @@ class SubmitActivationReportUsecase {
 
   Future<Either<Failure, ActivationSubmissionEntity>> call({
     required String participantId,
-    required File file,
+    required List<File> attachments,
     String? notes,
     String? receiverNik,
     String? receiverName,
   }) => repository.submitActivationReport(
     participantId: participantId,
-    file: file,
+    attachments: attachments,
     notes: notes,
     receiverNik: receiverNik,
     receiverName: receiverName,

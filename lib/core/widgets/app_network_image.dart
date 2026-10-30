@@ -12,6 +12,7 @@ class AppNetworkImage extends StatelessWidget {
   final BorderRadius? borderRadius;
   final int? memCacheWidth;
   final int? memCacheHeight;
+  final Map<String, String>? httpHeaders;
   final Widget Function(BuildContext, String)? placeholder;
   final Widget Function(BuildContext, String, dynamic)? errorWidget;
   final IconData errorIcon;
@@ -26,6 +27,7 @@ class AppNetworkImage extends StatelessWidget {
     this.borderRadius,
     this.memCacheWidth,
     this.memCacheHeight,
+    this.httpHeaders,
     this.placeholder,
     this.errorWidget,
     this.errorIcon = Icons.broken_image_outlined,
@@ -56,6 +58,7 @@ class AppNetworkImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
+      httpHeaders: httpHeaders,
       memCacheWidth: calculatedMemWidth,
       memCacheHeight: calculatedMemHeight,
       placeholder:

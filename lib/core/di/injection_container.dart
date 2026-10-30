@@ -95,10 +95,12 @@ import 'package:akar/features/linmas/dashboard/domain/usecases/get_member_dashbo
 import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_bloc.dart';
 
 // Activation / Penugasan
+import 'package:akar/features/linmas/activation/data/datasources/activation_pending_report_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_remote_datasource.dart';
 import 'package:akar/features/linmas/activation/data/repositories/activation_repository_impl.dart';
 import 'package:akar/features/linmas/activation/domain/repositories/activation_repository.dart';
 import 'package:akar/features/linmas/activation/domain/usecases/get_activation_runs_usecase.dart';
+import 'package:akar/features/linmas/activation/domain/usecases/get_activation_submissions_usecase.dart';
 import 'package:akar/features/linmas/activation/domain/usecases/submit_activation_report_usecase.dart';
 
 // Announcement
@@ -372,11 +374,17 @@ Future<void> init() async {
   sl.registerLazySingleton<ActivationRemoteDatasource>(
     () => ActivationRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<ActivationPendingReportLocalDatasource>(
+    () => ActivationPendingReportLocalDatasource(),
+  );
   sl.registerLazySingleton<ActivationRepository>(
     () => ActivationRepositoryImpl(remoteDatasource: sl()),
   );
   sl.registerLazySingleton<GetActivationRunsUsecase>(
     () => GetActivationRunsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetActivationSubmissionsUsecase>(
+    () => GetActivationSubmissionsUsecase(sl()),
   );
   sl.registerLazySingleton<SubmitActivationReportUsecase>(
     () => SubmitActivationReportUsecase(sl()),
@@ -385,7 +393,10 @@ Future<void> init() async {
   sl.registerLazySingleton<ActivationBloc>(
     () => ActivationBloc(
       getActivationRunsUsecase: sl(),
+      getActivationSubmissionsUsecase: sl(),
       submitActivationReportUsecase: sl(),
+      pendingReportStore: sl(),
+      authLocalDatasource: sl(),
     ),
   );
   sl.registerFactory<AnalisisBloc>(() => AnalisisBloc());

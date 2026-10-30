@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
+import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
@@ -12,18 +14,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddReportBottomSheet extends StatefulWidget {
   final ActivationActivity activity;
-  final String capturedPhotoUrl;
+  final String initialAttachmentPath;
 
   const AddReportBottomSheet({
     super.key,
     required this.activity,
-    required this.capturedPhotoUrl,
+    required this.initialAttachmentPath,
   });
 
   static void show(
     BuildContext context, {
     required ActivationActivity activity,
-    required String capturedPhotoUrl,
+    required String initialAttachmentPath,
   }) {
     showModalBottomSheet(
       context: context,
@@ -32,7 +34,7 @@ class AddReportBottomSheet extends StatefulWidget {
       backgroundColor: Colors.transparent,
       builder: (context) => AddReportBottomSheet(
         activity: activity,
-        capturedPhotoUrl: capturedPhotoUrl,
+        initialAttachmentPath: initialAttachmentPath,
       ),
     );
   }
@@ -42,19 +44,23 @@ class AddReportBottomSheet extends StatefulWidget {
 }
 
 class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
+  static const int _maxAttachments = 5;
+
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _nikController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
 
-  late List<String> _photoUrls;
+  late List<String> _attachments;
   bool _isSubmitting = false;
+
+  bool get _hasVideo => _attachments.any(FileSecurityUtils.isVideoPath);
 
   @override
   void initState() {
     super.initState();
-    _photoUrls = [widget.capturedPhotoUrl];
+    _attachments = [widget.initialAttachmentPath];
   }
 
   @override
@@ -65,44 +71,58 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _addNewPhoto() async {
-    if (_photoUrls.length >= 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Maksimal 5 foto per laporan bukti.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  Future<void> _addPhoto() async {
+    if (_attachments.length >= _maxAttachments) {
+      _showMessage('Maksimal $_maxAttachments lampiran per laporan.');
       return;
     }
 
     final newPhoto = await CameraCaptureScreen.open(context);
     if (newPhoto != null && mounted) {
       setState(() {
-        _photoUrls.add(newPhoto);
+        _attachments.add(newPhoto);
       });
     }
   }
 
-  void _removePhoto(int index) {
-    if (_photoUrls.length <= 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Laporan wajib menyertakan minimal 1 foto.'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  Future<void> _addVideo() async {
+    if (_attachments.length >= _maxAttachments) {
+      _showMessage('Maksimal $_maxAttachments lampiran per laporan.');
+      return;
+    }
+    if (_attachments.any(FileSecurityUtils.isVideoPath)) {
+      _showMessage('Maksimal 1 video per laporan.');
+      return;
+    }
+
+    final newVideo = await CameraCaptureScreen.openVideo(context);
+    if (newVideo != null && mounted) {
+      setState(() {
+        _attachments.add(newVideo);
+      });
+    }
+  }
+
+  void _removeAttachment(int index) {
+    if (_attachments.length <= 1) {
+      _showMessage('Laporan wajib menyertakan minimal 1 lampiran.');
       return;
     }
 
     setState(() {
-      _photoUrls.removeAt(index);
+      _attachments.removeAt(index);
     });
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
   }
 
   void _submitReport() {
     if (!_formKey.currentState!.validate()) return;
-    if (_photoUrls.isEmpty) return;
+    if (_attachments.isEmpty) return;
 
     setState(() => _isSubmitting = true);
 
@@ -112,7 +132,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     context.read<ActivationBloc>().add(
       SubmitActivationReportApiEvent(
         participantId: widget.activity.id,
-        file: File(_photoUrls.first),
+        activityTitle: widget.activity.title,
+        attachments: _attachments.map(File.new).toList(),
         notes: _notesController.text.trim().isNotEmpty
             ? _notesController.text.trim()
             : null,
@@ -126,6 +147,22 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
               const SnackBar(
                 content: Text('Penyerahan laporan berhasil disimpan!'),
                 backgroundColor: AppColors.success,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        onQueued: () {
+          if (mounted) {
+            setState(() => _isSubmitting = false);
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Tidak ada koneksi. Laporan disimpan dan akan dikirim '
+                  'otomatis saat internet tersedia.',
+                ),
+                backgroundColor: AppColors.warning,
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -147,10 +184,34 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     );
   }
 
-  Widget _buildPhotoTile(String pathOrUrl, int index) {
-    Widget imageWidget;
-    if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
-      imageWidget = AppNetworkImage(
+  Widget _buildAttachmentTile(String pathOrUrl, int index) {
+    final isVideo = FileSecurityUtils.isVideoPath(pathOrUrl);
+
+    Widget preview;
+    if (isVideo) {
+      preview = Container(
+        width: 100,
+        height: 100,
+        color: AppColors.grey900,
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.play_circle_fill_rounded,
+              color: AppColors.white,
+              size: 36,
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Video',
+              style: TextStyle(color: AppColors.white, fontSize: 11),
+            ),
+          ],
+        ),
+      );
+    } else if (pathOrUrl.startsWith('http://') ||
+        pathOrUrl.startsWith('https://')) {
+      preview = AppNetworkImage(
         imageUrl: pathOrUrl,
         width: 100,
         height: 100,
@@ -159,7 +220,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         backgroundColor: AppColors.grey200,
       );
     } else {
-      imageWidget = Image.file(
+      preview = Image.file(
         File(pathOrUrl),
         width: 100,
         height: 100,
@@ -183,25 +244,38 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          GestureDetector(
-            onTap: () {
-              FullscreenImageViewer.show(
+          if (isVideo)
+            GestureDetector(
+              onTap: () => FullscreenVideoViewer.show(
                 context,
-                imagePathOrUrl: pathOrUrl,
-                title: 'Foto Bukti ${index + 1}',
-              );
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: imageWidget,
+                pathOrUrl: pathOrUrl,
+                title: 'Video Bukti',
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: preview,
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () {
+                FullscreenImageViewer.show(
+                  context,
+                  imagePathOrUrl: pathOrUrl,
+                  title: 'Foto Bukti ${index + 1}',
+                );
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: preview,
+              ),
             ),
-          ),
-          if (_photoUrls.length > 1)
+          if (_attachments.length > 1)
             Positioned(
               top: -6,
               right: -6,
               child: GestureDetector(
-                onTap: () => _removePhoto(index),
+                onTap: () => _removeAttachment(index),
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: const BoxDecoration(
@@ -217,6 +291,43 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        height: 100,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: AppColors.primary, size: 28),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: AppTextStyles.labelSmall.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -276,7 +387,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Foto Bukti Kegiatan',
+                      'Foto / Video Bukti Kegiatan',
                       style: AppTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.textPrimary,
@@ -288,15 +399,15 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: _photoUrls.length >= 5
+                        color: _attachments.length >= _maxAttachments
                             ? AppColors.warning.withValues(alpha: 0.15)
                             : AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '${_photoUrls.length}/5 Foto',
+                        '${_attachments.length}/$_maxAttachments Lampiran',
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: _photoUrls.length >= 5
+                          color: _attachments.length >= _maxAttachments
                               ? AppColors.warning
                               : AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -311,46 +422,28 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount:
-                        _photoUrls.length + (_photoUrls.length < 5 ? 1 : 0),
+                        _attachments.length +
+                        (_attachments.length < _maxAttachments
+                            ? _hasVideo
+                                  ? 1
+                                  : 2
+                            : 0),
                     itemBuilder: (context, idx) {
-                      if (idx < _photoUrls.length) {
-                        return _buildPhotoTile(_photoUrls[idx], idx);
-                      } else {
-                        return GestureDetector(
-                          onTap: _addNewPhoto,
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            margin: const EdgeInsets.only(right: 12),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                style: BorderStyle.solid,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.add_a_photo_rounded,
-                                  color: AppColors.primary,
-                                  size: 28,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '+ Foto',
-                                  style: AppTextStyles.labelSmall.copyWith(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                      if (idx < _attachments.length) {
+                        return _buildAttachmentTile(_attachments[idx], idx);
+                      }
+                      if (idx == _attachments.length) {
+                        return _buildAddTile(
+                          icon: Icons.add_a_photo_rounded,
+                          label: '+ Foto',
+                          onTap: _addPhoto,
                         );
                       }
+                      return _buildAddTile(
+                        icon: Icons.videocam_rounded,
+                        label: '+ Video',
+                        onTap: _addVideo,
+                      );
                     },
                   ),
                 ),

@@ -105,6 +105,7 @@ extension ActivationStatusExtension on ActivationStatus {
 class ActivationReport {
   final String id;
   final List<String> photoUrls; // Supports up to 5 photos per report card!
+  final List<String> videoUrls;
   final DateTime submittedAt;
   final double latitude;
   final double longitude;
@@ -120,6 +121,7 @@ class ActivationReport {
   const ActivationReport({
     required this.id,
     required this.photoUrls,
+    this.videoUrls = const [],
     required this.submittedAt,
     required this.latitude,
     required this.longitude,

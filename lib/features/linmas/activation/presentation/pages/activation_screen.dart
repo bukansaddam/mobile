@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_card.dart';
@@ -18,11 +20,24 @@ class ActivationScreen extends StatefulWidget {
 class _ActivationScreenState extends State<ActivationScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final AppLifecycleListener _lifecycleListener;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _lifecycleListener = AppLifecycleListener(
+      onResume: () {
+        if (mounted) {
+          context.read<ActivationBloc>().add(const SyncPendingReportsEvent());
+        }
+      },
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ActivationBloc>().add(const SyncPendingReportsEvent());
+      }
+    });
   }
 
   void _onScroll() {
@@ -34,6 +49,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
 
   @override
   void dispose() {
+    _lifecycleListener.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _searchController.dispose();
@@ -384,6 +400,201 @@ class _ActivationScreenState extends State<ActivationScreen> {
     );
   }
 
+  Widget _buildPendingBanner(ActivationState state) {
+    final isSyncing = state.isSyncingPending;
+    final count = state.pendingReports.length;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: AppColors.warningLight,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isSyncing ? Icons.cloud_upload_rounded : Icons.cloud_off_rounded,
+            color: AppColors.warning,
+            size: 22,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: GestureDetector(
+              onTap: _showPendingReports,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isSyncing
+                        ? 'Mengirim laporan...'
+                        : '$count laporan belum terkirim',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isSyncing
+                        ? 'Jangan tutup aplikasi sampai selesai.'
+                        : 'Tersimpan di perangkat. Ketuk untuk melihat.',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: isSyncing
+                ? null
+                : () => context.read<ActivationBloc>().add(
+                    const SyncPendingReportsEvent(),
+                  ),
+            child: Text(
+              isSyncing ? 'Mengirim' : 'Kirim',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPendingReports() {
+    final screenContext = context;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (sheetContext) {
+        return BlocBuilder<ActivationBloc, ActivationState>(
+          builder: (context, state) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Laporan Menunggu Dikirim',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Laporan tersimpan di perangkat dan dikirim otomatis '
+                      'saat ada koneksi.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.5,
+                      ),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: state.pendingReports.length,
+                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        itemBuilder: (context, index) {
+                          final report = state.pendingReports[index];
+                          return ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(
+                              Icons.assignment_late_rounded,
+                              color: AppColors.warning,
+                            ),
+                            title: Text(
+                              report.activityTitle,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${DateFormat('HH:mm').format(report.createdAt)}'
+                              ' • '
+                              '${report.lastError == null ? 'Menunggu koneksi' : 'Gagal: ${report.lastError}'}',
+                              style: const TextStyle(fontSize: 11),
+                            ),
+                            onTap: () {
+                              Navigator.pop(sheetContext);
+                              screenContext.pushNamed(
+                                'activation_detail',
+                                extra: {'activityId': report.participantId},
+                              );
+                            },
+                            trailing: IconButton(
+                              tooltip: 'Hapus',
+                              icon: const Icon(
+                                Icons.delete_outline_rounded,
+                                color: AppColors.error,
+                              ),
+                              onPressed: () =>
+                                  _confirmDeletePending(context, report),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDeletePending(
+    BuildContext context,
+    PendingActivationReportModel report,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Hapus laporan?'),
+        content: Text(
+          'Laporan "${report.activityTitle}" akan dihapus dari perangkat '
+          'dan tidak akan pernah terkirim.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text(
+              'Hapus',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      context.read<ActivationBloc>().add(DeletePendingReportEvent(report.id));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ActivationBloc, ActivationState>(
@@ -628,6 +839,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                   ],
                 ),
               ),
+              if (state.pendingReports.isNotEmpty) _buildPendingBanner(state),
               Expanded(
                 child: state.isLoading
                     ? const Center(child: CircularProgressIndicator())
