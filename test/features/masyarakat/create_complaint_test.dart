@@ -26,6 +26,17 @@ class _FakeRepository implements ComplaintRepository {
   }
 
   @override
+  Future<Either<Failure, ComplaintPaginatedEntity>> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  }) async {
+    return const Right(ComplaintPaginatedEntity());
+  }
+
+  @override
   Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(
     String id,
   ) async {
@@ -63,6 +74,17 @@ class _ThrowingDatasource implements ComplaintRemoteDatasource {
   Future<ComplaintPaginatedModel> getMyComplaints({
     int page = 1,
     int perPage = 15,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ComplaintPaginatedModel> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
   }) {
     throw UnimplementedError();
   }

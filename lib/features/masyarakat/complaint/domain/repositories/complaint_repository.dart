@@ -18,5 +18,13 @@ abstract class ComplaintRepository {
     int perPage = 15,
   });
 
+  Future<Either<Failure, ComplaintPaginatedEntity>> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  });
+
   Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(String id);
 }

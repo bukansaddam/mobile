@@ -86,6 +86,16 @@ ComplaintStatus complaintStatusFromCode(String code) {
   }
 }
 
+String complaintStatusCode(ComplaintStatus status) => switch (status) {
+  ComplaintStatus.received => 'new',
+  ComplaintStatus.pending => 'pending',
+  ComplaintStatus.verified => 'verification',
+  ComplaintStatus.inProgress => 'in_progress',
+  ComplaintStatus.completed => 'completed',
+  ComplaintStatus.rejected => 'rejected',
+  ComplaintStatus.cancelled => 'cancelled',
+};
+
 class ComplaintStatusHistory {
   final ComplaintStatus status;
   final DateTime dateTime;

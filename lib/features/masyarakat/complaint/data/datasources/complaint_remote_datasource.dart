@@ -24,6 +24,14 @@ abstract class ComplaintRemoteDatasource {
     int perPage = 15,
   });
 
+  Future<ComplaintPaginatedModel> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  });
+
   Future<ComplaintReportDetailModel> getComplaintDetail(String id);
 }
 
@@ -86,11 +94,42 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
   Future<ComplaintPaginatedModel> getMyComplaints({
     int page = 1,
     int perPage = 15,
+  }) => _getPaginated(ApiConstants.reportsMe, page: page, perPage: perPage);
+
+  @override
+  Future<ComplaintPaginatedModel> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  }) => _getPaginated(
+    ApiConstants.reports,
+    page: page,
+    perPage: perPage,
+    status: status,
+    category: category,
+    query: query,
+  );
+
+  Future<ComplaintPaginatedModel> _getPaginated(
+    String path, {
+    required int page,
+    required int perPage,
+    String? status,
+    String? category,
+    String? query,
   }) async {
     try {
       final response = await dio.get(
-        ApiConstants.reportsMe,
-        queryParameters: {'page': page, 'per_page': perPage},
+        path,
+        queryParameters: {
+          'page': page,
+          'per_page': perPage,
+          'status': ?status,
+          'category': ?category,
+          'q': ?query,
+        },
       );
       final body = response.data is Map
           ? Map<String, dynamic>.from(response.data as Map)
@@ -98,7 +137,7 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       return ComplaintPaginatedModel.fromJson(body);
     } on DioException catch (e) {
       AppLogger.e(
-        '[COMPLAINT_DS] DioException in getMyComplaints: ${e.message}',
+        '[COMPLAINT_DS] DioException in $path: ${e.message}',
         e,
         e.stackTrace,
       );

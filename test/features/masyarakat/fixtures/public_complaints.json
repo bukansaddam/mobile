@@ -1,0 +1,79 @@
+{
+  "success": true,
+  "message": "OK",
+  "data": [
+    {
+      "id": 1256,
+      "ticketNumber": "PGD-2026-01256",
+      "title": "Rusak",
+      "status": "rejected",
+      "statusLabel": "Ditolak",
+      "statusColor": "#DA251E",
+      "category": { "id": 5, "label": "Keamanan Sosial", "color": "#6B7280" },
+      "district": null,
+      "village": null,
+      "assignedOfficer": null,
+      "agency": null,
+      "reportedAt": "2026-10-30T06:54:47+00:00",
+      "updatedAt": "2026-10-30T08:42:52+00:00",
+      "slaDueAt": null,
+      "sla": null,
+      "attachments": [
+        {
+          "id": 2437,
+          "file_name": "compressed_1793343284526.webp",
+          "fileName": "compressed_1793343284526.webp",
+          "mime_type": "image/webp",
+          "mimeType": "image/webp",
+          "size": 114052,
+          "sizeBytes": 114052,
+          "file_url": "/api/reports/attachments/2437/file"
+        },
+        {
+          "id": 2438,
+          "file_name": "compressed_1793343062757.mp4",
+          "fileName": "compressed_1793343062757.mp4",
+          "mime_type": "video/mp4",
+          "mimeType": "video/mp4",
+          "size": 1196843,
+          "sizeBytes": 1196843,
+          "file_url": "/api/reports/attachments/2438/file"
+        }
+      ]
+    },
+    {
+      "id": 1252,
+      "ticketNumber": "PGD-2026-01252",
+      "title": "Jalan Berlubang",
+      "status": "completed",
+      "statusLabel": "Selesai",
+      "statusColor": "#2563EB",
+      "category": { "id": 6, "label": "Bencana Alam", "color": "#6B7280" },
+      "district": null,
+      "village": null,
+      "assignedOfficer": { "id": 1, "name": "Admin AKAR" },
+      "agency": null,
+      "reportedAt": "2026-10-30T04:27:46+00:00",
+      "updatedAt": "2026-10-30T08:39:08+00:00",
+      "slaDueAt": null,
+      "sla": null,
+      "attachments": [
+        {
+          "id": 2431,
+          "file_name": "Gemini_Generated_Image_ue9p38ue9p38ue9p.webp",
+          "fileName": "Gemini_Generated_Image_ue9p38ue9p38ue9p.webp",
+          "mime_type": "image/webp",
+          "mimeType": "image/webp",
+          "size": 645582,
+          "sizeBytes": 645582,
+          "file_url": "/api/reports/attachments/2431/file"
+        }
+      ]
+    }
+  ],
+  "meta": { "current_page": 1, "last_page": 626, "per_page": 2, "total": 1251 },
+  "total": 1251,
+  "current_page": 1,
+  "last_page": 626,
+  "per_page": 2
+}

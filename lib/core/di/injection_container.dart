@@ -124,8 +124,10 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_location_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_public_complaints_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordinates_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
@@ -372,6 +374,9 @@ Future<void> init() async {
   sl.registerLazySingleton<GetComplaintDetailUsecase>(
     () => GetComplaintDetailUsecase(sl()),
   );
+  sl.registerLazySingleton<GetPublicComplaintsUsecase>(
+    () => GetPublicComplaintsUsecase(sl()),
+  );
 
   // BLoCs & Cubits
   sl.registerLazySingleton<AuthBloc>(
@@ -487,6 +492,9 @@ Future<void> init() async {
   );
   sl.registerFactory<ComplaintDetailBloc>(
     () => ComplaintDetailBloc(getComplaintDetail: sl()),
+  );
+  sl.registerFactory<ComplaintListBloc>(
+    () => ComplaintListBloc(getComplaints: sl()),
   );
   sl.registerFactory<LocationPickerCubit>(
     () => LocationPickerCubit(

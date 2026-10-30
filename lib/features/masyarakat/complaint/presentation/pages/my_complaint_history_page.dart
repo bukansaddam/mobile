@@ -555,6 +555,71 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                   ),
                 ),
 
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Riwayat Pengaduan Saya',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: const Color(0xFFBBF7D0),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              'Total: ${filteredList.length}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                          if (hasActiveFilter || _searchQuery.isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchQuery = '';
+                                  _selectedStatusFilter = null;
+                                  _selectedCategoryFilter = null;
+                                });
+                              },
+                              child: const Text(
+                                'Reset',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFE11D48),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: RefreshIndicator(
                     color: AppColors.primary,
@@ -582,72 +647,6 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Riwayat Pengaduan Saya',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFF0F172A),
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFDCFCE7),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: const Color(0xFFBBF7D0),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        'Total: ${filteredList.length}',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                    ),
-                                    if (hasActiveFilter ||
-                                        _searchQuery.isNotEmpty) ...[
-                                      const SizedBox(width: 8),
-                                      GestureDetector(
-                                        onTap: () {
-                                          _searchController.clear();
-                                          setState(() {
-                                            _searchQuery = '';
-                                            _selectedStatusFilter = null;
-                                            _selectedCategoryFilter = null;
-                                          });
-                                        },
-                                        child: const Text(
-                                          'Reset',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFFE11D48),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 12),
-
                             if (filteredList.isEmpty &&
                                 state.status == MyComplaintListStatus.loading)
                               const Padding(

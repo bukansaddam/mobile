@@ -8,6 +8,8 @@ import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_rep
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_public_complaints_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -124,6 +126,33 @@ class _FakeRepository implements ComplaintRepository {
             total: 2,
           ),
         );
+  }
+
+  String? lastStatus;
+  String? lastCategory;
+  String? lastQuery;
+  int publicCalls = 0;
+
+  @override
+  Future<Either<Failure, ComplaintPaginatedEntity>> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  }) async {
+    publicCalls++;
+    lastStatus = status;
+    lastCategory = category;
+    lastQuery = query;
+    return Right(
+      ComplaintPaginatedEntity(
+        data: [report('$page')],
+        currentPage: page,
+        lastPage: 3,
+        total: 3,
+      ),
+    );
   }
 
   @override
@@ -246,6 +275,76 @@ void main() {
       );
       expect(complaintStatusFromCode('completed'), ComplaintStatus.completed);
       expect(complaintStatusFromCode('rejected'), ComplaintStatus.rejected);
+    });
+  });
+
+  group('Daftar pengaduan publik', () {
+    test('response /api/reports terpetakan', () {
+      final body =
+          jsonDecode(
+                File(
+                  'test/features/masyarakat/fixtures/public_complaints.json',
+                ).readAsStringSync(),
+              )
+              as Map<String, dynamic>;
+
+      final paginated = ComplaintPaginatedModel.fromJson(body).toDomain();
+
+      expect(paginated.total, 1251);
+      expect(paginated.lastPage, 626);
+      expect(paginated.data, hasLength(2));
+
+      final rejected = ComplaintItem.fromReport(paginated.data.first);
+      expect(rejected.id, 'PGD-2026-01256');
+      expect(rejected.status, ComplaintStatus.rejected);
+      expect(rejected.statusLabel, 'Ditolak');
+      expect(rejected.category, 'Keamanan Sosial');
+      expect(rejected.isVideoAttachment(rejected.attachments.last), isTrue);
+
+      expect(
+        ComplaintItem.fromReport(paginated.data.last).status,
+        ComplaintStatus.completed,
+      );
+    });
+
+    test('bloc meneruskan filter dan memuat halaman berikutnya', () async {
+      final repository = _FakeRepository();
+      final bloc = ComplaintListBloc(
+        getComplaints: GetPublicComplaintsUsecase(repository),
+      );
+      addTearDown(bloc.close);
+
+      bloc.add(
+        const FetchComplaintsEvent(
+          status: 'completed',
+          category: 'Bencana Alam',
+          query: 'jalan',
+        ),
+      );
+      var state = await bloc.stream.firstWhere(
+        (state) => state.status == ComplaintListStatus.loaded,
+      );
+      expect(state.items, hasLength(1));
+      expect(state.hasReachedMax, isFalse);
+      expect(repository.lastStatus, 'completed');
+      expect(repository.lastCategory, 'Bencana Alam');
+      expect(repository.lastQuery, 'jalan');
+
+      bloc.add(const LoadMoreComplaintsEvent());
+      state = await bloc.stream.firstWhere(
+        (state) => state.items.length == 2 && !state.isLoadingMore,
+      );
+      expect(state.currentPage, 2);
+      expect(repository.lastStatus, 'completed');
+      expect(repository.publicCalls, 2);
+    });
+
+    test('kode status untuk filter', () {
+      expect(complaintStatusCode(ComplaintStatus.received), 'new');
+      expect(complaintStatusCode(ComplaintStatus.verified), 'verification');
+      expect(complaintStatusCode(ComplaintStatus.inProgress), 'in_progress');
+      expect(complaintStatusCode(ComplaintStatus.completed), 'completed');
+      expect(complaintStatusCode(ComplaintStatus.rejected), 'rejected');
     });
   });
 

@@ -55,6 +55,28 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
   }
 
   @override
+  Future<Either<Failure, ComplaintPaginatedEntity>> getPublicComplaints({
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? category,
+    String? query,
+  }) async {
+    try {
+      final model = await remoteDatasource.getPublicComplaints(
+        page: page,
+        perPage: perPage,
+        status: status,
+        category: category,
+        query: query,
+      );
+      return Right(model.toDomain());
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
   Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(
     String id,
   ) async {
