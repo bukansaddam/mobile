@@ -23,6 +23,10 @@ void main() {
       expect(ApiConstants.initialQuiz, '/api/initial-quiz');
     });
 
+    test('reports endpoint decodes accurately', () {
+      expect(ApiConstants.reports, '/api/reports');
+    });
+
     test('activation runs endpoint decodes accurately', () {
       expect(ApiConstants.activationRuns, '/api/activations/runs');
       expect(

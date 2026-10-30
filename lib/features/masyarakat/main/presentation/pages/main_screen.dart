@@ -1,3 +1,4 @@
+import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_list_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
@@ -34,6 +35,14 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
     }
   }
 
+  Future<void> _openCreateComplaint() async {
+    final result = await CreateComplaintPage.show(context);
+    if (result == true && mounted) {
+      context.read<MainCubit>().changeTab(0);
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MainCubit, MainState>(
@@ -53,18 +62,37 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
               MasyarakatProfileScreen(),
             ],
           ),
+          floatingActionButton: GestureDetector(
+            onTap: _openCreateComplaint,
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+                gradient: AppColors.primaryGradient,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withAlpha(100),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.add_rounded,
+                color: AppColors.white,
+                size: 32,
+              ),
+            ),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: CustomBottomNavBar(
             currentIndex: state.selectedIndex,
             onTapTab: (index) {
               if (index == 0 || index == 1 || index == 3 || index == 4) {
                 context.read<MainCubit>().changeTab(index);
-              }
-            },
-            onTapFab: () async {
-              final result = await CreateComplaintPage.show(context);
-              if (result == true && context.mounted) {
-                context.read<MainCubit>().changeTab(0);
-                setState(() {});
               }
             },
           ),

@@ -111,14 +111,19 @@ import 'package:akar/features/linmas/announcement/domain/usecases/get_announceme
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 
 // Masyarakat
+import 'package:akar/features/masyarakat/complaint/data/datasources/complaint_remote_datasource.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/location_native_datasource.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/location_remote_datasource.dart';
+import 'package:akar/features/masyarakat/complaint/data/repositories/complaint_repository_impl.dart';
 import 'package:akar/features/masyarakat/complaint/data/repositories/location_repository_impl.dart';
+import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/location_repository.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/create_complaint_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_address_from_latlng_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_location_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordinates_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 
@@ -205,6 +210,9 @@ Future<void> init() async {
   sl.registerLazySingleton<LocationNativeDataSource>(
     () => LocationNativeDataSourceImpl(),
   );
+  sl.registerLazySingleton<ComplaintRemoteDatasource>(
+    () => ComplaintRemoteDatasourceImpl(),
+  );
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -255,6 +263,9 @@ Future<void> init() async {
       remoteDataSource: sl<LocationRemoteDataSource>(),
       nativeDataSource: sl<LocationNativeDataSource>(),
     ),
+  );
+  sl.registerLazySingleton<ComplaintRepository>(
+    () => ComplaintRepositoryImpl(remoteDatasource: sl()),
   );
 
   // Use Cases
@@ -347,6 +358,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton(
     () => GetCurrentLocationUseCase(sl<LocationRepository>()),
+  );
+  sl.registerLazySingleton<CreateComplaintUsecase>(
+    () => CreateComplaintUsecase(sl()),
   );
 
   // BLoCs & Cubits
@@ -455,6 +469,9 @@ Future<void> init() async {
 
   // Dumas Cubits (Factory)
   sl.registerFactory<MainCubit>(() => MainCubit());
+  sl.registerFactory<CreateComplaintBloc>(
+    () => CreateComplaintBloc(createComplaint: sl()),
+  );
   sl.registerFactory<LocationPickerCubit>(
     () => LocationPickerCubit(
       getLocationSuggestionsUseCase: sl<GetLocationSuggestionsUseCase>(),

@@ -5,111 +5,70 @@ import 'package:flutter/material.dart';
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTapTab;
-  final VoidCallback onTapFab;
 
   const CustomBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTapTab,
-    required this.onTapFab,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      clipBehavior: Clip.none,
-      children: [
-        BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
-          color: AppColors.surface,
-          elevation: 12,
-          padding: EdgeInsets.zero,
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(
-                  child: _NavItem(
-                    icon: Icons.home_rounded,
-                    activeIcon: Icons.home_rounded,
-                    label: 'Beranda',
-                    isSelected: currentIndex == 0,
-                    onTap: () => onTapTab(0),
-                  ),
-                ),
-
-                Expanded(
-                  child: _NavItem(
-                    icon: Icons.assignment_outlined,
-                    activeIcon: Icons.assignment_rounded,
-                    label: 'Pengaduan',
-                    isSelected: currentIndex == 1,
-                    onTap: () => onTapTab(1),
-                  ),
-                ),
-
-                const SizedBox(width: 48),
-
-                Expanded(
-                  child: _NavItem(
-                    icon: Icons.history_outlined,
-                    activeIcon: Icons.history_rounded,
-                    label: 'Riwayat',
-                    isSelected: currentIndex == 3,
-                    onTap: () => onTapTab(3),
-                  ),
-                ),
-
-                Expanded(
-                  child: _NavItem(
-                    icon: Icons.person_outline_rounded,
-                    activeIcon: Icons.person_rounded,
-                    label: 'Profil',
-                    isSelected: currentIndex == 4,
-                    onTap: () => onTapTab(4),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        Positioned(
-          top: -24,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: onTapFab,
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                    gradient: AppColors.primaryGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withAlpha(100),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: AppColors.white,
-                    size: 32,
-                  ),
-                ),
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 8,
+      color: AppColors.surface,
+      elevation: 12,
+      padding: EdgeInsets.zero,
+      child: SizedBox(
+        height: 64,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: _NavItem(
+                icon: Icons.home_rounded,
+                activeIcon: Icons.home_rounded,
+                label: 'Beranda',
+                isSelected: currentIndex == 0,
+                onTap: () => onTapTab(0),
               ),
-            ],
-          ),
+            ),
+
+            Expanded(
+              child: _NavItem(
+                icon: Icons.assignment_outlined,
+                activeIcon: Icons.assignment_rounded,
+                label: 'Pengaduan',
+                isSelected: currentIndex == 1,
+                onTap: () => onTapTab(1),
+              ),
+            ),
+
+            const SizedBox(width: 48),
+
+            Expanded(
+              child: _NavItem(
+                icon: Icons.history_outlined,
+                activeIcon: Icons.history_rounded,
+                label: 'Riwayat',
+                isSelected: currentIndex == 3,
+                onTap: () => onTapTab(3),
+              ),
+            ),
+
+            Expanded(
+              child: _NavItem(
+                icon: Icons.person_outline_rounded,
+                activeIcon: Icons.person_rounded,
+                label: 'Profil',
+                isSelected: currentIndex == 4,
+                onTap: () => onTapTab(4),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

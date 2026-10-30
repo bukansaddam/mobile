@@ -105,6 +105,22 @@ class ApiConstants {
     188,
   ]);
 
+  // Reports (pengaduan masyarakat)
+  static final String reports = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    51,
+    104,
+    149,
+    160,
+    90,
+    182,
+    231,
+  ]);
+
   // Surveys
   static final String surveys = EndpointSecurity.decode(const <int>[
     117,

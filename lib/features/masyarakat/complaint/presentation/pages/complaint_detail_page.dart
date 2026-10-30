@@ -5,6 +5,8 @@ import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
+import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
 
@@ -267,7 +269,7 @@ class ComplaintDetailPage extends StatelessWidget {
                   const SizedBox(height: 14),
 
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Icon(
                         Icons.location_on_rounded,
@@ -332,7 +334,7 @@ class ComplaintDetailPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          'Lampiran Foto',
+                          'Lampiran Foto / Video',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -340,7 +342,7 @@ class ComplaintDetailPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${item.attachments.length} foto',
+                          '${item.attachments.length} media',
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF94A3B8),
@@ -357,13 +359,32 @@ class ComplaintDetailPage extends StatelessWidget {
                         itemCount: item.attachments.length,
                         itemBuilder: (context, index) {
                           final imgPath = item.attachments[index];
+                          final isVideo = FileSecurityUtils.isVideoPath(
+                            imgPath,
+                          );
                           return GestureDetector(
                             onTap: () {
+                              if (isVideo) {
+                                FullscreenVideoViewer.show(
+                                  context,
+                                  pathOrUrl: imgPath,
+                                  title: 'Video Pengaduan',
+                                );
+                                return;
+                              }
+                              final photos = item.attachments
+                                  .where(
+                                    (attachment) =>
+                                        !FileSecurityUtils.isVideoPath(
+                                          attachment,
+                                        ),
+                                  )
+                                  .toList();
                               FullscreenImageViewer.show(
                                 context,
                                 imagePathOrUrl: imgPath,
-                                images: item.attachments,
-                                initialIndex: index,
+                                images: photos,
+                                initialIndex: photos.indexOf(imgPath),
                               );
                             },
                             child: Container(
@@ -382,7 +403,16 @@ class ComplaintDetailPage extends StatelessWidget {
                                 child: Stack(
                                   fit: StackFit.expand,
                                   children: [
-                                    if (imgPath.startsWith('http://') ||
+                                    if (isVideo)
+                                      Container(
+                                        color: Colors.black,
+                                        child: const Icon(
+                                          Icons.play_circle_fill_rounded,
+                                          color: Colors.white,
+                                          size: 32,
+                                        ),
+                                      )
+                                    else if (imgPath.startsWith('http://') ||
                                         imgPath.startsWith('https://'))
                                       AppNetworkImage(
                                         imageUrl: imgPath,
@@ -633,7 +663,7 @@ class ComplaintDetailPage extends StatelessWidget {
       verifikasiText = 'Dibatalkan';
     }
 
-    final steps = ['Laporan\nMasuk', verifikasiText, 'Diproses', 'Selesai'];
+    final steps = ['Diterima', verifikasiText, 'Diproses', 'Selesai'];
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
