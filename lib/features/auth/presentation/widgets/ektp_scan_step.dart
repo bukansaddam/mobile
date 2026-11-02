@@ -1,30 +1,26 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 
-/// Langkah 1 pendaftaran: ambil foto e-KTP.
+/// Langkah 1 pendaftaran: pratinjau foto e-KTP.
 ///
-/// OCR belum aktif (menunggu API), jadi foto hanya dipakai sebagai pratinjau.
+/// Aksi ambil foto dikendalikan `RegisterScreen`; widget ini hanya menampilkan
+/// pratinjau dan tombol hapus.
 class EktpScanStep extends StatefulWidget {
   final Animation<double> entrance;
   final File? photo;
-  final ValueChanged<File> onPhotoPicked;
   final VoidCallback onClearPhoto;
-  final ValueChanged<String> onContinue;
 
   const EktpScanStep({
     super.key,
     required this.entrance,
     required this.photo,
-    required this.onPhotoPicked,
     required this.onClearPhoto,
-    required this.onContinue,
   });
 
   @override
@@ -33,10 +29,7 @@ class EktpScanStep extends StatefulWidget {
 
 class _EktpScanStepState extends State<EktpScanStep>
     with SingleTickerProviderStateMixin {
-  final _picker = ImagePicker();
-
   late final AnimationController _laserController;
-  bool _isPicking = false;
 
   @override
   void initState() {
@@ -65,39 +58,37 @@ class _EktpScanStepState extends State<EktpScanStep>
     super.dispose();
   }
 
-  Future<void> _pickPhoto(ImageSource source) async {
-    if (_isPicking) return;
-    setState(() => _isPicking = true);
-
-    try {
-      final file = await _picker.pickImage(
-        source: source,
-        imageQuality: 85,
-        maxWidth: 2000,
-      );
-      if (!mounted || file == null) return;
-      widget.onPhotoPicked(File(file.path));
-    } catch (_) {
-      if (mounted) {
-        AppToast.showError(context, message: 'Gagal mengambil foto e-KTP.');
-      }
-    } finally {
-      if (mounted) setState(() => _isPicking = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          EntranceTransition(
-            animation: widget.entrance,
-            start: 0,
-            end: 0.5,
-            child: _buildScannerCard(),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Lebar mengikuti layar; mengecil bila tinggi terbatas.
+                final width = math.min(
+                  constraints.maxWidth,
+                  constraints.maxHeight * 1.586,
+                );
+                return Center(
+                  child: SizedBox(
+                    width: width,
+                    child: AspectRatio(
+                      aspectRatio: 1.586,
+                      child: EntranceTransition(
+                        animation: widget.entrance,
+                        start: 0,
+                        end: 0.5,
+                        child: _buildScannerCard(),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
           const SizedBox(height: 20),
           EntranceTransition(
@@ -105,13 +96,6 @@ class _EktpScanStepState extends State<EktpScanStep>
             start: 0.15,
             end: 0.65,
             child: _buildTips(),
-          ),
-          const SizedBox(height: 20),
-          EntranceTransition(
-            animation: widget.entrance,
-            start: 0.35,
-            end: 0.85,
-            child: _buildActions(),
           ),
           const SizedBox(height: 14),
           EntranceTransition(
@@ -146,47 +130,9 @@ class _EktpScanStepState extends State<EktpScanStep>
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      child: Column(
-        children: [
-          AspectRatio(
-            aspectRatio: 1.586,
-            child: widget.photo == null
-                ? _buildMockCard()
-                : _buildPhotoPreview(widget.photo!),
-          ),
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(17),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  widget.photo == null
-                      ? Icons.photo_camera_outlined
-                      : Icons.check_circle_outline_rounded,
-                  size: 15,
-                  color: AppColors.white,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  widget.photo == null
-                      ? 'Posisikan e-KTP di Sini'
-                      : 'Foto e-KTP Siap',
-                  style: AppTextStyles.caption.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+      child: widget.photo == null
+          ? _buildMockCard()
+          : _buildPhotoPreview(widget.photo!),
     );
   }
 
@@ -229,7 +175,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                 ),
                 const Spacer(),
                 Text(
-                  'NIK: 3 2 0 1 • • • • • • • • • •',
+                  'NIK: • • • • • • • • • • • • • • • •',
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -238,7 +184,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Nama: S A D D A M   H • • •',
+                  'Nama: • • • • • • • • •',
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 9,
                     color: const Color(0xFF0284C7),
@@ -313,6 +259,19 @@ class _EktpScanStepState extends State<EktpScanStep>
               },
             ),
           ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              onPressed: widget.onClearPhoto,
+              tooltip: 'Hapus foto',
+              style: IconButton.styleFrom(
+                backgroundColor: AppColors.white,
+                foregroundColor: AppColors.error,
+              ),
+              icon: const Icon(Icons.delete_outline_rounded, size: 20),
+            ),
+          ),
         ],
       ),
     );
@@ -357,102 +316,6 @@ class _EktpScanStepState extends State<EktpScanStep>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildActions() {
-    if (widget.photo != null) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildPrimaryButton(
-            label: 'Lanjut ke Data Kependudukan',
-            onPressed: () => widget.onContinue(widget.photo!.path),
-          ),
-          const SizedBox(height: 10),
-          _buildSecondaryButton(
-            label: 'Ambil Ulang Foto',
-            onPressed: () => _pickPhoto(ImageSource.camera),
-          ),
-          TextButton(
-            onPressed: widget.onClearPhoto,
-            style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF64748B),
-              textStyle: AppTextStyles.caption.copyWith(fontSize: 12),
-            ),
-            child: const Text('Hapus Foto'),
-          ),
-        ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildPrimaryButton(
-          label: 'Ambil Foto Sekarang',
-          onPressed: () => _pickPhoto(ImageSource.camera),
-        ),
-        const SizedBox(height: 10),
-        _buildSecondaryButton(
-          label: 'Unggah dari Galeri Foto',
-          onPressed: () => _pickPhoto(ImageSource.gallery),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPrimaryButton({
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      height: 52,
-      child: FilledButton(
-        onPressed: _isPicking ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.button.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSecondaryButton({
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      height: 50,
-      child: FilledButton(
-        onPressed: _isPicking ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primaryDark,
-          foregroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.button.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
-        ),
       ),
     );
   }

@@ -1,17 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
+import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
+import 'package:akar/features/auth/domain/usecases/scan_ktp_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/auth/presentation/pages/ktp_camera_page.dart';
 import 'package:akar/features/auth/presentation/widgets/ektp_scan_step.dart';
 import 'package:akar/utils/app_logger.dart';
 
@@ -38,6 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _phoneController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _passwordConfirmationController = TextEditingController();
 
   late final AnimationController _entranceController;
 
@@ -47,6 +55,22 @@ class _RegisterScreenState extends State<RegisterScreen>
   double? _latitude;
   double? _longitude;
   bool _isPasswordObscured = true;
+  bool _isPasswordConfirmationObscured = true;
+  bool _isScanningKtp = false;
+  bool _isPickingPhoto = false;
+
+  /// Cache OCR per foto: selama foto sama, server tidak dipanggil ulang.
+  String? _ocrPhotoPath;
+  KtpOcrEntity? _cachedOcr;
+  bool _ocrPrompted = false;
+  bool _ocrApplied = false;
+
+  bool get _canAutoFill => _step == 1 && _cachedOcr != null && !_ocrApplied;
+
+  static final _uppercaseFormatter = TextInputFormatter.withFunction(
+    (oldValue, newValue) =>
+        newValue.copyWith(text: newValue.text.toUpperCase()),
+  );
 
   static const _titles = [
     'Ambil Foto e-KTP',
@@ -56,13 +80,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   ];
 
   static const _subtitles = [
-    'Posisikan e-KTP Anda di dalam bingkai agar sistem dapat membaca data '
-        'identitas secara otomatis.',
-    'Lengkapi data sesuai e-KTP Anda. Verifikasi otomatis akan aktif setelah '
-        'layanan OCR tersedia.',
+    'Posisikan seluruh e-KTP di dalam bingkai, lalu tekan Lanjut untuk memindai datanya.',
+    'Lengkapi data kependudukan sesuai e-KTP, lalu periksa kembali sebelum lanjut ke pembuatan akun.',
     'Lengkapi kontak aktif dan kata sandi untuk login ke aplikasi AKAR.',
-    'Pastikan seluruh data kependudukan dan akun Anda sudah sesuai sebelum '
-        'menyelesaikan pendaftaran.',
+    'Pastikan seluruh data kependudukan dan akun Anda sudah sesuai sebelum menyelesaikan pendaftaran.',
   ];
 
   @override
@@ -89,6 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     _phoneController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _passwordConfirmationController.dispose();
     super.dispose();
   }
 
@@ -100,10 +122,35 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   void _handleBack() {
-    if (_step > 0) {
-      _goToStep(_step - 1);
-      return;
+    if (_step > 0) _goToStep(_step - 1);
+  }
+
+  bool get _hasEnteredData =>
+      _ktpPhoto != null ||
+      _nikController.text.trim().isNotEmpty ||
+      _nameController.text.trim().isNotEmpty ||
+      _birthPlaceController.text.trim().isNotEmpty ||
+      _addressController.text.trim().isNotEmpty ||
+      _emailController.text.trim().isNotEmpty ||
+      _phoneController.text.trim().isNotEmpty ||
+      _usernameController.text.trim().isNotEmpty ||
+      _passwordController.text.isNotEmpty;
+
+  Future<void> _handleClose() async {
+    if (_hasEnteredData) {
+      final leave = await AppDialogs.showConfirmation(
+        context,
+        title: 'Keluar dari Pendaftaran?',
+        message:
+            'Data yang sudah Anda isi akan hilang jika keluar sekarang. '
+            'Yakin ingin kembali ke halaman login?',
+        confirmText: 'Keluar',
+        cancelText: 'Lanjut Isi',
+        isDestructive: true,
+      );
+      if (!mounted || !leave) return;
     }
+
     if (context.canPop()) {
       context.pop();
     } else {
@@ -119,6 +166,19 @@ class _RegisterScreenState extends State<RegisterScreen>
   void _continueToReview() {
     if (_accountFormKey.currentState?.validate() != true) return;
     _goToStep(3);
+  }
+
+  void _handleNext() {
+    switch (_step) {
+      case 0:
+        if (_ktpPhoto != null) _handleContinueToIdentity();
+      case 1:
+        _continueToAccount();
+      case 2:
+        _continueToReview();
+      case 3:
+        _handleRegister();
+    }
   }
 
   Future<void> _getCurrentLocation() async {
@@ -173,6 +233,233 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
   }
 
+  void _handlePhotoPicked(File file) {
+    setState(() {
+      _ktpPhoto = file;
+      _resetOcrCache();
+    });
+  }
+
+  void _resetOcrCache() {
+    _ocrPhotoPath = null;
+    _cachedOcr = null;
+    _ocrPrompted = false;
+    _ocrApplied = false;
+  }
+
+  Future<void> _showPhotoSourceSheet() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.grey300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_camera_outlined,
+                color: AppColors.primary,
+              ),
+              title: const Text('Ambil dari Kamera'),
+              onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.photo_library_outlined,
+                color: AppColors.primary,
+              ),
+              title: const Text('Ambil dari Galeri'),
+              onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+
+    if (!mounted || source == null) return;
+    if (source == ImageSource.camera) {
+      await _captureKtp();
+    } else {
+      await _pickKtpFromGallery();
+    }
+  }
+
+  Future<void> _captureKtp() async {
+    if (_isPickingPhoto) return;
+    setState(() => _isPickingPhoto = true);
+    try {
+      final file = await KtpCameraPage.open(context);
+      if (!mounted || file == null) return;
+      _handlePhotoPicked(file);
+    } finally {
+      if (mounted) setState(() => _isPickingPhoto = false);
+    }
+  }
+
+  Future<void> _pickKtpFromGallery() async {
+    if (_isPickingPhoto) return;
+    setState(() => _isPickingPhoto = true);
+    try {
+      final picked = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 90,
+        maxWidth: 2400,
+      );
+      if (!mounted || picked == null) return;
+
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        aspectRatio: const CropAspectRatio(ratioX: 85.6, ratioY: 53.98),
+        maxWidth: 1280,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 85,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Sesuaikan e-KTP',
+            toolbarColor: AppColors.primary,
+            toolbarWidgetColor: AppColors.white,
+            lockAspectRatio: true,
+            freeStyleCropEnabled: true,
+          ),
+          IOSUiSettings(
+            title: 'Sesuaikan e-KTP',
+            aspectRatioLockEnabled: true,
+            resetAspectRatioEnabled: false,
+          ),
+        ],
+      );
+      if (!mounted || cropped == null) return;
+      _handlePhotoPicked(File(cropped.path));
+    } catch (_) {
+      if (mounted) {
+        AppToast.showError(context, message: 'Gagal mengambil foto e-KTP.');
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingPhoto = false);
+    }
+  }
+
+  void _applyOcrResult(KtpOcrEntity ocr) {
+    if (ocr.nik.isNotEmpty) _nikController.text = ocr.nik;
+    if (ocr.name.isNotEmpty) _nameController.text = ocr.name.toUpperCase();
+    if (ocr.birthPlace.isNotEmpty) {
+      _birthPlaceController.text = ocr.birthPlace.toUpperCase();
+    }
+    if (ocr.birthDate != null) {
+      _birthDate = ocr.birthDate;
+      _birthDateController.text = DateFormat(
+        'dd/MM/yyyy',
+      ).format(ocr.birthDate!);
+    }
+    if (ocr.address.isNotEmpty) {
+      _addressController.text = ocr.address.toUpperCase();
+    }
+  }
+
+  Future<void> _scanKtpInBackground() async {
+    final photo = _ktpPhoto;
+    if (photo == null) return;
+
+    // Foto ini sudah pernah diproses: pakai cache, jangan panggil server lagi.
+    if (_ocrPhotoPath == photo.path) {
+      final ocr = _cachedOcr;
+      if (ocr != null && !_ocrPrompted) await _promptApplyOcr(ocr);
+      return;
+    }
+
+    if (_isScanningKtp) return;
+
+    setState(() => _isScanningKtp = true);
+    final result = await sl<ScanKtpUsecase>()(photo);
+    if (!mounted) return;
+
+    if (_ktpPhoto?.path != photo.path) {
+      setState(() => _isScanningKtp = false);
+      return;
+    }
+
+    final ocr = result.isRight ? result.right : null;
+    final hasData =
+        ocr != null &&
+        (ocr.nik.isNotEmpty || ocr.name.isNotEmpty || ocr.address.isNotEmpty);
+
+    setState(() {
+      _isScanningKtp = false;
+      _ocrPhotoPath = photo.path;
+      _cachedOcr = hasData ? ocr : null;
+    });
+
+    // Bila user sudah pindah step, cache disimpan untuk dipakai saat kembali.
+    if (hasData && _step == 1) await _promptApplyOcr(ocr);
+  }
+
+  Future<void> _promptApplyOcr(KtpOcrEntity ocr) async {
+    if (_ocrPrompted) return;
+    _ocrPrompted = true;
+
+    final apply = await AppDialogs.showConfirmation(
+      context,
+      title: 'Data e-KTP Ditemukan',
+      message:
+          'Apakah Anda ingin mengisi formulir secara otomatis dari hasil '
+          'pemindaian e-KTP?',
+      confirmText: 'Isi Otomatis',
+      cancelText: 'Isi Manual',
+      icon: Icons.document_scanner_outlined,
+    );
+    if (!mounted || !apply) return;
+
+    setState(() {
+      _applyOcrResult(ocr);
+      _ocrApplied = true;
+    });
+    AppToast.showSuccess(
+      context,
+      message: 'Data e-KTP berhasil terbaca. Periksa kembali.',
+    );
+  }
+
+  void _applyCachedOcr() {
+    final ocr = _cachedOcr;
+    if (ocr == null) return;
+
+    setState(() {
+      _applyOcrResult(ocr);
+      _ocrApplied = true;
+    });
+    AppToast.showSuccess(
+      context,
+      message: 'Data e-KTP berhasil diisi. Periksa kembali.',
+    );
+  }
+
+  void _handleContinueToIdentity() {
+    _goToStep(1);
+    if (_ktpPhoto == null) return;
+    _scanKtpInBackground();
+  }
+
+  void _clearPhoto() {
+    setState(() {
+      _ktpPhoto = null;
+      _resetOcrCache();
+    });
+  }
+
   Future<void> _pickBirthDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -206,7 +493,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         username: _usernameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text,
-        passwordConfirmation: _passwordController.text,
+        passwordConfirmation: _passwordConfirmationController.text,
       ),
     );
   }
@@ -291,10 +578,11 @@ class _RegisterScreenState extends State<RegisterScreen>
                             ),
                           );
                         },
-                        child: _buildStepBody(isLoading),
+                        child: _buildStepBody(),
                       ),
                     ),
                   ),
+                  _buildBottomBar(isLoading),
                 ],
               );
             },
@@ -304,24 +592,121 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget _buildStepBody(bool isLoading) {
+  Widget _buildStepBody() {
     switch (_step) {
       case 1:
         return _buildIdentityStep();
       case 2:
         return _buildAccountStep();
       case 3:
-        return _buildReviewStep(isLoading);
+        return _buildReviewStep();
       default:
         return EktpScanStep(
           key: const ValueKey('ktp'),
           entrance: _entranceController,
           photo: _ktpPhoto,
-          onPhotoPicked: (file) => setState(() => _ktpPhoto = file),
-          onClearPhoto: () => setState(() => _ktpPhoto = null),
-          onContinue: (_) => _goToStep(1),
+          onClearPhoto: _clearPhoto,
         );
     }
+  }
+
+  Widget _buildBottomBar(bool isLoading) {
+    final isFirstStep = _step == 0;
+    final hasPhoto = _ktpPhoto != null;
+
+    final VoidCallback? onPrimary;
+    if (isLoading) {
+      onPrimary = null;
+    } else if (isFirstStep && !hasPhoto) {
+      onPrimary = _isPickingPhoto ? null : _showPhotoSourceSheet;
+    } else {
+      onPrimary = _handleNext;
+    }
+
+    final primaryLabel = isFirstStep
+        ? (hasPhoto ? 'Lanjut' : 'Ambil Gambar')
+        : (_step == 3 ? 'Kirim' : 'Lanjut');
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 8, 18, 16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          children: [
+            if (!isFirstStep || hasPhoto) ...[
+              Expanded(
+                child: SizedBox(
+                  height: 50,
+                  child: OutlinedButton(
+                    onPressed: isLoading
+                        ? null
+                        : (isFirstStep ? _showPhotoSourceSheet : _handleBack),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.grey300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      isFirstStep ? 'Ambil Ulang' : 'Kembali',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: onPrimary,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: AppColors.white,
+                          ),
+                        )
+                      : Text(
+                          primaryLabel,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHeader() {
@@ -334,18 +719,38 @@ class _RegisterScreenState extends State<RegisterScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8, top: 4),
-            child: IconButton(
-              onPressed: _handleBack,
-              tooltip: 'Kembali',
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Color(0xFF111827),
-              ),
+            padding: const EdgeInsets.only(left: 8, right: 16, top: 4),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: _handleClose,
+                  tooltip: 'Kembali ke login',
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xFF111827),
+                  ),
+                ),
+                const Spacer(),
+                if (_canAutoFill)
+                  TextButton(
+                    onPressed: _applyCachedOcr,
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      textStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: const Size(0, 36),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('Isi Otomatis'),
+                  ),
+              ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -405,7 +810,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     return SingleChildScrollView(
       key: const ValueKey('identity'),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
       child: Form(
         key: _identityFormKey,
         child: Column(
@@ -426,7 +831,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     keyboardType: TextInputType.number,
                     maxLength: 16,
                     decoration: _input(
-                      '3201234567890001',
+                      'Masukkan 16 digit NIK',
                     ).copyWith(counterText: ''),
                     validator: (val) {
                       final nik = val?.trim() ?? '';
@@ -443,8 +848,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                     controller: _nameController,
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
-                    textCapitalization: TextCapitalization.words,
-                    decoration: _input('SADDAM HUSSEIN'),
+                    textCapitalization: TextCapitalization.characters,
+                    inputFormatters: [_uppercaseFormatter],
+                    decoration: _input('Nama sesuai e-KTP'),
                     validator: (val) => val == null || val.trim().isEmpty
                         ? 'Nama wajib diisi'
                         : null,
@@ -454,7 +860,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        flex: 3,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -464,7 +869,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                               onTapOutside: (_) =>
                                   FocusManager.instance.primaryFocus?.unfocus(),
                               textCapitalization: TextCapitalization.characters,
-                              decoration: _input('JAKARTA'),
+                              inputFormatters: [_uppercaseFormatter],
+                              decoration: _input('Kota/kabupaten'),
                               validator: (val) =>
                                   val == null || val.trim().isEmpty
                                   ? 'Wajib diisi'
@@ -475,7 +881,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        flex: 2,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -484,7 +889,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                               controller: _birthDateController,
                               readOnly: true,
                               onTap: _pickBirthDate,
-                              decoration: _input('15/08/1995').copyWith(
+                              decoration: _input('Pilih tanggal').copyWith(
                                 suffixIcon: const Icon(
                                   Icons.calendar_today_outlined,
                                   size: 18,
@@ -506,11 +911,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     textCapitalization: TextCapitalization.characters,
+                    inputFormatters: [_uppercaseFormatter],
                     minLines: 2,
                     maxLines: 3,
-                    decoration: _input(
-                      'JL. MERDEKA RAYA NO. 12, JAKARTA SELATAN',
-                    ),
+                    decoration: _input('Alamat lengkap sesuai e-KTP'),
                     validator: (val) => val == null || val.trim().isEmpty
                         ? 'Alamat wajib diisi'
                         : null,
@@ -532,30 +936,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            Center(
-              child: TextButton(
-                onPressed: () => _goToStep(0),
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  textStyle: AppTextStyles.caption.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                child: const Text('Foto kurang jelas? Pindai ulang e-KTP'),
-              ),
-            ),
-            const SizedBox(height: 22),
-            EntranceTransition(
-              animation: _entranceController,
-              start: 0.55,
-              end: 0.95,
-              child: _buildPrimaryButton(
-                label: 'Lanjut ke Pembuatan Akun',
-                onPressed: _continueToAccount,
-              ),
-            ),
           ],
         ),
       ),
@@ -566,7 +946,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     return SingleChildScrollView(
       key: const ValueKey('account'),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: Form(
         key: _accountFormKey,
         child: Column(
@@ -585,7 +965,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.emailAddress,
-                    decoration: _input('saddam.naradata@akar.co.id'),
+                    decoration: _input('Alamat email aktif'),
                     validator: (val) {
                       final email = val?.trim() ?? '';
                       if (email.isEmpty) return 'Email wajib diisi';
@@ -604,7 +984,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.phone,
-                    decoration: _input('0812-3456-7890'),
+                    decoration: _input('Nomor WhatsApp aktif'),
                     validator: (val) {
                       final phone = (val ?? '').replaceAll(
                         RegExp(r'[\s-]'),
@@ -625,7 +1005,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     controller: _usernameController,
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: _input('saddam_naradata'),
+                    decoration: _input('Username yang diinginkan'),
                     validator: (val) => val == null || val.trim().isEmpty
                         ? 'Username wajib diisi'
                         : null,
@@ -663,37 +1043,41 @@ class _RegisterScreenState extends State<RegisterScreen>
                       return null;
                     },
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.goNamed('login');
-                  }
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  textStyle: AppTextStyles.caption.copyWith(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 16),
+                  _buildLabel('Konfirmasi Kata Sandi'),
+                  TextFormField(
+                    controller: _passwordConfirmationController,
+                    onTapOutside: (_) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
+                    obscureText: _isPasswordConfirmationObscured,
+                    decoration: _input('Ulangi kata sandi').copyWith(
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordConfirmationObscured
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 20,
+                          color: const Color(0xFF94A3B8),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordConfirmationObscured =
+                                !_isPasswordConfirmationObscured;
+                          });
+                        },
+                      ),
+                    ),
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Konfirmasi kata sandi wajib diisi';
+                      }
+                      if (val != _passwordController.text) {
+                        return 'Konfirmasi kata sandi tidak cocok';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                child: const Text('Sudah memiliki akun? Masuk di sini'),
-              ),
-            ),
-            const SizedBox(height: 22),
-            EntranceTransition(
-              animation: _entranceController,
-              start: 0.5,
-              end: 0.95,
-              child: _buildPrimaryButton(
-                label: 'Tinjau Data Pendaftaran',
-                onPressed: _continueToReview,
+                ],
               ),
             ),
           ],
@@ -702,7 +1086,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
   }
 
-  Widget _buildReviewStep(bool isLoading) {
+  Widget _buildReviewStep() {
     return SingleChildScrollView(
       key: const ValueKey('review'),
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
@@ -726,58 +1110,6 @@ class _RegisterScreenState extends State<RegisterScreen>
                 const SizedBox(height: 18),
                 _buildSecurityPill(),
               ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: TextButton(
-              onPressed: () => _goToStep(2),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF64748B),
-                textStyle: AppTextStyles.caption.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: const Text('Kembali untuk memeriksa ulang data'),
-            ),
-          ),
-          const SizedBox(height: 22),
-          EntranceTransition(
-            animation: _entranceController,
-            start: 0.5,
-            end: 0.95,
-            child: SizedBox(
-              height: 52,
-              child: FilledButton(
-                onPressed: isLoading ? null : _handleRegister,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                child: isLoading
-                    ? const SizedBox(
-                        height: 22,
-                        width: 22,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.white,
-                          ),
-                        ),
-                      )
-                    : Text(
-                        'Kirim & Buat Akun Sekarang',
-                        style: AppTextStyles.button.copyWith(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
-                        ),
-                      ),
-              ),
             ),
           ),
         ],
@@ -955,39 +1287,20 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
+      child: Text.rich(
+        TextSpan(
+          text: text,
+          children: const [
+            TextSpan(
+              text: ' *',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ],
+        ),
         style: AppTextStyles.bodySmall.copyWith(
           fontSize: 13,
           fontWeight: FontWeight.bold,
           color: const Color(0xFF374151),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPrimaryButton({
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      height: 52,
-      child: FilledButton(
-        onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.button.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-            color: AppColors.white,
-          ),
         ),
       ),
     );
