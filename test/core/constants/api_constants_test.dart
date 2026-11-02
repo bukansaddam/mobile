@@ -13,6 +13,10 @@ void main() {
       expect(ApiConstants.me, '/api/auth/me');
     });
 
+    test('ocr endpoint decodes accurately', () {
+      expect(ApiConstants.ocrScan, '/api/ocr/scan');
+    });
+
     test('news endpoint decodes accurately', () {
       expect(ApiConstants.news, '/api/news');
     });

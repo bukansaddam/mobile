@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
+import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
 import 'package:akar/utils/app_logger.dart';
 
 abstract class AuthRemoteDatasource {
@@ -26,6 +30,7 @@ abstract class AuthRemoteDatasource {
     required String passwordConfirmation,
     String? deviceId,
   });
+  Future<KtpOcrModel> scanKtp(File file);
 }
 
 class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
@@ -119,6 +124,44 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
       throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<KtpOcrModel> scanKtp(File file) async {
+    FileSecurityUtils.validateImageFile(file);
+
+    try {
+      final response = await dio.post(
+        ApiConstants.ocrScan,
+        data: FormData.fromMap({
+          'file': await MultipartFile.fromFile(file.path),
+          'type_document': 'ktp',
+        }),
+        options: Options(
+          sendTimeout: const Duration(minutes: 5),
+          receiveTimeout: const Duration(minutes: 5),
+        ),
+      );
+
+      final body = response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{};
+
+      if (body['success'] == false) {
+        throw Exception(
+          (body['message'] ?? body['error'] ?? 'Gagal memindai e-KTP')
+              .toString(),
+        );
+      }
+      return KtpOcrModel.fromJson(body);
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[AUTH_DS] DioException in scanKtp: ${e.message}',
+        e,
+        e.stackTrace,
+      );
       throw Exception(ErrorUtils.parseErrorMessage(e));
     }
   }

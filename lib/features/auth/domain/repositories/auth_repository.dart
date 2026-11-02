@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
+import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, AuthEntity>> login({
@@ -22,6 +25,7 @@ abstract class AuthRepository {
     required String passwordConfirmation,
     String? deviceId,
   });
+  Future<Either<Failure, KtpOcrEntity>> scanKtp(File file);
   Future<Either<Failure, UserEntity?>> getSavedUser();
   Future<Either<Failure, String?>> getSavedToken();
   Future<Either<Failure, void>> logout();

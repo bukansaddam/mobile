@@ -73,6 +73,23 @@ class ApiConstants {
     241,
   ]);
 
+  // OCR
+  static final String ocrScan = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    46,
+    110,
+    151,
+    224,
+    91,
+    161,
+    245,
+    49,
+  ]);
+
   // News / Announcement
   static final String news = EndpointSecurity.decode(const <int>[
     117,

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
+import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
@@ -15,6 +18,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
   late AuthModel fakeResponse;
+
+  @override
+  Future<KtpOcrModel> scanKtp(File file) {
+    throw UnimplementedError();
+  }
 
   @override
   Future<AuthModel> login({
