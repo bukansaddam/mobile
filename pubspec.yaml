@@ -31,6 +31,8 @@ dependencies:
   google_maps_flutter: ^2.18.0
   google_speech: ^2.1.1
   googleapis_auth: ^1.6.0
+  image: ^4.3.0
+  image_cropper: ^13.0.0
   image_picker: ^1.1.2
   intl: ^0.20.3
   json_annotation: ^4.12.0
