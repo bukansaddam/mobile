@@ -43,6 +43,9 @@ class RegisterEvent extends AuthEvent {
   final String email;
   final String password;
   final String passwordConfirmation;
+  final String otpChallengeToken;
+  final String otpCode;
+  final File? ktpPhoto;
   final String? deviceId;
 
   const RegisterEvent({
@@ -58,6 +61,9 @@ class RegisterEvent extends AuthEvent {
     required this.email,
     required this.password,
     required this.passwordConfirmation,
+    this.otpChallengeToken = '',
+    this.otpCode = '',
+    this.ktpPhoto,
     this.deviceId,
   });
 
@@ -75,6 +81,9 @@ class RegisterEvent extends AuthEvent {
     email,
     password,
     passwordConfirmation,
+    otpChallengeToken,
+    otpCode,
+    ktpPhoto,
     deviceId,
   ];
 }

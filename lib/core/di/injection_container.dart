@@ -21,6 +21,7 @@ import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/scan_ktp_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/send_register_otp_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 
 // Profile
@@ -259,6 +260,9 @@ Future<void> init() async {
   sl.registerLazySingleton<LoginUsecase>(() => LoginUsecase(sl()));
   sl.registerLazySingleton<RegisterUsecase>(() => RegisterUsecase(sl()));
   sl.registerLazySingleton<ScanKtpUsecase>(() => ScanKtpUsecase(sl()));
+  sl.registerLazySingleton<SendRegisterOtpUsecase>(
+    () => SendRegisterOtpUsecase(sl()),
+  );
   sl.registerLazySingleton<GetSavedUserUsecase>(
     () => GetSavedUserUsecase(sl()),
   );

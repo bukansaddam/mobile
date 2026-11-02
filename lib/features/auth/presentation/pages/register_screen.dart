@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,14 +17,17 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
+import 'package:akar/features/auth/domain/entities/otp_challenge_entity.dart';
 import 'package:akar/features/auth/domain/usecases/scan_ktp_usecase.dart';
+import 'package:akar/features/auth/domain/usecases/send_register_otp_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/auth/presentation/pages/ktp_camera_page.dart';
 import 'package:akar/features/auth/presentation/widgets/ektp_scan_step.dart';
 import 'package:akar/utils/app_logger.dart';
 
-/// Pendaftaran masyarakat dalam satu halaman, empat langkah:
-/// 1. foto e-KTP, 2. data kependudukan, 3. pembuatan akun, 4. review data.
+/// Pendaftaran masyarakat dalam lima langkah:
+/// 1. foto e-KTP, 2. data kependudukan, 3. pembuatan akun, 4. review data,
+/// 5. verifikasi OTP WhatsApp.
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -35,6 +39,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   final _identityFormKey = GlobalKey<FormState>();
   final _accountFormKey = GlobalKey<FormState>();
+  final _otpFormKey = GlobalKey<FormState>();
 
   final _nikController = TextEditingController();
   final _nameController = TextEditingController();
@@ -46,6 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmationController = TextEditingController();
+  final _otpController = TextEditingController();
 
   late final AnimationController _entranceController;
 
@@ -58,6 +64,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   bool _isPasswordConfirmationObscured = true;
   bool _isScanningKtp = false;
   bool _isPickingPhoto = false;
+  bool _isSendingOtp = false;
+  OtpChallengeEntity? _otpChallenge;
+  DateTime? _otpChallengeReceivedAt;
+  Timer? _otpTimer;
 
   /// Cache OCR per foto: selama foto sama, server tidak dipanggil ulang.
   String? _ocrPhotoPath;
@@ -77,6 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     'Data Kependudukan',
     'Buat Akun Anda',
     'Review Data Pendaftaran',
+    'Verifikasi WhatsApp',
   ];
 
   static const _subtitles = [
@@ -84,6 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     'Lengkapi data kependudukan sesuai e-KTP, lalu periksa kembali sebelum lanjut ke pembuatan akun.',
     'Lengkapi kontak aktif dan kata sandi untuk login ke aplikasi AKAR.',
     'Pastikan seluruh data kependudukan dan akun Anda sudah sesuai sebelum menyelesaikan pendaftaran.',
+    'Masukkan kode OTP yang kami kirim ke nomor WhatsApp Anda.',
   ];
 
   @override
@@ -100,6 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   void dispose() {
+    _otpTimer?.cancel();
     _entranceController.dispose();
     _nikController.dispose();
     _nameController.dispose();
@@ -111,7 +124,60 @@ class _RegisterScreenState extends State<RegisterScreen>
     _usernameController.dispose();
     _passwordController.dispose();
     _passwordConfirmationController.dispose();
+    _otpController.dispose();
     super.dispose();
+  }
+
+  DateTime? get _otpExpiresAt {
+    final challenge = _otpChallenge;
+    if (challenge == null) return null;
+    if (challenge.expiresIn > 1000000000) {
+      return DateTime.fromMillisecondsSinceEpoch(challenge.expiresIn * 1000);
+    }
+    if (_otpChallengeReceivedAt != null) {
+      return _otpChallengeReceivedAt!.add(Duration(seconds: challenge.expiresIn));
+    }
+    return DateTime.fromMillisecondsSinceEpoch(challenge.expiresIn * 1000);
+  }
+
+  bool get _isOtpExpired {
+    final expiresAt = _otpExpiresAt;
+    if (expiresAt == null) return true;
+    return DateTime.now().isAfter(expiresAt);
+  }
+
+  Duration get _remainingOtpDuration {
+    final expiresAt = _otpExpiresAt;
+    if (expiresAt == null) return Duration.zero;
+    final diff = expiresAt.difference(DateTime.now());
+    return diff.isNegative ? Duration.zero : diff;
+  }
+
+  String get _formattedRemainingTime {
+    final duration = _remainingOtpDuration;
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    if (minutes > 0) {
+      return '$minutes menit ${seconds.toString().padLeft(2, '0')} detik';
+    }
+    return '$seconds detik';
+  }
+
+  void _startOtpTimer() {
+    _otpTimer?.cancel();
+    if (_otpChallenge == null || _isOtpExpired) return;
+    _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      if (_isOtpExpired) {
+        timer.cancel();
+        setState(() {});
+      } else {
+        setState(() {});
+      }
+    });
   }
 
   void _goToStep(int step) {
@@ -119,6 +185,11 @@ class _RegisterScreenState extends State<RegisterScreen>
     FocusScope.of(context).unfocus();
     setState(() => _step = step);
     _entranceController.forward(from: 0);
+    if (step == 4) {
+      _startOtpTimer();
+    } else {
+      _otpTimer?.cancel();
+    }
   }
 
   void _handleBack() {
@@ -177,7 +248,15 @@ class _RegisterScreenState extends State<RegisterScreen>
       case 2:
         _continueToReview();
       case 3:
-        _handleRegister();
+        if (_otpChallenge != null && !_isOtpExpired) {
+          _goToStep(4);
+        } else {
+          _handleSendOtp();
+        }
+      case 4:
+        if (!_isOtpExpired) {
+          _handleVerifyOtp();
+        }
     }
   }
 
@@ -475,9 +554,46 @@ class _RegisterScreenState extends State<RegisterScreen>
     });
   }
 
-  void _handleRegister() {
+  Future<void> _handleSendOtp() async {
+    if (_isSendingOtp) return;
     FocusScope.of(context).unfocus();
 
+    final phone = _phoneController.text.trim();
+    if (phone.isEmpty) {
+      AppToast.showWarning(context, message: 'Nomor WhatsApp belum diisi.');
+      return;
+    }
+
+    setState(() => _isSendingOtp = true);
+    final result = await sl<SendRegisterOtpUsecase>()(phoneNumber: phone);
+    if (!mounted) return;
+    setState(() => _isSendingOtp = false);
+
+    result.fold(
+      (failure) => AppToast.showError(context, message: failure.message),
+      (challenge) {
+        _otpController.clear();
+        _otpChallengeReceivedAt = DateTime.now();
+        setState(() => _otpChallenge = challenge);
+        _goToStep(4);
+      },
+    );
+  }
+
+  void _handleVerifyOtp() {
+    if (_otpFormKey.currentState?.validate() != true) return;
+
+    final challenge = _otpChallenge;
+    final photo = _ktpPhoto;
+    if (challenge == null || photo == null || _isOtpExpired) {
+      AppToast.showWarning(
+        context,
+        message: 'Kode OTP telah kedaluwarsa. Silakan kirim ulang OTP.',
+      );
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
     context.read<AuthBloc>().add(
       RegisterEvent(
         name: _nameController.text.trim(),
@@ -494,6 +610,9 @@ class _RegisterScreenState extends State<RegisterScreen>
         email: _emailController.text.trim(),
         password: _passwordController.text,
         passwordConfirmation: _passwordConfirmationController.text,
+        otpChallengeToken: challenge.challengeToken,
+        otpCode: _otpController.text.trim(),
+        ktpPhoto: photo,
       ),
     );
   }
@@ -541,7 +660,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               }
             },
             builder: (context, state) {
-              final isLoading = state is AuthLoading;
+              final isLoading = state is AuthLoading || _isSendingOtp;
 
               return Column(
                 children: [
@@ -600,6 +719,8 @@ class _RegisterScreenState extends State<RegisterScreen>
         return _buildAccountStep();
       case 3:
         return _buildReviewStep();
+      case 4:
+        return _buildOtpStep();
       default:
         return EktpScanStep(
           key: const ValueKey('ktp'),
@@ -619,13 +740,25 @@ class _RegisterScreenState extends State<RegisterScreen>
       onPrimary = null;
     } else if (isFirstStep && !hasPhoto) {
       onPrimary = _isPickingPhoto ? null : _showPhotoSourceSheet;
+    } else if (_step == 3) {
+      onPrimary = (_otpChallenge != null && !_isOtpExpired)
+          ? _handleNext
+          : _handleSendOtp;
+    } else if (_step == 4) {
+      onPrimary = (_otpChallenge == null || _isOtpExpired)
+          ? null
+          : _handleVerifyOtp;
     } else {
       onPrimary = _handleNext;
     }
 
     final primaryLabel = isFirstStep
         ? (hasPhoto ? 'Lanjut' : 'Ambil Gambar')
-        : (_step == 3 ? 'Kirim' : 'Lanjut');
+        : switch (_step) {
+            3 => (_otpChallenge != null && !_isOtpExpired) ? 'Lanjut' : 'Kirim',
+            4 => 'Verifikasi',
+            _ => 'Lanjut',
+          };
 
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 8, 18, 16),
@@ -710,7 +843,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildHeader() {
-    final progress = (_step + 1) / 4;
+    final progress = (_step + 1) / _titles.length;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
 
     return SafeArea(
@@ -755,7 +888,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Step ${_step + 1} of 4',
+                  'Step ${_step + 1} of ${_titles.length}',
                   style: AppTextStyles.bodySmall.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -1113,6 +1246,165 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildOtpStep() {
+    final phone = _phoneController.text.trim();
+    final isExpired = _isOtpExpired;
+    final hasChallenge = _otpChallenge != null;
+
+    return SingleChildScrollView(
+      key: const ValueKey('otp'),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+      child: Form(
+        key: _otpFormKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            EntranceTransition(
+              animation: _entranceController,
+              start: 0,
+              end: 0.6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF4),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xFFBBF7D0)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.chat_outlined,
+                          size: 18,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Kode OTP dikirim ke $phone',
+                            style: AppTextStyles.caption.copyWith(
+                              fontSize: 12,
+                              color: const Color(0xFF374151),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildLabel('Kode OTP'),
+                  TextFormField(
+                    controller: _otpController,
+                    keyboardType: TextInputType.number,
+                    maxLength: 6,
+                    textAlign: TextAlign.center,
+                    autofillHints: const [AutofillHints.oneTimeCode],
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 8,
+                    ),
+                    decoration: _input(
+                      'Masukkan kode',
+                    ).copyWith(counterText: ''),
+                    validator: (val) {
+                      final code = val?.trim() ?? '';
+                      if (code.isEmpty) return 'Kode OTP wajib diisi';
+                      if (!RegExp(r'^\d{4,6}$').hasMatch(code)) {
+                        return 'Kode OTP tidak valid';
+                      }
+                      return null;
+                    },
+                  ),
+                  if (hasChallenge && !isExpired) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.timer_outlined,
+                          size: 14,
+                          color: Color(0xFF64748B),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Kode OTP masih berlaku $_formattedRemainingTime.',
+                          style: AppTextStyles.caption.copyWith(
+                            fontSize: 11,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ] else if (hasChallenge && isExpired) ...[
+                    const SizedBox(height: 8),
+                    const Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 14,
+                          color: AppColors.error,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Kode OTP telah kedaluwarsa.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColors.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (hasChallenge && isExpired) ...[
+                    const SizedBox(height: 14),
+                    Center(
+                      child: TextButton.icon(
+                        onPressed: _isSendingOtp ? null : _handleSendOtp,
+                        icon: _isSendingOtp
+                            ? const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.primary,
+                                ),
+                              )
+                            : const Icon(Icons.refresh, size: 16),
+                        label: Text(
+                          _isSendingOtp ? 'Mengirim ulang...' : 'Kirim ulang OTP',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 14),
+                    Text(
+                      'Belum menerima kode? Kembali ke langkah review lalu tekan '
+                      'Kirim untuk mengirim ulang.',
+                      style: AppTextStyles.caption.copyWith(
+                        fontSize: 11,
+                        color: const Color(0xFF64748B),
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

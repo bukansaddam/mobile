@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:akar/core/network/dio_client.dart';
@@ -119,6 +121,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: event.email,
       password: event.password,
       passwordConfirmation: event.passwordConfirmation,
+      otpChallengeToken: event.otpChallengeToken,
+      otpCode: event.otpCode,
+      ktpPhoto: event.ktpPhoto,
       deviceId: deviceId,
     );
 
