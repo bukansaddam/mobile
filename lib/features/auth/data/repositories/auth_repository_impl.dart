@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
+import 'package:akar/features/auth/domain/entities/ktp_ocr_mapper.dart';
+import 'package:akar/features/auth/domain/entities/otp_challenge_entity.dart';
+import 'package:akar/features/auth/domain/entities/otp_challenge_mapper.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 
@@ -58,12 +65,18 @@ class AuthRepositoryImpl implements AuthRepository {
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   }) async {
     try {
@@ -71,12 +84,18 @@ class AuthRepositoryImpl implements AuthRepository {
         name: name,
         phoneNumber: phoneNumber,
         nik: nik,
+        birthPlace: birthPlace,
+        birthDate: birthDate,
+        address: address,
         longitude: longitude,
         latitude: latitude,
         username: username,
         email: email,
         password: password,
         passwordConfirmation: passwordConfirmation,
+        otpChallengeToken: otpChallengeToken,
+        otpCode: otpCode,
+        ktpPhoto: ktpPhoto,
         deviceId: deviceId,
       );
 
@@ -85,6 +104,34 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return Right(authModel.toDomain());
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, OtpChallengeEntity>> sendRegisterOtp({
+    required String phoneNumber,
+  }) async {
+    try {
+      final model = await remoteDatasource.sendRegisterOtp(
+        phoneNumber: phoneNumber,
+      );
+      return Right(model.toDomain());
+    } on FileSecurityException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, KtpOcrEntity>> scanKtp(File file) async {
+    try {
+      final model = await remoteDatasource.scanKtp(file);
+      return Right(model.toDomain());
+    } on FileSecurityException catch (e) {
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }

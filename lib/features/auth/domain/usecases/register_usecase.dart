@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
@@ -11,23 +13,35 @@ class RegisterUsecase {
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   }) => repository.register(
     name: name,
     phoneNumber: phoneNumber,
     nik: nik,
+    birthPlace: birthPlace,
+    birthDate: birthDate,
+    address: address,
     longitude: longitude,
     latitude: latitude,
     username: username,
     email: email,
     password: password,
     passwordConfirmation: passwordConfirmation,
+    otpChallengeToken: otpChallengeToken,
+    otpCode: otpCode,
+    ktpPhoto: ktpPhoto,
     deviceId: deviceId,
   );
 }

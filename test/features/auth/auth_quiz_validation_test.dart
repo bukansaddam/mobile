@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
+import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
+import 'package:akar/features/auth/data/models/otp_challenge_model.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
@@ -16,6 +20,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
   late AuthModel fakeResponse;
+
+  @override
+  Future<KtpOcrModel> scanKtp(File file) {
+    throw UnimplementedError();
+  }
 
   @override
   Future<AuthModel> login({
@@ -36,15 +45,32 @@ class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   }) async {
     return fakeResponse;
+  }
+
+  @override
+  Future<OtpChallengeModel> sendRegisterOtp({
+    required String phoneNumber,
+  }) async {
+    return const OtpChallengeModel(
+      challengeToken: 'challenge-token',
+      expiresIn: 300,
+      resendAfter: 60,
+    );
   }
 }
 

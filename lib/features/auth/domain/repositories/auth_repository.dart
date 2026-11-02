@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
+import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
+import 'package:akar/features/auth/domain/entities/otp_challenge_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, AuthEntity>> login({
@@ -11,14 +15,24 @@ abstract class AuthRepository {
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   });
+  Future<Either<Failure, OtpChallengeEntity>> sendRegisterOtp({
+    required String phoneNumber,
+  });
+  Future<Either<Failure, KtpOcrEntity>> scanKtp(File file);
   Future<Either<Failure, UserEntity?>> getSavedUser();
   Future<Either<Failure, String?>> getSavedToken();
   Future<Either<Failure, AuthEntity>> refreshToken();

@@ -34,24 +34,36 @@ class RegisterEvent extends AuthEvent {
   final String name;
   final String phoneNumber;
   final String nik;
+  final String birthPlace;
+  final String birthDate;
+  final String address;
   final double longitude;
   final double latitude;
   final String username;
   final String email;
   final String password;
   final String passwordConfirmation;
+  final String otpChallengeToken;
+  final String otpCode;
+  final File? ktpPhoto;
   final String? deviceId;
 
   const RegisterEvent({
     required this.name,
     required this.phoneNumber,
     required this.nik,
+    this.birthPlace = '',
+    this.birthDate = '',
+    this.address = '',
     required this.longitude,
     required this.latitude,
     required this.username,
     required this.email,
     required this.password,
     required this.passwordConfirmation,
+    this.otpChallengeToken = '',
+    this.otpCode = '',
+    this.ktpPhoto,
     this.deviceId,
   });
 
@@ -60,12 +72,18 @@ class RegisterEvent extends AuthEvent {
     name,
     phoneNumber,
     nik,
+    birthPlace,
+    birthDate,
+    address,
     longitude,
     latitude,
     username,
     email,
     password,
     passwordConfirmation,
+    otpChallengeToken,
+    otpCode,
+    ktpPhoto,
     deviceId,
   ];
 }

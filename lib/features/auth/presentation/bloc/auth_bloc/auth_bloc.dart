@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:akar/core/network/dio_client.dart';
@@ -79,10 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onLogin(
-    LoginEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
 
@@ -121,10 +120,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 
-  Future<void> _onRegister(
-    RegisterEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onRegister(RegisterEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
 
@@ -133,44 +129,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       name: event.name,
       phoneNumber: event.phoneNumber,
       nik: event.nik,
+      birthPlace: event.birthPlace,
+      birthDate: event.birthDate,
+      address: event.address,
       longitude: event.longitude,
       latitude: event.latitude,
       username: event.username,
       email: event.email,
       password: event.password,
       passwordConfirmation: event.passwordConfirmation,
+      otpChallengeToken: event.otpChallengeToken,
+      otpCode: event.otpCode,
+      ktpPhoto: event.ktpPhoto,
       deviceId: deviceId,
     );
 
-    result.fold(
-      (failure) => emit(AuthFailure(failure.message)),
-      (authEntity) {
-        if (authEntity.accessToken.isNotEmpty) {
-          DioClient.instance.options.headers['Authorization'] =
-              'Bearer ${authEntity.accessToken}';
-          emit(
-            AuthAuthenticated(
-              user: authEntity.user,
-              token: authEntity.accessToken,
-              message: authEntity.message ?? 'Registrasi berhasil',
-            ),
-          );
-        } else {
-          emit(
-            RegisterSuccess(
-              message: authEntity.message ?? 'Registrasi berhasil',
-              user: authEntity.user,
-            ),
-          );
-        }
-      },
-    );
+    result.fold((failure) => emit(AuthFailure(failure.message)), (authEntity) {
+      if (authEntity.accessToken.isNotEmpty) {
+        DioClient.instance.options.headers['Authorization'] =
+            'Bearer ${authEntity.accessToken}';
+        emit(
+          AuthAuthenticated(
+            user: authEntity.user,
+            token: authEntity.accessToken,
+            message: authEntity.message ?? 'Registrasi berhasil',
+          ),
+        );
+      } else {
+        emit(
+          RegisterSuccess(
+            message: authEntity.message ?? 'Registrasi berhasil',
+            user: authEntity.user,
+          ),
+        );
+      }
+    });
   }
 
-  Future<void> _onLogout(
-    LogoutEvent event,
-    Emitter<AuthState> emit,
-  ) async {
+  Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
     await _logoutUsecase();
@@ -178,10 +174,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthUnauthenticated(message: 'Logout berhasil'));
   }
 
-  void _onUpdateAuthUser(
-    UpdateAuthUserEvent event,
-    Emitter<AuthState> emit,
-  ) {
+  void _onUpdateAuthUser(UpdateAuthUserEvent event, Emitter<AuthState> emit) {
     final currentState = state;
     if (currentState is AuthAuthenticated) {
       emit(currentState.copyWith(user: event.user));

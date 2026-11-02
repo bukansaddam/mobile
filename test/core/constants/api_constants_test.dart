@@ -11,7 +11,12 @@ void main() {
       expect(ApiConstants.login, '/api/login');
       expect(ApiConstants.refreshToken, '/api/auth/refresh');
       expect(ApiConstants.register, '/api/register');
+      expect(ApiConstants.registerOtpSend, '/api/register/public/otp/send');
       expect(ApiConstants.me, '/api/auth/me');
+    });
+
+    test('ocr endpoint decodes accurately', () {
+      expect(ApiConstants.ocrScan, '/api/ocr/scan');
     });
 
     test('news endpoint decodes accurately', () {

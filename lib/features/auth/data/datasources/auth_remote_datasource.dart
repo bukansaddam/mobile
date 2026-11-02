@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
+import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
+import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
+import 'package:akar/features/auth/data/models/otp_challenge_model.dart';
 import 'package:akar/utils/app_logger.dart';
 
 abstract class AuthRemoteDatasource {
@@ -16,14 +21,22 @@ abstract class AuthRemoteDatasource {
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   });
+  Future<OtpChallengeModel> sendRegisterOtp({required String phoneNumber});
+  Future<KtpOcrModel> scanKtp(File file);
 }
 
 class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
@@ -97,30 +110,55 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     required String name,
     required String phoneNumber,
     required String nik,
+    String birthPlace = '',
+    String birthDate = '',
+    String address = '',
     required double longitude,
     required double latitude,
     required String username,
     required String email,
     required String password,
     required String passwordConfirmation,
+    String otpChallengeToken = '',
+    String otpCode = '',
+    File? ktpPhoto,
     String? deviceId,
   }) async {
-    final Map<String, dynamic> requestData = {
+    if (ktpPhoto != null) {
+      FileSecurityUtils.validateImageFile(ktpPhoto);
+    }
+
+    final requestData = <String, dynamic>{
       'name': name,
       'phone': phoneNumber,
       'nik': nik,
+      // shortcut: birth_place belum tentu diterima endpoint register, cek saat API siap.
+      if (birthPlace.isNotEmpty) 'birth_place': birthPlace,
+      if (birthDate.isNotEmpty) 'birth_date': birthDate,
+      if (address.isNotEmpty) 'address': address,
       'longitude': longitude,
       'latitude': latitude,
       'username': username,
       'email': email,
       'password': password,
       'password_confirmation': passwordConfirmation,
+      if (otpChallengeToken.isNotEmpty)
+        'otp_challenge_token': otpChallengeToken,
+      if (otpCode.isNotEmpty) 'otp_code': otpCode,
       if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
     };
 
+    // shortcut: nama field foto KTP diasumsikan `ktp_photo`, sesuaikan bila API berbeda.
+    if (ktpPhoto != null) {
+      requestData['ktp_photo'] = await MultipartFile.fromFile(ktpPhoto.path);
+    }
+
     try {
       final response = await handleRequest<AuthModel>(
-        () => dio.post(ApiConstants.register, data: requestData),
+        () => dio.post(
+          ApiConstants.register,
+          data: FormData.fromMap(requestData),
+        ),
         fromJson: _parseAuthModel,
       );
 
@@ -138,6 +176,75 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
       throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<OtpChallengeModel> sendRegisterOtp({
+    required String phoneNumber,
+  }) async {
+    try {
+      final response = await handleRequest<OtpChallengeModel>(
+        () => dio.post(
+          ApiConstants.registerOtpSend,
+          data: {'phone': phoneNumber},
+        ),
+        fromJson: (json) =>
+            OtpChallengeModel.fromJson(Map<String, dynamic>.from(json as Map)),
+      );
+
+      if (response.success && response.data != null) {
+        return response.data!;
+      }
+      throw Exception(response.message ?? 'Gagal mengirim kode OTP');
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[AUTH_DS] DioException in sendRegisterOtp: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    } catch (e, s) {
+      AppLogger.e('[AUTH_DS] Unexpected error in sendRegisterOtp: $e', e, s);
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<KtpOcrModel> scanKtp(File file) async {
+    FileSecurityUtils.validateImageFile(file);
+
+    try {
+      final response = await dio.post(
+        ApiConstants.ocrScan,
+        data: FormData.fromMap({
+          'file': await MultipartFile.fromFile(file.path),
+          'type_document': 'ktp',
+        }),
+        options: Options(
+          sendTimeout: const Duration(minutes: 5),
+          receiveTimeout: const Duration(minutes: 5),
+        ),
+      );
+
+      final body = response.data is Map
+          ? Map<String, dynamic>.from(response.data as Map)
+          : const <String, dynamic>{};
+
+      if (body['success'] == false) {
+        throw Exception(
+          (body['message'] ?? body['error'] ?? 'Gagal memindai e-KTP')
+              .toString(),
+        );
+      }
+      return KtpOcrModel.fromJson(body);
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[AUTH_DS] DioException in scanKtp: ${e.message}',
+        e,
+        e.stackTrace,
+      );
       throw Exception(ErrorUtils.parseErrorMessage(e));
     }
   }

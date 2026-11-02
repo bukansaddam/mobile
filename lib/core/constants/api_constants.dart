@@ -77,6 +77,37 @@ class ApiConstants {
     242,
     34,
   ]);
+  static final String registerOtpSend = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    51,
+    104,
+    130,
+    166,
+    91,
+    182,
+    241,
+    45,
+    54,
+    139,
+    244,
+    40,
+    114,
+    37,
+    12,
+    246,
+    30,
+    105,
+    101,
+    240,
+    107,
+    183,
+    138,
+    43,
+  ]);
   static final String me = EndpointSecurity.decode(const <int>[
     117,
     79,
@@ -90,6 +121,23 @@ class ApiConstants {
     7,
     175,
     241,
+  ]);
+
+  // OCR
+  static final String ocrScan = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    46,
+    110,
+    151,
+    224,
+    91,
+    161,
+    245,
+    49,
   ]);
 
   // News / Announcement
