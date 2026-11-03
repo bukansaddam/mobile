@@ -1,4 +1,5 @@
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:flutter/material.dart';
 
 /// Utility untuk menampilkan feedback non-blocking (SnackBar/Toast)
@@ -77,6 +78,7 @@ class AppToast {
     if (messenger == null) return;
 
     messenger.hideCurrentSnackBar();
+    final cleanMessage = ErrorUtils.cleanExceptionMessage(message);
     messenger.showSnackBar(
       SnackBar(
         content: Row(
@@ -85,7 +87,7 @@ class AppToast {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                message,
+                cleanMessage,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,

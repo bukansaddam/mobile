@@ -1,7 +1,22 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 class ErrorUtils {
   ErrorUtils._();
+
+  /// Membersihkan prefix teknis (Exception/Failure) dari pesan error.
+  static String cleanExceptionMessage(String message) {
+    var text = message.trim();
+    final prefixRegex = RegExp(
+      r'^(_?[A-Za-z0-9_]*Exception|Failure|ServerFailure|DioException(\s*\[[^\]]*\])?):\s*',
+      caseSensitive: false,
+    );
+    while (prefixRegex.hasMatch(text)) {
+      text = text.replaceFirst(prefixRegex, '').trim();
+    }
+    return text;
+  }
 
   /// Mengubah berbagai jenis error/exception (seperti DioException status 500, HTML response,
   /// timeout, dsb) menjadi pesan ringkas yang ramah pengguna.
@@ -12,19 +27,20 @@ class ErrorUtils {
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
 
-      // Status code 5xx Server Error -> Terjadi Kesalahan
       if (statusCode != null && statusCode >= 500) {
         return "Terjadi Kesalahan";
       }
 
-      final rawData = error.response?.data;
+      dynamic rawData = error.response?.data;
 
-      // Bila response data berupa HTML string -> Terjadi Kesalahan
-      if (rawData is String && _isHtml(rawData)) {
-        return "Terjadi Kesalahan";
+      if (rawData is String) {
+        if (_isHtml(rawData)) return "Terjadi Kesalahan";
+        try {
+          final decoded = jsonDecode(rawData);
+          if (decoded is Map) rawData = decoded;
+        } catch (_) {}
       }
 
-      // Bila response data berupa JSON Map
       if (rawData is Map) {
         final mapData = Map<String, dynamic>.from(rawData);
         final validationErrors = _extractValidationErrors(mapData);
@@ -32,6 +48,7 @@ class ErrorUtils {
             ?.toString();
 
         if (validationErrors != null && validationErrors.isNotEmpty) {
+          final cleanVal = cleanExceptionMessage(validationErrors);
           if (serverMsg != null &&
               serverMsg.trim().isNotEmpty &&
               !_isHtml(serverMsg) &&
@@ -39,16 +56,16 @@ class ErrorUtils {
               serverMsg.toLowerCase() != 'validation failed' &&
               serverMsg.toLowerCase() != 'the given data was invalid.' &&
               serverMsg.toLowerCase() != 'format data tidak valid') {
-            return '$serverMsg: $validationErrors';
+            return cleanExceptionMessage('$serverMsg: $cleanVal');
           }
-          return validationErrors;
+          return cleanVal;
         }
 
         if (serverMsg != null && serverMsg.trim().isNotEmpty) {
           if (_isHtml(serverMsg) || _isTechnicalError(serverMsg)) {
             return "Terjadi Kesalahan";
           }
-          return serverMsg;
+          return cleanExceptionMessage(serverMsg);
         }
       }
 
@@ -60,10 +77,14 @@ class ErrorUtils {
         return "Format data tidak valid";
       }
 
-      // Exception message atau string representation check
       final errStr = error.toString();
       if (_isHtml(errStr) || _isTechnicalError(errStr)) {
         return "Terjadi Kesalahan";
+      }
+
+      final cleanedErr = cleanExceptionMessage(errStr);
+      if (cleanedErr.isNotEmpty && !_isTechnicalError(cleanedErr)) {
+        return cleanedErr;
       }
 
       return "Terjadi Kesalahan";
@@ -73,20 +94,13 @@ class ErrorUtils {
       final mapData = Map<String, dynamic>.from(error);
       final validationErrors = _extractValidationErrors(mapData);
       if (validationErrors != null && validationErrors.isNotEmpty) {
-        return validationErrors;
+        return cleanExceptionMessage(validationErrors);
       }
       final msg = (mapData['message'] ?? mapData['meta']?['message'])
           ?.toString();
       if (msg != null && msg.trim().isNotEmpty) {
-        return msg;
+        return cleanExceptionMessage(msg);
       }
-    }
-
-    if (error is String) {
-      if (_isHtml(error) || _isTechnicalError(error)) {
-        return "Terjadi Kesalahan";
-      }
-      return error;
     }
 
     final str = error.toString();
@@ -94,7 +108,7 @@ class ErrorUtils {
       return "Terjadi Kesalahan";
     }
 
-    final cleaned = str.replaceAll('Exception: ', '').trim();
+    final cleaned = cleanExceptionMessage(str);
     if (cleaned.isEmpty || _isTechnicalError(cleaned)) {
       return "Terjadi Kesalahan";
     }

@@ -134,5 +134,47 @@ void main() {
       final result = ErrorUtils.parseErrorMessage(mapData);
       expect(result, equals('Suku wajib diisi'));
     });
+
+    test('cleans Exception prefix from raw string and exception objects', () {
+      expect(
+        ErrorUtils.parseErrorMessage(
+          Exception('Nomor WhatsApp sudah terdaftar'),
+        ),
+        equals('Nomor WhatsApp sudah terdaftar'),
+      );
+      expect(
+        ErrorUtils.parseErrorMessage(
+          'Exception: Format nomor telepon tidak valid',
+        ),
+        equals('Format nomor telepon tidak valid'),
+      );
+      expect(
+        ErrorUtils.parseErrorMessage(
+          Exception('Exception: ServerFailure: Kode OTP tidak sesuai'),
+        ),
+        equals('Kode OTP tidak sesuai'),
+      );
+      expect(
+        ErrorUtils.parseErrorMessage({
+          'message': 'Exception: NIK sudah terdaftar',
+        }),
+        equals('NIK sudah terdaftar'),
+      );
+    });
+
+    test('parses JSON string response in DioException data', () {
+      final dioException = DioException(
+        requestOptions: RequestOptions(path: '/api/test'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/api/test'),
+          statusCode: 400,
+          data: '{"message": "Exception: Kode verifikasi salah"}',
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      final result = ErrorUtils.parseErrorMessage(dioException);
+      expect(result, equals('Kode verifikasi salah'));
+    });
   });
 }
