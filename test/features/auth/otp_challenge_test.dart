@@ -53,5 +53,21 @@ void main() {
       expect(expiresAt.difference(receivedAt).inSeconds, 300);
       expect(DateTime.now().isBefore(expiresAt), isTrue);
     });
+
+    test('calculates resend cooldown duration correctly', () {
+      const entity = OtpChallengeEntity(
+        challengeToken: 'token-123',
+        expiresIn: 300,
+        resendAfter: 60,
+      );
+      final sentAt = DateTime.now();
+      final resendAvailableAt = sentAt.add(
+        Duration(seconds: entity.resendAfter),
+      );
+
+      final diff = resendAvailableAt.difference(sentAt).inSeconds;
+      expect(diff, 60);
+      expect(DateTime.now().isBefore(resendAvailableAt), isTrue);
+    });
   });
 }

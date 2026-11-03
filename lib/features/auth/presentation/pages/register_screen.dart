@@ -67,6 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen>
   bool _isSendingOtp = false;
   OtpChallengeEntity? _otpChallenge;
   DateTime? _otpChallengeReceivedAt;
+  DateTime? _resendAvailableAt;
+  String? _otpPhone;
   Timer? _otpTimer;
 
   /// Cache OCR per foto: selama foto sama, server tidak dipanggil ulang.
@@ -128,8 +130,17 @@ class _RegisterScreenState extends State<RegisterScreen>
     super.dispose();
   }
 
-  DateTime? get _otpExpiresAt {
+  OtpChallengeEntity? get _validOtpChallenge {
     final challenge = _otpChallenge;
+    if (challenge == null) return null;
+    if (_otpPhone != null && _otpPhone != _phoneController.text.trim()) {
+      return null;
+    }
+    return challenge;
+  }
+
+  DateTime? get _otpExpiresAt {
+    final challenge = _validOtpChallenge;
     if (challenge == null) return null;
     if (challenge.expiresIn > 1000000000) {
       return DateTime.fromMillisecondsSinceEpoch(challenge.expiresIn * 1000);
@@ -144,6 +155,13 @@ class _RegisterScreenState extends State<RegisterScreen>
     final expiresAt = _otpExpiresAt;
     if (expiresAt == null) return true;
     return DateTime.now().isAfter(expiresAt);
+  }
+
+  int get _remainingResendSeconds {
+    final availableAt = _resendAvailableAt;
+    if (availableAt == null) return 0;
+    final diff = availableAt.difference(DateTime.now()).inSeconds;
+    return diff > 0 ? diff : 0;
   }
 
   Duration get _remainingOtpDuration {
@@ -165,18 +183,16 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   void _startOtpTimer() {
     _otpTimer?.cancel();
-    if (_otpChallenge == null || _isOtpExpired) return;
+    if (_validOtpChallenge == null) return;
     _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
       }
-      if (_isOtpExpired) {
+      if (_isOtpExpired && _remainingResendSeconds <= 0) {
         timer.cancel();
-        setState(() {});
-      } else {
-        setState(() {});
       }
+      setState(() {});
     });
   }
 
@@ -187,8 +203,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     _entranceController.forward(from: 0);
     if (step == 4) {
       _startOtpTimer();
-    } else {
-      _otpTimer?.cancel();
     }
   }
 
@@ -248,7 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       case 2:
         _continueToReview();
       case 3:
-        if (_otpChallenge != null && !_isOtpExpired) {
+        if (_validOtpChallenge != null && !_isOtpExpired) {
           _goToStep(4);
         } else {
           _handleSendOtp();
@@ -554,8 +568,17 @@ class _RegisterScreenState extends State<RegisterScreen>
     });
   }
 
-  Future<void> _handleSendOtp() async {
+  Future<void> _handleSendOtp({bool force = false}) async {
     if (_isSendingOtp) return;
+    if (force && _remainingResendSeconds > 0) {
+      AppToast.showWarning(
+        context,
+        message:
+            'Mohon tunggu $_remainingResendSeconds detik sebelum kirim ulang.',
+      );
+      return;
+    }
+
     FocusScope.of(context).unfocus();
 
     final phone = _phoneController.text.trim();
@@ -573,9 +596,24 @@ class _RegisterScreenState extends State<RegisterScreen>
       (failure) => AppToast.showError(context, message: failure.message),
       (challenge) {
         _otpController.clear();
-        _otpChallengeReceivedAt = DateTime.now();
-        setState(() => _otpChallenge = challenge);
-        _goToStep(4);
+        final now = DateTime.now();
+        final cooldownSeconds =
+            challenge.resendAfter > 0 ? challenge.resendAfter : 60;
+        setState(() {
+          _otpPhone = phone;
+          _otpChallenge = challenge;
+          _otpChallengeReceivedAt = now;
+          _resendAvailableAt = now.add(Duration(seconds: cooldownSeconds));
+        });
+        _startOtpTimer();
+        if (_step != 4) {
+          _goToStep(4);
+        } else {
+          AppToast.showSuccess(
+            context,
+            message: 'Kode OTP baru berhasil dikirim ke WhatsApp Anda.',
+          );
+        }
       },
     );
   }
@@ -583,7 +621,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   void _handleVerifyOtp() {
     if (_otpFormKey.currentState?.validate() != true) return;
 
-    final challenge = _otpChallenge;
+    final challenge = _validOtpChallenge;
     final photo = _ktpPhoto;
     if (challenge == null || photo == null || _isOtpExpired) {
       AppToast.showWarning(
@@ -741,11 +779,11 @@ class _RegisterScreenState extends State<RegisterScreen>
     } else if (isFirstStep && !hasPhoto) {
       onPrimary = _isPickingPhoto ? null : _showPhotoSourceSheet;
     } else if (_step == 3) {
-      onPrimary = (_otpChallenge != null && !_isOtpExpired)
+      onPrimary = (_validOtpChallenge != null && !_isOtpExpired)
           ? _handleNext
           : _handleSendOtp;
     } else if (_step == 4) {
-      onPrimary = (_otpChallenge == null || _isOtpExpired)
+      onPrimary = (_validOtpChallenge == null || _isOtpExpired)
           ? null
           : _handleVerifyOtp;
     } else {
@@ -755,7 +793,10 @@ class _RegisterScreenState extends State<RegisterScreen>
     final primaryLabel = isFirstStep
         ? (hasPhoto ? 'Lanjut' : 'Ambil Gambar')
         : switch (_step) {
-            3 => (_otpChallenge != null && !_isOtpExpired) ? 'Lanjut' : 'Kirim',
+            3 =>
+              (_validOtpChallenge != null && !_isOtpExpired)
+                  ? 'Lanjut'
+                  : 'Kirim',
             4 => 'Verifikasi',
             _ => 'Lanjut',
           };
@@ -1253,7 +1294,8 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget _buildOtpStep() {
     final phone = _phoneController.text.trim();
     final isExpired = _isOtpExpired;
-    final hasChallenge = _otpChallenge != null;
+    final hasChallenge = _validOtpChallenge != null;
+    final resendSeconds = _remainingResendSeconds;
 
     return SingleChildScrollView(
       key: const ValueKey('otp'),
@@ -1363,43 +1405,54 @@ class _RegisterScreenState extends State<RegisterScreen>
                       ],
                     ),
                   ],
-                  if (hasChallenge && isExpired) ...[
-                    const SizedBox(height: 14),
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: _isSendingOtp ? null : _handleSendOtp,
-                        icon: _isSendingOtp
-                            ? const SizedBox(
-                                width: 14,
-                                height: 14,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.primary,
+                  const SizedBox(height: 16),
+                  Center(
+                    child: resendSeconds > 0
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.access_time_rounded,
+                                size: 14,
+                                color: Color(0xFF64748B),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Kirim ulang kode dalam ${resendSeconds}s',
+                                style: AppTextStyles.caption.copyWith(
+                                  fontSize: 12,
+                                  color: const Color(0xFF64748B),
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              )
-                            : const Icon(Icons.refresh, size: 16),
-                        label: Text(
-                          _isSendingOtp ? 'Mengirim ulang...' : 'Kirim ulang OTP',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                              ),
+                            ],
+                          )
+                        : TextButton.icon(
+                            onPressed: _isSendingOtp
+                                ? null
+                                : () => _handleSendOtp(force: true),
+                            icon: _isSendingOtp
+                                ? const SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.primary,
+                                    ),
+                                  )
+                                : const Icon(Icons.refresh_rounded, size: 16),
+                            label: Text(
+                              _isSendingOtp
+                                  ? 'Mengirim ulang...'
+                                  : 'Kirim Ulang Kode OTP',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ] else ...[
-                    const SizedBox(height: 14),
-                    Text(
-                      'Belum menerima kode? Kembali ke langkah review lalu tekan '
-                      'Kirim untuk mengirim ulang.',
-                      style: AppTextStyles.caption.copyWith(
-                        fontSize: 11,
-                        color: const Color(0xFF64748B),
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
+                  ),
                 ],
               ),
             ),
