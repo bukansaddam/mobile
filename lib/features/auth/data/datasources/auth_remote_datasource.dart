@@ -156,7 +156,7 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     try {
       final response = await handleRequest<AuthModel>(
         () => dio.post(
-          ApiConstants.register,
+          ApiConstants.registerPublic,
           data: FormData.fromMap(requestData),
         ),
         fromJson: _parseAuthModel,
