@@ -101,6 +101,28 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  String? get _roleTitle {
+    switch (widget.role?.toLowerCase()) {
+      case 'linmas':
+        return 'Petugas Linmas';
+      case 'masyarakat':
+        return 'Masyarakat';
+      default:
+        return null;
+    }
+  }
+
+  String get _subtitle {
+    switch (widget.role?.toLowerCase()) {
+      case 'linmas':
+        return 'Akses operasional perlindungan masyarakat';
+      case 'masyarakat':
+        return 'Masuk untuk layanan aduan & informasi warga';
+      default:
+        return 'Masuk ke akun Anda untuk melanjutkan';
+    }
+  }
+
   void _handleBack() {
     if (context.canPop()) {
       context.pop();
@@ -111,16 +133,29 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final roleTitle = _roleTitle;
+
     return Scaffold(
       backgroundColor: const Color(0xFFE8F5E9),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           tooltip: 'Kembali',
           onPressed: _handleBack,
         ),
+        title: roleTitle != null
+            ? Text(
+                roleTitle,
+                style: AppTextStyles.titleMedium.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              )
+            : null,
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -234,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen>
                           start: 0.12,
                           end: 0.47,
                           child: Text(
-                            'Masuk ke akun Anda untuk melanjutkan',
+                            _subtitle,
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.textSecondary,
                             ),
