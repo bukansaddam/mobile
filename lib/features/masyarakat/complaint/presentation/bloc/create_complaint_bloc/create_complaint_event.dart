@@ -14,6 +14,7 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
   final double latitude;
   final double longitude;
   final List<File> attachments;
+  final String? category;
 
   const SubmitComplaintEvent({
     required this.title,
@@ -22,6 +23,7 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
     required this.latitude,
     required this.longitude,
     required this.attachments,
+    this.category,
   });
 
   @override
@@ -32,5 +34,6 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
     latitude,
     longitude,
     attachments,
+    category,
   ];
 }

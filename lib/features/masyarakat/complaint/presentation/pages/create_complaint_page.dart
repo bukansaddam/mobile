@@ -20,18 +20,26 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CreateComplaintPage extends StatefulWidget {
   final ComplaintCategory? initialCategory;
+  final bool isInsidentil;
 
-  const CreateComplaintPage({super.key, this.initialCategory});
+  const CreateComplaintPage({
+    super.key,
+    this.initialCategory,
+    this.isInsidentil = false,
+  });
 
   static Future<bool?> show(
     BuildContext context, {
     ComplaintCategory? initialCategory,
+    bool isInsidentil = false,
   }) {
     return Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            CreateComplaintPage(initialCategory: initialCategory),
+        builder: (context) => CreateComplaintPage(
+          initialCategory: initialCategory,
+          isInsidentil: isInsidentil,
+        ),
       ),
     );
   }
@@ -43,9 +51,20 @@ class CreateComplaintPage extends StatefulWidget {
 class _CreateComplaintPageState extends State<CreateComplaintPage> {
   static const int _maxAttachments = 5;
 
+  static const List<String> _incidentCategories = [
+    'Keamanan & Ketertiban',
+    'Bencana Alam',
+    'Kebakaran',
+    'Sosial & Kemasyarakatan',
+    'Lingkungan Hidup',
+    'Infrastruktur',
+    'Lainnya',
+  ];
+
   final _formKey = GlobalKey<FormState>();
   late final CreateComplaintBloc _bloc;
 
+  String? _selectedCategory;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -61,6 +80,11 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   void initState() {
     super.initState();
     _bloc = sl<CreateComplaintBloc>();
+    if (widget.initialCategory != null) {
+      _selectedCategory = widget.initialCategory!.label;
+    } else if (widget.isInsidentil) {
+      _selectedCategory = _incidentCategories.first;
+    }
     _fetchCurrentLocation();
   }
 
@@ -235,6 +259,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         latitude: latitude,
         longitude: longitude,
         attachments: _attachments.map(File.new).toList(),
+        category: _selectedCategory ?? widget.initialCategory?.label,
       ),
     );
   }
@@ -243,10 +268,16 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
     final ticket = report.ticketNumber;
     AppDialogs.showSuccess(
       context,
-      title: 'Pengaduan Berhasil Dikirim!',
-      message: ticket.isEmpty
-          ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
-          : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.',
+      title: widget.isInsidentil
+          ? 'Laporan Insidentil Berhasil Dikirim!'
+          : 'Pengaduan Berhasil Dikirim!',
+      message: widget.isInsidentil
+          ? (ticket.isEmpty
+              ? 'Laporan insidentil telah tersimpan di sistem.'
+              : 'Laporan $ticket telah tersimpan di sistem.')
+          : (ticket.isEmpty
+              ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
+              : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.'),
       buttonText: 'Kembali ke Beranda',
       onPressed: () => Navigator.pop(context, true),
     );
@@ -435,9 +466,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                 ),
                 onPressed: () => Navigator.pop(context),
               ),
-              title: const Text(
-                'Buat Pengaduan',
-                style: TextStyle(
+              title: Text(
+                widget.isInsidentil ? 'Laporan Insidentil' : 'Buat Pengaduan',
+                style: const TextStyle(
                   color: Color(0xFF0F172A),
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -465,18 +496,20 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                       width: 1,
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline_rounded,
                         color: AppColors.primary,
                         size: 22,
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Isi formulir pengaduan dengan data yang jujur & jelas agar petugas dapat menindaklanjuti secara cepat.',
-                          style: TextStyle(
+                          widget.isInsidentil
+                              ? 'Isi formulir laporan insidentil dengan data yang akurat agar dapat segera ditindaklanjuti.'
+                              : 'Isi formulir pengaduan dengan data yang jujur & jelas agar petugas dapat menindaklanjuti secara cepat.',
+                          style: const TextStyle(
                             fontSize: 12.5,
                             color: AppColors.primaryDark,
                             height: 1.35,
@@ -489,7 +522,74 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
                 const SizedBox(height: 20),
 
-                _buildFieldLabel('Judul Pengaduan'),
+                if (widget.isInsidentil) ...[
+                  _buildFieldLabel('Kategori Laporan'),
+                  const SizedBox(height: 8),
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedCategory,
+                    isExpanded: true,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF0F172A),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Pilih kategori laporan',
+                      hintStyle: const TextStyle(
+                        color: Color(0xFF94A3B8),
+                        fontSize: 14,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.category_outlined,
+                        color: AppColors.primary,
+                        size: 20,
+                      ),
+                      filled: true,
+                      fillColor: AppColors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    items: _incidentCategories.map((cat) {
+                      return DropdownMenuItem<String>(
+                        value: cat,
+                        child: Text(cat),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) {
+                        setState(() => _selectedCategory = val);
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Kategori laporan wajib dipilih';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                ],
+
+                _buildFieldLabel(
+                  widget.isInsidentil ? 'Judul Laporan' : 'Judul Pengaduan',
+                ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _titleController,
@@ -500,7 +600,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                     color: Color(0xFF0F172A),
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Contoh: Jalan Berlubang di Depan Sekolah',
+                    hintText: widget.isInsidentil
+                        ? 'Contoh: Pohon Tumbang Menutup Jalan'
+                        : 'Contoh: Jalan Berlubang di Depan Sekolah',
                     hintStyle: const TextStyle(
                       color: Color(0xFF94A3B8),
                       fontSize: 14,
@@ -529,7 +631,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Judul pengaduan tidak boleh kosong';
+                      return widget.isInsidentil
+                          ? 'Judul laporan tidak boleh kosong'
+                          : 'Judul pengaduan tidak boleh kosong';
                     }
                     if (value.trim().length < 5) {
                       return 'Judul minimal 5 karakter';
@@ -540,7 +644,11 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
                 const SizedBox(height: 18),
 
-                _buildFieldLabel('Deskripsi Pengaduan'),
+                _buildFieldLabel(
+                  widget.isInsidentil
+                      ? 'Deskripsi Laporan'
+                      : 'Deskripsi Pengaduan',
+                ),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _descriptionController,
@@ -552,8 +660,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                     color: Color(0xFF0F172A),
                   ),
                   decoration: InputDecoration(
-                    hintText:
-                        'Jelaskan rincian permasalahan yang terjadi secara detail...',
+                    hintText: widget.isInsidentil
+                        ? 'Jelaskan kronologi atau rincian kejadian secara detail...'
+                        : 'Jelaskan rincian permasalahan yang terjadi secara detail...',
                     hintStyle: const TextStyle(
                       color: Color(0xFF94A3B8),
                       fontSize: 14,

@@ -17,6 +17,7 @@ abstract class ComplaintRemoteDatasource {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   });
 
   Future<ComplaintPaginatedModel> getMyComplaints({
@@ -52,6 +53,7 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) async {
     try {
       final prepared = await _prepareAttachments(attachments);
@@ -65,6 +67,7 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
             latitude: latitude,
             longitude: longitude,
             attachments: prepared,
+            category: category,
           ),
           options: _uploadOptions,
         ),
@@ -181,20 +184,26 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) async {
     final files = <MultipartFile>[];
     for (final file in attachments) {
       files.add(await _multipartFile(file));
     }
 
-    return FormData.fromMap({
+    final data = <String, dynamic>{
       'title': title,
       'description': description,
       'address': address,
       'latitude': latitude,
       'longitude': longitude,
       _attachmentsField: files,
-    });
+    };
+    if (category != null && category.trim().isNotEmpty) {
+      data['category'] = category.trim();
+    }
+
+    return FormData.fromMap(data);
   }
 
   Future<MultipartFile> _multipartFile(File file) {

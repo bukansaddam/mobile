@@ -170,6 +170,7 @@ class _FakeRepository implements ComplaintRepository {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) {
     throw UnimplementedError();
   }

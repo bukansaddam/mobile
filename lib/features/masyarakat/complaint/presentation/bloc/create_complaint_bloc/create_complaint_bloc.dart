@@ -34,6 +34,7 @@ class CreateComplaintBloc
       latitude: event.latitude,
       longitude: event.longitude,
       attachments: event.attachments,
+      category: event.category,
     );
 
     result.fold((failure) {

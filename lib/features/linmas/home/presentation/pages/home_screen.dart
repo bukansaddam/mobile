@@ -232,6 +232,16 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       },
       {
+        'title': 'Laporan Insidentil',
+        'subtitle': 'Kejadian Lapangan',
+        'icon': Icons.report_problem_rounded,
+        'color': const Color(0xFFE11D48),
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('laporanInsidentil');
+        },
+      },
+      {
         'title': 'Demografi',
         'subtitle': 'Tokoh Sekitar',
         'icon': Icons.badge_rounded,

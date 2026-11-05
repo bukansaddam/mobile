@@ -16,6 +16,7 @@ class _FakeRepository implements ComplaintRepository {
     ComplaintReportEntity(id: '9', status: 'received'),
   );
   int calls = 0;
+  void Function({String? category})? createComplaintCallback;
 
   @override
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
@@ -51,8 +52,10 @@ class _FakeRepository implements ComplaintRepository {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) async {
     calls++;
+    createComplaintCallback?.call(category: category);
     return result;
   }
 }
@@ -66,6 +69,7 @@ class _ThrowingDatasource implements ComplaintRemoteDatasource {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) async {
     throw const FileSecurityException('Berkas tidak valid');
   }
@@ -125,6 +129,28 @@ void main() {
     );
     expect((state as CreateComplaintSuccess).report.id, '9');
     expect(repository.calls, 1);
+  });
+
+  test('pengaduan insidentil meneruskan category ke repository', () async {
+    String? passedCategory;
+    repository.createComplaintCallback = ({category}) {
+      passedCategory = category;
+    };
+
+    bloc.add(
+      const SubmitComplaintEvent(
+        title: 'Pohon tumbang',
+        description: 'Menutup jalan utama setelah badai',
+        address: 'Jl. Sudirman No. 10',
+        latitude: -6.21,
+        longitude: 106.82,
+        attachments: [],
+        category: 'Bencana Alam',
+      ),
+    );
+
+    await bloc.stream.firstWhere((state) => state is CreateComplaintSuccess);
+    expect(passedCategory, 'Bencana Alam');
   });
 
   test('kegagalan server memancarkan failure dan pesannya', () async {

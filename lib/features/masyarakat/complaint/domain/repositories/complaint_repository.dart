@@ -11,6 +11,7 @@ abstract class ComplaintRepository {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   });
 
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({

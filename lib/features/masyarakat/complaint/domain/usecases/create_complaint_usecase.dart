@@ -16,6 +16,7 @@ class CreateComplaintUsecase {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) {
     return repository.createComplaint(
       title: title,
@@ -24,6 +25,7 @@ class CreateComplaintUsecase {
       latitude: latitude,
       longitude: longitude,
       attachments: attachments,
+      category: category,
     );
   }
 }

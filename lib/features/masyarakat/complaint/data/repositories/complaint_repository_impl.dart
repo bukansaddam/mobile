@@ -20,6 +20,7 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
     required double latitude,
     required double longitude,
     required List<File> attachments,
+    String? category,
   }) async {
     try {
       final model = await remoteDatasource.createComplaint(
@@ -29,6 +30,7 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
         latitude: latitude,
         longitude: longitude,
         attachments: attachments,
+        category: category,
       );
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {

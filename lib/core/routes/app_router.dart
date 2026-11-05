@@ -76,6 +76,7 @@ class AppRouter {
   static const String tambahOrganisasi = 'tambahOrganisasi';
   static const String bankSampah = 'bankSampah';
   static const String tambahBankSampah = 'tambahBankSampah';
+  static const String laporanInsidentil = 'laporanInsidentil';
 
   // Masyarakat Routes
   static const String masyarakatMain = 'masyarakatMain';
@@ -100,6 +101,7 @@ class AppRouter {
   static const String bankSampahPath = '/bank-sampah';
   static const String tambahBankSampahPath = '/tambah-bank-sampah';
   static const String activationDetailPath = '/activation-detail';
+  static const String laporanInsidentilPath = '/laporan-insidentil';
 
   static const String masyarakatMainPath = '/masyarakat/main';
   static const String complaintDetailPath = '/masyarakat/complaint-detail';
@@ -179,6 +181,7 @@ class AppRouter {
           '/tambah-organisasi',
           '/bank-sampah',
           '/tambah-bank-sampah',
+          '/laporan-insidentil',
           '/activation-detail',
           '/activation_detail',
           '/survey',
@@ -339,6 +342,28 @@ class AppRouter {
         path: tambahBankSampahPath,
         name: tambahBankSampah,
         builder: (context, state) => const AddBankSampahReportScreen(),
+      ),
+      GoRoute(
+        path: laporanInsidentilPath,
+        name: laporanInsidentil,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: const CreateComplaintPage(isInsidentil: true),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: animation.drive(
+                      Tween<Offset>(
+                        begin: const Offset(0, 1),
+                        end: Offset.zero,
+                      ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                    ),
+                    child: child,
+                  );
+                },
+          );
+        },
       ),
       GoRoute(
         path: activationDetailPath,
