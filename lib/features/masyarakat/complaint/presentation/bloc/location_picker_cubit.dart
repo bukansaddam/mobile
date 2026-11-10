@@ -27,6 +27,13 @@ class LocationPickerCubit extends Cubit<LocationPickerState> {
     required this.getCurrentLocationUseCase,
   }) : super(const LocationPickerState());
 
+  @override
+  void emit(LocationPickerState state) {
+    if (!isClosed) {
+      super.emit(state);
+    }
+  }
+
   void init(LatLng? initialPosition, String? initialAddress) {
     final target = initialPosition ?? LocationPickerState.defaultLocation;
     final address = (initialAddress != null && initialAddress.isNotEmpty)
@@ -48,6 +55,7 @@ class LocationPickerCubit extends Cubit<LocationPickerState> {
     emit(state.copyWith(isLocatingUser: true));
 
     final result = await getCurrentLocationUseCase();
+    if (isClosed) return;
     result.fold(
       (failure) {
         emit(state.copyWith(isLocatingUser: false));
@@ -103,6 +111,7 @@ class LocationPickerCubit extends Cubit<LocationPickerState> {
     emit(state.copyWith(isLoadingAddress: true));
 
     final result = await getAddressFromLatLngUseCase(position);
+    if (isClosed) return;
     result.fold(
       (failure) {
         emit(
@@ -141,6 +150,7 @@ class LocationPickerCubit extends Cubit<LocationPickerState> {
     emit(state.copyWith(isLoadingSuggestions: true));
 
     final result = await getLocationSuggestionsUseCase(query);
+    if (isClosed) return;
     result.fold(
       (failure) {
         emit(
@@ -169,6 +179,7 @@ class LocationPickerCubit extends Cubit<LocationPickerState> {
     emit(state.copyWith(isSearching: true, clearErrorMessage: true));
 
     final result = await searchCoordinatesUseCase(trimmed);
+    if (isClosed) return;
     result.fold(
       (failure) {
         emit(
