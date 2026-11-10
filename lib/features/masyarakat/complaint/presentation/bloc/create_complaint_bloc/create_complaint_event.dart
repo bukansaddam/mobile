@@ -15,6 +15,8 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
   final double longitude;
   final List<File> attachments;
   final String? category;
+  final int? categoryId;
+  final bool isInsidentil;
 
   const SubmitComplaintEvent({
     required this.title,
@@ -24,6 +26,8 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
     required this.longitude,
     required this.attachments,
     this.category,
+    this.categoryId,
+    this.isInsidentil = false,
   });
 
   @override
@@ -35,5 +39,7 @@ class SubmitComplaintEvent extends CreateComplaintEvent {
     longitude,
     attachments,
     category,
+    categoryId,
+    isInsidentil,
   ];
 }

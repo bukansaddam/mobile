@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -17,6 +19,32 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class IncidentCategoryItem {
+  final int? id;
+  final String label;
+  final String? code;
+  final String? domain;
+  final String? color;
+
+  const IncidentCategoryItem({
+    this.id,
+    required this.label,
+    this.code,
+    this.domain,
+    this.color,
+  });
+
+  factory IncidentCategoryItem.fromJson(Map<String, dynamic> json) {
+    return IncidentCategoryItem(
+      id: (json['id'] as num?)?.toInt(),
+      label: (json['label'] ?? json['name'] ?? '').toString().trim(),
+      code: json['code']?.toString(),
+      domain: json['domain']?.toString(),
+      color: json['color']?.toString(),
+    );
+  }
+}
 
 class CreateComplaintPage extends StatefulWidget {
   final ComplaintCategory? initialCategory;
@@ -51,20 +79,27 @@ class CreateComplaintPage extends StatefulWidget {
 class _CreateComplaintPageState extends State<CreateComplaintPage> {
   static const int _maxAttachments = 5;
 
-  static const List<String> _incidentCategories = [
-    'Keamanan & Ketertiban',
-    'Bencana Alam',
-    'Kebakaran',
-    'Sosial & Kemasyarakatan',
-    'Lingkungan Hidup',
-    'Infrastruktur',
-    'Lainnya',
+  static const List<IncidentCategoryItem> _fallbackCategories = [
+    IncidentCategoryItem(id: 6, label: 'Bencana Alam', color: '#1877F2'),
+    IncidentCategoryItem(id: 10, label: 'Kebakaran', color: '#DC2626'),
+    IncidentCategoryItem(id: 12, label: 'Pohon Tumbang', color: '#0D8E34'),
+    IncidentCategoryItem(id: 7, label: 'Banjir', color: '#1877F2'),
+    IncidentCategoryItem(id: 8, label: 'Tanah Longsor', color: '#F59E0B'),
+    IncidentCategoryItem(id: 9, label: 'Angin Kencang', color: '#06B6D4'),
+    IncidentCategoryItem(id: 11, label: 'Gempa Bumi', color: '#A855F7'),
+    IncidentCategoryItem(id: 5, label: 'Keamanan Sosial', color: '#3B82F6'),
+    IncidentCategoryItem(id: 4, label: 'Lingkungan', color: '#10B981'),
+    IncidentCategoryItem(id: 1, label: 'Sampah', color: '#0D8E34'),
   ];
 
   final _formKey = GlobalKey<FormState>();
   late final CreateComplaintBloc _bloc;
 
-  String? _selectedCategory;
+  bool _isLoadingCategories = false;
+  List<IncidentCategoryItem> _categories = [];
+  IncidentCategoryItem? _selectedCategory;
+  String? _categoryError;
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -80,12 +115,282 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   void initState() {
     super.initState();
     _bloc = sl<CreateComplaintBloc>();
+    _categories = List.from(_fallbackCategories);
     if (widget.initialCategory != null) {
-      _selectedCategory = widget.initialCategory!.label;
-    } else if (widget.isInsidentil) {
-      _selectedCategory = _incidentCategories.first;
+      _selectedCategory = _categories.firstWhere(
+        (c) =>
+            c.label.toLowerCase() ==
+            widget.initialCategory!.label.toLowerCase(),
+        orElse: () => _categories.first,
+      );
     }
     _fetchCurrentLocation();
+    if (widget.isInsidentil) {
+      _loadCategories();
+    }
+  }
+
+  Future<void> _loadCategories() async {
+    setState(() => _isLoadingCategories = true);
+    try {
+      final res = await DioClient.instance.get(ApiConstants.categories);
+      final raw = res.data;
+      List list = [];
+      if (raw is Map && raw['data'] is List) {
+        list = raw['data'] as List;
+      } else if (raw is List) {
+        list = raw;
+      }
+
+      final items = list
+          .whereType<Map>()
+          .map(
+            (e) => IncidentCategoryItem.fromJson(Map<String, dynamic>.from(e)),
+          )
+          .where((e) => e.label.isNotEmpty)
+          .toList();
+
+      if (mounted && items.isNotEmpty) {
+        setState(() {
+          _categories = items;
+          if (_selectedCategory == null && widget.initialCategory != null) {
+            _selectedCategory = items.firstWhere(
+              (c) =>
+                  c.label.toLowerCase() ==
+                  widget.initialCategory!.label.toLowerCase(),
+              orElse: () => items.first,
+            );
+          }
+        });
+      }
+    } catch (_) {
+      // shortcut: fallback ke kategori bawaan jika endpoint categories gagal dimuat.
+    } finally {
+      if (mounted) setState(() => _isLoadingCategories = false);
+    }
+  }
+
+  void _showCategoryPickerSheet() {
+    final searchController = TextEditingController();
+    List<IncidentCategoryItem> filteredList = List.from(_categories);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (bottomSheetContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            final searchText = searchController.text.trim();
+            final hasSearch = searchText.isNotEmpty;
+
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(bottomSheetContext).viewInsets.bottom,
+                ),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight:
+                        MediaQuery.of(bottomSheetContext).size.height * 0.75,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Container(
+                          width: 38,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: AppColors.grey300,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Pilih Kategori Laporan',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.grey600,
+                              ),
+                              onPressed: () =>
+                                  Navigator.pop(bottomSheetContext),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TextField(
+                          controller: searchController,
+                          onTapOutside: (_) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                          onChanged: (val) {
+                            setModalState(() {
+                              filteredList = _categories
+                                  .where(
+                                    (item) => item.label.toLowerCase().contains(
+                                      val.trim().toLowerCase(),
+                                    ),
+                                  )
+                                  .toList();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Cari kategori kejadian...',
+                            hintStyle: const TextStyle(
+                              color: Color(0xFF94A3B8),
+                              fontSize: 14,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                              color: AppColors.primary,
+                            ),
+                            suffixIcon: searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(
+                                      Icons.clear_rounded,
+                                      color: Color(0xFF94A3B8),
+                                    ),
+                                    onPressed: () {
+                                      searchController.clear();
+                                      setModalState(() {
+                                        filteredList = List.from(_categories);
+                                      });
+                                    },
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor: const Color(0xFFF1F5F9),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                      Expanded(
+                        child: filteredList.isEmpty
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        Icons.search_off_rounded,
+                                        size: 48,
+                                        color: Color(0xFF94A3B8),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        hasSearch
+                                            ? '"$searchText" tidak ditemukan'
+                                            : 'Kategori tidak ditemukan',
+                                        style: const TextStyle(
+                                          color: Color(0xFF64748B),
+                                          fontSize: 14,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: filteredList.length,
+                                itemBuilder: (context, index) {
+                                  final item = filteredList[index];
+                                  final isSelected =
+                                      _selectedCategory?.id != null
+                                      ? _selectedCategory?.id == item.id
+                                      : _selectedCategory?.label == item.label;
+
+                                  Color? dotColor;
+                                  if (item.color != null &&
+                                      item.color!.startsWith('#') &&
+                                      item.color!.length >= 7) {
+                                    try {
+                                      final hex = item.color!.replaceFirst(
+                                        '#',
+                                        '',
+                                      );
+                                      dotColor = Color(
+                                        int.parse('FF$hex', radix: 16),
+                                      );
+                                    } catch (_) {}
+                                  }
+
+                                  return ListTile(
+                                    leading: Container(
+                                      width: 10,
+                                      height: 10,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: dotColor ?? AppColors.primary,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      item.label,
+                                      style: TextStyle(
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        color: isSelected
+                                            ? AppColors.primary
+                                            : const Color(0xFF0F172A),
+                                      ),
+                                    ),
+                                    trailing: isSelected
+                                        ? const Icon(
+                                            Icons.check_circle_rounded,
+                                            color: AppColors.primary,
+                                          )
+                                        : null,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedCategory = item;
+                                        _categoryError = null;
+                                      });
+                                      Navigator.pop(bottomSheetContext);
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> _fetchCurrentLocation() async {
@@ -239,6 +544,11 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    if (widget.isInsidentil && _selectedCategory == null) {
+      setState(() => _categoryError = 'Kategori laporan wajib dipilih');
+      _showMessage('Pilih kategori laporan terlebih dahulu.');
+      return;
+    }
     if (_attachments.isEmpty) {
       _showMessage('Sertakan minimal 1 foto atau video.');
       return;
@@ -259,7 +569,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         latitude: latitude,
         longitude: longitude,
         attachments: _attachments.map(File.new).toList(),
-        category: _selectedCategory ?? widget.initialCategory?.label,
+        category: _selectedCategory?.label ?? widget.initialCategory?.label,
+        categoryId: _selectedCategory?.id,
+        isInsidentil: widget.isInsidentil,
       ),
     );
   }
@@ -273,11 +585,11 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
           : 'Pengaduan Berhasil Dikirim!',
       message: widget.isInsidentil
           ? (ticket.isEmpty
-              ? 'Laporan insidentil telah tersimpan di sistem.'
-              : 'Laporan $ticket telah tersimpan di sistem.')
+                ? 'Laporan insidentil telah tersimpan di sistem.'
+                : 'Laporan $ticket telah tersimpan di sistem.')
           : (ticket.isEmpty
-              ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
-              : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.'),
+                ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
+                : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.'),
       buttonText: 'Kembali ke Beranda',
       onPressed: () => Navigator.pop(context, true),
     );
@@ -525,64 +837,81 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                 if (widget.isInsidentil) ...[
                   _buildFieldLabel('Kategori Laporan'),
                   const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedCategory,
-                    isExpanded: true,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF0F172A),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Pilih kategori laporan',
-                      hintStyle: const TextStyle(
-                        color: Color(0xFF94A3B8),
-                        fontSize: 14,
-                      ),
-                      prefixIcon: const Icon(
-                        Icons.category_outlined,
-                        color: AppColors.primary,
-                        size: 20,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(
+                  InkWell(
+                    onTap: _showCategoryPickerSheet,
+                    borderRadius: BorderRadius.circular(14),
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        hintText: 'Pilih kategori laporan',
+                        hintStyle: const TextStyle(
+                          color: Color(0xFF94A3B8),
+                          fontSize: 14,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.category_outlined,
                           color: AppColors.primary,
-                          width: 1.5,
+                          size: 20,
+                        ),
+                        suffixIcon: _isLoadingCategories
+                            ? const UnconstrainedBox(
+                                child: SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: Color(0xFF64748B),
+                                size: 24,
+                              ),
+                        filled: true,
+                        fillColor: AppColors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide(
+                            color: _categoryError != null
+                                ? const Color(0xFFE11D48)
+                                : const Color(0xFFE2E8F0),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.5,
+                          ),
+                        ),
+                        errorText: _categoryError,
+                      ),
+                      child: Text(
+                        _selectedCategory?.label ?? 'Pilih kategori laporan',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _selectedCategory != null
+                              ? const Color(0xFF0F172A)
+                              : const Color(0xFF94A3B8),
+                          fontWeight: _selectedCategory != null
+                              ? FontWeight.w500
+                              : FontWeight.normal,
                         ),
                       ),
                     ),
-                    items: _incidentCategories.map((cat) {
-                      return DropdownMenuItem<String>(
-                        value: cat,
-                        child: Text(cat),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _selectedCategory = val);
-                      }
-                    },
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Kategori laporan wajib dipilih';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 18),
                 ],

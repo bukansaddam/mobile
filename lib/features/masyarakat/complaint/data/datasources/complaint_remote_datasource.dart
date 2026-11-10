@@ -18,6 +18,8 @@ abstract class ComplaintRemoteDatasource {
     required double longitude,
     required List<File> attachments,
     String? category,
+    int? categoryId,
+    bool isInsidentil = false,
   });
 
   Future<ComplaintPaginatedModel> getMyComplaints({
@@ -54,12 +56,17 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     required double longitude,
     required List<File> attachments,
     String? category,
+    int? categoryId,
+    bool isInsidentil = false,
   }) async {
     try {
       final prepared = await _prepareAttachments(attachments);
+      final endpoint = isInsidentil
+          ? ApiConstants.incidentReports
+          : ApiConstants.reports;
       final response = await handleRequest<ComplaintReportModel>(
         () async => dio.post(
-          ApiConstants.reports,
+          endpoint,
           data: await _createFormData(
             title: title,
             description: description,
@@ -68,6 +75,8 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
             longitude: longitude,
             attachments: prepared,
             category: category,
+            categoryId: categoryId,
+            isInsidentil: isInsidentil,
           ),
           options: _uploadOptions,
         ),
@@ -185,6 +194,8 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     required double longitude,
     required List<File> attachments,
     String? category,
+    int? categoryId,
+    bool isInsidentil = false,
   }) async {
     final files = <MultipartFile>[];
     for (final file in attachments) {
@@ -199,8 +210,19 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       'longitude': longitude,
       _attachmentsField: files,
     };
-    if (category != null && category.trim().isNotEmpty) {
-      data['category'] = category.trim();
+    if (isInsidentil) {
+      if (categoryId != null) {
+        data['report_category_id'] = categoryId;
+      } else if (category != null && int.tryParse(category) != null) {
+        data['report_category_id'] = int.parse(category);
+      }
+    } else {
+      if (category != null && category.trim().isNotEmpty) {
+        data['category'] = category.trim();
+      }
+      if (categoryId != null) {
+        data['category_id'] = categoryId;
+      }
     }
 
     return FormData.fromMap(data);

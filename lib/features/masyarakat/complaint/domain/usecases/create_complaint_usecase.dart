@@ -17,6 +17,8 @@ class CreateComplaintUsecase {
     required double longitude,
     required List<File> attachments,
     String? category,
+    int? categoryId,
+    bool isInsidentil = false,
   }) {
     return repository.createComplaint(
       title: title,
@@ -26,6 +28,8 @@ class CreateComplaintUsecase {
       longitude: longitude,
       attachments: attachments,
       category: category,
+      categoryId: categoryId,
+      isInsidentil: isInsidentil,
     );
   }
 }

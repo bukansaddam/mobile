@@ -171,6 +171,8 @@ class _FakeRepository implements ComplaintRepository {
     required double longitude,
     required List<File> attachments,
     String? category,
+    int? categoryId,
+    bool isInsidentil = false,
   }) {
     throw UnimplementedError();
   }
