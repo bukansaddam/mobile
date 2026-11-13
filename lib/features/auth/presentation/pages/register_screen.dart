@@ -506,7 +506,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     final apply = await AppDialogs.showConfirmation(
       context,
-      title: 'Data e-KTP Ditemukan',
+      title: 'Scan KTP Berhasil',
       message:
           'Apakah Anda ingin mengisi formulir secara otomatis dari hasil '
           'pemindaian e-KTP?',
@@ -1191,7 +1191,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                     onTapOutside: (_) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     obscureText: _isPasswordObscured,
-                    decoration: _input('Minimal 6 karakter').copyWith(
+                    decoration: _input('Minimal 8 karakter').copyWith(
                       suffixIcon: IconButton(
                         icon: Icon(
                           _isPasswordObscured
@@ -1211,8 +1211,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                       if (val == null || val.isEmpty) {
                         return 'Kata sandi wajib diisi';
                       }
-                      if (val.length < 6) {
-                        return 'Kata sandi minimal 6 karakter';
+                      if (val.length < 8) {
+                        return 'Kata sandi minimal 8 karakter';
                       }
                       return null;
                     },
