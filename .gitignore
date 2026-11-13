@@ -73,3 +73,7 @@ SECURITY_AUDIT_REPORT.md
 anti-slop/*
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# QA & Personal Test Reports
+test_reports/
+test_report/

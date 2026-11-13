@@ -203,7 +203,9 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Tidak ada bank sampah dengan kata kunci "$_searchQuery"',
+                                _searchQuery.isEmpty
+                                    ? 'Belum ada bank sampah terdaftar.'
+                                    : 'Tidak ada bank sampah dengan kata kunci "$_searchQuery"',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                 ),

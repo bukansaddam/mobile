@@ -80,12 +80,20 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     final rawData = response.data;
     List<dynamic>? list;
     if (rawData is Map) {
-      if (rawData['points'] is List) {
-        list = rawData['points'] as List<dynamic>;
-      } else if (rawData['data'] is List) {
-        list = rawData['data'] as List<dynamic>;
-      } else if (rawData['rows'] is List) {
-        list = rawData['rows'] as List<dynamic>;
+      // API mengembalikan { data: { rows: [agregat wilayah], points: [titik unit bank sampah] } }.
+      // Titik lokasi bank sampah berada di `points`.
+      final data = rawData['data'];
+      final source = data is Map ? data : rawData;
+      final points = source['points'];
+      final rows = source['rows'];
+      if (points is List && points.isNotEmpty) {
+        list = points;
+      } else if (rows is List && rows.isNotEmpty) {
+        list = rows;
+      } else if (data is List) {
+        list = data;
+      } else if (source['data'] is List) {
+        list = source['data'] as List<dynamic>;
       }
     } else if (rawData is List) {
       list = rawData;
