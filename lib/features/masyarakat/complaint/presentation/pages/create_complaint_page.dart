@@ -81,12 +81,6 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
   static const List<IncidentCategoryItem> _fallbackCategories = [
     IncidentCategoryItem(id: 6, label: 'Bencana Alam', color: '#1877F2'),
-    IncidentCategoryItem(id: 10, label: 'Kebakaran', color: '#DC2626'),
-    IncidentCategoryItem(id: 12, label: 'Pohon Tumbang', color: '#0D8E34'),
-    IncidentCategoryItem(id: 7, label: 'Banjir', color: '#1877F2'),
-    IncidentCategoryItem(id: 8, label: 'Tanah Longsor', color: '#F59E0B'),
-    IncidentCategoryItem(id: 9, label: 'Angin Kencang', color: '#06B6D4'),
-    IncidentCategoryItem(id: 11, label: 'Gempa Bumi', color: '#A855F7'),
     IncidentCategoryItem(id: 5, label: 'Keamanan Sosial', color: '#3B82F6'),
     IncidentCategoryItem(id: 4, label: 'Lingkungan', color: '#10B981'),
     IncidentCategoryItem(id: 1, label: 'Sampah', color: '#0D8E34'),
@@ -133,7 +127,12 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   Future<void> _loadCategories() async {
     setState(() => _isLoadingCategories = true);
     try {
-      final res = await DioClient.instance.get(ApiConstants.categories);
+      // domain=report: tanpa filter ini endpoint mengembalikan kategori DUMAS,
+      // sehingga report_category_id ditolak backend.
+      final res = await DioClient.instance.get(
+        ApiConstants.categories,
+        queryParameters: const {'domain': 'report'},
+      );
       final raw = res.data;
       List list = [];
       if (raw is Map && raw['data'] is List) {
