@@ -6,7 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
-import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
@@ -58,12 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!locationStatus.isGranted || !cameraStatus.isGranted) {
         await [Permission.location, Permission.camera].request();
-      }
-
-      if (mounted) {
-        await sl<FirebaseNotificationService>().checkAndPromptOverlayPermission(
-          context,
-        );
       }
     } catch (_) {}
   }

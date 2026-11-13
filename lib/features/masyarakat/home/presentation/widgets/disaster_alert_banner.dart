@@ -149,21 +149,6 @@ class DisasterAlertBanner extends StatelessWidget {
               const SizedBox(height: 10),
               _buildSimulateOption(
                 context,
-                title: '⚙️ Izin Fullscreen di Luar Aplikasi (Overlay)',
-                subtitle:
-                    'Aktifkan agar panggilan darurat langsung fullscreen saat membuka aplikasi lain',
-                onTap: () async {
-                  Navigator.pop(context);
-                  await sl<FirebaseNotificationService>()
-                      .checkAndPromptOverlayPermission(
-                        context,
-                        forcePrompt: true,
-                      );
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildSimulateOption(
-                context,
                 title: '📱 Tes Push Notifikasi Sistem (Luar Aplikasi)',
                 subtitle:
                     'Picu peringatan dalam 8 detik (minimize app sekarang untuk menguji)',
