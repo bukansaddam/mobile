@@ -11,7 +11,6 @@ class ComplaintBannerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 210,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
@@ -25,17 +24,18 @@ class ComplaintBannerCard extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Stack(
-          fit: StackFit.expand,
           children: [
-            Align(
-              alignment: const Alignment(1.5, 1.0),
-              child: Image.asset(
-                'assets/placeholder_feature.jpeg',
-                fit: BoxFit.cover,
-                cacheHeight: 450,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(color: AppColors.primaryDark);
-                },
+            Positioned.fill(
+              child: Align(
+                alignment: const Alignment(1.5, 1.0),
+                child: Image.asset(
+                  'assets/placeholder_feature.jpeg',
+                  fit: BoxFit.cover,
+                  cacheHeight: 450,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: AppColors.primaryDark);
+                  },
+                ),
               ),
             ),
 
@@ -60,34 +60,30 @@ class ComplaintBannerCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(22.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'DUMAS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          height: 1.15,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Dukungan masyarakat untuk\nlingkungan yang lebih baik',
-                        style: TextStyle(
-                          color: Colors.white.withAlpha(230),
-                          fontSize: 12.5,
-                          height: 1.35,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'DUMAS',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      height: 1.15,
+                      letterSpacing: 0.8,
+                    ),
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Dukungan masyarakat untuk\nlingkungan yang lebih baik',
+                    style: TextStyle(
+                      color: Colors.white.withAlpha(230),
+                      fontSize: 12.5,
+                      height: 1.35,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
 
                   LayoutBuilder(
                     builder: (context, constraints) {

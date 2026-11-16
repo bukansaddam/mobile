@@ -380,7 +380,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: Padding(
+            body: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: ComplaintBannerCard(
                 onCreateComplaint: () => tapped = true,
@@ -392,12 +392,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(find.text('DUMAS'), findsOneWidget);
-      expect(
-        find.text('Dukungan masyarakat untuk\nlingkungan yang lebih baik'),
-        findsOneWidget,
+      final subtitleFinder = find.text(
+        'Dukungan masyarakat untuk\nlingkungan yang lebih baik',
       );
+      expect(find.text('DUMAS'), findsOneWidget);
+      expect(subtitleFinder, findsOneWidget);
       expect(find.text('PENGADUAN\nMASYARAKAT'), findsNothing);
+
+      final subtitleRect = tester.getRect(subtitleFinder);
+      final buttonRect = tester.getRect(find.byType(ElevatedButton));
+      expect(buttonRect.top - subtitleRect.bottom, closeTo(16.0, 1.0));
 
       await tester.tap(find.text('BUAT PENGADUAN'));
       await tester.pump();
