@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/profile/domain/entities/update_profile_params.dart';
 import 'package:akar/features/profile/domain/repositories/profile_repository.dart';
 import 'package:akar/features/profile/domain/usecases/get_profile_usecase.dart';
@@ -36,6 +38,21 @@ class _FakeProfileBloc extends Fake implements ProfileBloc {
 
   @override
   void add(ProfileEvent event) {}
+}
+
+class _FakeMyComplaintListBloc extends Fake implements MyComplaintListBloc {
+  _FakeMyComplaintListBloc(this._state);
+
+  final MyComplaintListState _state;
+
+  @override
+  MyComplaintListState get state => _state;
+
+  @override
+  Stream<MyComplaintListState> get stream => const Stream.empty();
+
+  @override
+  void add(MyComplaintListEvent event) {}
 }
 
 class MockProfileRepository implements ProfileRepository {
@@ -191,7 +208,7 @@ void main() {
 
   group('Profile Screen NIK Display Tests', () {
     testWidgets(
-      'MasyarakatProfileScreen menampilkan NIK lengkap tanpa masking',
+      'MasyarakatProfileScreen menampilkan centang hijau untuk NIK, telepon, dan email tanpa menampilkan teks sensitifnya',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(600, 900));
         final user = testUser.copyWith(role: 'member', profilePic: '');
@@ -212,13 +229,86 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(tester.takeException(), isNull);
-        expect(find.text('3201234567890001'), findsOneWidget);
-        expect(find.textContaining('****'), findsNothing);
+        expect(find.text('NIK'), findsOneWidget);
+        expect(find.text('No. Telepon'), findsOneWidget);
+        expect(find.text('Email'), findsOneWidget);
+        expect(find.text('3201234567890001'), findsNothing);
+        expect(find.text('081234567890'), findsNothing);
+        expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(3));
         expect(
           find.text('Pengaturan Notifikasi & Alarm Bencana'),
           findsNothing,
         );
         expect(find.text('Ubah Kata Sandi'), findsNothing);
+
+        final partialUser = testUser.copyWith(
+          role: 'member',
+          profilePic: '',
+          email: '',
+        );
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: partialUser, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+            ],
+            child: const MaterialApp(home: MasyarakatProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(2));
+        expect(find.text('-'), findsOneWidget);
+        expect(find.text('0'), findsNWidgets(3));
+
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
+
+    testWidgets(
+      'MasyarakatProfileScreen menghitung statistik Laporan, Proses, dan Selesai secara dinamis dari MyComplaintListBloc',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(600, 900));
+        final user = testUser.copyWith(role: 'member', profilePic: '');
+        const complaintState = MyComplaintListState(
+          status: MyComplaintListStatus.loaded,
+          total: 5,
+          items: [
+            ComplaintReportEntity(id: '1', status: 'new'),
+            ComplaintReportEntity(id: '2', status: 'verification'),
+            ComplaintReportEntity(id: '3', status: 'in_progress'),
+            ComplaintReportEntity(id: '4', status: 'completed'),
+            ComplaintReportEntity(id: '5', status: 'rejected'),
+          ],
+        );
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: user, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+              BlocProvider<MyComplaintListBloc>.value(
+                value: _FakeMyComplaintListBloc(complaintState),
+              ),
+            ],
+            child: const MaterialApp(home: MasyarakatProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('5'), findsOneWidget);
+        expect(find.text('3'), findsOneWidget);
+        expect(find.text('1'), findsOneWidget);
 
         await tester.binding.setSurfaceSize(null);
       },

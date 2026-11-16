@@ -8,8 +8,8 @@ import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
-import 'package:akar/features/masyarakat/complaint/data/dummy_complaints.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -204,32 +204,54 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     );
   }
 
+  MyComplaintListState _watchMyComplaintState(BuildContext context) {
+    try {
+      return context.watch<MyComplaintListBloc>().state;
+    } catch (_) {
+      return const MyComplaintListState();
+    }
+  }
+
+  Future<void> _onRefresh(BuildContext context) async {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    try {
+      context.read<MyComplaintListBloc>().add(
+        const FetchMyComplaintsEvent(isRefresh: true),
+      );
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
+    final complaintState = _watchMyComplaintState(context);
     final currentUser = authState is AuthAuthenticated ? authState.user : null;
     final userName = currentUser?.name ?? 'Warga Masyarakat';
     final userContact =
         currentUser?.email ?? currentUser?.phoneNumber ?? 'Warga Terdaftar';
 
-    final totalLaporanCount = dummyMyComplaints.length;
-    final inProgressCount = dummyMyComplaints
+    final statuses = complaintState.items
+        .map((report) => complaintStatusFromCode(report.status))
+        .toList();
+    final totalLaporanCount = complaintState.total > complaintState.items.length
+        ? complaintState.total
+        : complaintState.items.length;
+    final inProgressCount = statuses
         .where(
-          (c) =>
-              c.status == ComplaintStatus.inProgress ||
-              c.status == ComplaintStatus.received ||
-              c.status == ComplaintStatus.pending,
+          (status) =>
+              status == ComplaintStatus.inProgress ||
+              status == ComplaintStatus.verified ||
+              status == ComplaintStatus.received ||
+              status == ComplaintStatus.pending,
         )
         .length;
-    final completedCount = dummyMyComplaints
-        .where((c) => c.status == ComplaintStatus.completed)
+    final completedCount = statuses
+        .where((status) => status == ComplaintStatus.completed)
         .length;
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {
-          context.read<ProfileBloc>().add(GetProfileEvent());
-        },
+        onRefresh: () => _onRefresh(context),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
@@ -372,13 +394,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     _buildProfileDetailItem(
                                       icon: Icons.badge_outlined,
                                       label: 'NIK',
-                                      value:
-                                          (currentUser?.nik != null &&
-                                              currentUser!.nik!
-                                                  .trim()
-                                                  .isNotEmpty)
-                                          ? currentUser.nik!.trim()
-                                          : '-',
+                                      value: currentUser?.nik,
                                     ),
                                     const Divider(
                                       height: 16,
@@ -387,7 +403,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     _buildProfileDetailItem(
                                       icon: Icons.phone_outlined,
                                       label: 'No. Telepon',
-                                      value: currentUser?.phoneNumber ?? '-',
+                                      value: currentUser?.phoneNumber,
                                     ),
                                     const Divider(
                                       height: 16,
@@ -396,7 +412,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     _buildProfileDetailItem(
                                       icon: Icons.email_outlined,
                                       label: 'Email',
-                                      value: currentUser?.email ?? '-',
+                                      value: currentUser?.email,
                                     ),
                                   ],
                                 ),
@@ -584,8 +600,10 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
   Widget _buildProfileDetailItem({
     required IconData icon,
     required String label,
-    required String value,
+    required String? value,
   }) {
+    final isFilled = value != null && value.trim().isNotEmpty;
+
     return Row(
       children: [
         Icon(icon, size: 18, color: AppColors.textSecondary),
@@ -599,14 +617,22 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
           ),
         ),
         const Spacer(),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF0F172A),
+        if (isFilled)
+          Icon(
+            Icons.check_circle_rounded,
+            size: 18,
+            color: AppColors.success,
+            semanticLabel: '$label tersedia',
+          )
+        else
+          const Text(
+            '-',
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF0F172A),
+            ),
           ),
-        ),
       ],
     );
   }
