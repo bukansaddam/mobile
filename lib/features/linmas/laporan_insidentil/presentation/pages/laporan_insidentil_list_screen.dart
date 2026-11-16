@@ -152,17 +152,26 @@ class LaporanInsidentilListScreen extends HookWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openCreateReport(context),
-        backgroundColor: AppColors.primaryDark,
-        foregroundColor: AppColors.white,
-        elevation: 3,
-        icon: const Icon(Icons.add_rounded),
-        label: Text(
-          'Buat Laporan',
-          style: AppTextStyles.button.copyWith(color: AppColors.white),
-        ),
-      ),
+      floatingActionButton:
+          BlocBuilder<MyComplaintListBloc, MyComplaintListState>(
+            buildWhen: (prev, curr) => prev.items.isEmpty != curr.items.isEmpty,
+            builder: (context, state) {
+              if (state.items.isEmpty) {
+                return const SizedBox.shrink();
+              }
+              return FloatingActionButton.extended(
+                onPressed: () => _openCreateReport(context),
+                backgroundColor: AppColors.primaryDark,
+                foregroundColor: AppColors.white,
+                elevation: 3,
+                icon: const Icon(Icons.add_rounded),
+                label: Text(
+                  'Buat Laporan',
+                  style: AppTextStyles.button.copyWith(color: AppColors.white),
+                ),
+              );
+            },
+          ),
       body: BlocListener<MyComplaintListBloc, MyComplaintListState>(
         listenWhen: (previous, current) =>
             current.status == MyComplaintListStatus.failure &&

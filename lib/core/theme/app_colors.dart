@@ -8,6 +8,7 @@ class AppColors {
   static const Color primaryDark = Color(0xFF114C30);
   static const Color primaryLight = Color(0xFFE8F5E9);
   static const Color accent = Color(0xFF4B2E0E);
+  static const Color earth = Color(0xFFB45309);
   static const Color secondary = Color(0xFF1E293B);
 
   static const LinearGradient primaryGradient = LinearGradient(

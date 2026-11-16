@@ -1,5 +1,5 @@
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_card.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -31,23 +31,8 @@ class LaporanInsidentilBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.status == MyComplaintListStatus.loading && state.items.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(color: AppColors.primary),
-              const SizedBox(height: 14),
-              Text(
-                'Memuat laporan insidentil...',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
+      return const ReportCardShimmerList(
+        semanticLabel: 'Memuat laporan insidentil...',
       );
     }
 
@@ -126,19 +111,7 @@ class LaporanInsidentilBody extends StatelessWidget {
         separatorBuilder: (_, _) => const SizedBox(height: 10),
         itemBuilder: (context, index) {
           if (index >= visibleReports.length) {
-            return const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
-            );
+            return const ReportCardShimmerTile();
           }
 
           final item = ComplaintItem.fromReport(visibleReports[index]);

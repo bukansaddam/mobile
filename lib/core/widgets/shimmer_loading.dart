@@ -398,3 +398,82 @@ class _OrganisasiCardSkeleton extends StatelessWidget {
     );
   }
 }
+
+/// Shimmer skeleton matching a compact report list card (icon, title, timestamp, status pill).
+class ReportCardShimmerTile extends StatelessWidget {
+  const ReportCardShimmerTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withAlpha(6),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(14),
+        child: ShimmerLoading(
+          child: Row(
+            children: [
+              ShimmerBox(width: 42, height: 42, borderRadius: 12),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FractionallySizedBox(
+                      widthFactor: 0.78,
+                      child: ShimmerBox(height: 14, borderRadius: 4),
+                    ),
+                    SizedBox(height: 6),
+                    ShimmerBox(width: 96, height: 12, borderRadius: 4),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8),
+              ShimmerBox(width: 78, height: 22, borderRadius: 12),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Synchronized shimmer list for Jaga Tanahku and Laporan Insidentil screens.
+class ReportCardShimmerList extends StatelessWidget {
+  final int itemCount;
+  final String semanticLabel;
+
+  const ReportCardShimmerList({
+    super.key,
+    this.itemCount = 6,
+    this.semanticLabel = 'Memuat daftar laporan...',
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      liveRegion: true,
+      label: semanticLabel,
+      child: ExcludeSemantics(
+        child: Shimmer(
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+            itemCount: itemCount,
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
+            itemBuilder: (_, _) => const ReportCardShimmerTile(),
+          ),
+        ),
+      ),
+    );
+  }
+}

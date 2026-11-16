@@ -261,6 +261,16 @@ class _HomeScreenState extends State<HomeScreen> {
           context.pushNamed('bankSampah');
         },
       },
+      {
+        'title': 'Jaga Tanahku',
+        'subtitle': 'Laporan Aset Tanah',
+        'icon': Icons.landscape_rounded,
+        'color': AppColors.earth,
+        'onTap': () {
+          _dismissSurveyIfSubmitted(context);
+          context.pushNamed('jagaTanah');
+        },
+      },
     ];
 
     return GridView.builder(

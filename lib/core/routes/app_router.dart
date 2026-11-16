@@ -17,6 +17,10 @@ import 'package:akar/features/linmas/demografi/institusi/presentation/pages/add_
 import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/add_organisasi_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/create_jaga_tanah_page.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_list_screen.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
@@ -81,6 +85,8 @@ class AppRouter {
   static const String tambahBankSampah = 'tambahBankSampah';
   static const String laporanInsidentil = 'laporanInsidentil';
   static const String tambahLaporanInsidentil = 'tambahLaporanInsidentil';
+  static const String jagaTanah = 'jagaTanah';
+  static const String tambahJagaTanah = 'tambahJagaTanah';
 
   // Masyarakat Routes
   static const String masyarakatMain = 'masyarakatMain';
@@ -108,6 +114,8 @@ class AppRouter {
   static const String laporanInsidentilPath = '/laporan-insidentil';
   static const String tambahLaporanInsidentilPath =
       '/tambah-laporan-insidentil';
+  static const String jagaTanahPath = '/jaga-tanah';
+  static const String tambahJagaTanahPath = '/tambah-jaga-tanah';
 
   static const String masyarakatMainPath = '/masyarakat/main';
   static const String complaintDetailPath = '/masyarakat/complaint-detail';
@@ -189,6 +197,8 @@ class AppRouter {
           '/tambah-bank-sampah',
           '/laporan-insidentil',
           '/tambah-laporan-insidentil',
+          '/jaga-tanah',
+          '/tambah-jaga-tanah',
           '/activation-detail',
           '/activation_detail',
           '/survey',
@@ -383,6 +393,42 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: jagaTanahPath,
+        name: jagaTanah,
+        builder: (context, state) => BlocProvider(
+          create: (_) =>
+              sl<JagaTanahListBloc>()..add(const FetchJagaTanahReportsEvent()),
+          child: const JagaTanahListScreen(),
+        ),
+      ),
+      GoRoute(
+        path: tambahJagaTanahPath,
+        name: tambahJagaTanah,
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) =>
+                  sl<CreateJagaTanahBloc>()
+                    ..add(const LoadJagaTanahCategoriesEvent()),
+              child: const CreateJagaTanahPage(),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: animation.drive(
+                      Tween<Offset>(
+                        begin: const Offset(0, 1),
+                        end: Offset.zero,
+                      ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                    ),
+                    child: child,
+                  );
+                },
+          );
+        },
+      ),
+      GoRoute(
         path: activationDetailPath,
         name: activationDetail,
         builder: (context, state) {
@@ -561,6 +607,10 @@ class AppRouter {
 
   static Future<bool?> toTambahLaporanInsidentil(BuildContext context) {
     return context.pushNamed<bool>(tambahLaporanInsidentil);
+  }
+
+  static Future<bool?> toTambahJagaTanah(BuildContext context) {
+    return context.pushNamed<bool>(tambahJagaTanah);
   }
 
   static bool _isNavigatingToEditProfile = false;

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/routes/app_router.dart';
+import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
@@ -151,7 +152,13 @@ void main() {
     expect(find.byIcon(Icons.tune_rounded), findsNothing);
     bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
     await tester.pump();
-    expect(find.text('Memuat laporan insidentil...'), findsOneWidget);
+    expect(find.byType(ReportCardShimmerList), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('Memuat laporan insidentil...'),
+      findsOneWidget,
+    );
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(tester.takeException(), isNull);
 
     // 2. Empty state
     repository.pendingCompleter!.complete(
@@ -161,7 +168,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Belum Ada Laporan Insidentil'), findsOneWidget);
-    expect(find.text('Buat Laporan'), findsWidgets);
+    expect(find.byType(FloatingActionButton), findsNothing);
+    expect(find.text('Buat Laporan'), findsOneWidget);
 
     // 3. Error state & retry
     repository.response = const Left(ServerFailure('Server tidak terjangkau'));
@@ -170,6 +178,7 @@ void main() {
 
     expect(find.text('Gagal Memuat Laporan'), findsOneWidget);
     expect(find.text('Server tidak terjangkau'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
     await tester.tap(find.text('Coba Lagi'));
     await tester.pumpAndSettle();
     expect(repository.fetchCalls, 3);
@@ -206,6 +215,7 @@ void main() {
     );
     bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
     await tester.pumpAndSettle();
+    expect(find.byType(FloatingActionButton), findsOneWidget);
 
     for (final size in const [Size(320, 640), Size(800, 1024)]) {
       await tester.binding.setSurfaceSize(size);

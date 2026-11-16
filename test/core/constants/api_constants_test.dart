@@ -33,6 +33,8 @@ void main() {
       expect(ApiConstants.reports, '/api/reports');
       expect(ApiConstants.incidentReports, '/api/incident-reports');
       expect(ApiConstants.incidentReportsMe, '/api/incident-reports/me');
+      expect(ApiConstants.jagaTanahReports, '/api/jaga-tanah-reports');
+      expect(ApiConstants.jagaTanahReportsMe, '/api/jaga-tanah-reports/me');
       expect(ApiConstants.reportsMe, '/api/reports/me');
       expect(ApiConstants.reportDetail(1256), '/api/reports/1256');
     });

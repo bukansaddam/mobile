@@ -88,6 +88,14 @@ import 'package:akar/features/linmas/bank_sampah/domain/usecases/delete_bank_sam
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_locations_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/get_bank_sampah_reports_usecase.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
+import 'package:akar/features/linmas/jaga_tanah/data/repositories/jaga_tanah_repository_impl.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tanah_reports_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 
 // Member Dashboard
 import 'package:akar/features/linmas/dashboard/data/datasources/member_dashboard_remote_datasource.dart';
@@ -222,6 +230,9 @@ Future<void> init() async {
   sl.registerLazySingleton<ComplaintRemoteDatasource>(
     () => ComplaintRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<JagaTanahRemoteDatasource>(
+    () => JagaTanahRemoteDatasourceImpl(),
+  );
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -275,6 +286,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ComplaintRepository>(
     () => ComplaintRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<JagaTanahRepository>(
+    () => JagaTanahRepositoryImpl(remoteDatasource: sl()),
   );
 
   // Use Cases
@@ -386,6 +400,15 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetPublicComplaintsUsecase>(
     () => GetPublicComplaintsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetMyJagaTanahReportsUsecase>(
+    () => GetMyJagaTanahReportsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetJagaTanahCategoriesUsecase>(
+    () => GetJagaTanahCategoriesUsecase(sl()),
+  );
+  sl.registerLazySingleton<CreateJagaTanahReportUsecase>(
+    () => CreateJagaTanahReportUsecase(sl()),
   );
 
   // BLoCs & Cubits
@@ -506,6 +529,12 @@ Future<void> init() async {
   );
   sl.registerFactory<ComplaintListBloc>(
     () => ComplaintListBloc(getComplaints: sl()),
+  );
+  sl.registerFactory<JagaTanahListBloc>(
+    () => JagaTanahListBloc(getMyReports: sl(), getCategories: sl()),
+  );
+  sl.registerFactory<CreateJagaTanahBloc>(
+    () => CreateJagaTanahBloc(createReport: sl(), getCategories: sl()),
   );
   sl.registerFactory<LocationPickerCubit>(
     () => LocationPickerCubit(
