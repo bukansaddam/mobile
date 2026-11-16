@@ -151,7 +151,7 @@ void main() {
   );
 
   testWidgets(
-    'CustomAppBar uses shield icon badge, prevents overflow at 200% text scale, and preserves logo tap shortcut',
+    'CustomAppBar uses Dumas logo badge, prevents overflow at 200% text scale, and preserves logo tap shortcut',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 640));
 
@@ -171,10 +171,11 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         _assetNameOf(tester, find.byType(Image)),
-        AppConstants.logoIconAsset,
+        AppConstants.logoDumasAsset,
       );
       expect(find.text(AppConstants.appBarTitle), findsOneWidget);
       expect(find.text('Dumas'), findsOneWidget);
+      expect(find.byIcon(Icons.notifications_none_rounded), findsNothing);
 
       final logoFinder = find.byType(AppLogoBadge);
       for (int i = 0; i < 5; i++) {
@@ -188,7 +189,7 @@ void main() {
   );
 
   testWidgets(
-    'MainScreen Linmas AppBar uses shield icon badge without overflow and preserves logo tap shortcut',
+    'MainScreen Linmas AppBar uses Linmas logo badge without overflow and preserves logo tap shortcut',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(480, 900));
 
@@ -207,10 +208,11 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         _assetNameOf(tester, find.byType(Image)),
-        AppConstants.logoIconAsset,
+        AppConstants.logoLinmasAsset,
       );
       expect(find.text(AppConstants.appBarTitle), findsOneWidget);
       expect(find.text('Laporan Linmas'), findsOneWidget);
+      expect(find.byIcon(Icons.notifications_none_rounded), findsNothing);
 
       final logoFinder = find.byType(AppLogoBadge);
       for (int i = 0; i < 3; i++) {

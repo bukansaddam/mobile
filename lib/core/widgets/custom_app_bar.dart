@@ -10,6 +10,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final int unreadCount;
   final String? title;
   final String? subtitle;
+  final bool showNotificationButton;
 
   const CustomAppBar({
     super.key,
@@ -17,6 +18,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.unreadCount = 0,
     this.title,
     this.subtitle,
+    this.showNotificationButton = false,
   });
 
   @override
@@ -81,7 +83,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const AppLogoBadge(
+              const AppLogoBadge.dumas(
                 size: 38,
                 borderRadius: 10,
                 fallbackIconSize: 22,
@@ -123,61 +125,68 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                IconButton(
-                  onPressed: widget.onNotificationPressed,
-                  style: IconButton.styleFrom(
-                    backgroundColor: AppColors.grey50,
-                    shape: const CircleBorder(),
-                    side: const BorderSide(color: Color(0xFFE2E8F0), width: 1),
+          if (widget.showNotificationButton)
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    onPressed: widget.onNotificationPressed,
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.grey50,
+                      shape: const CircleBorder(),
+                      side: const BorderSide(
+                        color: Color(0xFFE2E8F0),
+                        width: 1,
+                      ),
+                    ),
+                    icon: const Icon(
+                      Icons.notifications_none_rounded,
+                      color: Color(0xFF0F172A),
+                      size: 22,
+                    ),
+                    tooltip: 'Notifikasi',
                   ),
-                  icon: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: Color(0xFF0F172A),
-                    size: 22,
-                  ),
-                  tooltip: 'Notifikasi',
-                ),
-                if (widget.unreadCount > 0)
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 5,
-                        vertical: 1.5,
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 17,
-                        minHeight: 17,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.error,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.white, width: 1.5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          widget.unreadCount > 99
-                              ? '99+'
-                              : '${widget.unreadCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.bold,
-                            height: 1.0,
+                  if (widget.unreadCount > 0)
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1.5,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 17,
+                          minHeight: 17,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppColors.white,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            widget.unreadCount > 99
+                                ? '99+'
+                                : '${widget.unreadCount}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              height: 1.0,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

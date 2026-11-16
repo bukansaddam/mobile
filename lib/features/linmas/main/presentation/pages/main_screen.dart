@@ -20,8 +20,13 @@ import 'package:go_router/go_router.dart';
 
 class MainScreen extends StatefulWidget {
   final bool isExclusiveModeEnabled;
+  final bool showNotificationButton;
 
-  const MainScreen({super.key, this.isExclusiveModeEnabled = kDebugMode});
+  const MainScreen({
+    super.key,
+    this.isExclusiveModeEnabled = kDebugMode,
+    this.showNotificationButton = false,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -137,7 +142,7 @@ class _MainScreenState extends State<MainScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppLogoBadge(
+                  AppLogoBadge.linmas(
                     size: 34,
                     borderRadius: 9,
                     fallbackIconSize: 20,
@@ -186,66 +191,67 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: SizedBox(
-                  width: 48,
-                  height: 48,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          if (_hasUnreadNotification) {
-                            setState(() {
-                              _hasUnreadNotification = false;
-                            });
-                          }
-                          NotificationModalSheet.show(context);
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 48,
-                          minHeight: 48,
+              if (widget.showNotificationButton)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (_hasUnreadNotification) {
+                              setState(() {
+                                _hasUnreadNotification = false;
+                              });
+                            }
+                            NotificationModalSheet.show(context);
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 48,
+                            minHeight: 48,
+                          ),
+                          icon: const Icon(
+                            Icons.notifications_none_rounded,
+                            color: AppColors.textPrimary,
+                            size: 26,
+                          ),
+                          tooltip: 'Notifikasi Kegiatan',
                         ),
-                        icon: const Icon(
-                          Icons.notifications_none_rounded,
-                          color: AppColors.textPrimary,
-                          size: 26,
-                        ),
-                        tooltip: 'Notifikasi Kegiatan',
-                      ),
-                      if (_hasUnreadNotification)
-                        Positioned(
-                          top: 4,
-                          right: 4,
-                          child: IgnorePointer(
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: AppColors.error,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 16,
-                                minHeight: 16,
-                              ),
-                              child: const Text(
-                                '5',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
+                        if (_hasUnreadNotification)
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: IgnorePointer(
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: AppColors.error,
+                                  shape: BoxShape.circle,
                                 ),
-                                textAlign: TextAlign.center,
+                                constraints: const BoxConstraints(
+                                  minWidth: 16,
+                                  minHeight: 16,
+                                ),
+                                child: const Text(
+                                  '5',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           bottomNavigationBar: BottomAppBar(

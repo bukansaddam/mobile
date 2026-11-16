@@ -2,12 +2,14 @@ import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-/// Displays the transparent shield emblem inside a clean rounded badge.
+/// Displays the transparent brand emblem inside a clean rounded badge.
 class AppLogoBadge extends StatelessWidget {
   final double size;
   final double borderRadius;
   final double fallbackIconSize;
   final List<BoxShadow>? boxShadow;
+  final String assetPath;
+  final String semanticLabel;
 
   const AppLogoBadge({
     super.key,
@@ -15,7 +17,27 @@ class AppLogoBadge extends StatelessWidget {
     this.borderRadius = 10,
     this.fallbackIconSize = 22,
     this.boxShadow,
+    this.assetPath = AppConstants.logoIconAsset,
+    this.semanticLabel = 'Ikon Perisai ${AppConstants.appName}',
   });
+
+  const AppLogoBadge.dumas({
+    super.key,
+    this.size = 38,
+    this.borderRadius = 10,
+    this.fallbackIconSize = 22,
+    this.boxShadow,
+  }) : assetPath = AppConstants.logoDumasAsset,
+       semanticLabel = 'Logo DUMAS Aduan Masyarakat dan Laporan LINMAS';
+
+  const AppLogoBadge.linmas({
+    super.key,
+    this.size = 38,
+    this.borderRadius = 10,
+    this.fallbackIconSize = 22,
+    this.boxShadow,
+  }) : assetPath = AppConstants.logoLinmasAsset,
+       semanticLabel = 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS';
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +58,12 @@ class AppLogoBadge extends StatelessWidget {
           (borderRadius - 3).clamp(0.0, borderRadius),
         ),
         child: Image.asset(
-          AppConstants.logoIconAsset,
+          assetPath,
           fit: BoxFit.contain,
           cacheWidth: decodedSize,
           cacheHeight: decodedSize,
           filterQuality: FilterQuality.high,
-          semanticLabel: 'Ikon Perisai LINMAS',
+          semanticLabel: semanticLabel,
           errorBuilder: (context, error, stackTrace) {
             return Icon(
               Icons.shield_rounded,
