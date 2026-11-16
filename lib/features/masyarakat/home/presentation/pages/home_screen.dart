@@ -71,6 +71,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future<void> _openCreateComplaint(BuildContext context) async {
+    final result = await CreateComplaintPage.show(context);
+    if (result == true && context.mounted) {
+      context.read<MainCubit>().changeTab(0);
+      context.read<MyComplaintListBloc>().add(
+        const FetchMyComplaintsEvent(isRefresh: true),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -95,17 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ComplaintBannerCard(
-                          onCreateComplaint: () async {
-                            final result = await CreateComplaintPage.show(
-                              context,
-                            );
-                            if (result == true && context.mounted) {
-                              context.read<MainCubit>().changeTab(0);
-                              context.read<MyComplaintListBloc>().add(
-                                const FetchMyComplaintsEvent(isRefresh: true),
-                              );
-                            }
-                          },
+                          onCreateComplaint: () =>
+                              _openCreateComplaint(context),
                         ),
 
                         const SizedBox(height: 16),
@@ -163,8 +164,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             return ComplaintListWidget(
                               items: items,
+                              isError:
+                                  state.status == MyComplaintListStatus.failure,
+                              errorMessage: state.errorMessage,
                               onItemTap: (item) =>
                                   ComplaintDetailPage.show(context, item),
+                              onCreateTap: () => _openCreateComplaint(context),
+                              onRefreshTap: () =>
+                                  context.read<MyComplaintListBloc>().add(
+                                    const FetchMyComplaintsEvent(
+                                      isRefresh: true,
+                                    ),
+                                  ),
                             );
                           },
                         ),

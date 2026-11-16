@@ -6,21 +6,29 @@ import 'package:flutter/material.dart';
 class ComplaintListWidget extends StatelessWidget {
   final List<ComplaintItem> items;
   final Function(ComplaintItem item)? onItemTap;
+  final VoidCallback? onCreateTap;
+  final VoidCallback? onRefreshTap;
+  final bool isError;
+  final String? errorMessage;
 
-  const ComplaintListWidget({super.key, required this.items, this.onItemTap});
+  const ComplaintListWidget({
+    super.key,
+    required this.items,
+    this.onItemTap,
+    this.onCreateTap,
+    this.onRefreshTap,
+    this.isError = false,
+    this.errorMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(24),
-        alignment: Alignment.center,
-        child: Text(
-          'Belum ada pengaduan.',
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
+      return _ComplaintEmptyState(
+        isError: isError,
+        errorMessage: errorMessage,
+        onCreateTap: onCreateTap,
+        onRefreshTap: onRefreshTap,
       );
     }
 
@@ -33,6 +41,121 @@ class ComplaintListWidget extends StatelessWidget {
         final item = items[index];
         return _ComplaintCard(item: item, onTap: () => onItemTap?.call(item));
       },
+    );
+  }
+}
+
+class _ComplaintEmptyState extends StatelessWidget {
+  final bool isError;
+  final String? errorMessage;
+  final VoidCallback? onCreateTap;
+  final VoidCallback? onRefreshTap;
+
+  const _ComplaintEmptyState({
+    required this.isError,
+    this.errorMessage,
+    this.onCreateTap,
+    this.onRefreshTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final iconBgColor = isError ? AppColors.errorLight : AppColors.primaryLight;
+    final iconColor = isError ? AppColors.error : AppColors.primaryDark;
+    final icon = isError ? Icons.cloud_off_rounded : Icons.post_add_rounded;
+    final title = isError
+        ? 'Gagal Memuat Pengaduan'
+        : 'Belum Ada Pengaduan Saya';
+    final subtitle = isError
+        ? (errorMessage ?? 'Periksa koneksi Anda lalu coba muat ulang.')
+        : 'Laporkan kendala fasilitas, keamanan, atau kebersihan di sekitar Anda agar segera ditindaklanjuti.';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.grey200),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 24, color: iconColor),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.titleMedium.copyWith(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          if (isError && onRefreshTap != null) ...[
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: onRefreshTap,
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              label: const Text('Coba Lagi'),
+              style: _outlinedActionStyle(),
+            ),
+          ] else if (!isError && onCreateTap != null) ...[
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: onCreateTap,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+                elevation: 0,
+                minimumSize: const Size(0, 44),
+                tapTargetSize: MaterialTapTargetSize.padded,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              child: const Text('Buat Pengaduan'),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  ButtonStyle _outlinedActionStyle() {
+    return OutlinedButton.styleFrom(
+      foregroundColor: AppColors.primaryDark,
+      backgroundColor: AppColors.primaryLight.withValues(alpha: 0.45),
+      side: BorderSide(color: AppColors.primaryDark.withValues(alpha: 0.25)),
+      minimumSize: const Size(0, 44),
+      tapTargetSize: MaterialTapTargetSize.padded,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
     );
   }
 }
