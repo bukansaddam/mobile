@@ -81,6 +81,7 @@ class ProfileRemoteDatasourceImpl extends BaseRemoteDataSource
         FileSecurityUtils.validateImageFile(params.profilePic!);
         final compressed = await ImageCompressHelper.compressToWebp(
           params.profilePic!,
+          watermark: false,
         );
         final fileName = compressed.path.split('/').last;
         map['profile_pic'] = await MultipartFile.fromFile(

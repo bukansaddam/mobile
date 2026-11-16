@@ -5,6 +5,7 @@ import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
 import 'package:akar/features/auth/data/models/otp_challenge_model.dart';
@@ -150,7 +151,11 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
 
     // shortcut: nama field foto KTP diasumsikan `ktp_photo`, sesuaikan bila API berbeda.
     if (ktpPhoto != null) {
-      requestData['ktp_photo'] = await MultipartFile.fromFile(ktpPhoto.path);
+      final preparedKtp = await ImageCompressHelper.compressToWebp(ktpPhoto);
+      requestData['ktp_photo'] = await MultipartFile.fromFile(
+        preparedKtp.path,
+        filename: preparedKtp.path.split('/').last,
+      );
     }
 
     try {

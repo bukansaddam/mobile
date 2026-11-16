@@ -22,6 +22,7 @@ class CameraCaptureScreen {
       if (photo != null) {
         final compressedWebpFile = await ImageCompressHelper.compressToWebp(
           File(photo.path),
+          watermark: false,
         );
         return compressedWebpFile.path;
       }
