@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_brand_logo.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
@@ -179,66 +180,11 @@ class _SplashScreenState extends State<SplashScreen>
                         scale: 1 + 0.015 * _pulseController.value,
                         child: child,
                       ),
-                      child: Container(
-                        width: 104,
-                        height: 104,
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.08),
-                              blurRadius: 24,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: Image.asset(
-                              'assets/logo.webp',
-                              width: 84,
-                              height: 84,
-                              cacheWidth: 252,
-                              cacheHeight: 252,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(
-                                  Icons.location_on_rounded,
-                                  size: 64,
-                                  color: AppColors.primary,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 28),
+                        child: AppBrandLogo.vertical(maxWidth: 240),
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  AnimatedBuilder(
-                    animation: _textController,
-                    builder: (context, child) {
-                      final progress = _textController.value;
-                      return Opacity(
-                        opacity: _textFade.value,
-                        child: Transform.translate(
-                          offset: Offset(0, 12 * (1 - progress)),
-                          child: Text(
-                            AppConstants.appName,
-                            style: AppTextStyles.displayLarge.copyWith(
-                              color: AppColors.textPrimary,
-                              fontSize: 36,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 20 + 8 * (1 - progress),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
                   ),
 
                   const Spacer(flex: 2),

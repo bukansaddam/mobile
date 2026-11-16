@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_brand_logo.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -213,42 +214,14 @@ class _LoginScreenState extends State<LoginScreen>
                           animation: _entranceController,
                           start: 0,
                           end: 0.35,
-                          child: Center(
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(22),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.08),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(18),
-                                child: Image.asset(
-                                  'assets/logo.webp',
-                                  width: 60,
-                                  height: 60,
-                                  cacheWidth: 180,
-                                  cacheHeight: 180,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(
-                                        Icons.location_on_rounded,
-                                        size: 44,
-                                        color: AppColors.primary,
-                                      ),
-                                ),
-                              ),
+                          child: const Center(
+                            child: AppBrandLogo.vertical(
+                              maxWidth: 168,
+                              fallbackIconSize: 44,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
 
                         EntranceTransition(
                           animation: _entranceController,
