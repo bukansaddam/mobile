@@ -1,3 +1,4 @@
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
@@ -479,7 +480,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
 
                   const Center(
                     child: Text(
-                      'AKAR • versi 1.0.0',
+                      '${AppConstants.appName} • versi ${AppConstants.appVersion}',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textSecondary,

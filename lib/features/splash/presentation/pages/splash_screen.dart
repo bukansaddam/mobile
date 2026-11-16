@@ -182,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 28),
-                        child: AppBrandLogo.vertical(maxWidth: 240),
+                        child: AppBrandLogo.general(maxWidth: 240),
                       ),
                     ),
                   ),

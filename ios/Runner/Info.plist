@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>Akar</string>
+		<string>SISKAMLING</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>akar</string>
+		<string>SISKAMLING</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -75,17 +75,17 @@
 		<key>DART_DEFINES_MAPS_API_KEY</key>
 		<string>$(GOOGLE_MAPS_API_KEY)</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Aplikasi membutuhkan akses lokasi untuk pelacakan komando AKAR.</string>
+		<string>Aplikasi membutuhkan akses lokasi untuk pelacakan komando SISKAMLING.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando AKAR.</string>
+		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando SISKAMLING.</string>
 		<key>NSLocationAlwaysUsageDescription</key>
-		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando AKAR.</string>
+		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando SISKAMLING.</string>
 		<key>NSCameraUsageDescription</key>
-		<string>Aplikasi membutuhkan akses kamera untuk mengunggah foto laporan aktivitas AKAR.</string>
+		<string>Aplikasi membutuhkan akses kamera untuk mengunggah foto laporan aktivitas SISKAMLING.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>Aplikasi membutuhkan akses mikrofon untuk perekaman dikte suara laporan harian (Laphar).</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Aplikasi membutuhkan akses galeri foto untuk memilih foto laporan AKAR.</string>
+		<string>Aplikasi membutuhkan akses galeri foto untuk memilih foto laporan SISKAMLING.</string>
 		<key>BGTaskSchedulerPermittedIdentifiers</key>
 		<array>
 			<string>dev.flutter.background.refresh</string>

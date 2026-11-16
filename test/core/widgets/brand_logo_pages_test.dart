@@ -77,18 +77,23 @@ String? _assetNameOf(WidgetTester tester, Finder finder) {
 }
 
 void main() {
-  testWidgets('Brand asset constants resolve to valid bundled PNG assets', (
+  testWidgets('Brand asset constants resolve to valid bundled image assets', (
     tester,
   ) async {
     for (final asset in [
       AppConstants.logoHorizontalAsset,
-      AppConstants.logoVerticalAsset,
       AppConstants.logoIconAsset,
+      AppConstants.logoGeneralAsset,
+      AppConstants.logoLinmasAsset,
+      AppConstants.logoDumasAsset,
     ]) {
       final data = await rootBundle.load(asset);
       expect(data.lengthInBytes, greaterThan(0));
     }
-    expect(AppConstants.logoVerticalAsset, 'assets/logo_vertical.png');
+    expect(AppConstants.appName, 'SISKAMLING');
+    expect(AppConstants.logoGeneralAsset, 'assets/logo_general.webp');
+    expect(AppConstants.logoLinmasAsset, 'assets/logo_linmas.png');
+    expect(AppConstants.logoDumasAsset, 'assets/logo_dumas.webp');
   });
 
   testWidgets(
@@ -99,18 +104,24 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
-              body: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: AppBrandLogo(maxWidth: 340),
-                  ),
-                  SizedBox(height: 16),
-                  AppBrandLogo.vertical(maxWidth: 180),
-                  SizedBox(height: 16),
-                  AppLogoBadge(size: 38, borderRadius: 10),
-                ],
+              body: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: AppBrandLogo(maxWidth: 340),
+                    ),
+                    SizedBox(height: 16),
+                    AppBrandLogo.general(maxWidth: 180),
+                    SizedBox(height: 16),
+                    AppBrandLogo.linmas(maxWidth: 180),
+                    SizedBox(height: 16),
+                    AppBrandLogo.dumas(maxWidth: 180),
+                    SizedBox(height: 16),
+                    AppLogoBadge(size: 38, borderRadius: 10),
+                  ],
+                ),
               ),
             ),
           ),
@@ -119,16 +130,21 @@ void main() {
 
         expect(tester.takeException(), isNull);
         final images = find.byType(Image);
-        expect(images, findsNWidgets(3));
+        expect(images, findsNWidgets(5));
         expect(
           _assetNameOf(tester, images.at(0)),
           AppConstants.logoHorizontalAsset,
         );
         expect(
           _assetNameOf(tester, images.at(1)),
-          AppConstants.logoVerticalAsset,
+          AppConstants.logoGeneralAsset,
         );
-        expect(_assetNameOf(tester, images.at(2)), AppConstants.logoIconAsset);
+        expect(
+          _assetNameOf(tester, images.at(2)),
+          AppConstants.logoLinmasAsset,
+        );
+        expect(_assetNameOf(tester, images.at(3)), AppConstants.logoDumasAsset);
+        expect(_assetNameOf(tester, images.at(4)), AppConstants.logoIconAsset);
       }
       await tester.binding.setSurfaceSize(null);
     },
@@ -211,7 +227,7 @@ void main() {
   );
 
   testWidgets(
-    'LoginScreen displays vertical brand logo without overflow and allows switching login tabs',
+    'LoginScreen displays role-specific brand logos (Dumas for masyarakat, Linmas for linmas) without overflow',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(600, 900));
 
@@ -229,7 +245,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         _assetNameOf(tester, find.byType(Image)),
-        AppConstants.logoVerticalAsset,
+        AppConstants.logoDumasAsset,
       );
       expect(find.text('Selamat Datang'), findsOneWidget);
 
@@ -237,12 +253,46 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
 
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>.value(value: _FakeAuthBloc()),
+            BlocProvider<TrackingBloc>.value(value: _FakeTrackingBloc()),
+          ],
+          child: const MaterialApp(home: LoginScreen(role: 'linmas')),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(
+        _assetNameOf(tester, find.byType(Image)),
+        AppConstants.logoLinmasAsset,
+      );
+
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>.value(value: _FakeAuthBloc()),
+            BlocProvider<TrackingBloc>.value(value: _FakeTrackingBloc()),
+          ],
+          child: const MaterialApp(home: LoginScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(
+        _assetNameOf(tester, find.byType(Image)),
+        AppConstants.logoGeneralAsset,
+      );
+
       await tester.binding.setSurfaceSize(null);
     },
   );
 
   testWidgets(
-    'SplashScreen displays vertical brand logo without duplicate AKAR text and navigates cleanly',
+    'SplashScreen displays general brand logo without duplicate SISKAMLING text and navigates cleanly',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(360, 780));
       final router = GoRouter(
@@ -276,7 +326,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         _assetNameOf(tester, find.byType(Image)),
-        AppConstants.logoVerticalAsset,
+        AppConstants.logoGeneralAsset,
       );
       expect(find.text(AppConstants.appName), findsNothing);
       expect(find.text('v${AppConstants.appVersion}'), findsOneWidget);

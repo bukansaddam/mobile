@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:akar/core/constants/api_constants.dart';
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -27,8 +28,9 @@ class BackgroundServiceHelper {
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       notificationChannelId,
-      'AKAR Location Tracking Service',
-      description: 'Layanan pelacakan lokasi background 24/7 AKAR',
+      '${AppConstants.appName} Location Tracking Service',
+      description:
+          'Layanan pelacakan lokasi background 24/7 ${AppConstants.appName}',
       importance: Importance.low,
     );
 
@@ -47,7 +49,8 @@ class BackgroundServiceHelper {
         autoStart: false,
         isForegroundMode: true,
         notificationChannelId: notificationChannelId,
-        initialNotificationTitle: 'AKAR Tracking Service 24/7',
+        initialNotificationTitle:
+            '${AppConstants.appName} Tracking Service 24/7',
         initialNotificationContent: 'Pelacakan lokasi aktif di latar belakang',
         foregroundServiceNotificationId: notificationId,
       ),
@@ -222,7 +225,7 @@ class BackgroundServiceHelper {
         if (service is AndroidServiceInstance) {
           if (await service.isForegroundService()) {
             service.setForegroundNotificationInfo(
-              title: 'AKAR Location Tracking',
+              title: '${AppConstants.appName} Location Tracking',
               content: 'Pelacakan lokasi aktif di latar belakang',
             );
           }

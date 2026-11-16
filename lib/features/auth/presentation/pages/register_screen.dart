@@ -10,6 +10,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -95,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   static const _subtitles = [
     'Posisikan seluruh e-KTP di dalam bingkai, lalu tekan Lanjut untuk memindai datanya.',
     'Lengkapi data kependudukan sesuai e-KTP, lalu periksa kembali sebelum lanjut ke pembuatan akun.',
-    'Lengkapi kontak aktif dan kata sandi untuk login ke aplikasi AKAR.',
+    'Lengkapi kontak aktif dan kata sandi untuk login ke aplikasi ${AppConstants.appName}.',
     'Pastikan seluruh data kependudukan dan akun Anda sudah sesuai sebelum menyelesaikan pendaftaran.',
     'Masukkan kode OTP yang kami kirim ke nomor WhatsApp Anda.',
   ];
@@ -146,7 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen>
       return DateTime.fromMillisecondsSinceEpoch(challenge.expiresIn * 1000);
     }
     if (_otpChallengeReceivedAt != null) {
-      return _otpChallengeReceivedAt!.add(Duration(seconds: challenge.expiresIn));
+      return _otpChallengeReceivedAt!.add(
+        Duration(seconds: challenge.expiresIn),
+      );
     }
     return DateTime.fromMillisecondsSinceEpoch(challenge.expiresIn * 1000);
   }
@@ -239,7 +242,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     if (context.canPop()) {
       context.pop();
     } else {
-      context.goNamed('login');
+      context.goNamed('login', queryParameters: {'role': 'masyarakat'});
     }
   }
 
@@ -597,8 +600,9 @@ class _RegisterScreenState extends State<RegisterScreen>
       (challenge) {
         _otpController.clear();
         final now = DateTime.now();
-        final cooldownSeconds =
-            challenge.resendAfter > 0 ? challenge.resendAfter : 60;
+        final cooldownSeconds = challenge.resendAfter > 0
+            ? challenge.resendAfter
+            : 60;
         setState(() {
           _otpPhone = phone;
           _otpChallenge = challenge;
@@ -692,7 +696,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                       : 'Akun Anda telah berhasil dibuat. Silakan login untuk melanjutkan.',
                   buttonText: 'Masuk ke Akun',
                   onPressed: () {
-                    context.goNamed('login');
+                    context.goNamed(
+                      'login',
+                      queryParameters: {'role': 'masyarakat'},
+                    );
                   },
                 );
               }

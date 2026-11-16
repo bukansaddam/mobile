@@ -9,6 +9,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/utils/app_logger.dart';
@@ -81,8 +82,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
       const androidDetails = AndroidNotificationDetails(
         'akar_emergency_channel',
-        'Peringatan Darurat AKAR',
-        channelDescription: 'Saluran notifikasi darurat dan bencana AKAR',
+        'Peringatan Darurat ${AppConstants.appName}',
+        channelDescription:
+            'Saluran notifikasi darurat dan bencana ${AppConstants.appName}',
         importance: Importance.max,
         priority: Priority.max,
         category: AndroidNotificationCategory.call,
@@ -131,14 +133,15 @@ class FirebaseNotificationService {
   static const String _prefsDeviceIdKey = 'DEVICE_ID';
 
   static const String defaultChannelId = 'akar_notification_channel';
-  static const String defaultChannelName = 'Notifikasi AKAR';
+  static const String defaultChannelName = 'Notifikasi ${AppConstants.appName}';
   static const String defaultChannelDesc =
-      'Saluran utama penerimaan notifikasi aplikasi AKAR';
+      'Saluran utama penerimaan notifikasi aplikasi ${AppConstants.appName}';
 
   static const String emergencyChannelId = 'akar_emergency_channel';
-  static const String emergencyChannelName = 'Peringatan Darurat AKAR';
+  static const String emergencyChannelName =
+      'Peringatan Darurat ${AppConstants.appName}';
   static const String emergencyChannelDesc =
-      'Saluran notifikasi darurat dan bencana AKAR';
+      'Saluran notifikasi darurat dan bencana ${AppConstants.appName}';
 
   static const AndroidNotificationChannel defaultChannel =
       AndroidNotificationChannel(
@@ -342,7 +345,10 @@ class FirebaseNotificationService {
     final notification = message.notification;
     final data = message.data;
 
-    final title = notification?.title ?? data['title'] ?? 'Notifikasi AKAR';
+    final title =
+        notification?.title ??
+        data['title'] ??
+        'Notifikasi ${AppConstants.appName}';
     final body = notification?.body ?? data['body'] ?? data['message'] ?? '';
 
     if (title.isEmpty && body.isEmpty) return;

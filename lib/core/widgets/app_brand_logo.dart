@@ -2,9 +2,46 @@ import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
-enum AppBrandLogoVariant { horizontal, vertical }
+enum AppBrandLogoVariant {
+  horizontal(
+    assetPath: AppConstants.logoHorizontalAsset,
+    aspectRatio: 2048 / 682,
+    maxDecodedWidth: 2048,
+    semanticLabel: 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS',
+  ),
+  general(
+    assetPath: AppConstants.logoGeneralAsset,
+    aspectRatio: 1.0,
+    maxDecodedWidth: 1024,
+    semanticLabel: 'Logo SISKAMLING.org Laporan LINMAS dan DUMAS',
+  ),
+  linmas(
+    assetPath: AppConstants.logoLinmasAsset,
+    aspectRatio: 1.0,
+    maxDecodedWidth: 1254,
+    semanticLabel: 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS',
+  ),
+  dumas(
+    assetPath: AppConstants.logoDumasAsset,
+    aspectRatio: 1.0,
+    maxDecodedWidth: 1024,
+    semanticLabel: 'Logo DUMAS Aduan Masyarakat dan Laporan LINMAS',
+  );
 
-/// Displays the transparent LINMAS brand lockup responsively.
+  const AppBrandLogoVariant({
+    required this.assetPath,
+    required this.aspectRatio,
+    required this.maxDecodedWidth,
+    required this.semanticLabel,
+  });
+
+  final String assetPath;
+  final double aspectRatio;
+  final int maxDecodedWidth;
+  final String semanticLabel;
+}
+
+/// Displays the transparent brand lockup responsively.
 class AppBrandLogo extends StatelessWidget {
   final double maxWidth;
   final double fallbackIconSize;
@@ -17,38 +54,42 @@ class AppBrandLogo extends StatelessWidget {
     this.variant = AppBrandLogoVariant.horizontal,
   });
 
-  const AppBrandLogo.vertical({
+  const AppBrandLogo.general({
     super.key,
     this.maxWidth = 220,
     this.fallbackIconSize = 64,
-  }) : variant = AppBrandLogoVariant.vertical;
+  }) : variant = AppBrandLogoVariant.general;
 
-  static const double _horizontalAspectRatio = 2048 / 682;
-  static const double _verticalAspectRatio = 1.0;
+  const AppBrandLogo.linmas({
+    super.key,
+    this.maxWidth = 220,
+    this.fallbackIconSize = 64,
+  }) : variant = AppBrandLogoVariant.linmas;
+
+  const AppBrandLogo.dumas({
+    super.key,
+    this.maxWidth = 220,
+    this.fallbackIconSize = 64,
+  }) : variant = AppBrandLogoVariant.dumas;
 
   @override
   Widget build(BuildContext context) {
-    final isVertical = variant == AppBrandLogoVariant.vertical;
-    final assetPath = isVertical
-        ? AppConstants.logoVerticalAsset
-        : AppConstants.logoHorizontalAsset;
-    final aspectRatio = isVertical
-        ? _verticalAspectRatio
-        : _horizontalAspectRatio;
-    final maxDecodedWidth = isVertical ? 1254 : 2048;
     final dpr = MediaQuery.maybeDevicePixelRatioOf(context) ?? 3.0;
-    final decodedWidth = (maxWidth * dpr).round().clamp(768, maxDecodedWidth);
+    final decodedWidth = (maxWidth * dpr).round().clamp(
+      768,
+      variant.maxDecodedWidth,
+    );
 
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: maxWidth),
       child: AspectRatio(
-        aspectRatio: aspectRatio,
+        aspectRatio: variant.aspectRatio,
         child: Image.asset(
-          assetPath,
+          variant.assetPath,
           fit: BoxFit.contain,
           cacheWidth: decodedWidth,
           filterQuality: FilterQuality.high,
-          semanticLabel: 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS',
+          semanticLabel: variant.semanticLabel,
           errorBuilder: (context, error, stackTrace) {
             return Icon(
               Icons.shield_rounded,

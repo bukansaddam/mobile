@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -96,7 +97,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
     final user = widget.user;
     final String name = (user.name != null && user.name!.trim().isNotEmpty)
         ? user.name!.trim()
-        : 'Pengguna AKAR';
+        : 'Pengguna ${AppConstants.appName}';
     final String nik = (user.nik != null && user.nik!.trim().isNotEmpty)
         ? user.nik!.trim()
         : '3273000000000000';
@@ -107,7 +108,8 @@ class _KtaCardModalState extends State<KtaCardModal> {
     final String roleTitle = user.isOfficer
         ? 'SATUAN LINMAS'
         : 'WARGA TERDAFTAR';
-    final String memberId = 'AKAR-${(user.id.toString()).padLeft(6, '0')}';
+    final String memberId =
+        '${AppConstants.appName}-${(user.id.toString()).padLeft(6, '0')}';
 
     final initialLetter = name.isNotEmpty ? name[0].toUpperCase() : 'U';
 
@@ -208,7 +210,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'AKAR',
+                                AppConstants.appName,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 13,
@@ -368,7 +370,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Diterbitkan oleh Sistem AKAR',
+                                  'Diterbitkan oleh Sistem ${AppConstants.appName}',
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 9.5,

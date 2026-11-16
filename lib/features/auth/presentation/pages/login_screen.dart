@@ -124,6 +124,18 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
+  AppBrandLogoVariant get _logoVariant {
+    switch (widget.role?.toLowerCase()) {
+      case 'masyarakat':
+      case 'dumas':
+        return AppBrandLogoVariant.dumas;
+      case 'linmas':
+        return AppBrandLogoVariant.linmas;
+      default:
+        return AppBrandLogoVariant.general;
+    }
+  }
+
   void _handleBack() {
     if (context.canPop()) {
       context.pop();
@@ -214,8 +226,9 @@ class _LoginScreenState extends State<LoginScreen>
                           animation: _entranceController,
                           start: 0,
                           end: 0.35,
-                          child: const Center(
-                            child: AppBrandLogo.vertical(
+                          child: Center(
+                            child: AppBrandLogo(
+                              variant: _logoVariant,
                               maxWidth: 168,
                               fallbackIconSize: 44,
                             ),
