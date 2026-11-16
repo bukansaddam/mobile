@@ -13,12 +13,15 @@ import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bl
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final bool isExclusiveModeEnabled;
+
+  const MainScreen({super.key, this.isExclusiveModeEnabled = kDebugMode});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -30,7 +33,12 @@ class _MainScreenState extends State<MainScreen> {
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
 
+  bool get _isExclusiveModeActive =>
+      kDebugMode && widget.isExclusiveModeEnabled;
+
   void _onLogoTap() {
+    if (!_isExclusiveModeActive) return;
+
     final now = DateTime.now();
     if (_lastLogoTapTime != null &&
         now.difference(_lastLogoTapTime!).inSeconds > 3) {
@@ -124,7 +132,7 @@ class _MainScreenState extends State<MainScreen> {
             centerTitle: false,
             automaticallyImplyLeading: false,
             title: GestureDetector(
-              onTap: _onLogoTap,
+              onTap: _isExclusiveModeActive ? _onLogoTap : null,
               behavior: HitTestBehavior.opaque,
               child: Row(
                 mainAxisSize: MainAxisSize.min,

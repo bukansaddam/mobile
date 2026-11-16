@@ -227,6 +227,36 @@ void main() {
   );
 
   testWidgets(
+    'MainScreen menonaktifkan Mode Eksklusif saat tidak dalam mode debug',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(480, 900));
+
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>.value(value: _FakeAuthBloc()),
+            BlocProvider<PanicBloc>.value(value: _FakePanicBloc()),
+            BlocProvider<SurveyBloc>.value(value: _FakeSurveyBloc()),
+          ],
+          child: const MaterialApp(
+            home: MainScreen(isExclusiveModeEnabled: false),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      for (int i = 0; i < 10; i++) {
+        await tester.tap(find.byType(AppLogoBadge));
+        await tester.pump();
+      }
+      expect(find.textContaining('Mode Eksklusif'), findsNothing);
+      expect(find.textContaining('Reset Status Survey'), findsNothing);
+
+      await tester.binding.setSurfaceSize(null);
+    },
+  );
+
+  testWidgets(
     'LoginScreen displays role-specific brand logos (Dumas for masyarakat, Linmas for linmas) without overflow',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(600, 900));

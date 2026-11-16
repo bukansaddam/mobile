@@ -4,12 +4,14 @@ import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class TrackingConfigModal {
   static void show(BuildContext context) {
+    if (!kDebugMode) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
