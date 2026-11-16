@@ -14,7 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MasyarakatProfileScreen extends StatefulWidget {
-  const MasyarakatProfileScreen({super.key});
+  final bool showNotificationSettings;
+  final bool showChangePasswordMenu;
+
+  const MasyarakatProfileScreen({
+    super.key,
+    this.showNotificationSettings = false,
+    this.showChangePasswordMenu = false,
+  });
 
   @override
   State<MasyarakatProfileScreen> createState() =>
@@ -419,25 +426,30 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 title: 'Edit Profil Saya',
                                 onTap: () => AppRouter.toEditProfile(context),
                               ),
-                              const Divider(
-                                height: 1,
-                                color: Color(0xFFF1F5F9),
-                              ),
-                              _buildMenuItem(
-                                icon: Icons.notifications_none_rounded,
-                                title: 'Pengaturan Notifikasi & Alarm Bencana',
-                                onTap: () =>
-                                    _showNotificationSettingsSheet(context),
-                              ),
-                              const Divider(
-                                height: 1,
-                                color: Color(0xFFF1F5F9),
-                              ),
-                              _buildMenuItem(
-                                icon: Icons.lock_outline_rounded,
-                                title: 'Ubah Kata Sandi',
-                                onTap: () => AppRouter.toEditProfile(context),
-                              ),
+                              if (widget.showNotificationSettings) ...[
+                                const Divider(
+                                  height: 1,
+                                  color: Color(0xFFF1F5F9),
+                                ),
+                                _buildMenuItem(
+                                  icon: Icons.notifications_none_rounded,
+                                  title:
+                                      'Pengaturan Notifikasi & Alarm Bencana',
+                                  onTap: () =>
+                                      _showNotificationSettingsSheet(context),
+                                ),
+                              ],
+                              if (widget.showChangePasswordMenu) ...[
+                                const Divider(
+                                  height: 1,
+                                  color: Color(0xFFF1F5F9),
+                                ),
+                                _buildMenuItem(
+                                  icon: Icons.lock_outline_rounded,
+                                  title: 'Ubah Kata Sandi',
+                                  onTap: () => AppRouter.toEditProfile(context),
+                                ),
+                              ],
                               const Divider(
                                 height: 1,
                                 color: Color(0xFFF1F5F9),

@@ -214,6 +214,11 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('3201234567890001'), findsOneWidget);
         expect(find.textContaining('****'), findsNothing);
+        expect(
+          find.text('Pengaturan Notifikasi & Alarm Bencana'),
+          findsNothing,
+        );
+        expect(find.text('Ubah Kata Sandi'), findsNothing);
 
         await tester.binding.setSurfaceSize(null);
       },
