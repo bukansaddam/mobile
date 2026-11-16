@@ -1644,7 +1644,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           if (report.recipientNik != null &&
                               report.recipientNik!.isNotEmpty)
                             Text(
-                              'NIK Penerima: ${DataMaskingUtils.maskNikOrKk(report.recipientNik)}',
+                              'NIK Penerima: ${report.recipientNik!.trim()}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),

@@ -2,7 +2,6 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/utils/data_masking_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -366,9 +365,13 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     _buildProfileDetailItem(
                                       icon: Icons.badge_outlined,
                                       label: 'NIK',
-                                      value: DataMaskingUtils.maskNikOrKk(
-                                        currentUser?.nik,
-                                      ),
+                                      value:
+                                          (currentUser?.nik != null &&
+                                              currentUser!.nik!
+                                                  .trim()
+                                                  .isNotEmpty)
+                                          ? currentUser.nik!.trim()
+                                          : '-',
                                     ),
                                     const Divider(
                                       height: 16,
@@ -458,7 +461,9 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                         icon: Icons.logout_rounded,
                                       );
                                   if (confirmed && context.mounted) {
-                                    context.read<AuthBloc>().add(const LogoutEvent());
+                                    context.read<AuthBloc>().add(
+                                      const LogoutEvent(),
+                                    );
                                   }
                                 },
                               ),

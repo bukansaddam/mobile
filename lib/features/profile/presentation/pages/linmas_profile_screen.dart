@@ -3,7 +3,6 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/core/utils/data_masking_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -399,7 +398,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                         _buildProfileDetailItem(
                           icon: Icons.card_membership_rounded,
                           label: 'NIK',
-                          value: DataMaskingUtils.maskNikOrKk(user.nik),
+                          value: user.nik,
                         ),
                         _buildProfileDetailItem(
                           icon: Icons.phone_android_rounded,

@@ -1,10 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
+import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/domain/entities/update_profile_params.dart';
 import 'package:akar/features/profile/domain/repositories/profile_repository.dart';
 import 'package:akar/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:akar/features/profile/domain/usecases/update_profile_usecase.dart';
+import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
+import 'package:akar/features/profile/presentation/pages/linmas_profile_screen.dart';
+import 'package:akar/features/profile/presentation/pages/masyarakat_profile_screen.dart';
+
+class _FakeAuthBloc extends Fake implements AuthBloc {
+  _FakeAuthBloc(this._state);
+
+  final AuthState _state;
+
+  @override
+  AuthState get state => _state;
+
+  @override
+  Stream<AuthState> get stream => const Stream.empty();
+
+  @override
+  void add(AuthEvent event) {}
+}
+
+class _FakeProfileBloc extends Fake implements ProfileBloc {
+  @override
+  ProfileState get state => ProfileInitial();
+
+  @override
+  Stream<ProfileState> get stream => const Stream.empty();
+
+  @override
+  void add(ProfileEvent event) {}
+}
 
 class MockProfileRepository implements ProfileRepository {
   Either<Failure, UserEntity>? getProfileResult;
@@ -12,16 +44,14 @@ class MockProfileRepository implements ProfileRepository {
 
   @override
   Future<Either<Failure, UserEntity>> getProfile() async {
-    return getProfileResult ??
-        const Left(ServerFailure('Mock failure'));
+    return getProfileResult ?? const Left(ServerFailure('Mock failure'));
   }
 
   @override
   Future<Either<Failure, UserEntity>> updateProfile(
     UpdateProfileParams params,
   ) async {
-    return updateProfileResult ??
-        const Left(ServerFailure('Mock failure'));
+    return updateProfileResult ?? const Left(ServerFailure('Mock failure'));
   }
 }
 
@@ -57,8 +87,9 @@ void main() {
     });
 
     test('should return ServerFailure when getProfile fails', () async {
-      repository.getProfileResult =
-          const Left(ServerFailure('Gagal memuat profil'));
+      repository.getProfileResult = const Left(
+        ServerFailure('Gagal memuat profil'),
+      );
 
       final result = await usecase();
 
@@ -96,13 +127,11 @@ void main() {
     });
 
     test('should return ServerFailure when updateProfile fails', () async {
-      repository.updateProfileResult =
-          const Left(ServerFailure('Gagal memperbarui profil'));
-
-      const params = UpdateProfileParams(
-        name: 'John Doe',
-        username: 'johndoe',
+      repository.updateProfileResult = const Left(
+        ServerFailure('Gagal memperbarui profil'),
       );
+
+      const params = UpdateProfileParams(name: 'John Doe', username: 'johndoe');
 
       final result = await usecase(params);
 
@@ -121,21 +150,99 @@ void main() {
     });
 
     test('preserves full http/https URLs as-is', () {
-      const user = UserEntity(id: 1, profilePic: 'https://cdn.example.com/avatars/1.png');
+      const user = UserEntity(
+        id: 1,
+        profilePic: 'https://cdn.example.com/avatars/1.png',
+      );
       expect(user.displayProfilePic, 'https://cdn.example.com/avatars/1.png');
     });
 
     test('prepends baseUrl and storage for relative paths', () {
-      const user1 = UserEntity(id: 1, profilePic: 'profile_pictures/avatar.jpg');
-      expect(user1.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+      const user1 = UserEntity(
+        id: 1,
+        profilePic: 'profile_pictures/avatar.jpg',
+      );
+      expect(
+        user1.displayProfilePic,
+        contains('/storage/profile_pictures/avatar.jpg'),
+      );
 
-      const user2 = UserEntity(id: 1, profilePic: '/storage/profile_pictures/avatar.jpg');
-      expect(user2.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+      const user2 = UserEntity(
+        id: 1,
+        profilePic: '/storage/profile_pictures/avatar.jpg',
+      );
+      expect(
+        user2.displayProfilePic,
+        contains('/storage/profile_pictures/avatar.jpg'),
+      );
       expect(user2.displayProfilePic, isNot(contains('/storage/storage/')));
 
-      const user3 = UserEntity(id: 1, profilePic: 'storage/profile_pictures/avatar.jpg');
-      expect(user3.displayProfilePic, contains('/storage/profile_pictures/avatar.jpg'));
+      const user3 = UserEntity(
+        id: 1,
+        profilePic: 'storage/profile_pictures/avatar.jpg',
+      );
+      expect(
+        user3.displayProfilePic,
+        contains('/storage/profile_pictures/avatar.jpg'),
+      );
       expect(user3.displayProfilePic, isNot(contains('/storage/storage/')));
+    });
+  });
+
+  group('Profile Screen NIK Display Tests', () {
+    testWidgets(
+      'MasyarakatProfileScreen menampilkan NIK lengkap tanpa masking',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(600, 900));
+        final user = testUser.copyWith(role: 'member', profilePic: '');
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: user, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+            ],
+            child: const MaterialApp(home: MasyarakatProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('3201234567890001'), findsOneWidget);
+        expect(find.textContaining('****'), findsNothing);
+
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
+
+    testWidgets('LinmasProfileScreen menampilkan NIK lengkap tanpa masking', (
+      tester,
+    ) async {
+      await tester.binding.setSurfaceSize(const Size(600, 900));
+      final user = testUser.copyWith(role: 'officer', profilePic: '');
+
+      await tester.pumpWidget(
+        MultiBlocProvider(
+          providers: [
+            BlocProvider<AuthBloc>.value(
+              value: _FakeAuthBloc(AuthAuthenticated(user: user, token: 'tok')),
+            ),
+            BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+          ],
+          child: const MaterialApp(home: LinmasProfileScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('3201234567890001'), findsOneWidget);
+      expect(find.textContaining('****'), findsNothing);
+
+      await tester.binding.setSurfaceSize(null);
     });
   });
 }
