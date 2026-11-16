@@ -5,10 +5,7 @@ import 'package:akar/core/theme/app_colors.dart';
 class ComplaintBannerCard extends StatelessWidget {
   final VoidCallback onCreateComplaint;
 
-  const ComplaintBannerCard({
-    super.key,
-    required this.onCreateComplaint,
-  });
+  const ComplaintBannerCard({super.key, required this.onCreateComplaint});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +67,7 @@ class ComplaintBannerCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'PENGADUAN\nMASYARAKAT',
+                        'DUMAS',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -81,7 +78,7 @@ class ComplaintBannerCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Sampaikan keluhan anda untuk\nlingkungan yang lebih baik.',
+                        'Dukungan masyarakat untuk\nlingkungan yang lebih baik',
                         style: TextStyle(
                           color: Colors.white.withAlpha(230),
                           fontSize: 12.5,

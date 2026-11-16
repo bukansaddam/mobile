@@ -1,6 +1,7 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_logo_badge.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_alert_banner.dart';
 import 'package:flutter/material.dart';
 
@@ -80,58 +81,43 @@ class _CustomAppBarState extends State<CustomAppBar> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFE2E8F0), width: 1),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.asset(
-                    'assets/logo.webp',
-                    fit: BoxFit.contain,
-                    cacheWidth: 114,
-                    cacheHeight: 114,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.shield_rounded,
-                        color: AppColors.primary,
-                        size: 22,
-                      );
-                    },
-                  ),
-                ),
+              const AppLogoBadge(
+                size: 38,
+                borderRadius: 10,
+                fallbackIconSize: 22,
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.title ?? AppConstants.appName,
-                    style: AppTextStyles.headlineMedium.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      letterSpacing: 0.5,
-                      height: 1.1,
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.title ?? AppConstants.appBarTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.headlineMedium.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        letterSpacing: 0.5,
+                        height: 1.1,
+                      ),
                     ),
-                  ),
-                  Text(
-                    widget.subtitle ?? 'Pengaduan Masyarakat',
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
-                      height: 1.15,
+                    Text(
+                      widget.subtitle ?? 'Dumas',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.2,
+                        height: 1.15,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
