@@ -17,12 +17,14 @@ import 'package:akar/features/linmas/demografi/institusi/presentation/pages/add_
 import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/add_organisasi_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
+import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 import 'package:akar/features/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
@@ -33,6 +35,7 @@ import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class GoRouterRefreshStream extends ChangeNotifier {
@@ -77,6 +80,7 @@ class AppRouter {
   static const String bankSampah = 'bankSampah';
   static const String tambahBankSampah = 'tambahBankSampah';
   static const String laporanInsidentil = 'laporanInsidentil';
+  static const String tambahLaporanInsidentil = 'tambahLaporanInsidentil';
 
   // Masyarakat Routes
   static const String masyarakatMain = 'masyarakatMain';
@@ -102,6 +106,8 @@ class AppRouter {
   static const String tambahBankSampahPath = '/tambah-bank-sampah';
   static const String activationDetailPath = '/activation-detail';
   static const String laporanInsidentilPath = '/laporan-insidentil';
+  static const String tambahLaporanInsidentilPath =
+      '/tambah-laporan-insidentil';
 
   static const String masyarakatMainPath = '/masyarakat/main';
   static const String complaintDetailPath = '/masyarakat/complaint-detail';
@@ -182,6 +188,7 @@ class AppRouter {
           '/bank-sampah',
           '/tambah-bank-sampah',
           '/laporan-insidentil',
+          '/tambah-laporan-insidentil',
           '/activation-detail',
           '/activation_detail',
           '/survey',
@@ -346,6 +353,16 @@ class AppRouter {
       GoRoute(
         path: laporanInsidentilPath,
         name: laporanInsidentil,
+        builder: (context, state) => BlocProvider(
+          create: (_) =>
+              sl<MyComplaintListBloc>()
+                ..add(const FetchMyComplaintsEvent(isInsidentil: true)),
+          child: const LaporanInsidentilListScreen(),
+        ),
+      ),
+      GoRoute(
+        path: tambahLaporanInsidentilPath,
+        name: tambahLaporanInsidentil,
         pageBuilder: (context, state) {
           return CustomTransitionPage(
             key: state.pageKey,
@@ -540,6 +557,10 @@ class AppRouter {
 
   static Future<bool?> toCreateComplaint(BuildContext context) {
     return context.pushNamed<bool>(createComplaint);
+  }
+
+  static Future<bool?> toTambahLaporanInsidentil(BuildContext context) {
+    return context.pushNamed<bool>(tambahLaporanInsidentil);
   }
 
   static bool _isNavigatingToEditProfile = false;

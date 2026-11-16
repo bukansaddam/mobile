@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 
 abstract class ComplaintRepository {
@@ -19,7 +20,13 @@ abstract class ComplaintRepository {
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   });
+
+  Future<Either<Failure, List<ComplaintCategoryOption>>>
+  getIncidentCategories();
 
   Future<Either<Failure, ComplaintPaginatedEntity>> getPublicComplaints({
     int page = 1,

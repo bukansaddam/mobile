@@ -6,6 +6,7 @@ import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 
@@ -25,7 +26,12 @@ abstract class ComplaintRemoteDatasource {
   Future<ComplaintPaginatedModel> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   });
+
+  Future<List<ComplaintCategoryOption>> getIncidentCategories();
 
   Future<ComplaintPaginatedModel> getPublicComplaints({
     int page = 1,
@@ -106,7 +112,56 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
   Future<ComplaintPaginatedModel> getMyComplaints({
     int page = 1,
     int perPage = 15,
-  }) => _getPaginated(ApiConstants.reportsMe, page: page, perPage: perPage);
+    bool isInsidentil = false,
+    String? status,
+    String? category,
+  }) => _getPaginated(
+    isInsidentil ? ApiConstants.incidentReportsMe : ApiConstants.reportsMe,
+    page: page,
+    perPage: perPage,
+    status: status,
+    category: category,
+  );
+
+  @override
+  Future<List<ComplaintCategoryOption>> getIncidentCategories() async {
+    try {
+      final response = await dio.get(
+        ApiConstants.categories,
+        queryParameters: const {'domain': 'report'},
+      );
+      final body = response.data;
+      final rawList = body is Map && body['data'] is List
+          ? body['data'] as List
+          : (body is List ? body : const []);
+      return rawList
+          .whereType<Map>()
+          .map((raw) {
+            final map = Map<String, dynamic>.from(raw);
+            final label = (map['label'] ?? map['name'] ?? '').toString().trim();
+            final code = (map['code'] ?? '').toString().trim();
+            final isActive = map['is_active'] != false;
+            return (
+              active: isActive,
+              item: ComplaintCategoryOption(
+                id: (map['id'] as num?)?.toInt() ?? 0,
+                code: code.isNotEmpty ? code : label,
+                label: label,
+              ),
+            );
+          })
+          .where((entry) => entry.active && entry.item.label.isNotEmpty)
+          .map((entry) => entry.item)
+          .toList();
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[COMPLAINT_DS] DioException in categories: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
 
   @override
   Future<ComplaintPaginatedModel> getPublicComplaints({

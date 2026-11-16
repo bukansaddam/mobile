@@ -10,7 +10,16 @@ class GetMyComplaintsUsecase {
   Future<Either<Failure, ComplaintPaginatedEntity>> call({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   }) {
-    return repository.getMyComplaints(page: page, perPage: perPage);
+    return repository.getMyComplaints(
+      page: page,
+      perPage: perPage,
+      isInsidentil: isInsidentil,
+      status: status,
+      category: category,
+    );
   }
 }

@@ -4,9 +4,11 @@ import 'dart:io';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_incident_categories_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_public_complaints_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
@@ -111,12 +113,32 @@ class _FakeRepository implements ComplaintRepository {
     title: 'Aduan $id',
   );
 
+  bool? lastIsInsidentil;
+  String? lastStatusFilter;
+  String? lastCategoryFilter;
+  Either<Failure, List<ComplaintCategoryOption>> categoriesResult =
+      const Right([
+        ComplaintCategoryOption(
+          id: 1,
+          code: 'bencana-alam',
+          label: 'Bencana Alam',
+        ),
+        ComplaintCategoryOption(id: 2, code: 'lingkungan', label: 'Lingkungan'),
+      ]);
+  int categoryCalls = 0;
+
   @override
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   }) async {
     listCalls++;
+    lastIsInsidentil = isInsidentil;
+    lastStatusFilter = status;
+    lastCategoryFilter = category;
     return listResult ??
         Right(
           ComplaintPaginatedEntity(
@@ -126,6 +148,13 @@ class _FakeRepository implements ComplaintRepository {
             total: 2,
           ),
         );
+  }
+
+  @override
+  Future<Either<Failure, List<ComplaintCategoryOption>>>
+  getIncidentCategories() async {
+    categoryCalls++;
+    return categoriesResult;
   }
 
   String? lastStatus;
@@ -310,6 +339,69 @@ void main() {
       );
     });
 
+    test('response /api/incident-reports/me terpetakan dengan akurat', () {
+      const incidentResponse = {
+        'success': true,
+        'message': 'OK',
+        'data': [
+          {
+            'id': 1262,
+            'ticketNumber': 'PGD-2026-01262',
+            'title': 'Penggunaan lahan kas desa tidak sesuai peruntukan',
+            'description': 'Terdapat lahan desa digunakan untuk warung makan',
+            'status': 'in_progress',
+            'statusLabel': 'Sedang Diproses',
+            'statusColor': '#22C55E',
+            'category': {
+              'id': 4,
+              'code': 'lingkungan',
+              'label': 'Lingkungan',
+              'name': 'Lingkungan',
+            },
+            'address': 'Jl. Tebet Timur Dalam II E No.10',
+            'latitude': -6.2297267,
+            'longitude': 106.8547701,
+            'reportedAt': '2026-11-16T04:07:11+00:00',
+            'updatedAt': '2026-11-16T04:08:43+00:00',
+            'sla': {
+              'stageLabel': 'Penanganan',
+              'remainingMinutes': 4090,
+              'progressPct': 5,
+              'state': 'on_track',
+            },
+            'attachments': [
+              {
+                'id': 2444,
+                'mimeType': 'image/webp',
+                'file_url': '/api/reports/attachments/2444/file',
+              },
+              {
+                'id': 2445,
+                'mimeType': 'video/mp4',
+                'file_url': '/api/reports/attachments/2445/file',
+              },
+            ],
+          },
+        ],
+        'meta': {'current_page': 1, 'last_page': 1, 'per_page': 20, 'total': 1},
+      };
+
+      final paginated = ComplaintPaginatedModel.fromJson(
+        incidentResponse,
+      ).toDomain();
+
+      expect(paginated.total, 1);
+      expect(paginated.data, hasLength(1));
+
+      final item = ComplaintItem.fromReport(paginated.data.single);
+      expect(item.id, 'PGD-2026-01262');
+      expect(item.reportId, '1262');
+      expect(item.category, 'Lingkungan');
+      expect(item.status, ComplaintStatus.inProgress);
+      expect(item.statusLabel, 'Sedang Diproses');
+      expect(item.isVideoAttachment(item.attachments.last), isTrue);
+    });
+
     test('bloc meneruskan filter dan memuat halaman berikutnya', () async {
       final repository = _FakeRepository();
       final bloc = ComplaintListBloc(
@@ -390,6 +482,167 @@ void main() {
       );
       expect(state.errorMessage, 'Gagal memuat');
     });
+
+    test(
+      'insidentil meneruskan flag isInsidentil dan menyaring via search',
+      () async {
+        final repository = _FakeRepository()
+          ..listResult = const Right(
+            ComplaintPaginatedEntity(
+              data: [
+                ComplaintReportEntity(
+                  id: '1262',
+                  ticketNumber: 'PGD-2026-01262',
+                  title: 'Penggunaan lahan kas desa tidak sesuai peruntukan',
+                  category: 'Lingkungan',
+                  address: 'Jl. Tebet Timur Dalam II E No.10',
+                  status: 'in_progress',
+                  statusLabel: 'Sedang Diproses',
+                ),
+                ComplaintReportEntity(
+                  id: '1259',
+                  ticketNumber: 'PGD-2026-01259',
+                  title: 'Banjir',
+                  category: 'Lingkungan',
+                  address: 'Jalan Barkha No.9',
+                  status: 'verification',
+                  statusLabel: 'Menunggu Verifikasi',
+                ),
+              ],
+              currentPage: 1,
+              lastPage: 2,
+              total: 3,
+            ),
+          );
+
+        final bloc = MyComplaintListBloc(
+          getMyComplaints: GetMyComplaintsUsecase(repository),
+        );
+        addTearDown(bloc.close);
+
+        bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
+        var state = await bloc.stream.firstWhere(
+          (state) => state.status == MyComplaintListStatus.loaded,
+        );
+        expect(repository.lastIsInsidentil, isTrue);
+        expect(state.isInsidentil, isTrue);
+        expect(state.filteredItems, hasLength(2));
+
+        bloc.add(const SearchMyComplaintsEvent('banjir'));
+        state = await bloc.stream.firstWhere(
+          (state) => state.searchQuery == 'banjir',
+        );
+        expect(state.filteredItems.single.id, '1259');
+
+        bloc.add(const LoadMoreMyComplaintsEvent());
+        state = await bloc.stream.firstWhere(
+          (state) => state.items.length == 4 && !state.isLoadingMore,
+        );
+        expect(repository.lastIsInsidentil, isTrue);
+        expect(state.filteredItems.map((item) => item.id), ['1259', '1259']);
+      },
+    );
+
+    test(
+      'memuat kategori dinamis dari server dan menangani retry saat gagal',
+      () async {
+        final repository = _FakeRepository()
+          ..categoriesResult = const Left(ServerFailure('Gagal kategori'));
+        final bloc = MyComplaintListBloc(
+          getMyComplaints: GetMyComplaintsUsecase(repository),
+          getIncidentCategories: GetIncidentCategoriesUsecase(repository),
+        );
+        addTearDown(bloc.close);
+
+        bloc.add(const FetchIncidentCategoriesEvent());
+        var state = await bloc.stream.firstWhere(
+          (state) => !state.isLoadingCategories && state.categoryError != null,
+        );
+        expect(state.categoryError, 'Gagal kategori');
+        expect(state.categories, isEmpty);
+
+        repository.categoriesResult = const Right([
+          ComplaintCategoryOption(
+            id: 2,
+            code: 'lingkungan',
+            label: 'Lingkungan',
+          ),
+        ]);
+        bloc.add(const FetchIncidentCategoriesEvent(force: true));
+        state = await bloc.stream.firstWhere(
+          (state) => !state.isLoadingCategories && state.categories.isNotEmpty,
+        );
+        expect(state.categoryError, isNull);
+        expect(state.categories.single.code, 'lingkungan');
+        expect(repository.categoryCalls, 2);
+      },
+    );
+
+    test(
+      'ApplyMyComplaintFilterEvent meneruskan status & kategori ke repository dan bertahan saat pagination/refresh',
+      () async {
+        final repository = _FakeRepository();
+        final bloc = MyComplaintListBloc(
+          getMyComplaints: GetMyComplaintsUsecase(repository),
+          getIncidentCategories: GetIncidentCategoriesUsecase(repository),
+        );
+        addTearDown(bloc.close);
+
+        bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
+        await bloc.stream.firstWhere(
+          (state) => state.status == MyComplaintListStatus.loaded,
+        );
+
+        bloc.add(
+          const ApplyMyComplaintFilterEvent(
+            status: 'in_progress',
+            category: 'lingkungan',
+          ),
+        );
+        var state = await bloc.stream.firstWhere(
+          (state) =>
+              state.status == MyComplaintListStatus.loaded &&
+              state.statusFilter == 'in_progress' &&
+              state.categoryFilter == 'lingkungan',
+        );
+        expect(repository.lastStatusFilter, 'in_progress');
+        expect(repository.lastCategoryFilter, 'lingkungan');
+        expect(state.activeFilterCount, 2);
+        expect(state.hasActiveFilter, isTrue);
+
+        repository.lastStatusFilter = null;
+        repository.lastCategoryFilter = null;
+        bloc.add(const LoadMoreMyComplaintsEvent());
+        state = await bloc.stream.firstWhere(
+          (state) => state.items.length == 2 && !state.isLoadingMore,
+        );
+        expect(repository.lastStatusFilter, 'in_progress');
+        expect(repository.lastCategoryFilter, 'lingkungan');
+
+        repository.lastStatusFilter = null;
+        repository.lastCategoryFilter = null;
+        bloc.add(
+          const FetchMyComplaintsEvent(isInsidentil: true, isRefresh: true),
+        );
+        await bloc.stream.firstWhere(
+          (state) =>
+              state.status == MyComplaintListStatus.loaded &&
+              state.items.length == 1,
+        );
+        expect(repository.lastStatusFilter, 'in_progress');
+        expect(repository.lastCategoryFilter, 'lingkungan');
+
+        bloc.add(const ApplyMyComplaintFilterEvent());
+        state = await bloc.stream.firstWhere(
+          (state) =>
+              state.status == MyComplaintListStatus.loaded &&
+              !state.hasActiveFilter,
+        );
+        expect(repository.lastStatusFilter, isNull);
+        expect(repository.lastCategoryFilter, isNull);
+        expect(state.activeFilterCount, 0);
+      },
+    );
   });
 
   group('ComplaintDetailBloc', () {

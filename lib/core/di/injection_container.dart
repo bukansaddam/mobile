@@ -124,6 +124,7 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/create_compla
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_address_from_latlng_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_location_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_incident_categories_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_public_complaints_usecase.dart';
@@ -377,6 +378,9 @@ Future<void> init() async {
   sl.registerLazySingleton<GetMyComplaintsUsecase>(
     () => GetMyComplaintsUsecase(sl()),
   );
+  sl.registerLazySingleton<GetIncidentCategoriesUsecase>(
+    () => GetIncidentCategoriesUsecase(sl()),
+  );
   sl.registerLazySingleton<GetComplaintDetailUsecase>(
     () => GetComplaintDetailUsecase(sl()),
   );
@@ -494,7 +498,8 @@ Future<void> init() async {
     () => CreateComplaintBloc(createComplaint: sl()),
   );
   sl.registerFactory<MyComplaintListBloc>(
-    () => MyComplaintListBloc(getMyComplaints: sl()),
+    () =>
+        MyComplaintListBloc(getMyComplaints: sl(), getIncidentCategories: sl()),
   );
   sl.registerFactory<ComplaintDetailBloc>(
     () => ComplaintDetailBloc(getComplaintDetail: sl()),

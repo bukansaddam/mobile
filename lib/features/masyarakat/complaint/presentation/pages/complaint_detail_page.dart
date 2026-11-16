@@ -240,71 +240,86 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: const Color(0xFFE2E8F0),
-                              width: 1,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8F0),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.tag_rounded,
+                                  size: 14,
+                                  color: Color(0xFF64748B),
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    item.id,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF475569),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Icons.tag_rounded,
-                                size: 14,
-                                color: Color(0xFF64748B),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                item.id,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xFF475569),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  ComplaintCategory.getIconFor(item.category),
+                                  size: 14,
+                                  color: const Color(0xFF15803D),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFDCFCE7),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                ComplaintCategory.getIconFor(item.category),
-                                size: 14,
-                                color: const Color(0xFF15803D),
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                item.category,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF15803D),
-                                  fontWeight: FontWeight.bold,
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    item.category,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Color(0xFF15803D),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 12),
@@ -329,12 +344,16 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                           color: Color(0xFF64748B),
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          item.formattedDateTime,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF64748B),
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            item.formattedDateTime,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF64748B),
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
@@ -730,9 +749,7 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
     }
 
     String verifikasiText = 'Verifikasi';
-    if (status == ComplaintStatus.pending) {
-      verifikasiText = 'Menunggu\nVerifikasi';
-    } else if (status == ComplaintStatus.verified || activeStep > 1) {
+    if (status == ComplaintStatus.verified || activeStep > 1) {
       verifikasiText = 'Diverifikasi';
     } else if (status == ComplaintStatus.rejected) {
       verifikasiText = 'Ditolak';
@@ -750,96 +767,128 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.primary.withAlpha(40)),
       ),
-      child: Row(
-        children: List.generate(4, (index) {
-          final isCompleted = index < activeStep;
-          final isCurrent = index == activeStep;
+      child: Column(
+        children: [
+          Row(
+            children: List.generate(4, (index) {
+              final isCompleted = index < activeStep;
+              final isCurrent = index == activeStep;
 
-          Color circleColor;
-          Color iconColor;
-          IconData stepIcon;
+              Color circleColor;
+              Color iconColor;
+              IconData stepIcon;
 
-          if (isCompleted) {
-            circleColor = AppColors.primary;
-            iconColor = Colors.white;
-            stepIcon = Icons.check_rounded;
-          } else if (isCurrent) {
-            if (isCancelledOrRejected) {
-              circleColor = AppColors.error;
-              iconColor = Colors.white;
-              stepIcon = Icons.close_rounded;
-            } else {
-              circleColor = AppColors.primary;
-              iconColor = Colors.white;
-              stepIcon = status.icon;
-            }
-          } else {
-            circleColor = AppColors.grey300;
-            iconColor = AppColors.grey500;
-            stepIcon = index == 0
-                ? Icons.inbox_rounded
-                : index == 1
-                ? Icons.verified_user_rounded
-                : index == 2
-                ? Icons.engineering_rounded
-                : Icons.check_circle_rounded;
-          }
+              if (isCompleted) {
+                circleColor = AppColors.primary;
+                iconColor = AppColors.white;
+                stepIcon = Icons.check_rounded;
+              } else if (isCurrent) {
+                if (isCancelledOrRejected) {
+                  circleColor = AppColors.error;
+                  iconColor = AppColors.white;
+                  stepIcon = Icons.close_rounded;
+                } else {
+                  circleColor = AppColors.primary;
+                  iconColor = AppColors.white;
+                  stepIcon = status.icon;
+                }
+              } else {
+                circleColor = AppColors.grey300;
+                iconColor = AppColors.textSecondary;
+                stepIcon = index == 0
+                    ? Icons.inbox_rounded
+                    : index == 1
+                    ? Icons.verified_user_rounded
+                    : index == 2
+                    ? Icons.engineering_rounded
+                    : Icons.check_circle_rounded;
+              }
 
-          return Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: circleColor,
-                          shape: BoxShape.circle,
-                          boxShadow: isCurrent
-                              ? [
-                                  BoxShadow(
-                                    color: circleColor.withAlpha(80),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Icon(stepIcon, size: 15, color: iconColor),
+              return Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: index == 0
+                          ? const SizedBox.shrink()
+                          : Container(
+                              height: 2,
+                              margin: const EdgeInsets.only(right: 6),
+                              color: index <= activeStep
+                                  ? AppColors.primary
+                                  : AppColors.grey300,
+                            ),
+                    ),
+                    Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: circleColor,
+                        shape: BoxShape.circle,
+                        boxShadow: isCurrent
+                            ? [
+                                BoxShadow(
+                                  color: circleColor.withAlpha(80),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
+                      child: Icon(stepIcon, size: 15, color: iconColor),
+                    ),
+                    Expanded(
+                      child: index == 3
+                          ? const SizedBox.shrink()
+                          : Container(
+                              height: 2,
+                              margin: const EdgeInsets.only(left: 6),
+                              color: index < activeStep
+                                  ? AppColors.primary
+                                  : AppColors.grey300,
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(4, (index) {
+              final isCompleted = index < activeStep;
+              final isCurrent = index == activeStep;
+
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
                         steps[index],
+                        maxLines: 1,
+                        softWrap: false,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: AppTextStyles.labelSmall.copyWith(
                           fontSize: 10,
+                          letterSpacing: 0,
                           fontWeight: (isCurrent || isCompleted)
                               ? FontWeight.bold
                               : FontWeight.w500,
                           color: (isCurrent || isCompleted)
                               ? AppColors.textPrimary
-                              : AppColors.textHint,
+                              : AppColors.textSecondary,
                           height: 1.15,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-                if (index < 3)
-                  Container(
-                    width: 12,
-                    height: 2,
-                    margin: const EdgeInsets.only(bottom: 18),
-                    color: index < activeStep
-                        ? AppColors.primary
-                        : AppColors.grey300,
-                  ),
-              ],
-            ),
-          );
-        }),
+              );
+            }),
+          ),
+        ],
       ),
     );
   }

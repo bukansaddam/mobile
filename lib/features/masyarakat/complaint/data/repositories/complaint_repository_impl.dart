@@ -4,6 +4,7 @@ import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/complaint_remote_datasource.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 
@@ -48,13 +49,30 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   }) async {
     try {
       final model = await remoteDatasource.getMyComplaints(
         page: page,
         perPage: perPage,
+        isInsidentil: isInsidentil,
+        status: status,
+        category: category,
       );
       return Right(model.toDomain());
+    } catch (e) {
+      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ComplaintCategoryOption>>>
+  getIncidentCategories() async {
+    try {
+      final items = await remoteDatasource.getIncidentCategories();
+      return Right(items);
     } catch (e) {
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
     }

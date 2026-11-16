@@ -5,6 +5,7 @@ import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/complaint_remote_datasource.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
 import 'package:akar/features/masyarakat/complaint/data/repositories/complaint_repository_impl.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/create_complaint_usecase.dart';
@@ -23,8 +24,17 @@ class _FakeRepository implements ComplaintRepository {
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   }) async {
     return const Right(ComplaintPaginatedEntity());
+  }
+
+  @override
+  Future<Either<Failure, List<ComplaintCategoryOption>>>
+  getIncidentCategories() async {
+    return const Right([]);
   }
 
   @override
@@ -87,7 +97,15 @@ class _ThrowingDatasource implements ComplaintRemoteDatasource {
   Future<ComplaintPaginatedModel> getMyComplaints({
     int page = 1,
     int perPage = 15,
+    bool isInsidentil = false,
+    String? status,
+    String? category,
   }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ComplaintCategoryOption>> getIncidentCategories() {
     throw UnimplementedError();
   }
 

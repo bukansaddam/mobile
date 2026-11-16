@@ -5,6 +5,14 @@ enum MyComplaintListStatus { initial, loading, loaded, failure }
 class MyComplaintListState extends Equatable {
   final MyComplaintListStatus status;
   final List<ComplaintReportEntity> items;
+  final List<ComplaintReportEntity> filteredItems;
+  final String searchQuery;
+  final bool isInsidentil;
+  final String? statusFilter;
+  final String? categoryFilter;
+  final List<ComplaintCategoryOption> categories;
+  final bool isLoadingCategories;
+  final String? categoryError;
   final int currentPage;
   final int lastPage;
   final int total;
@@ -15,6 +23,14 @@ class MyComplaintListState extends Equatable {
   const MyComplaintListState({
     this.status = MyComplaintListStatus.initial,
     this.items = const [],
+    this.filteredItems = const [],
+    this.searchQuery = '',
+    this.isInsidentil = false,
+    this.statusFilter,
+    this.categoryFilter,
+    this.categories = const [],
+    this.isLoadingCategories = false,
+    this.categoryError,
     this.currentPage = 1,
     this.lastPage = 1,
     this.total = 0,
@@ -23,9 +39,25 @@ class MyComplaintListState extends Equatable {
     this.errorMessage,
   });
 
+  int get activeFilterCount =>
+      (statusFilter != null ? 1 : 0) + (categoryFilter != null ? 1 : 0);
+
+  bool get hasActiveFilter => activeFilterCount > 0;
+
   MyComplaintListState copyWith({
     MyComplaintListStatus? status,
     List<ComplaintReportEntity>? items,
+    List<ComplaintReportEntity>? filteredItems,
+    String? searchQuery,
+    bool? isInsidentil,
+    String? statusFilter,
+    bool clearStatusFilter = false,
+    String? categoryFilter,
+    bool clearCategoryFilter = false,
+    List<ComplaintCategoryOption>? categories,
+    bool? isLoadingCategories,
+    String? categoryError,
+    bool clearCategoryError = false,
     int? currentPage,
     int? lastPage,
     int? total,
@@ -37,6 +69,20 @@ class MyComplaintListState extends Equatable {
     return MyComplaintListState(
       status: status ?? this.status,
       items: items ?? this.items,
+      filteredItems: filteredItems ?? this.filteredItems,
+      searchQuery: searchQuery ?? this.searchQuery,
+      isInsidentil: isInsidentil ?? this.isInsidentil,
+      statusFilter: clearStatusFilter
+          ? null
+          : (statusFilter ?? this.statusFilter),
+      categoryFilter: clearCategoryFilter
+          ? null
+          : (categoryFilter ?? this.categoryFilter),
+      categories: categories ?? this.categories,
+      isLoadingCategories: isLoadingCategories ?? this.isLoadingCategories,
+      categoryError: clearCategoryError
+          ? null
+          : (categoryError ?? this.categoryError),
       currentPage: currentPage ?? this.currentPage,
       lastPage: lastPage ?? this.lastPage,
       total: total ?? this.total,
@@ -50,6 +96,14 @@ class MyComplaintListState extends Equatable {
   List<Object?> get props => [
     status,
     items,
+    filteredItems,
+    searchQuery,
+    isInsidentil,
+    statusFilter,
+    categoryFilter,
+    categories,
+    isLoadingCategories,
+    categoryError,
     currentPage,
     lastPage,
     total,

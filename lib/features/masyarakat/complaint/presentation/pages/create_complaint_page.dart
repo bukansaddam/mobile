@@ -589,7 +589,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
           : (ticket.isEmpty
                 ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
                 : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.'),
-      buttonText: 'Kembali ke Beranda',
+      buttonText: widget.isInsidentil ? 'Kembali' : 'Kembali ke Beranda',
       onPressed: () => Navigator.pop(context, true),
     );
   }
