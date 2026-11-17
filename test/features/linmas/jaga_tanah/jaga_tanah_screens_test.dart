@@ -111,7 +111,7 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
 void main() {
   Widget buildListTestApp({
     required JagaTanahListBloc bloc,
-    bool showFilter = false,
+    bool showFilter = true,
   }) {
     final router = GoRouter(
       initialLocation: AppRouter.jagaTanahPath,
@@ -151,7 +151,7 @@ void main() {
   }
 
   testWidgets(
-    'JagaTanahListScreen menampilkan loading, empty, error+retry, search, FAB, dan filter tersembunyi default',
+    'JagaTanahListScreen menampilkan loading, empty, error+retry, search, FAB, dan filter tampil default',
     (tester) async {
       final repository = _FakeJagaTanahRepository()
         ..pendingCompleter =
@@ -162,9 +162,9 @@ void main() {
       );
       addTearDown(bloc.close);
 
-      // 1. Loading & filter button hidden by default
+      // 1. Loading & filter button visible by default
       await tester.pumpWidget(buildListTestApp(bloc: bloc));
-      expect(find.byIcon(Icons.tune_rounded), findsNothing);
+      expect(find.byIcon(Icons.tune_rounded), findsOneWidget);
 
       bloc.add(const FetchJagaTanahReportsEvent());
       await tester.pump();
@@ -280,6 +280,144 @@ void main() {
       await tester.tap(find.text('Okupasi lahan pemda'));
       await tester.pumpAndSettle();
       expect(find.text('Detail PGD-2026-00102'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'filter status dan kategori Jaga Tanahku mengirim query ke server dan menampilkan badge + reset',
+    (tester) async {
+      final repository = _FakeJagaTanahRepository()
+        ..listResponse = Right(
+          ComplaintPaginatedEntity(
+            data: [
+              ComplaintReportEntity(
+                id: '101',
+                ticketNumber: 'PGD-2026-00101',
+                title: 'Pagar batas tanah desa rusak',
+                category: 'Tanah Kas Desa',
+                address: 'Desa Sukamaju',
+                status: 'in_progress',
+                statusLabel: 'Sedang Diproses',
+                reportedAt: DateTime.now().subtract(const Duration(hours: 2)),
+              ),
+            ],
+            currentPage: 1,
+            lastPage: 1,
+            total: 1,
+          ),
+        )
+        ..categoriesResponse = const Left(
+          ServerFailure('Gagal memuat kategori'),
+        );
+
+      final bloc = JagaTanahListBloc(
+        getMyReports: GetMyJagaTanahReportsUsecase(repository),
+        getCategories: GetJagaTanahCategoriesUsecase(repository),
+      );
+      addTearDown(bloc.close);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      await tester.binding.setSurfaceSize(const Size(320, 640));
+      await tester.pumpWidget(buildListTestApp(bloc: bloc));
+      bloc.add(const FetchJagaTanahReportsEvent());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Filter Laporan'), findsOneWidget);
+      expect(find.text('Gagal memuat kategori'), findsOneWidget);
+      expect(find.text('Muat Ulang'), findsOneWidget);
+
+      repository.categoriesResponse = const Right([
+        JagaTanahCategoryEntity(
+          id: 20,
+          code: 'tanah_kas_desa',
+          label: 'Tanah Kas Desa',
+          sortOrder: 1,
+        ),
+        JagaTanahCategoryEntity(
+          id: 21,
+          code: 'tanah_pemda',
+          label: 'Tanah Pemda',
+          sortOrder: 2,
+          children: [
+            JagaTanahCategoryEntity(
+              id: 22,
+              code: 'tanah_pemda_kabupaten_kota',
+              label: 'Kabupaten/Kota',
+              parentId: 21,
+              sortOrder: 1,
+            ),
+          ],
+        ),
+      ]);
+      await tester.ensureVisible(find.text('Muat Ulang'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Muat Ulang'));
+      await tester.pumpAndSettle();
+
+      expect(repository.categoryCalls, 2);
+      expect(find.text('Tanah Kas Desa'), findsWidgets);
+      expect(find.text('Tanah Pemda - Kabupaten/Kota'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      // Verify 200% zoom inside filter sheet at 320x640 without overflow
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Sedang Diproses').last);
+      await tester.tap(find.text('Sedang Diproses').last);
+      await tester.ensureVisible(find.text('Tanah Pemda - Kabupaten/Kota'));
+      await tester.tap(find.text('Tanah Pemda - Kabupaten/Kota'));
+      await tester.pumpAndSettle();
+
+      repository.listResponse = const Right(ComplaintPaginatedEntity());
+      await tester.tap(find.text('Terapkan Filter'));
+      await tester.pumpAndSettle();
+
+      expect(repository.lastStatusFilter, 'in_progress');
+      expect(repository.lastCategoryFilter, 'tanah_pemda_kabupaten_kota');
+      expect(find.text('2'), findsOneWidget);
+      expect(
+        find.text('Tidak ada laporan yang sesuai dengan filter yang dipilih.'),
+        findsOneWidget,
+      );
+
+      repository.listResponse = Right(
+        ComplaintPaginatedEntity(
+          data: [
+            ComplaintReportEntity(
+              id: '102',
+              ticketNumber: 'PGD-2026-00102',
+              title: 'Okupasi lahan pemda',
+              category: 'Kabupaten/Kota',
+              address: 'Jl. Jenderal Sudirman',
+              status: 'verification',
+              statusLabel: 'Menunggu Verifikasi',
+              reportedAt: DateTime.now().subtract(const Duration(days: 1)),
+            ),
+          ],
+          currentPage: 1,
+          lastPage: 1,
+          total: 1,
+        ),
+      );
+      await tester.tap(find.text('Reset Filter'));
+      await tester.pumpAndSettle();
+
+      expect(repository.lastStatusFilter, isNull);
+      expect(repository.lastCategoryFilter, isNull);
+      expect(find.text('Okupasi lahan pemda'), findsOneWidget);
+      expect(find.text('2'), findsNothing);
+
+      await tester.binding.setSurfaceSize(const Size(800, 1024));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
     },
   );
 

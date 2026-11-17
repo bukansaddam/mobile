@@ -18,7 +18,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 class LaporanInsidentilListScreen extends HookWidget {
   final bool showFilter;
 
-  const LaporanInsidentilListScreen({super.key, this.showFilter = false});
+  const LaporanInsidentilListScreen({super.key, this.showFilter = true});
 
   Future<void> _onRefresh(BuildContext context) async {
     final bloc = context.read<MyComplaintListBloc>();

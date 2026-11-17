@@ -97,7 +97,7 @@ class _FakeComplaintRepository implements ComplaintRepository {
 void main() {
   Widget buildTestApp({
     required MyComplaintListBloc bloc,
-    bool showFilter = false,
+    bool showFilter = true,
   }) {
     final router = GoRouter(
       initialLocation: AppRouter.laporanInsidentilPath,
@@ -147,9 +147,9 @@ void main() {
     );
     addTearDown(bloc.close);
 
-    // 1. Loading state & filter hidden by default
+    // 1. Loading state & filter visible by default
     await tester.pumpWidget(buildTestApp(bloc: bloc));
-    expect(find.byIcon(Icons.tune_rounded), findsNothing);
+    expect(find.byIcon(Icons.tune_rounded), findsOneWidget);
     bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
     await tester.pump();
     expect(find.byType(ReportCardShimmerList), findsOneWidget);
