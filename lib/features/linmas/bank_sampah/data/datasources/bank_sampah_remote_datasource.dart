@@ -130,7 +130,10 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     }
     if (photo != null) {
       FileSecurityUtils.validateImageFile(photo);
-      final compressedPhoto = await ImageCompressHelper.compressToWebp(photo);
+      final compressedPhoto = await ImageCompressHelper.compressToWebp(
+        photo,
+        resolveDeviceLocationIfMissing: true,
+      );
       final fileName = compressedPhoto.path.split('/').last;
       map['photo'] = await MultipartFile.fromFile(
         compressedPhoto.path,

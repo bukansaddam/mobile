@@ -151,7 +151,10 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
 
     // shortcut: nama field foto KTP diasumsikan `ktp_photo`, sesuaikan bila API berbeda.
     if (ktpPhoto != null) {
-      final preparedKtp = await ImageCompressHelper.compressToWebp(ktpPhoto);
+      final preparedKtp = await ImageCompressHelper.compressToWebp(
+        ktpPhoto,
+        watermark: false,
+      );
       requestData['ktp_photo'] = await MultipartFile.fromFile(
         preparedKtp.path,
         filename: preparedKtp.path.split('/').last,

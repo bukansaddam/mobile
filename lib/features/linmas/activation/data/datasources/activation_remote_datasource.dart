@@ -128,20 +128,6 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     return DioMediaType('image', extension == 'jpg' ? 'jpeg' : extension);
   }
 
-  Future<List<File>> _prepareAttachments(List<File> attachments) async {
-    final prepared = <File>[];
-    for (final file in attachments) {
-      if (FileSecurityUtils.isVideoPath(file.path)) {
-        FileSecurityUtils.validateVideoFile(file);
-        prepared.add(file);
-      } else {
-        FileSecurityUtils.validateImageFile(file);
-        prepared.add(await ImageCompressHelper.compressToWebp(file));
-      }
-    }
-    return prepared;
-  }
-
   // Unggah lampiran jauh lebih lama dari timeout default 30 detik.
   static final Options _uploadOptions = Options(
     sendTimeout: const Duration(minutes: 10),
@@ -232,7 +218,10 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     String? receiverName,
   }) async {
     try {
-      final prepared = await _prepareAttachments(attachments);
+      final prepared = await ImageCompressHelper.prepareMediaFiles(
+        attachments,
+        resolveDeviceLocationIfMissing: true,
+      );
 
       final response = await handleRequest<ActivationSubmissionResponseModel>(
         () async => dio.post(

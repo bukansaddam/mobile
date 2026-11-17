@@ -66,7 +66,13 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     bool isInsidentil = false,
   }) async {
     try {
-      final prepared = await _prepareAttachments(attachments);
+      final prepared = await ImageCompressHelper.prepareMediaFiles(
+        attachments,
+        latitude: latitude,
+        longitude: longitude,
+        address: address,
+        resolveDeviceLocationIfMissing: address.trim().isEmpty,
+      );
       final endpoint = isInsidentil
           ? ApiConstants.incidentReports
           : ApiConstants.reports;
@@ -225,20 +231,6 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       throw Exception(response.message ?? 'Gagal memuat detail pengaduan');
     }
     return response.data ?? const ComplaintReportDetailModel();
-  }
-
-  Future<List<File>> _prepareAttachments(List<File> attachments) async {
-    final prepared = <File>[];
-    for (final file in attachments) {
-      if (FileSecurityUtils.isVideoPath(file.path)) {
-        FileSecurityUtils.validateVideoFile(file);
-        prepared.add(file);
-      } else {
-        FileSecurityUtils.validateImageFile(file);
-        prepared.add(await ImageCompressHelper.compressToWebp(file));
-      }
-    }
-    return prepared;
   }
 
   Future<FormData> _createFormData({

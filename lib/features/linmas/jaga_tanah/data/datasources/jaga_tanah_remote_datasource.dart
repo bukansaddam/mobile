@@ -102,7 +102,13 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     int? subCategoryId,
   }) async {
     try {
-      final prepared = await _prepareAttachments(attachments);
+      final prepared = await ImageCompressHelper.prepareMediaFiles(
+        attachments,
+        latitude: latitude,
+        longitude: longitude,
+        address: address,
+        resolveDeviceLocationIfMissing: address.trim().isEmpty,
+      );
       final response = await handleRequest<ComplaintReportModel>(
         () async => dio.post(
           ApiConstants.jagaTanahReports,
@@ -210,20 +216,6 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
       sortOrder: (map['sort_order'] as num?)?.toInt() ?? 0,
       children: List<JagaTanahCategoryEntity>.unmodifiable(parsedChildren),
     );
-  }
-
-  Future<List<File>> _prepareAttachments(List<File> attachments) async {
-    final prepared = <File>[];
-    for (final file in attachments) {
-      if (FileSecurityUtils.isVideoPath(file.path)) {
-        FileSecurityUtils.validateVideoFile(file);
-        prepared.add(file);
-      } else {
-        FileSecurityUtils.validateImageFile(file);
-        prepared.add(await ImageCompressHelper.compressToWebp(file));
-      }
-    }
-    return prepared;
   }
 
   Future<FormData> _createFormData({
