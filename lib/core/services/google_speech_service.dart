@@ -68,9 +68,7 @@ class GoogleSpeechService {
       return _cachedAuthData!;
     } catch (e, stack) {
       AppLogger.e('Failed to get Google Cloud access token', e, stack);
-      throw UnsupportedError(
-        'Kredensial Service Account lokal telah dihapus demi keamanan arsitektur. Fitur transkripsi suara dialihkan melalui backend proxy.',
-      );
+      rethrow;
     }
   }
 
@@ -187,9 +185,7 @@ class GoogleSpeechService {
       }
     } catch (e, stack) {
       AppLogger.e('Error streaming audio to Google Speech API', e, stack);
-      throw UnsupportedError(
-        'Kredensial Service Account lokal telah dihapus demi keamanan arsitektur. Fitur transkripsi suara dialihkan melalui backend proxy.',
-      );
+      rethrow;
     }
   }
 }

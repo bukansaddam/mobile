@@ -166,7 +166,7 @@ Future<void> init() async {
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
   sl.registerLazySingleton<GoogleSpeechService>(
-    () => GoogleSpeechService(dio: sl()),
+    () => GoogleSpeechService(),
   );
   sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());
   final audioAlarmService = AudioAlarmService();
