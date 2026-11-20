@@ -10,7 +10,6 @@ import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_filter_sheet.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_search_bar.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
-import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -47,7 +46,7 @@ class JagaTanahListScreen extends HookWidget {
 
   void _openDetail(BuildContext context, ComplaintItem item) {
     FocusManager.instance.primaryFocus?.unfocus();
-    ComplaintDetailPage.show(context, item);
+    AppRouter.toJagaTanahDetail(context, item);
   }
 
   void _openFilterSheet(BuildContext context) {

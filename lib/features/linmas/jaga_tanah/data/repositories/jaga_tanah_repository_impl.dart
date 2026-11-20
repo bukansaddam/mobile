@@ -5,6 +5,7 @@ import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
 import 'package:akar/utils/app_logger.dart';
@@ -32,6 +33,19 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
     } catch (e, s) {
       AppLogger.e('[JAGA_TANAH_REPO] Error getMyReports', e, s);
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, JagaTanahDetailEntity>> getReportDetail(
+    String id,
+  ) async {
+    try {
+      final model = await remoteDatasource.getReportDetail(id);
+      return Right(model.entity);
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_REPO] Error getReportDetail', e, s);
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 

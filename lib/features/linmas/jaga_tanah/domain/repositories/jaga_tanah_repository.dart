@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 
 abstract class JagaTanahRepository {
@@ -11,6 +12,8 @@ abstract class JagaTanahRepository {
     String? status,
     String? category,
   });
+
+  Future<Either<Failure, JagaTanahDetailEntity>> getReportDetail(String id);
 
   Future<Either<Failure, List<JagaTanahCategoryEntity>>> getCategories();
 

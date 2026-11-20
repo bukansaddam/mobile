@@ -6,12 +6,16 @@ import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/errors/exceptions.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
+import 'package:akar/features/linmas/jaga_tanah/data/models/jaga_tanah_detail_model.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_detail_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tanah_reports_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:dio/dio.dart';
@@ -71,6 +75,13 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
   );
   Either<Failure, ComplaintReportEntity> createResult = const Right(
     ComplaintReportEntity(id: '89', ticketNumber: 'PGD-2026-00089'),
+  );
+  Either<Failure, JagaTanahDetailEntity> detailResult = const Right(
+    JagaTanahDetailEntity(
+      id: '89',
+      ticketNumber: 'JGT-2611200001',
+      title: 'Laporan Tanah 89',
+    ),
   );
 
   int listCalls = 0;
@@ -133,6 +144,18 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
   Future<Either<Failure, List<JagaTanahCategoryEntity>>> getCategories() async {
     categoryCalls++;
     return categoriesResult;
+  }
+
+  String? lastDetailId;
+  int detailCalls = 0;
+
+  @override
+  Future<Either<Failure, JagaTanahDetailEntity>> getReportDetail(
+    String id,
+  ) async {
+    detailCalls++;
+    lastDetailId = id;
+    return detailResult;
   }
 
   @override
@@ -626,6 +649,263 @@ void main() {
             ),
           ),
         );
+      },
+    );
+  });
+
+  group('JagaTanahDetailModel.fromJson', () {
+    test(
+      'mengurai struktur nested detail Jaga Tanah lengkap dengan bpn_feedback dan timeline',
+      () {
+        final detail = JagaTanahDetailModel.fromJson({
+          'report': {
+            'id': 89,
+            'ticketNumber': 'JGT-2611200001',
+            'title': 'Lahan Kas Desa Sukomulyo',
+            'description': 'Sebagian lahan semak belukar',
+            'status': 'bpn_forwarded',
+            'statusLabel': 'Diteruskan ke BPN',
+            'category': {
+              'id': 22,
+              'label': 'Kabupaten/Kota',
+              'parent': {'id': 21, 'label': 'Tanah Pemda'},
+            },
+            'reportedAt': '2026-11-20T08:00:00+00:00',
+            'escalation_level': 1,
+          },
+          'location': {
+            'address': '± 500 m arah barat Balai Desa',
+            'province': 'Jawa Timur',
+            'regency': 'Kab. Mojokerto',
+            'district': 'Ngoro',
+            'village': 'Sukomulyo',
+            'latitude': -7.983921,
+            'longitude': 112.621508,
+            'object_shape': 'Satu bidang tanah',
+            'estimated_area': '> 5 - 10 Ha',
+            'location_access': 'Jalan lingkungan',
+          },
+          'condition': {
+            'field_condition': 'Sebagian dimanfaatkan',
+            'dominant_land_cover': 'Semak belukar',
+            'visible_usage': 'Perkebunan',
+            'usage_level': 'Rendah (< 25% dari luas)',
+            'maintenance_status': 'Tidak terpelihara (tidak ada aktivitas)',
+            'condition_info_source': 'Pengamatan langsung oleh Linmas',
+          },
+          'tenure': {
+            'tenure_info_source': 'Papan di lokasi',
+            'possession_markers': 'Ada papan, tanpa pagar',
+            'conflict_info': 'Tidak ada informasi',
+          },
+          'verification': {
+            'verifier_unit': 'DPC Kab. Mojokerto',
+            'verification_method': 'both',
+            'verification_summary': 'Titik sesuai batas fisik.',
+          },
+          'follow_up': {
+            'follow_up_decision': 'bpn',
+            'follow_up_notes': 'Koordinasi cek sertifikat ke Kantah.',
+            'bpn_action_type': 'cek_status_hak',
+          },
+          'bpn_feedbacks': [
+            {
+              'source_institution': 'BPN Kab. Mojokerto',
+              'land_right_type': 'HP',
+              'land_right_number_nib': 'HP-12.01.00045',
+              'bpn_reference_number': 'BPN/2026/89',
+              'status': 'certificate_checked',
+              'summary': 'Tercatat atas nama Pemkab.',
+            },
+          ],
+          'attachments': [
+            {
+              'id': 12,
+              'mime_type': 'image/jpeg',
+              'file_url': '/api/jaga-tanah-reports/attachments/12/file',
+            },
+          ],
+          'timeline': [
+            {
+              'type': 'submitted',
+              'description': 'Laporan Jaga Tanah dikirim.',
+              'actor': {'name': 'Petugas A'},
+              'created_at': '2026-11-20T08:00:00+00:00',
+            },
+          ],
+        }).entity;
+
+        expect(detail.id, '89');
+        expect(detail.ticketNumber, 'JGT-2611200001');
+        expect(detail.category, 'Tanah Pemda');
+        expect(detail.subCategory, 'Kabupaten/Kota');
+        expect(detail.escalationLevel, 1);
+        expect(detail.province, 'Jawa Timur');
+        expect(detail.locationAccess, 'Jalan lingkungan');
+        expect(detail.fieldCondition, 'Sebagian dimanfaatkan');
+        expect(detail.tenureInfoSource, 'Papan di lokasi');
+        expect(detail.verifierUnit, 'DPC Kab. Mojokerto');
+        expect(detail.landRightType, 'HP');
+        expect(detail.landRightNumberNib, 'HP-12.01.00045');
+        expect(
+          detail.attachments.single.url,
+          '${ApiConstants.baseUrl}/api/jaga-tanah-reports/attachments/12/file',
+        );
+        expect(detail.timeline.single.actorName, 'Petugas A');
+      },
+    );
+
+    test('mengurai payload flat snake_case dan fallback URL lampiran ID', () {
+      final detail = JagaTanahDetailModel.fromJson({
+        'id': 90,
+        'ticket_number': 'JGT-2611200002',
+        'title': 'Tanah Kas Desa Barat',
+        'status': 'verified',
+        'category': 'Tanah Kas Desa',
+        'address': 'Dusun Krajan',
+        'latitude': '-7.500000',
+        'longitude': '112.100000',
+        'location_access': 'Jalan aspal / utama',
+        'attachments': [
+          {'id': 55, 'file_name': 'video_bukti.mp4'},
+        ],
+      }).entity;
+
+      expect(detail.id, '90');
+      expect(detail.ticketNumber, 'JGT-2611200002');
+      expect(detail.latitude, closeTo(-7.5, 0.0001));
+      expect(detail.longitude, closeTo(112.1, 0.0001));
+      expect(detail.locationAccess, 'Jalan aspal / utama');
+      expect(detail.attachments.single.isVideo, isTrue);
+      expect(
+        detail.attachments.single.url,
+        '${ApiConstants.baseUrl}/api/jaga-tanah-reports/attachments/55/file',
+      );
+    });
+
+    test('mengurai wrapper spatialAndCondition dari response detail live', () {
+      final detail = JagaTanahDetailModel.fromJson({
+        'report': {
+          'id': 91,
+          'ticketNumber': 'JGT-2611200003',
+          'title': 'Tanah Fasos RW 04',
+          'status': 'submitted',
+        },
+        'spatialAndCondition': {
+          'objectShape': null,
+          'estimatedArea': null,
+          'locationAccess': 'Jalan tanah / setapak',
+          'fieldCondition': 'Sebagian dimanfaatkan',
+          'dominantLandCover': 'Bangunan permanen',
+          'visibleUsage': 'Fasilitas umum / sosial',
+          'usageLevel': 'Sedang (25% - 75% dari luas)',
+          'maintenanceStatus': 'Kurang terpelihara',
+          'conditionInfoSource': 'Informasi perangkat desa / kelurahan',
+          'tenureInfoSource': 'Papan di lokasi',
+          'possessionMarkers': 'Ada pagar / patok, tanpa papan',
+          'conflictInfo': 'Ada indikasi konflik / sengketa',
+        },
+      }).entity;
+
+      expect(detail.objectShape, isNull);
+      expect(detail.estimatedArea, isNull);
+      expect(detail.locationAccess, 'Jalan tanah / setapak');
+      expect(detail.fieldCondition, 'Sebagian dimanfaatkan');
+      expect(detail.dominantLandCover, 'Bangunan permanen');
+      expect(detail.visibleUsage, 'Fasilitas umum / sosial');
+      expect(detail.usageLevel, 'Sedang (25% - 75% dari luas)');
+      expect(detail.maintenanceStatus, 'Kurang terpelihara');
+      expect(
+        detail.conditionInfoSource,
+        'Informasi perangkat desa / kelurahan',
+      );
+      expect(detail.tenureInfoSource, 'Papan di lokasi');
+      expect(detail.possessionMarkers, 'Ada pagar / patok, tanpa papan');
+      expect(detail.conflictInfo, 'Ada indikasi konflik / sengketa');
+    });
+  });
+
+  group('JagaTanahRemoteDatasourceImpl.getReportDetail', () {
+    test(
+      'mengambil detail dari GET /api/jaga-tanah-reports/{id} dan melempar NotFoundException pada 404',
+      () async {
+        RequestOptions? capturedOptions;
+        var returnNotFound = false;
+        final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+          ..httpClientAdapter = _FakeDioAdapter((options) async {
+            capturedOptions = options;
+            if (returnNotFound) {
+              return ResponseBody.fromString(
+                jsonEncode({'success': false, 'message': 'Laporan tidak ada.'}),
+                404,
+                headers: {
+                  Headers.contentTypeHeader: [Headers.jsonContentType],
+                },
+              );
+            }
+            return ResponseBody.fromString(
+              jsonEncode({
+                'success': true,
+                'message': 'OK',
+                'data': {
+                  'id': 89,
+                  'ticketNumber': 'JGT-2611200001',
+                  'title': 'Okupasi Lahan',
+                  'status': 'submitted',
+                  'field_condition': 'Terbengkalai / tidak dimanfaatkan',
+                },
+              }),
+              200,
+              headers: {
+                Headers.contentTypeHeader: [Headers.jsonContentType],
+              },
+            );
+          });
+        final datasource = JagaTanahRemoteDatasourceImpl(dio: dio);
+
+        final detailModel = await datasource.getReportDetail('89');
+        expect(capturedOptions!.method, 'GET');
+        expect(capturedOptions!.path, ApiConstants.jagaTanahReportDetail('89'));
+        expect(detailModel.entity.ticketNumber, 'JGT-2611200001');
+        expect(
+          detailModel.entity.fieldCondition,
+          'Terbengkalai / tidak dimanfaatkan',
+        );
+
+        returnNotFound = true;
+        await expectLater(
+          datasource.getReportDetail('999'),
+          throwsA(isA<NotFoundException>()),
+        );
+      },
+    );
+  });
+
+  group('JagaTanahDetailBloc', () {
+    test(
+      'memuat detail dan mempertahankan detail lama saat refresh gagal',
+      () async {
+        final repository = _FakeJagaTanahRepository();
+        final bloc = JagaTanahDetailBloc(
+          getReportDetail: GetJagaTanahDetailUsecase(repository),
+        );
+        addTearDown(bloc.close);
+
+        bloc.add(const FetchJagaTanahDetailEvent('89'));
+        var state = await bloc.stream.firstWhere(
+          (s) => s.status == JagaTanahDetailStatus.loaded,
+        );
+        expect(repository.lastDetailId, '89');
+        expect(state.detail?.ticketNumber, 'JGT-2611200001');
+
+        repository.detailResult = const Left(ServerFailure('Jaringan putus'));
+        bloc.add(const FetchJagaTanahDetailEvent('89', isRefresh: true));
+        state = await bloc.stream.firstWhere(
+          (s) => s.status == JagaTanahDetailStatus.failure,
+        );
+        expect(state.detail?.ticketNumber, 'JGT-2611200001');
+        expect(state.errorMessage, 'Jaringan putus');
+        expect(state.isRefreshing, isFalse);
       },
     );
   });

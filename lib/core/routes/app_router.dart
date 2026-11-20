@@ -18,8 +18,10 @@ import 'package:akar/features/linmas/demografi/organisasi/presentation/pages/add
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/bank_sampah_list_screen.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/pages/add_bank_sampah_report_screen.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/create_jaga_tanah_page.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_detail_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_list_screen.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
 import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
@@ -87,6 +89,7 @@ class AppRouter {
   static const String tambahLaporanInsidentil = 'tambahLaporanInsidentil';
   static const String jagaTanah = 'jagaTanah';
   static const String tambahJagaTanah = 'tambahJagaTanah';
+  static const String jagaTanahDetail = 'jagaTanahDetail';
 
   // Masyarakat Routes
   static const String masyarakatMain = 'masyarakatMain';
@@ -116,6 +119,7 @@ class AppRouter {
       '/tambah-laporan-insidentil';
   static const String jagaTanahPath = '/jaga-tanah';
   static const String tambahJagaTanahPath = '/tambah-jaga-tanah';
+  static const String jagaTanahDetailPath = '/jaga-tanah/detail';
 
   static const String masyarakatMainPath = '/masyarakat/main';
   static const String complaintDetailPath = '/masyarakat/complaint-detail';
@@ -429,6 +433,42 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: jagaTanahDetailPath,
+        name: jagaTanahDetail,
+        pageBuilder: (context, state) {
+          final extra = state.extra;
+          final ComplaintItem? item = extra is ComplaintItem ? extra : null;
+          final String reportId = item != null
+              ? (item.reportId ?? '')
+              : (extra?.toString() ?? '');
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: BlocProvider(
+              create: (_) {
+                final bloc = sl<JagaTanahDetailBloc>();
+                if (reportId.isNotEmpty) {
+                  bloc.add(FetchJagaTanahDetailEvent(reportId));
+                }
+                return bloc;
+              },
+              child: JagaTanahDetailPage(reportId: reportId, initialItem: item),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: animation.drive(
+                      Tween<Offset>(
+                        begin: const Offset(1, 0),
+                        end: Offset.zero,
+                      ).chain(CurveTween(curve: Curves.easeOutCubic)),
+                    ),
+                    child: child,
+                  );
+                },
+          );
+        },
+      ),
+      GoRoute(
         path: activationDetailPath,
         name: activationDetail,
         builder: (context, state) {
@@ -611,6 +651,13 @@ class AppRouter {
 
   static Future<bool?> toTambahJagaTanah(BuildContext context) {
     return context.pushNamed<bool>(tambahJagaTanah);
+  }
+
+  static Future<void> toJagaTanahDetail(
+    BuildContext context,
+    ComplaintItem item,
+  ) {
+    return context.pushNamed(jagaTanahDetail, extra: item);
   }
 
   static bool _isNavigatingToEditProfile = false;

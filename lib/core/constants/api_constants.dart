@@ -292,6 +292,7 @@ class ApiConstants {
     178,
     125,
   ]);
+  static String jagaTanahReportDetail(dynamic id) => '$jagaTanahReports/$id';
   static final String reportsMe = EndpointSecurity.decode(const <int>[
     117,
     79,

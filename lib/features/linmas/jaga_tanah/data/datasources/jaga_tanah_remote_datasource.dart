@@ -5,7 +5,9 @@ import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
+import 'package:akar/features/linmas/jaga_tanah/data/models/jaga_tanah_detail_model.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -17,6 +19,8 @@ abstract class JagaTanahRemoteDatasource {
     String? status,
     String? category,
   });
+
+  Future<JagaTanahDetailModel> getReportDetail(String id);
 
   Future<List<JagaTanahCategoryEntity>> getCategories();
 
@@ -88,6 +92,30 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
         e.stackTrace,
       );
       throw Exception(ErrorUtils.parseErrorMessage(e));
+    }
+  }
+
+  @override
+  Future<JagaTanahDetailModel> getReportDetail(String id) async {
+    try {
+      final response = await handleRequest<JagaTanahDetailModel>(
+        () => dio.get(ApiConstants.jagaTanahReportDetail(id)),
+        fromJson: (json) => JagaTanahDetailModel.fromJson(
+          json is Map ? Map<String, dynamic>.from(json) : const {},
+        ),
+      );
+
+      if (!response.success) {
+        throwResponseError(
+          response,
+          fallbackMessage: 'Gagal memuat detail laporan Jaga Tanah',
+        );
+      }
+      return response.data ??
+          const JagaTanahDetailModel(JagaTanahDetailEntity());
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_DS] Error in getReportDetail: $e', e, s);
+      rethrow;
     }
   }
 

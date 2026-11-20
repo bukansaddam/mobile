@@ -3,17 +3,23 @@ import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/routes/app_router.dart';
+import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_detail_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tanah_reports_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/create_jaga_tanah_page.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_detail_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_list_screen.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_attachment_section.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_detail_status_banner.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_review_step.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_step_indicator.dart';
@@ -118,6 +124,23 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     return categoriesResponse;
   }
 
+  Either<Failure, JagaTanahDetailEntity> detailResponse = const Right(
+    JagaTanahDetailEntity(
+      id: '89',
+      ticketNumber: 'JGT-2611200001',
+      title: 'Laporan Tanah 89',
+    ),
+  );
+  int detailCalls = 0;
+
+  @override
+  Future<Either<Failure, JagaTanahDetailEntity>> getReportDetail(
+    String id,
+  ) async {
+    detailCalls++;
+    return detailResponse;
+  }
+
   @override
   Future<Either<Failure, ComplaintReportEntity>> createReport({
     required String title,
@@ -201,11 +224,11 @@ void main() {
           ),
         ),
         GoRoute(
-          path: AppRouter.complaintDetailPath,
-          name: AppRouter.complaintDetail,
+          path: AppRouter.jagaTanahDetailPath,
+          name: AppRouter.jagaTanahDetail,
           builder: (context, state) {
             final item = state.extra as ComplaintItem;
-            return Scaffold(body: Center(child: Text('Detail ${item.id}')));
+            return Scaffold(body: Center(child: Text('Detail JGT ${item.id}')));
           },
         ),
       ],
@@ -340,10 +363,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(repository.fetchCalls, callsBeforeFab + 1);
 
-      // 7. Tap item opens detail route
+      // 7. Tap item opens Jaga Tanah detail route
       await tester.tap(find.text('Okupasi lahan pemda'));
       await tester.pumpAndSettle();
-      expect(find.text('Detail PGD-2026-00102'), findsOneWidget);
+      expect(find.text('Detail JGT PGD-2026-00102'), findsOneWidget);
     },
   );
 
@@ -942,6 +965,170 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Laporan Terkirim'), findsNothing);
       expect(popResult, isTrue);
+    },
+  );
+
+  testWidgets(
+    'JagaTanahDetailPage menampilkan loading, error+retry, serta seluruh isi laporan Jaga Tanah aman di 320x640 dan zoom 200%',
+    (tester) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      final repository = _FakeJagaTanahRepository()
+        ..detailResponse = const Left(ServerFailure('Server gangguan'));
+      final bloc = JagaTanahDetailBloc(
+        getReportDetail: GetJagaTanahDetailUsecase(repository),
+      );
+      addTearDown(bloc.close);
+
+      await tester.binding.setSurfaceSize(const Size(360, 780));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider<JagaTanahDetailBloc>.value(
+            value: bloc,
+            child: JagaTanahDetailPage(
+              reportId: '89',
+              mapPreviewBuilder: (_, center) => Container(
+                key: const ValueKey('detail_fake_map'),
+                alignment: Alignment.center,
+                child: Text(
+                  'Pin ${center.latitude.toStringAsFixed(3)}, ${center.longitude.toStringAsFixed(3)}',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      bloc.add(const FetchJagaTanahDetailEvent('89'));
+      await tester.pumpAndSettle();
+      expect(find.text('Detail Laporan Jaga Tanah'), findsOneWidget);
+      expect(find.text('Gagal Memuat Detail Laporan'), findsOneWidget);
+      expect(find.text('Server gangguan'), findsOneWidget);
+
+      repository.detailResponse = Right(
+        JagaTanahDetailEntity(
+          id: '89',
+          ticketNumber: 'JGT-2611200001',
+          title: 'Lahan Kas Desa Sukomulyo Belum Terpelihara',
+          description: 'Sebagian lahan ditumbuhi semak belukar.',
+          status: 'bpn_forwarded',
+          statusLabel: 'Diteruskan ke BPN',
+          category: 'Tanah Pemda',
+          subCategory: 'Kabupaten/Kota',
+          reportedAt: DateTime(2026, 11, 20, 15, 0),
+          escalationLevel: 1,
+          address: '± 500 m arah barat Balai Desa Sukomulyo',
+          province: 'Jawa Timur',
+          regency: 'Kab. Mojokerto',
+          district: 'Ngoro',
+          village: 'Sukomulyo',
+          latitude: -7.983921,
+          longitude: 112.621508,
+          objectShape: 'Satu bidang tanah',
+          estimatedArea: '> 5 - 10 Ha',
+          locationAccess: 'Jalan lingkungan',
+          fieldCondition: 'Sebagian dimanfaatkan',
+          dominantLandCover: 'Semak belukar',
+          visibleUsage: 'Perkebunan',
+          usageLevel: 'Rendah (< 25% dari luas)',
+          maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
+          conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+          tenureInfoSource: 'Papan di lokasi',
+          possessionMarkers: 'Ada papan, tanpa pagar',
+          conflictInfo: 'Tidak ada informasi',
+          verifierUnit: 'DPC Kab. Mojokerto',
+          verificationMethod: 'both',
+          verificationSummary: 'Titik sesuai batas fisik.',
+          followUpDecision: 'bpn',
+          followUpNotes: 'Koordinasi cek sertifikat ke Kantah.',
+          bpnActionType: 'cek_status_hak',
+          bpnReferenceNumber: 'BPN/2026/89',
+          sourceInstitution: 'BPN Kab. Mojokerto',
+          landRightType: 'HP',
+          landRightNumberNib: 'HP-12.01.00045',
+          bpnFeedbackStatus: 'certificate_checked',
+          bpnFeedbackSummary: 'Tercatat atas nama Pemkab.',
+          attachments: const [
+            ComplaintAttachmentEntity(
+              mimeType: 'image/jpeg',
+              url: '/tmp/non_existent_detail.jpg',
+            ),
+            ComplaintAttachmentEntity(
+              mimeType: 'video/mp4',
+              url: '/tmp/non_existent_detail.mp4',
+            ),
+          ],
+          timeline: [
+            ComplaintTimelineEntity(
+              type: 'submitted',
+              description: 'Laporan dikirim oleh petugas.',
+              actorName: 'Budi Santoso',
+              createdAt: DateTime(2026, 11, 20, 15, 0),
+            ),
+          ],
+        ),
+      );
+
+      await tester.tap(find.text('Coba Lagi'));
+      await tester.pumpAndSettle();
+      expect(repository.detailCalls, 2);
+
+      // Pastikan seluruh seksi & isi Jaga Tanah tampil dan copy Dumas tidak muncul
+      expect(find.text('Detail Pengaduan'), findsNothing);
+      expect(find.text('Status Pengaduan'), findsNothing);
+      expect(find.text('Status Laporan'), findsOneWidget);
+      expect(find.text('Diteruskan ke BPN'), findsNWidgets(2));
+      expect(find.text('JGT-2611200001'), findsNothing);
+      expect(find.text('Tanah Pemda • Kabupaten/Kota'), findsNothing);
+      expect(find.text('Eskalasi Level 1'), findsNothing);
+      expect(find.text('Tanah Pemda'), findsOneWidget);
+      expect(find.text('Kabupaten/Kota'), findsNWidgets(2));
+      final bannerContainer = tester.widget<Container>(
+        find
+            .descendant(
+              of: find.byType(JagaTanahDetailStatusBanner),
+              matching: find.byType(Container),
+            )
+            .first,
+      );
+      final bannerDecoration = bannerContainer.decoration as BoxDecoration;
+      expect(bannerDecoration.color, AppColors.primaryLight);
+
+      expect(find.text('Informasi Laporan'), findsOneWidget);
+      expect(find.text('Lokasi & Data Spasial'), findsOneWidget);
+      expect(find.byKey(const ValueKey('detail_fake_map')), findsOneWidget);
+      expect(find.text('Jawa Timur'), findsOneWidget);
+      expect(find.text('Jalan lingkungan'), findsOneWidget);
+      expect(find.text('2 media'), findsOneWidget);
+
+      expect(find.text('Kondisi Penggunaan & Pemanfaatan'), findsOneWidget);
+      expect(find.text('Sebagian dimanfaatkan'), findsOneWidget);
+      expect(find.text('Semak belukar'), findsOneWidget);
+      expect(find.text('Pengamatan langsung oleh Linmas'), findsOneWidget);
+
+      expect(find.text('Informasi Hak & Penguasaan'), findsOneWidget);
+      expect(find.text('Papan di lokasi'), findsOneWidget);
+      expect(find.text('Ada papan, tanpa pagar'), findsOneWidget);
+
+      expect(find.text('Verifikasi & Tindak Lanjut'), findsOneWidget);
+      expect(find.text('DPC Kab. Mojokerto'), findsOneWidget);
+      expect(find.text('Hubungi Pelapor & Cek Lapangan'), findsOneWidget);
+      expect(find.text('HP-12.01.00045'), findsOneWidget);
+
+      expect(find.text('Perkembangan Status'), findsOneWidget);
+      expect(find.text('Oleh: Budi Santoso'), findsOneWidget);
+
+      // Uji responsivitas 320x640, 800x1024, dan zoom teks 200%
+      for (final size in const [Size(320, 640), Size(800, 1024)]) {
+        await tester.binding.setSurfaceSize(size);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      }
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      await tester.binding.setSurfaceSize(const Size(320, 640));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
     },
   );
 }

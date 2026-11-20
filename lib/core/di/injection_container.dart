@@ -93,8 +93,10 @@ import 'package:akar/features/linmas/jaga_tanah/data/repositories/jaga_tanah_rep
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_detail_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tanah_reports_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 
 // Member Dashboard
@@ -165,9 +167,7 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
-  sl.registerLazySingleton<GoogleSpeechService>(
-    () => GoogleSpeechService(),
-  );
+  sl.registerLazySingleton<GoogleSpeechService>(() => GoogleSpeechService());
   sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());
   final audioAlarmService = AudioAlarmService();
   sl.registerLazySingleton<AudioAlarmService>(() => audioAlarmService);
@@ -410,6 +410,9 @@ Future<void> init() async {
   sl.registerLazySingleton<CreateJagaTanahReportUsecase>(
     () => CreateJagaTanahReportUsecase(sl()),
   );
+  sl.registerLazySingleton<GetJagaTanahDetailUsecase>(
+    () => GetJagaTanahDetailUsecase(sl()),
+  );
 
   // BLoCs & Cubits
   sl.registerLazySingleton<AuthBloc>(
@@ -535,6 +538,9 @@ Future<void> init() async {
   );
   sl.registerFactory<CreateJagaTanahBloc>(
     () => CreateJagaTanahBloc(createReport: sl(), getCategories: sl()),
+  );
+  sl.registerFactory<JagaTanahDetailBloc>(
+    () => JagaTanahDetailBloc(getReportDetail: sl()),
   );
   sl.registerFactory<LocationPickerCubit>(
     () => LocationPickerCubit(
