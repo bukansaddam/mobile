@@ -1,13 +1,14 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_bar_notification_button.dart';
 import 'package:akar/core/widgets/app_logo_badge.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_screen.dart';
 import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen.dart';
 import 'package:akar/features/linmas/home/presentation/pages/home_screen.dart';
-import 'package:akar/features/linmas/home/presentation/widgets/notification_modal.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/tracking_config_modal.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:akar/features/profile/presentation/pages/linmas_profile_screen.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
@@ -25,7 +26,7 @@ class MainScreen extends StatefulWidget {
   const MainScreen({
     super.key,
     this.isExclusiveModeEnabled = kDebugMode,
-    this.showNotificationButton = false,
+    this.showNotificationButton = true,
   });
 
   @override
@@ -34,7 +35,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentTabIndex = 0;
-  bool _hasUnreadNotification = true;
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
 
@@ -192,65 +192,13 @@ class _MainScreenState extends State<MainScreen> {
             ),
             actions: [
               if (widget.showNotificationButton)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            if (_hasUnreadNotification) {
-                              setState(() {
-                                _hasUnreadNotification = false;
-                              });
-                            }
-                            NotificationModalSheet.show(context);
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 48,
-                            minHeight: 48,
-                          ),
-                          icon: const Icon(
-                            Icons.notifications_none_rounded,
-                            color: AppColors.textPrimary,
-                            size: 26,
-                          ),
-                          tooltip: 'Notifikasi Kegiatan',
-                        ),
-                        if (_hasUnreadNotification)
-                          Positioned(
-                            top: 4,
-                            right: 4,
-                            child: IgnorePointer(
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.error,
-                                  shape: BoxShape.circle,
-                                ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
-                                child: const Text(
-                                  '5',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                AppBarNotificationButton(
+                  onPressed: () {
+                    _dismissSurveyIfSubmitted(context);
+                    NotificationNavigationHelper.openNotificationCenter(
+                      context,
+                    );
+                  },
                 ),
             ],
           ),

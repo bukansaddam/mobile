@@ -39,6 +39,7 @@ import 'package:akar/features/survey/presentation/pages/survey_screen.dart';
 import 'package:akar/features/survey/presentation/pages/initial_survey_screen.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
+import 'package:akar/features/notifications/presentation/pages/notification_page.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,6 +74,7 @@ class AppRouter {
   static const String initialSurvey = 'initialSurvey';
   static const String emergencyCall = 'emergencyCall';
   static const String emergencyCallPath = '/emergency-call';
+  static const String notifications = 'notifications';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -127,6 +129,7 @@ class AppRouter {
   static const String myComplaintsPath = '/masyarakat/my-complaints';
   static const String surveyPath = '/survey';
   static const String initialSurveyPath = '/initial-survey';
+  static const String notificationsPath = '/notifications';
 
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -267,6 +270,11 @@ class AppRouter {
         path: editProfilePath,
         name: editProfile,
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: notificationsPath,
+        name: notifications,
+        builder: (context, state) => const NotificationPage(),
       ),
       GoRoute(
         path: surveyPath,

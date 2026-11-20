@@ -27,6 +27,8 @@ import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/orga
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_lifecycle_listener.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/utils/app_logger.dart';
 
@@ -81,18 +83,23 @@ class MyApp extends StatelessWidget {
         BlocProvider<BankSampahBloc>(create: (_) => di.sl<BankSampahBloc>()),
         BlocProvider<MainCubit>(create: (_) => di.sl<MainCubit>()),
         BlocProvider<SurveyBloc>(create: (_) => di.sl<SurveyBloc>()),
+        BlocProvider<NotificationBloc>(
+          create: (_) => di.sl<NotificationBloc>(),
+        ),
       ],
-      child: MaterialApp.router(
-        title: AppConstants.appName,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        routerConfig: AppRouter.router,
-        builder: (context, child) {
-          return GestureDetector(
-            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-            child: child,
-          );
-        },
+      child: NotificationLifecycleListener(
+        child: MaterialApp.router(
+          title: AppConstants.appName,
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          routerConfig: AppRouter.router,
+          builder: (context, child) {
+            return GestureDetector(
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              child: child,
+            );
+          },
+        ),
       ),
     );
   }

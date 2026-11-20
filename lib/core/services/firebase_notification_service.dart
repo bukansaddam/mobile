@@ -528,12 +528,30 @@ class FirebaseNotificationService {
         return;
       }
 
-      final type = data['type']?.toString().toLowerCase();
+      final kind = (data['kind'] ?? data['type'])?.toString().toLowerCase();
 
-      switch (type) {
+      if (kind != null && kind.startsWith('jaga_tanah')) {
+        final reportId = data['report_id']?.toString();
+        if (reportId != null && reportId.isNotEmpty) {
+          AppRouter.router.pushNamed(
+            AppRouter.jagaTanahDetail,
+            extra: reportId,
+          );
+        } else {
+          AppRouter.router.pushNamed(AppRouter.notifications);
+        }
+        return;
+      }
+
+      switch (kind) {
         case 'activation':
+        case 'activation_assigned':
+        case 'activation_approval_updated':
         case 'penugasan':
-          final activityId = data['activityId']?.toString() ?? '';
+          final activityId =
+              data['activation_run_id']?.toString() ??
+              data['activityId']?.toString() ??
+              '';
           AppRouter.router.pushNamed(
             AppRouter.activationDetail,
             extra: {'activityId': activityId, 'autoShowInfo': true},
@@ -542,7 +560,12 @@ class FirebaseNotificationService {
 
         case 'complaint':
         case 'pengaduan':
-          AppRouter.router.pushNamed(AppRouter.myComplaints);
+        case 'report_status_update':
+          AppRouter.router.pushNamed(AppRouter.notifications);
+          break;
+
+        case 'emergency_report_status_update':
+          AppRouter.router.pushNamed(AppRouter.notifications);
           break;
 
         case 'panic':
@@ -620,7 +643,7 @@ class FirebaseNotificationService {
           break;
 
         default:
-          AppLogger.i('Unhandled notification payload type: $type');
+          AppLogger.i('Unhandled notification payload type: $kind');
           break;
       }
     } catch (e) {

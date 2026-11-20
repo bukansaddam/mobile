@@ -9,8 +9,7 @@ import 'package:akar/features/masyarakat/home/presentation/pages/home_screen.dar
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_state.dart';
 import 'package:akar/features/masyarakat/main/presentation/widgets/custom_bottom_navbar.dart';
-import 'package:akar/features/masyarakat/notification/data/dummy_notifications.dart';
-import 'package:akar/features/masyarakat/notification/presentation/pages/notification_page.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:akar/features/profile/presentation/pages/masyarakat_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,18 +22,8 @@ class MasyarakatMainScreen extends StatefulWidget {
 }
 
 class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
-  int get _unreadCount => dummyNotifications.where((n) => !n.isRead).length;
-
-  void _handleNotificationTap() async {
-    setState(() {
-      for (var item in dummyNotifications) {
-        item.isRead = true;
-      }
-    });
-    await NotificationPage.show(context);
-    if (mounted) {
-      setState(() {});
-    }
+  void _handleNotificationTap() {
+    NotificationNavigationHelper.openNotificationCenter(context);
   }
 
   Future<void> _openCreateComplaint(BuildContext context) async {
@@ -56,10 +45,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
       child: BlocBuilder<MainCubit, MainState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: CustomAppBar(
-              unreadCount: _unreadCount,
-              onNotificationPressed: _handleNotificationTap,
-            ),
+            appBar: CustomAppBar(onNotificationPressed: _handleNotificationTap),
             body: IndexedStack(
               index: state.selectedIndex,
               children: const [

@@ -1,13 +1,15 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_bar_notification_button.dart';
 import 'package:akar/core/widgets/app_logo_badge.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_alert_banner.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationPressed;
-  final int unreadCount;
+  final int? unreadCount;
   final String? title;
   final String? subtitle;
   final bool showNotificationButton;
@@ -15,10 +17,10 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({
     super.key,
     this.onNotificationPressed,
-    this.unreadCount = 0,
+    this.unreadCount,
     this.title,
     this.subtitle,
-    this.showNotificationButton = false,
+    this.showNotificationButton = true,
   });
 
   @override
@@ -126,66 +128,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
         ),
         actions: [
           if (widget.showNotificationButton)
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    onPressed: widget.onNotificationPressed,
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.grey50,
-                      shape: const CircleBorder(),
-                      side: const BorderSide(
-                        color: Color(0xFFE2E8F0),
-                        width: 1,
-                      ),
-                    ),
-                    icon: const Icon(
-                      Icons.notifications_none_rounded,
-                      color: Color(0xFF0F172A),
-                      size: 22,
-                    ),
-                    tooltip: 'Notifikasi',
+            AppBarNotificationButton(
+              unreadCount: widget.unreadCount,
+              onPressed:
+                  widget.onNotificationPressed ??
+                  () => NotificationNavigationHelper.openNotificationCenter(
+                    context,
                   ),
-                  if (widget.unreadCount > 0)
-                    Positioned(
-                      top: 4,
-                      right: 4,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 1.5,
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 17,
-                          minHeight: 17,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.error,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppColors.white,
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            widget.unreadCount > 99
-                                ? '99+'
-                                : '${widget.unreadCount}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.bold,
-                              height: 1.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
             ),
         ],
       ),
