@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
+import 'package:akar/core/errors/exceptions.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
@@ -66,15 +67,16 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
           return authModel.copyWith(message: response.message);
         }
         return authModel;
-      } else {
-        throw Exception(response.message ?? 'Login gagal');
       }
+      throwResponseError(response, fallbackMessage: 'Login gagal');
+    } on AppException {
+      rethrow;
     } on DioException catch (e) {
       AppLogger.e('[AUTH_DS] DioException: ${e.message}', e, e.stackTrace);
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      throw ErrorUtils.toAppException(e, fallbackMessage: 'Login gagal');
     } catch (e, s) {
       AppLogger.e('[AUTH_DS] Unexpected error: $e', e, s);
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      throw ErrorUtils.toAppException(e, fallbackMessage: 'Login gagal');
     }
   }
 
@@ -85,6 +87,10 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
         () => dio.post(
           ApiConstants.refreshToken,
           data: {'refresh_token': refreshToken},
+          options: Options(
+            sendTimeout: const Duration(seconds: 6),
+            receiveTimeout: const Duration(seconds: 6),
+          ),
         ),
         fromJson: _parseAuthModel,
       );
@@ -92,17 +98,25 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
       if (response.success && response.data != null) {
         return response.data!;
       }
-      throw Exception(response.message ?? 'Refresh token gagal');
+      throwResponseError(response, fallbackMessage: 'Refresh token gagal');
+    } on AppException {
+      rethrow;
     } on DioException catch (e) {
       AppLogger.e(
         '[AUTH_DS] Refresh DioException: ${e.message}',
         e,
         e.stackTrace,
       );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      throw ErrorUtils.toAppException(
+        e,
+        fallbackMessage: 'Refresh token gagal',
+      );
     } catch (e, s) {
       AppLogger.e('[AUTH_DS] Refresh unexpected error: $e', e, s);
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      throw ErrorUtils.toAppException(
+        e,
+        fallbackMessage: 'Refresh token gagal',
+      );
     }
   }
 

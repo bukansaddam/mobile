@@ -13,13 +13,11 @@ class NetworkException extends AppException {
 }
 
 class UnauthorizedException extends AppException {
-  const UnauthorizedException([super.message = 'Unauthorized'])
-    : super(statusCode: 401);
+  const UnauthorizedException(super.message, {super.statusCode = 401});
 }
 
 class ServerException extends AppException {
-  const ServerException([super.message = 'Internal Server Error'])
-    : super(statusCode: 500);
+  const ServerException(super.message, {super.statusCode = 500});
 }
 
 class CacheException extends AppException {

@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:akar/core/errors/exceptions.dart';
+import 'package:akar/core/errors/failures.dart';
 import 'package:dio/dio.dart';
 
 class ErrorUtils {
@@ -9,7 +13,7 @@ class ErrorUtils {
   static String cleanExceptionMessage(String message) {
     var text = message.trim();
     final prefixRegex = RegExp(
-      r'^(_?[A-Za-z0-9_]*Exception|Failure|ServerFailure|DioException(\s*\[[^\]]*\])?):\s*',
+      r'^(_?[A-Za-z0-9_]*(?:Exception|Failure)(\s*\[[^\]]*\])?):\s*',
       caseSensitive: false,
     );
     while (prefixRegex.hasMatch(text)) {
@@ -18,11 +22,124 @@ class ErrorUtils {
     return text;
   }
 
+  /// Apakah error berasal dari kondisi jaringan offline, DNS, atau timeout
+  /// (kecuali kegagalan sertifikat/TLS agar SSL pinning tidak tersamarkan).
+  static bool isNetworkException(Object? error) {
+    if (error == null) return false;
+    if (error is NetworkException) return true;
+    if (error is HandshakeException || error is TlsException) return false;
+    if (error is SocketException ||
+        error is TimeoutException ||
+        error is HttpException) {
+      return true;
+    }
+    if (error is DioException) {
+      final inner = error.error;
+      if (inner is HandshakeException || inner is TlsException) {
+        return false;
+      }
+      switch (error.type) {
+        case DioExceptionType.connectionError:
+        case DioExceptionType.connectionTimeout:
+        case DioExceptionType.sendTimeout:
+        case DioExceptionType.receiveTimeout:
+          return true;
+        case DioExceptionType.unknown:
+          return inner is SocketException ||
+              inner is TimeoutException ||
+              inner is HttpException;
+        case DioExceptionType.badResponse:
+        case DioExceptionType.cancel:
+        case DioExceptionType.badCertificate:
+        case DioExceptionType.transformTimeout:
+          return false;
+      }
+    }
+    return false;
+  }
+
+  /// Memetakan error mentah ke [AppException] terklasifikasi tanpa membuang statusCode.
+  static AppException toAppException(Object error, {String? fallbackMessage}) {
+    if (error is AppException) return error;
+    final msg = parseErrorMessage(error);
+    final resolvedMsg =
+        (msg == 'Terjadi Kesalahan' &&
+            fallbackMessage != null &&
+            fallbackMessage.trim().isNotEmpty)
+        ? fallbackMessage.trim()
+        : msg;
+
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      if (isNetworkException(error)) {
+        return NetworkException(resolvedMsg, statusCode: statusCode);
+      }
+      if (statusCode == 401 || statusCode == 403) {
+        return UnauthorizedException(resolvedMsg, statusCode: statusCode);
+      }
+      if (statusCode == 400 || statusCode == 422) {
+        return ValidationException(resolvedMsg, statusCode: statusCode);
+      }
+      if (statusCode == 404) {
+        return NotFoundException(resolvedMsg);
+      }
+      return ServerException(resolvedMsg, statusCode: statusCode);
+    }
+
+    if (isNetworkException(error)) {
+      return NetworkException(resolvedMsg);
+    }
+    return ServerException(resolvedMsg, statusCode: null);
+  }
+
+  /// Memetakan exception/DioException menjadi [Failure] domain yang terstruktur.
+  static Failure toFailure(Object error, {String? fallbackMessage}) {
+    if (error is UnauthorizedException) {
+      return ServerFailure(error.message, statusCode: error.statusCode ?? 401);
+    }
+    if (error is NetworkException) {
+      return NetworkFailure(error.message, statusCode: error.statusCode);
+    }
+    if (error is ValidationException) {
+      return ValidationFailure(error.message, statusCode: error.statusCode);
+    }
+    if (error is CacheException) {
+      return CacheFailure(error.message, statusCode: error.statusCode);
+    }
+    if (error is AppException) {
+      return ServerFailure(error.message, statusCode: error.statusCode);
+    }
+    if (error is DioException) {
+      return toFailure(
+        toAppException(error, fallbackMessage: fallbackMessage),
+        fallbackMessage: fallbackMessage,
+      );
+    }
+    if (isNetworkException(error)) {
+      return NetworkFailure(parseErrorMessage(error));
+    }
+    final msg = parseErrorMessage(error);
+    return ServerFailure(
+      (msg == 'Terjadi Kesalahan' &&
+              fallbackMessage != null &&
+              fallbackMessage.trim().isNotEmpty)
+          ? fallbackMessage.trim()
+          : msg,
+    );
+  }
+
   /// Mengubah berbagai jenis error/exception (seperti DioException status 500, HTML response,
   /// timeout, dsb) menjadi pesan ringkas yang ramah pengguna.
   /// Jika terjadi error 500 / HTML response / server error, me-return "Terjadi Kesalahan".
   static String parseErrorMessage(dynamic error) {
     if (error == null) return "Terjadi Kesalahan";
+    if (error is AppException) return cleanExceptionMessage(error.message);
+    if (error is TimeoutException) {
+      return "Koneksi timeout. Periksa jaringan Anda.";
+    }
+    if (error is SocketException) {
+      return "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+    }
 
     if (error is DioException) {
       final statusCode = error.response?.statusCode;
@@ -75,6 +192,17 @@ class ErrorUtils {
 
       if (statusCode == 422) {
         return "Format data tidak valid";
+      }
+
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.sendTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.error is TimeoutException) {
+        return "Koneksi timeout. Periksa jaringan Anda.";
+      }
+
+      if (isNetworkException(error)) {
+        return "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
       }
 
       final errStr = error.toString();

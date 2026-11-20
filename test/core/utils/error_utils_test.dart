@@ -1,6 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:akar/core/errors/exceptions.dart';
+import 'package:akar/core/errors/failures.dart';
+import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _TestRemoteDataSource extends BaseRemoteDataSource {}
 
 void main() {
   group('ErrorUtils.parseErrorMessage', () {
@@ -52,30 +60,33 @@ void main() {
       expect(result, equals('NIK sudah terdaftar'));
     });
 
-    test('returns "Sesi telah berakhir, silakan login ulang" for status 401',
-        () {
-      final dioException = DioException(
-        requestOptions: RequestOptions(path: '/api/test'),
-        response: Response(
+    test(
+      'returns "Sesi telah berakhir, silakan login ulang" for status 401',
+      () {
+        final dioException = DioException(
           requestOptions: RequestOptions(path: '/api/test'),
-          statusCode: 401,
-        ),
-        type: DioExceptionType.badResponse,
-      );
+          response: Response(
+            requestOptions: RequestOptions(path: '/api/test'),
+            statusCode: 401,
+          ),
+          type: DioExceptionType.badResponse,
+        );
 
-      final result = ErrorUtils.parseErrorMessage(dioException);
-      expect(result, equals('Sesi telah berakhir, silakan login ulang'));
-    });
+        final result = ErrorUtils.parseErrorMessage(dioException);
+        expect(result, equals('Sesi telah berakhir, silakan login ulang'));
+      },
+    );
 
     test(
-        'returns "Terjadi Kesalahan" for raw string containing 500 or validateStatus',
-        () {
-      const rawError =
-          'DioException [bad response]: This exception was thrown because the response has a status code of 500 and RequestOptions.validateStatus was configured to throw for this status code.';
+      'returns "Terjadi Kesalahan" for raw string containing 500 or validateStatus',
+      () {
+        const rawError =
+            'DioException [bad response]: This exception was thrown because the response has a status code of 500 and RequestOptions.validateStatus was configured to throw for this status code.';
 
-      final result = ErrorUtils.parseErrorMessage(rawError);
-      expect(result, equals('Terjadi Kesalahan'));
-    });
+        final result = ErrorUtils.parseErrorMessage(rawError);
+        expect(result, equals('Terjadi Kesalahan'));
+      },
+    );
 
     test('extracts specific validation errors from errors map', () {
       final dioException = DioException(
@@ -175,6 +186,133 @@ void main() {
 
       final result = ErrorUtils.parseErrorMessage(dioException);
       expect(result, equals('Kode verifikasi salah'));
+    });
+  });
+
+  group('ErrorUtils offline classification', () {
+    test('mengenali error jaringan dan timeout sebagai network exception', () {
+      expect(
+        ErrorUtils.isNetworkException(const SocketException('No route')),
+        isTrue,
+      );
+      expect(
+        ErrorUtils.isNetworkException(TimeoutException('Timeout')),
+        isTrue,
+      );
+      expect(
+        ErrorUtils.isNetworkException(
+          DioException(
+            requestOptions: RequestOptions(path: '/test'),
+            type: DioExceptionType.connectionError,
+          ),
+        ),
+        isTrue,
+      );
+      expect(
+        ErrorUtils.isNetworkException(
+          DioException(
+            requestOptions: RequestOptions(path: '/test'),
+            type: DioExceptionType.receiveTimeout,
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('tidak menyamarkan SSL handshake / badCertificate / cancel', () {
+      expect(
+        ErrorUtils.isNetworkException(const HandshakeException('Pin mismatch')),
+        isFalse,
+      );
+      expect(
+        ErrorUtils.isNetworkException(
+          DioException(
+            requestOptions: RequestOptions(path: '/test'),
+            type: DioExceptionType.badCertificate,
+            error: const HandshakeException('Pin mismatch'),
+          ),
+        ),
+        isFalse,
+      );
+      expect(
+        ErrorUtils.isNetworkException(
+          DioException(
+            requestOptions: RequestOptions(path: '/test'),
+            type: DioExceptionType.cancel,
+          ),
+        ),
+        isFalse,
+      );
+    });
+
+    test('memetakan status HTTP dan network error ke Failure tepat', () {
+      final netFailure = ErrorUtils.toFailure(
+        DioException(
+          requestOptions: RequestOptions(path: '/reports'),
+          type: DioExceptionType.connectionTimeout,
+        ),
+      );
+      expect(netFailure, isA<NetworkFailure>());
+      expect(netFailure.isRetryable, isTrue);
+
+      final valFailure = ErrorUtils.toFailure(
+        const ValidationException('Judul wajib diisi', statusCode: 422),
+      );
+      expect(valFailure, isA<ValidationFailure>());
+      expect(valFailure.statusCode, 422);
+      expect(valFailure.isRetryable, isFalse);
+
+      final authFailure = ErrorUtils.toFailure(
+        const UnauthorizedException('Token kadaluwarsa', statusCode: 401),
+      );
+      expect(authFailure, isA<ServerFailure>());
+      expect(authFailure.statusCode, 401);
+      expect(authFailure.isAuthInvalid, isTrue);
+      expect(authFailure.isRetryable, isFalse);
+
+      final server503 = ErrorUtils.toFailure(
+        const ServerException('Maintenance', statusCode: 503),
+      );
+      expect(server503.isRetryable, isTrue);
+    });
+  });
+
+  group('BaseRemoteDataSource.throwResponseError', () {
+    final ds = _TestRemoteDataSource();
+
+    test('mempertahankan tipe exception sesuai statusCode/isNetworkError', () {
+      expect(
+        () => ds.throwResponseError(
+          const ApiResponse<void>(
+            success: false,
+            message: 'Offline',
+            isNetworkError: true,
+          ),
+        ),
+        throwsA(isA<NetworkException>()),
+      );
+      expect(
+        () => ds.throwResponseError(
+          const ApiResponse<void>(
+            success: false,
+            message: 'Forbidden',
+            statusCode: 403,
+          ),
+        ),
+        throwsA(
+          isA<UnauthorizedException>().having((e) => e.statusCode, 'code', 403),
+        ),
+      );
+      expect(
+        () => ds.throwResponseError(
+          const ApiResponse<void>(
+            success: false,
+            message: 'Invalid payload',
+            statusCode: 422,
+          ),
+        ),
+        throwsA(isA<ValidationException>()),
+      );
     });
   });
 }

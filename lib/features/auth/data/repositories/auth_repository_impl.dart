@@ -56,7 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(authModel.toDomain());
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 
@@ -105,7 +105,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return Right(authModel.toDomain());
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 
@@ -119,9 +119,9 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Left(ValidationFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 
@@ -131,9 +131,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final model = await remoteDatasource.scanKtp(file);
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {
-      return Left(ServerFailure(e.message));
+      return Left(ValidationFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 
@@ -192,7 +192,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _saveSession(authModel);
       return Right(authModel.toDomain());
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 

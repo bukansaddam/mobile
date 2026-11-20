@@ -29,6 +29,17 @@ class Failure {
   final int? statusCode;
   const Failure(this.message, {this.statusCode});
 
+  /// Layak dicoba ulang atau dimasukkan ke antrean offline.
+  bool get isRetryable {
+    if (this is NetworkFailure) return true;
+    if (this is ValidationFailure || this is CacheFailure) return false;
+    final code = statusCode;
+    return code != null && (code == 408 || code == 429 || code >= 500);
+  }
+
+  /// Kredensial atau sesi ditolak secara eksplisit oleh server.
+  bool get isAuthInvalid => statusCode == 401 || statusCode == 403;
+
   @override
   String toString() => 'Failure: $message';
 }
@@ -37,11 +48,16 @@ class ServerFailure extends Failure {
   const ServerFailure(super.message, {super.statusCode});
 }
 
+/// Kegagalan akibat koneksi terputus, DNS gagal, atau timeout sebelum respons diterima.
+class NetworkFailure extends Failure {
+  const NetworkFailure(super.message, {super.statusCode});
+}
+
 class CacheFailure extends Failure {
   const CacheFailure(super.message, {super.statusCode});
 }
 
 /// Kegagalan yang tidak akan berubah bila diulang (mis. berkas tidak valid).
 class ValidationFailure extends Failure {
-  const ValidationFailure(super.message);
+  const ValidationFailure(super.message, {super.statusCode});
 }

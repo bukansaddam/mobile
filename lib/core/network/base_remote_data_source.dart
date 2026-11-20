@@ -1,3 +1,4 @@
+import 'package:akar/core/errors/exceptions.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -9,6 +10,7 @@ class ApiResponse<T> {
   final T? data;
   final String? message;
   final int? statusCode;
+  final bool isNetworkError;
   // final PaginationModel? pagination;
 
   const ApiResponse({
@@ -16,6 +18,7 @@ class ApiResponse<T> {
     this.data,
     this.message,
     this.statusCode,
+    this.isNetworkError = false,
     // this.pagination,
   });
 
@@ -91,14 +94,41 @@ abstract class BaseRemoteDataSource {
         success: false,
         message: _parseDioError(e),
         statusCode: e.response?.statusCode,
+        isNetworkError: ErrorUtils.isNetworkException(e),
       );
     } catch (e, s) {
       AppLogger.e('[BASE_DS] Unexpected error', e, s);
       return ApiResponse<T>(
         success: false,
         message: ErrorUtils.parseErrorMessage(e),
+        isNetworkError: ErrorUtils.isNetworkException(e),
       );
     }
+  }
+
+  /// Melempar [AppException] terklasifikasi dari [ApiResponse] yang gagal.
+  Never throwResponseError(
+    ApiResponse<dynamic> response, {
+    String fallbackMessage = 'Terjadi Kesalahan',
+  }) {
+    final msg =
+        (response.message != null && response.message!.trim().isNotEmpty)
+        ? response.message!.trim()
+        : fallbackMessage;
+    if (response.isNetworkError) {
+      throw NetworkException(msg, statusCode: response.statusCode);
+    }
+    final code = response.statusCode;
+    if (code == 401 || code == 403) {
+      throw UnauthorizedException(msg, statusCode: code);
+    }
+    if (code == 400 || code == 422) {
+      throw ValidationException(msg, statusCode: code);
+    }
+    if (code == 404) {
+      throw NotFoundException(msg);
+    }
+    throw ServerException(msg, statusCode: code);
   }
 
   String _parseDioError(DioException e) {

@@ -32,14 +32,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required LogoutUsecase logoutUsecase,
     required RefreshTokenUsecase refreshTokenUsecase,
     FirebaseNotificationService? notificationService,
-  })  : _loginUsecase = loginUsecase,
-        _registerUsecase = registerUsecase,
-        _getSavedUserUsecase = getSavedUserUsecase,
-        _getSavedTokenUsecase = getSavedTokenUsecase,
-        _logoutUsecase = logoutUsecase,
-        _refreshTokenUsecase = refreshTokenUsecase,
-        _notificationService = notificationService,
-        super(const AuthInitial()) {
+  }) : _loginUsecase = loginUsecase,
+       _registerUsecase = registerUsecase,
+       _getSavedUserUsecase = getSavedUserUsecase,
+       _getSavedTokenUsecase = getSavedTokenUsecase,
+       _logoutUsecase = logoutUsecase,
+       _refreshTokenUsecase = refreshTokenUsecase,
+       _notificationService = notificationService,
+       super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<LoginEvent>(_onLogin);
     on<RegisterEvent>(_onRegister);
@@ -61,20 +61,45 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     if (token != null && token.isNotEmpty && currentUser != null) {
       final refreshResult = await _refreshTokenUsecase();
-      final refreshed = refreshResult.fold((_) => null, (val) => val);
+      await refreshResult.fold<Future<void>>(
+        (failure) async {
+          // Pertahankan sesi lokal saat offline/timeout/5xx agar user tetap bisa lapor offline.
+          if (failure.isRetryable) {
+            DioClient.instance.options.headers['Authorization'] =
+                'Bearer $token';
+            emit(
+              AuthAuthenticated(
+                user: currentUser,
+                token: token,
+                isOfflineSession: true,
+              ),
+            );
+            return;
+          }
 
-      if (refreshed == null || refreshed.accessToken.isEmpty) {
-        await _logoutUsecase();
-        DioClient.instance.options.headers.remove('Authorization');
-        emit(const AuthUnauthenticated());
-        return;
-      }
+          await _logoutUsecase();
+          DioClient.instance.options.headers.remove('Authorization');
+          emit(const AuthUnauthenticated());
+        },
+        (refreshed) async {
+          if (refreshed.accessToken.isEmpty) {
+            await _logoutUsecase();
+            DioClient.instance.options.headers.remove('Authorization');
+            emit(const AuthUnauthenticated());
+            return;
+          }
 
-      DioClient.instance.options.headers['Authorization'] =
-          'Bearer ${refreshed.accessToken}';
-      emit(
-        AuthAuthenticated(user: refreshed.user, token: refreshed.accessToken),
+          DioClient.instance.options.headers['Authorization'] =
+              'Bearer ${refreshed.accessToken}';
+          emit(
+            AuthAuthenticated(
+              user: refreshed.user,
+              token: refreshed.accessToken,
+            ),
+          );
+        },
       );
+      return;
     } else {
       DioClient.instance.options.headers.remove('Authorization');
       emit(const AuthUnauthenticated());

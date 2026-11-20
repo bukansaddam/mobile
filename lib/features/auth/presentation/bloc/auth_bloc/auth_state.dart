@@ -34,27 +34,31 @@ class AuthAuthenticated extends AuthState {
   final UserEntity user;
   final String token;
   final String? message;
+  final bool isOfflineSession;
 
   const AuthAuthenticated({
     required this.user,
     required this.token,
     this.message,
+    this.isOfflineSession = false,
   });
 
   AuthAuthenticated copyWith({
     UserEntity? user,
     String? token,
     String? message,
+    bool? isOfflineSession,
   }) {
     return AuthAuthenticated(
       user: user ?? this.user,
       token: token ?? this.token,
       message: message ?? this.message,
+      isOfflineSession: isOfflineSession ?? this.isOfflineSession,
     );
   }
 
   @override
-  List<Object?> get props => [user, token, message];
+  List<Object?> get props => [user, token, message, isOfflineSession];
 }
 
 class AuthUnauthenticated extends AuthState {
