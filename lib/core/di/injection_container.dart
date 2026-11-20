@@ -98,6 +98,14 @@ import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tana
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
+import 'package:akar/features/notifications/data/datasources/notification_remote_datasource.dart';
+import 'package:akar/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:akar/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:akar/features/notifications/domain/usecases/get_notification_count_usecase.dart';
+import 'package:akar/features/notifications/domain/usecases/get_notifications_usecase.dart';
+import 'package:akar/features/notifications/domain/usecases/mark_all_notifications_read_usecase.dart';
+import 'package:akar/features/notifications/domain/usecases/mark_notification_read_usecase.dart';
+import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 
 // Member Dashboard
 import 'package:akar/features/linmas/dashboard/data/datasources/member_dashboard_remote_datasource.dart';
@@ -233,6 +241,9 @@ Future<void> init() async {
   sl.registerLazySingleton<JagaTanahRemoteDatasource>(
     () => JagaTanahRemoteDatasourceImpl(),
   );
+  sl.registerLazySingleton<NotificationRemoteDatasource>(
+    () => NotificationRemoteDatasourceImpl(),
+  );
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -289,6 +300,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<JagaTanahRepository>(
     () => JagaTanahRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(remoteDatasource: sl()),
   );
 
   // Use Cases
@@ -412,6 +426,18 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetJagaTanahDetailUsecase>(
     () => GetJagaTanahDetailUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetNotificationsUsecase>(
+    () => GetNotificationsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetNotificationCountUsecase>(
+    () => GetNotificationCountUsecase(sl()),
+  );
+  sl.registerLazySingleton<MarkNotificationReadUsecase>(
+    () => MarkNotificationReadUsecase(sl()),
+  );
+  sl.registerLazySingleton<MarkAllNotificationsReadUsecase>(
+    () => MarkAllNotificationsReadUsecase(sl()),
   );
 
   // BLoCs & Cubits
@@ -590,6 +616,14 @@ Future<void> init() async {
       submitApiSurveyAnswersUsecase: sl(),
       getInitialQuizUsecase: sl(),
       submitInitialQuizUsecase: sl(),
+    ),
+  );
+  sl.registerFactory<NotificationBloc>(
+    () => NotificationBloc(
+      getNotifications: sl(),
+      getNotificationCount: sl(),
+      markNotificationRead: sl(),
+      markAllNotificationsRead: sl(),
     ),
   );
 }

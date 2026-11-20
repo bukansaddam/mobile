@@ -884,4 +884,88 @@ class ApiConstants {
         122,
         171,
       ]);
+
+  // /api/notifications
+  static final String notifications = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    47,
+    98,
+    145,
+    166,
+    78,
+    171,
+    247,
+    62,
+    109,
+    146,
+    238,
+    36,
+    109,
+  ]);
+
+  // /api/notifications/count
+  static final String notificationsCount = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    47,
+    98,
+    145,
+    166,
+    78,
+    171,
+    247,
+    62,
+    109,
+    146,
+    238,
+    36,
+    109,
+    99,
+    12,
+    182,
+    4,
+    115,
+    97,
+  ]);
+
+  // /api/notifications/read-all
+  static final String notificationsReadAll =
+      EndpointSecurity.decode(const <int>[
+        117,
+        79,
+        44,
+        118,
+        230,
+        47,
+        98,
+        145,
+        166,
+        78,
+        171,
+        247,
+        62,
+        109,
+        146,
+        238,
+        36,
+        109,
+        99,
+        29,
+        188,
+        16,
+        121,
+        56,
+        190,
+        116,
+        190,
+      ]);
+
+  static String notificationRead(String id) => '$notifications/$id/read';
 }
