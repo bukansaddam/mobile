@@ -4,11 +4,11 @@ import 'dart:typed_data';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 
-/// Interceptor untuk logging semua network request dan response.
+/// Interceptor untuk logging ringkas network request dan response.
 class LoggingInterceptor extends Interceptor {
   static const _stopwatchKey = '_loggingStopwatch';
-  static const _maxLogLineLength = 800;
-  static const _jsonEncoder = JsonEncoder.withIndent('  ', _toStringFallback);
+  static const _maxBodyChars = 500;
+  static const _maxBodyLines = 10;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -19,12 +19,12 @@ class LoggingInterceptor extends Interceptor {
 
     options.extra[_stopwatchKey] = Stopwatch()..start();
 
-    AppLogger.d('''
-╔════ REQUEST ════════════════════════════
-║ ${options.method} ${options.uri}
-║ Headers: ${options.headers}
-║ Data: ${options.data}
-╚═════════════════════════════════════════''');
+    AppLogger.d(
+      '╔════ REQUEST ════════════════════════════\n'
+      '║ ${options.method} ${options.uri}\n'
+      '║ Data: ${_formatData(options.data)}\n'
+      '╚═════════════════════════════════════════',
+    );
     handler.next(options);
   }
 
@@ -39,8 +39,7 @@ class LoggingInterceptor extends Interceptor {
       '╔════ RESPONSE ═══════════════════════════\n'
       '║ Status: ${response.statusCode}${_takeDurationLine(response.requestOptions)}\n'
       '║ URL: ${response.requestOptions.uri}\n'
-      '║ Data:\n'
-      '${_formatData(response.data)}\n'
+      '║ Data: ${_formatData(response.data)}\n'
       '╚═════════════════════════════════════════',
     );
     handler.next(response);
@@ -58,8 +57,7 @@ class LoggingInterceptor extends Interceptor {
       '║ Status: ${err.response?.statusCode}${_takeDurationLine(err.requestOptions)}\n'
       '║ URL: ${err.requestOptions.uri}\n'
       '║ Message: ${err.message}\n'
-      '║ Data:\n'
-      '${_formatData(err.response?.data)}\n'
+      '║ Data: ${_formatData(err.response?.data)}\n'
       '╚═════════════════════════════════════════',
       err,
       err.stackTrace,
@@ -80,13 +78,16 @@ class LoggingInterceptor extends Interceptor {
     if (data is Uint8List || data is ResponseBody) {
       return '<binary ${data.runtimeType}>';
     }
+    if (data is FormData) {
+      return '<FormData fields:${data.fields.length} files:${data.files.length}>';
+    }
 
     String raw;
     if (data is String) {
-      raw = _tryPrettyJsonString(data);
+      raw = data.trim();
     } else if (data is Map || data is Iterable) {
       try {
-        raw = _jsonEncoder.convert(data);
+        raw = jsonEncode(data, toEncodable: _toStringFallback);
       } catch (_) {
         raw = data.toString();
       }
@@ -94,36 +95,22 @@ class LoggingInterceptor extends Interceptor {
       raw = data.toString();
     }
 
-    return _chunkLines(raw, _maxLogLineLength);
-  }
-
-  static String _tryPrettyJsonString(String input) {
-    final trimmed = input.trim();
-    final looksJson =
-        (trimmed.startsWith('{') && trimmed.endsWith('}')) ||
-        (trimmed.startsWith('[') && trimmed.endsWith(']'));
-    if (!looksJson) return input;
-    try {
-      return _jsonEncoder.convert(jsonDecode(trimmed));
-    } catch (_) {
-      return input;
-    }
+    return _truncate(raw);
   }
 
   static Object? _toStringFallback(dynamic object) => object.toString();
 
-  static String _chunkLines(String text, int maxLength) {
-    final lines = <String>[];
-    for (final line in text.split('\n')) {
-      if (line.length <= maxLength) {
-        lines.add(line);
-        continue;
-      }
-      for (var i = 0; i < line.length; i += maxLength) {
-        final end = i + maxLength < line.length ? i + maxLength : line.length;
-        lines.add(line.substring(i, end));
-      }
-    }
-    return lines.join('\n');
+  static String _truncate(String text) {
+    final sample = text.length > _maxBodyChars
+        ? text.substring(0, _maxBodyChars)
+        : text;
+    final lines = sample.split('\n');
+    final overLines = lines.length > _maxBodyLines;
+    final overChars = text.length > _maxBodyChars;
+
+    if (!overLines && !overChars) return sample;
+
+    final preview = overLines ? lines.take(_maxBodyLines).join('\n') : sample;
+    return '$preview... (truncated, ${text.length} chars)';
   }
 }

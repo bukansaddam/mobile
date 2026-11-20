@@ -27,17 +27,20 @@ class _PassThroughResponseHandler extends ResponseInterceptorHandler {
   void next(Response response) {}
 }
 
+class _PassThroughRequestHandler extends RequestInterceptorHandler {
+  @override
+  void next(RequestOptions requestOptions) {}
+}
+
 void main() {
-  test('logs request duration and complete raw OCR JSON without truncation', () async {
+  test('logs request duration and truncates oversized JSON response', () async {
     final longRawLine = 'RAW_LINE_${'X' * 1200}_TAIL_MARKER';
     final payload = {
       'success': true,
       'message': 'Dokumen berhasil dipindai.',
       'data': {
         'document_type': 'ktp',
-        'nik': '3271063010020008',
         'raw_texts': ['PROVINSI JAWA BARAT', longRawLine],
-        'all_fields': {'nama': 'BUDI SANTOSO', 'nik': '3271063010020008'},
       },
     };
 
@@ -65,15 +68,35 @@ void main() {
     final joined = lines.join('\n');
     expect(joined, contains('Duration:'));
     expect(joined, contains('ms ('));
-    expect(joined, contains('"document_type": "ktp"'));
-    expect(joined, contains('"nama": "BUDI SANTOSO"'));
-    expect(joined, contains('TAIL_MARKER'));
-    for (final line in lines) {
-      expect(line.length, lessThanOrEqualTo(900));
-    }
+    expect(joined, contains('"document_type":"ktp"'));
+    expect(joined, contains('(truncated,'));
+    expect(joined, isNot(contains('TAIL_MARKER')));
   });
 
-  test('logs duration and raw error body on DioException', () async {
+  test('caps multi-line response bodies so logs stay compact', () async {
+    final multiLinePayload = List.generate(30, (i) => 'line_$i').join('\n');
+    final interceptor = LoggingInterceptor();
+    final response = Response(
+      requestOptions: RequestOptions(path: '/api/multiline'),
+      statusCode: 200,
+      data: multiLinePayload,
+    );
+
+    final lines = <String>[];
+    runZoned(
+      () => interceptor.onResponse(response, _PassThroughResponseHandler()),
+      zoneSpecification: ZoneSpecification(
+        print: (_, _, _, line) => lines.add(line),
+      ),
+    );
+
+    final joined = lines.join('\n');
+    expect(joined, contains('line_0'));
+    expect(joined, contains('(truncated,'));
+    expect(joined, isNot(contains('line_29')));
+  });
+
+  test('logs duration and error body on DioException', () async {
     final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
       ..httpClientAdapter = _FakeAdapter((_) async {
         return ResponseBody.fromString(
@@ -99,27 +122,51 @@ void main() {
 
     final joined = lines.join('\n');
     expect(joined, contains('Duration:'));
-    expect(joined, contains('"message": "OCR timeout"'));
+    expect(joined, contains('"message":"OCR timeout"'));
   });
 
-  test('handles binary payload and missing stopwatch safely', () async {
+  test('handles binary, FormData, and missing stopwatch safely', () async {
     final interceptor = LoggingInterceptor();
+    final formData = FormData.fromMap({'note': 'test'});
     final response = Response(
-      requestOptions: RequestOptions(path: '/api/file'),
+      requestOptions: RequestOptions(path: '/api/file', data: formData),
       statusCode: 200,
       data: Uint8List.fromList([1, 2, 3, 4]),
     );
 
     final lines = <String>[];
     runZoned(
-      () => interceptor.onResponse(response, _PassThroughResponseHandler()),
+      () {
+        interceptor.onRequest(
+          response.requestOptions,
+          _PassThroughRequestHandler(),
+        );
+        interceptor.onResponse(response, _PassThroughResponseHandler());
+      },
       zoneSpecification: ZoneSpecification(
         print: (_, _, _, line) => lines.add(line),
       ),
     );
 
+    final noStopwatchLines = <String>[];
+    runZoned(
+      () => interceptor.onResponse(
+        Response(
+          requestOptions: RequestOptions(path: '/api/no-timer'),
+          statusCode: 200,
+          data: 'ok',
+        ),
+        _PassThroughResponseHandler(),
+      ),
+      zoneSpecification: ZoneSpecification(
+        print: (_, _, _, line) => noStopwatchLines.add(line),
+      ),
+    );
+
     final joined = lines.join('\n');
+    expect(joined, contains('<FormData fields:1 files:0>'));
     expect(joined, contains('<binary Uint8List>'));
-    expect(joined, isNot(contains('Duration:')));
+    expect(joined, contains('Duration:'));
+    expect(noStopwatchLines.join('\n'), isNot(contains('Duration:')));
   });
 }
