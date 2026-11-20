@@ -83,5 +83,15 @@ void main() {
         'https://asia-southeast1-speech.googleapis.com/v2/projects/demo-project/locations/asia-southeast1/recognizers/_:recognize',
       );
     });
+
+    test('notification endpoints decode accurately', () {
+      expect(ApiConstants.notifications, '/api/notifications');
+      expect(ApiConstants.notificationsCount, '/api/notifications/count');
+      expect(ApiConstants.notificationsReadAll, '/api/notifications/read-all');
+      expect(
+        ApiConstants.notificationRead('abc-123'),
+        '/api/notifications/abc-123/read',
+      );
+    });
   });
 }

@@ -10,6 +10,7 @@ import 'package:akar/features/linmas/main/presentation/pages/main_screen.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/complaint_banner_card.dart';
+import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
@@ -29,6 +30,21 @@ class _FakeAuthBloc extends Fake implements AuthBloc {
 
   @override
   void add(AuthEvent event) {}
+}
+
+class _FakeNotificationBloc extends Fake implements NotificationBloc {
+  _FakeNotificationBloc([this._state = const NotificationState()]);
+
+  final NotificationState _state;
+
+  @override
+  NotificationState get state => _state;
+
+  @override
+  Stream<NotificationState> get stream => const Stream.empty();
+
+  @override
+  void add(NotificationEvent event) {}
 }
 
 class _FakeTrackingBloc extends Fake implements TrackingBloc {
@@ -151,7 +167,7 @@ void main() {
   );
 
   testWidgets(
-    'CustomAppBar uses Dumas logo badge, prevents overflow at 200% text scale, and preserves logo tap shortcut',
+    'CustomAppBar uses Dumas logo badge, shows live badge at 200% text scale without overflow, and preserves logo tap shortcut',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(320, 640));
 
@@ -175,7 +191,8 @@ void main() {
       );
       expect(find.text(AppConstants.appBarTitle), findsOneWidget);
       expect(find.text('Dumas'), findsOneWidget);
-      expect(find.byIcon(Icons.notifications_none_rounded), findsNothing);
+      expect(find.byIcon(Icons.notifications_none_rounded), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
 
       final logoFinder = find.byType(AppLogoBadge);
       for (int i = 0; i < 5; i++) {
@@ -189,7 +206,7 @@ void main() {
   );
 
   testWidgets(
-    'MainScreen Linmas AppBar uses Linmas logo badge without overflow and preserves logo tap shortcut',
+    'MainScreen Linmas AppBar uses Linmas logo badge, displays NotificationBloc unread count without overflow, and preserves logo tap shortcut',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(480, 900));
 
@@ -199,6 +216,11 @@ void main() {
             BlocProvider<AuthBloc>.value(value: _FakeAuthBloc()),
             BlocProvider<PanicBloc>.value(value: _FakePanicBloc()),
             BlocProvider<SurveyBloc>.value(value: _FakeSurveyBloc()),
+            BlocProvider<NotificationBloc>.value(
+              value: _FakeNotificationBloc(
+                const NotificationState(unreadCount: 12),
+              ),
+            ),
           ],
           child: const MaterialApp(home: MainScreen()),
         ),
@@ -212,7 +234,8 @@ void main() {
       );
       expect(find.text(AppConstants.appBarTitle), findsOneWidget);
       expect(find.text('Laporan Linmas'), findsOneWidget);
-      expect(find.byIcon(Icons.notifications_none_rounded), findsNothing);
+      expect(find.byIcon(Icons.notifications_none_rounded), findsOneWidget);
+      expect(find.text('12'), findsOneWidget);
 
       final logoFinder = find.byType(AppLogoBadge);
       for (int i = 0; i < 3; i++) {
