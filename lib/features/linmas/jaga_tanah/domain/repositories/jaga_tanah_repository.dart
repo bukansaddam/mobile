@@ -23,5 +23,17 @@ abstract class JagaTanahRepository {
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   });
 }

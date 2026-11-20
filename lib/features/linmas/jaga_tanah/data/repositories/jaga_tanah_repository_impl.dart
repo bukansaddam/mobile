@@ -56,6 +56,18 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   }) async {
     try {
       final model = await remoteDatasource.createReport(
@@ -67,13 +79,25 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
         attachments: attachments,
         categoryId: categoryId,
         subCategoryId: subCategoryId,
+        type: type,
+        locationAccess: locationAccess,
+        fieldCondition: fieldCondition,
+        dominantLandCover: dominantLandCover,
+        visibleUsage: visibleUsage,
+        usageLevel: usageLevel,
+        maintenanceStatus: maintenanceStatus,
+        conditionInfoSource: conditionInfoSource,
+        tenureInfoSource: tenureInfoSource,
+        possessionMarkers: possessionMarkers,
+        conflictInfo: conflictInfo,
+        idempotencyKey: idempotencyKey,
       );
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {
       return Left(ValidationFailure(e.message));
     } catch (e, s) {
       AppLogger.e('[JAGA_TANAH_REPO] Error createReport', e, s);
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 }

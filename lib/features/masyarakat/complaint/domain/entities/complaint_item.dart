@@ -62,8 +62,10 @@ ComplaintStatus complaintStatusFromCode(String code) {
   switch (code.toLowerCase()) {
     case 'new':
     case 'created':
+    case 'submitted':
       return ComplaintStatus.received;
     case 'pending':
+    case 'verification_assigned':
       return ComplaintStatus.pending;
     case 'verification':
     case 'verified':
@@ -71,6 +73,9 @@ ComplaintStatus complaintStatusFromCode(String code) {
       return ComplaintStatus.verified;
     case 'in_progress':
     case 'processing':
+    case 'mediation':
+    case 'fifty_fifty':
+    case 'bpn_forwarded':
       return ComplaintStatus.inProgress;
     case 'resolved':
     case 'completed':

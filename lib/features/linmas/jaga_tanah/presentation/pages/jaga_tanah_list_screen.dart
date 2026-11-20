@@ -142,7 +142,7 @@ class JagaTanahListScreen extends HookWidget {
               ),
             ),
             title: Text(
-              'Jaga Tanahku',
+              'Jaga Tanah',
               style: AppTextStyles.headlineMedium.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.bold,

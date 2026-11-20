@@ -12,7 +12,13 @@ class CameraCaptureScreen {
   CameraCaptureScreen._();
 
   /// Membuka kamera perangkat HP secara langsung dan mengompres foto ke format WebP.
-  static Future<String?> open(BuildContext context) async {
+  static Future<String?> open(
+    BuildContext context, {
+    bool watermark = false,
+    double? stampLatitude,
+    double? stampLongitude,
+    String? stampAddress,
+  }) async {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? photo = await picker.pickImage(
@@ -22,7 +28,12 @@ class CameraCaptureScreen {
       if (photo != null) {
         final compressedWebpFile = await ImageCompressHelper.compressToWebp(
           File(photo.path),
-          watermark: false,
+          watermark: watermark,
+          includeGeoStamp: watermark,
+          stampLatitude: stampLatitude,
+          stampLongitude: stampLongitude,
+          stampAddress: stampAddress,
+          resolveDeviceLocationIfMissing: watermark,
         );
         return compressedWebpFile.path;
       }

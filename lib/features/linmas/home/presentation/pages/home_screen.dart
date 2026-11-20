@@ -262,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       },
       {
-        'title': 'Jaga Tanahku',
+        'title': 'Jaga Tanah',
         'subtitle': 'Laporan Aset Tanah',
         'icon': Icons.landscape_rounded,
         'color': AppColors.earth,

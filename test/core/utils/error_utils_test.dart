@@ -187,6 +187,33 @@ void main() {
       final result = ErrorUtils.parseErrorMessage(dioException);
       expect(result, equals('Kode verifikasi salah'));
     });
+
+    test('parses OpenAPI list-of-maps validation errors array', () {
+      final dioException = DioException(
+        requestOptions: RequestOptions(path: '/api/jaga-tanah-reports'),
+        response: Response(
+          requestOptions: RequestOptions(path: '/api/jaga-tanah-reports'),
+          statusCode: 422,
+          data: {
+            'success': false,
+            'message': 'Validasi gagal.',
+            'errors': [
+              {'field': 'latitude', 'error': 'The latitude field is required.'},
+              {'field': 'title', 'error': 'Judul maksimal 255 karakter.'},
+            ],
+          },
+        ),
+        type: DioExceptionType.badResponse,
+      );
+
+      final result = ErrorUtils.parseErrorMessage(dioException);
+      expect(
+        result,
+        equals(
+          'Validasi gagal.: The latitude field is required.\nJudul maksimal 255 karakter.',
+        ),
+      );
+    });
   });
 
   group('ErrorUtils offline classification', () {

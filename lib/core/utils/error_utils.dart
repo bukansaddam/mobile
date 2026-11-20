@@ -286,10 +286,19 @@ class ErrorUtils {
         return messages.join('\n');
       }
     } else if (errors is List) {
-      final messages = errors
-          .where((e) => e != null && e.toString().trim().isNotEmpty)
-          .map((e) => e.toString().trim())
-          .toList();
+      final messages = <String>[];
+      for (final item in errors) {
+        if (item is Map) {
+          final text = (item['error'] ?? item['message'] ?? item['detail'])
+              ?.toString()
+              .trim();
+          if (text != null && text.isNotEmpty) {
+            messages.add(text);
+          }
+        } else if (item != null && item.toString().trim().isNotEmpty) {
+          messages.add(item.toString().trim());
+        }
+      }
       if (messages.isNotEmpty) {
         return messages.join('\n');
       }

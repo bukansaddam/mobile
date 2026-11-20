@@ -29,6 +29,18 @@ abstract class JagaTanahRemoteDatasource {
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   });
 }
 
@@ -40,6 +52,13 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     sendTimeout: const Duration(minutes: 10),
     receiveTimeout: const Duration(minutes: 3),
   );
+
+  final Dio? _dioOverride;
+
+  JagaTanahRemoteDatasourceImpl({Dio? dio}) : _dioOverride = dio;
+
+  @override
+  Dio get dio => _dioOverride ?? super.dio;
 
   @override
   Future<ComplaintPaginatedModel> getMyReports({
@@ -100,6 +119,18 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   }) async {
     try {
       final prepared = await ImageCompressHelper.prepareMediaFiles(
@@ -109,6 +140,16 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
         address: address,
         resolveDeviceLocationIfMissing: address.trim().isEmpty,
       );
+      final trimmedKey = idempotencyKey?.trim();
+      final requestOptions = (trimmedKey != null && trimmedKey.isNotEmpty)
+          ? _uploadOptions.copyWith(
+              headers: {
+                ...?_uploadOptions.headers,
+                'X-Idempotency-Key': trimmedKey,
+              },
+            )
+          : _uploadOptions;
+
       final response = await handleRequest<ComplaintReportModel>(
         () async => dio.post(
           ApiConstants.jagaTanahReports,
@@ -121,8 +162,19 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
             attachments: prepared,
             categoryId: categoryId,
             subCategoryId: subCategoryId,
+            type: type,
+            locationAccess: locationAccess,
+            fieldCondition: fieldCondition,
+            dominantLandCover: dominantLandCover,
+            visibleUsage: visibleUsage,
+            usageLevel: usageLevel,
+            maintenanceStatus: maintenanceStatus,
+            conditionInfoSource: conditionInfoSource,
+            tenureInfoSource: tenureInfoSource,
+            possessionMarkers: possessionMarkers,
+            conflictInfo: conflictInfo,
           ),
-          options: _uploadOptions,
+          options: requestOptions,
         ),
         fromJson: (json) => ComplaintReportModel.fromJson(
           json is Map ? Map<String, dynamic>.from(json) : const {},
@@ -130,16 +182,9 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
       );
 
       if (!response.success) {
-        throw Exception(response.message ?? 'Gagal mengirim laporan');
+        throwResponseError(response, fallbackMessage: 'Gagal mengirim laporan');
       }
       return response.data ?? const ComplaintReportModel();
-    } on DioException catch (e) {
-      AppLogger.e(
-        '[JAGA_TANAH_DS] DioException in createReport: ${e.message}',
-        e,
-        e.stackTrace,
-      );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[JAGA_TANAH_DS] Error in createReport: $e', e, s);
       rethrow;
@@ -227,6 +272,17 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    required String type,
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
   }) async {
     final files = <MultipartFile>[];
     for (final file in attachments) {
@@ -234,16 +290,36 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     }
 
     final data = <String, dynamic>{
-      'title': title,
-      'description': description,
-      'address': address,
+      'title': title.trim(),
       'latitude': latitude,
       'longitude': longitude,
-      'report_category_id': categoryId,
+      'category_id': categoryId,
       _attachmentsField: files,
     };
     if (subCategoryId != null) {
       data['sub_category_id'] = subCategoryId;
+    }
+
+    final optionalTextFields = <String, String?>{
+      'description': description,
+      'address': address,
+      'type': type,
+      'location_access': locationAccess,
+      'field_condition': fieldCondition,
+      'dominant_land_cover': dominantLandCover,
+      'visible_usage': visibleUsage,
+      'usage_level': usageLevel,
+      'maintenance_status': maintenanceStatus,
+      'condition_info_source': conditionInfoSource,
+      'tenure_info_source': tenureInfoSource,
+      'possession_markers': possessionMarkers,
+      'conflict_info': conflictInfo,
+    };
+    for (final entry in optionalTextFields.entries) {
+      final trimmed = entry.value?.trim() ?? '';
+      if (trimmed.isNotEmpty) {
+        data[entry.key] = trimmed;
+      }
     }
 
     return FormData.fromMap(data);

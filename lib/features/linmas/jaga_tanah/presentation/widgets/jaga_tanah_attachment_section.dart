@@ -4,12 +4,15 @@ import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_attachment_tile.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_field_label.dart';
 import 'package:flutter/material.dart';
 
 class JagaTanahAttachmentSection extends StatelessWidget {
   final List<String> attachments;
   final int maxAttachments;
   final bool hasVideo;
+  final bool isRequired;
+  final String? errorText;
   final VoidCallback onAddPhoto;
   final VoidCallback onAddVideo;
   final ValueChanged<int> onRemove;
@@ -19,6 +22,8 @@ class JagaTanahAttachmentSection extends StatelessWidget {
     required this.attachments,
     required this.maxAttachments,
     required this.hasVideo,
+    this.isRequired = false,
+    this.errorText,
     required this.onAddPhoto,
     required this.onAddVideo,
     required this.onRemove,
@@ -39,13 +44,9 @@ class JagaTanahAttachmentSection extends StatelessWidget {
             spacing: 8,
             runSpacing: 4,
             children: [
-              Text(
-                'Lampiran Foto / Video',
-                style: AppTextStyles.titleMedium.copyWith(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+              JagaTanahFieldLabel(
+                label: 'Lampiran Foto / Video',
+                isRequired: isRequired,
               ),
               Text(
                 '${attachments.length}/$maxAttachments lampiran',
@@ -92,7 +93,9 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: AppColors.grey300,
+                            color: errorText != null
+                                ? AppColors.error
+                                : AppColors.grey300,
                             width: 1.5,
                           ),
                         ),
@@ -140,7 +143,9 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: AppColors.grey300,
+                              color: errorText != null
+                                  ? AppColors.error
+                                  : AppColors.grey300,
                               width: 1.5,
                             ),
                           ),
@@ -179,7 +184,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                       FullscreenVideoViewer.show(
                         context,
                         pathOrUrl: path,
-                        title: 'Video Laporan Jaga Tanahku',
+                        title: 'Video Laporan Jaga Tanah',
                       );
                       return;
                     }
@@ -191,7 +196,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                       imagePathOrUrl: path,
                       images: photos,
                       initialIndex: photos.indexOf(path),
-                      title: 'Foto Laporan Jaga Tanahku',
+                      title: 'Foto Laporan Jaga Tanah',
                     );
                   },
                 );
@@ -199,6 +204,13 @@ class JagaTanahAttachmentSection extends StatelessWidget {
             ],
           ),
         ),
+        if (errorText != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            errorText!,
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
+          ),
+        ],
       ],
     );
   }

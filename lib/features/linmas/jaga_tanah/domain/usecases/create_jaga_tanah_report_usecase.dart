@@ -18,6 +18,18 @@ class CreateJagaTanahReportUsecase {
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   }) {
     return _repository.createReport(
       title: title,
@@ -28,6 +40,18 @@ class CreateJagaTanahReportUsecase {
       attachments: attachments,
       categoryId: categoryId,
       subCategoryId: subCategoryId,
+      type: type,
+      locationAccess: locationAccess,
+      fieldCondition: fieldCondition,
+      dominantLandCover: dominantLandCover,
+      visibleUsage: visibleUsage,
+      usageLevel: usageLevel,
+      maintenanceStatus: maintenanceStatus,
+      conditionInfoSource: conditionInfoSource,
+      tenureInfoSource: tenureInfoSource,
+      possessionMarkers: possessionMarkers,
+      conflictInfo: conflictInfo,
+      idempotencyKey: idempotencyKey,
     );
   }
 }

@@ -32,7 +32,7 @@ class JagaTanahBody extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.status == JagaTanahListStatus.loading && state.items.isEmpty) {
       return const ReportCardShimmerList(
-        semanticLabel: 'Memuat laporan Jaga Tanahku...',
+        semanticLabel: 'Memuat laporan Jaga Tanah...',
       );
     }
 
@@ -47,7 +47,7 @@ class JagaTanahBody extends StatelessWidget {
           title: 'Gagal Memuat Laporan',
           message:
               state.errorMessage ??
-              'Terjadi kendala saat mengambil daftar laporan Jaga Tanahku.',
+              'Terjadi kendala saat mengambil daftar laporan Jaga Tanah.',
           actionLabel: 'Coba Lagi',
           actionIcon: Icons.refresh_rounded,
           onAction: onRetry,
@@ -86,7 +86,7 @@ class JagaTanahBody extends StatelessWidget {
           iconBackgroundColor: AppColors.primaryLight,
           title: hasConstraints
               ? 'Laporan Tidak Ditemukan'
-              : 'Belum Ada Laporan Jaga Tanahku',
+              : 'Belum Ada Laporan Jaga Tanah',
           message: emptyMessage,
           actionLabel: actionLabel,
           actionIcon: hasConstraints ? Icons.close_rounded : Icons.add_rounded,

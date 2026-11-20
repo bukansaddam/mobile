@@ -19,9 +19,12 @@ class JagaTanahFilterSheet extends HookWidget {
   });
 
   static const List<({String code, String label})> _statusOptions = [
-    (code: 'new', label: 'Laporan Masuk'),
-    (code: 'verification', label: 'Menunggu Verifikasi'),
-    (code: 'in_progress', label: 'Sedang Diproses'),
+    (code: 'submitted', label: 'Diajukan'),
+    (code: 'verification_assigned', label: 'Verifikasi Ditugaskan'),
+    (code: 'verified', label: 'Terverifikasi'),
+    (code: 'mediation', label: 'Mediasi'),
+    (code: 'fifty_fifty', label: 'Mediasi 50:50'),
+    (code: 'bpn_forwarded', label: 'Diteruskan ke BPN'),
     (code: 'completed', label: 'Selesai'),
     (code: 'rejected', label: 'Ditolak'),
   ];
@@ -211,7 +214,7 @@ class JagaTanahFilterSheet extends HookWidget {
                                   SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
-                                      'Memuat kategori Jaga Tanahku...',
+                                      'Memuat kategori Jaga Tanah...',
                                       style: AppTextStyles.bodySmall,
                                     ),
                                   ),

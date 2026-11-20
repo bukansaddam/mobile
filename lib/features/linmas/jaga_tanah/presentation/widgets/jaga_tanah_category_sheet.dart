@@ -25,7 +25,10 @@ class JagaTanahCategorySheet extends StatelessWidget {
         lower.contains('kecamatan')) {
       return Icons.account_balance_rounded;
     }
-    return Icons.terrain_rounded;
+    if (lower.contains('desa')) {
+      return Icons.terrain_rounded;
+    }
+    return Icons.landscape_rounded;
   }
 
   @override

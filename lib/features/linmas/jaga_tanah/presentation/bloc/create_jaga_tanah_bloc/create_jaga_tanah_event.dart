@@ -25,6 +25,18 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
   final List<File> attachments;
   final int categoryId;
   final int? subCategoryId;
+  final String type;
+  final String? locationAccess;
+  final String? fieldCondition;
+  final String? dominantLandCover;
+  final String? visibleUsage;
+  final String? usageLevel;
+  final String? maintenanceStatus;
+  final String? conditionInfoSource;
+  final String? tenureInfoSource;
+  final String? possessionMarkers;
+  final String? conflictInfo;
+  final String? idempotencyKey;
 
   const SubmitJagaTanahReportEvent({
     required this.title,
@@ -35,6 +47,18 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
     required this.attachments,
     required this.categoryId,
     this.subCategoryId,
+    this.type = 'point',
+    this.locationAccess,
+    this.fieldCondition,
+    this.dominantLandCover,
+    this.visibleUsage,
+    this.usageLevel,
+    this.maintenanceStatus,
+    this.conditionInfoSource,
+    this.tenureInfoSource,
+    this.possessionMarkers,
+    this.conflictInfo,
+    this.idempotencyKey,
   });
 
   @override
@@ -47,5 +71,17 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
     attachments,
     categoryId,
     subCategoryId,
+    type,
+    locationAccess,
+    fieldCondition,
+    dominantLandCover,
+    visibleUsage,
+    usageLevel,
+    maintenanceStatus,
+    conditionInfoSource,
+    tenureInfoSource,
+    possessionMarkers,
+    conflictInfo,
+    idempotencyKey,
   ];
 }

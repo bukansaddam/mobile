@@ -80,6 +80,18 @@ class CreateJagaTanahBloc
       attachments: event.attachments,
       categoryId: event.categoryId,
       subCategoryId: event.subCategoryId,
+      type: event.type,
+      locationAccess: event.locationAccess,
+      fieldCondition: event.fieldCondition,
+      dominantLandCover: event.dominantLandCover,
+      visibleUsage: event.visibleUsage,
+      usageLevel: event.usageLevel,
+      maintenanceStatus: event.maintenanceStatus,
+      conditionInfoSource: event.conditionInfoSource,
+      tenureInfoSource: event.tenureInfoSource,
+      possessionMarkers: event.possessionMarkers,
+      conflictInfo: event.conflictInfo,
+      idempotencyKey: event.idempotencyKey,
     );
 
     result.fold(

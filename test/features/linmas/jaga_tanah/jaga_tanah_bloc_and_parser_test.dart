@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:akar/core/constants/api_constants.dart';
+import 'package:akar/core/errors/exceptions.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
@@ -10,7 +14,24 @@ import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tana
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _FakeDioAdapter implements HttpClientAdapter {
+  _FakeDioAdapter(this.onFetch);
+
+  final Future<ResponseBody> Function(RequestOptions options) onFetch;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) => onFetch(options);
+
+  @override
+  void close({bool force = false}) {}
+}
 
 class _FakeJagaTanahRepository implements JagaTanahRepository {
   Either<Failure, ComplaintPaginatedEntity>? listResult;
@@ -54,10 +75,29 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
 
   int listCalls = 0;
   int categoryCalls = 0;
+  int createCalls = 0;
   String? lastStatusFilter;
   String? lastCategoryFilter;
+  String? lastTitle;
+  String? lastDescription;
+  String? lastAddress;
+  double? lastLatitude;
+  double? lastLongitude;
+  List<File>? lastAttachments;
   int? lastCategoryId;
   int? lastSubCategoryId;
+  String? lastType;
+  String? lastLocationAccess;
+  String? lastFieldCondition;
+  String? lastDominantLandCover;
+  String? lastVisibleUsage;
+  String? lastUsageLevel;
+  String? lastMaintenanceStatus;
+  String? lastConditionInfoSource;
+  String? lastTenureInfoSource;
+  String? lastPossessionMarkers;
+  String? lastConflictInfo;
+  String? lastIdempotencyKey;
 
   ComplaintReportEntity _sampleReport(String id) => ComplaintReportEntity(
     id: id,
@@ -105,9 +145,40 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     required List<File> attachments,
     required int categoryId,
     int? subCategoryId,
+    String type = 'point',
+    String? locationAccess,
+    String? fieldCondition,
+    String? dominantLandCover,
+    String? visibleUsage,
+    String? usageLevel,
+    String? maintenanceStatus,
+    String? conditionInfoSource,
+    String? tenureInfoSource,
+    String? possessionMarkers,
+    String? conflictInfo,
+    String? idempotencyKey,
   }) async {
+    createCalls++;
+    lastTitle = title;
+    lastDescription = description;
+    lastAddress = address;
+    lastLatitude = latitude;
+    lastLongitude = longitude;
+    lastAttachments = attachments;
     lastCategoryId = categoryId;
     lastSubCategoryId = subCategoryId;
+    lastType = type;
+    lastLocationAccess = locationAccess;
+    lastFieldCondition = fieldCondition;
+    lastDominantLandCover = dominantLandCover;
+    lastVisibleUsage = visibleUsage;
+    lastUsageLevel = usageLevel;
+    lastMaintenanceStatus = maintenanceStatus;
+    lastConditionInfoSource = conditionInfoSource;
+    lastTenureInfoSource = tenureInfoSource;
+    lastPossessionMarkers = possessionMarkers;
+    lastConflictInfo = conflictInfo;
+    lastIdempotencyKey = idempotencyKey;
     return createResult;
   }
 }
@@ -334,14 +405,227 @@ void main() {
             attachments: [File('/tmp/foto.jpg')],
             categoryId: 21,
             subCategoryId: 22,
+            locationAccess: 'Jalan lingkungan',
+            fieldCondition: 'Sebagian dimanfaatkan',
+            dominantLandCover: 'Semak belukar',
+            visibleUsage: 'Perkebunan',
+            usageLevel: 'Rendah (< 25% dari luas)',
+            maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
+            conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+            tenureInfoSource: 'Papan di lokasi',
+            possessionMarkers: 'Ada papan, tanpa pagar',
+            conflictInfo: 'Tidak ada informasi',
+            idempotencyKey: 'jgt-test-key-001',
           ),
         );
         state = await bloc.stream.firstWhere(
           (s) => s.submitStatus == CreateJagaTanahSubmitStatus.success,
         );
+        expect(repository.createCalls, 1);
+        expect(repository.lastTitle, 'Patok batas rusak');
+        expect(
+          repository.lastDescription,
+          'Patok batas tanah pemda mengalami pergeseran.',
+        );
+        expect(repository.lastAddress, 'Jl. Merdeka Selatan');
+        expect(repository.lastLatitude, -6.18);
+        expect(repository.lastLongitude, 106.82);
         expect(repository.lastCategoryId, 21);
         expect(repository.lastSubCategoryId, 22);
+        expect(repository.lastType, 'point');
+        expect(repository.lastLocationAccess, 'Jalan lingkungan');
+        expect(repository.lastFieldCondition, 'Sebagian dimanfaatkan');
+        expect(repository.lastDominantLandCover, 'Semak belukar');
+        expect(repository.lastVisibleUsage, 'Perkebunan');
+        expect(repository.lastUsageLevel, 'Rendah (< 25% dari luas)');
+        expect(
+          repository.lastMaintenanceStatus,
+          'Tidak terpelihara (tidak ada aktivitas)',
+        );
+        expect(
+          repository.lastConditionInfoSource,
+          'Pengamatan langsung oleh Linmas',
+        );
+        expect(repository.lastTenureInfoSource, 'Papan di lokasi');
+        expect(repository.lastPossessionMarkers, 'Ada papan, tanpa pagar');
+        expect(repository.lastConflictInfo, 'Tidak ada informasi');
+        expect(repository.lastIdempotencyKey, 'jgt-test-key-001');
         expect(state.submittedReport?.ticketNumber, 'PGD-2026-00089');
+      },
+    );
+  });
+
+  group('JagaTanahRemoteDatasourceImpl.createReport', () {
+    test(
+      'mengirim multipart FormData lengkap + X-Idempotency-Key ke POST /api/jaga-tanah-reports dan mengurai root 201 ticketNumber',
+      () async {
+        final tempDir = Directory.systemTemp.createTempSync('jaga_tanah_ds_');
+        addTearDown(() => tempDir.deleteSync(recursive: true));
+        final sampleVideo = File('${tempDir.path}/evidence.mp4')
+          ..writeAsBytesSync(const [0, 0, 0, 24, 102, 116, 121, 112]);
+
+        RequestOptions? capturedOptions;
+        final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+          ..httpClientAdapter = _FakeDioAdapter((options) async {
+            capturedOptions = options;
+            return ResponseBody.fromString(
+              jsonEncode({
+                'id': 89,
+                'ticketNumber': 'JGT-2611200001',
+                'message':
+                    'Laporan Jaga Tanah berhasil dikirim dan sedang diproses untuk verifikasi (< 24 jam).',
+                'success': true,
+              }),
+              201,
+              headers: {
+                Headers.contentTypeHeader: [Headers.jsonContentType],
+              },
+            );
+          });
+        final datasource = JagaTanahRemoteDatasourceImpl(dio: dio);
+
+        final result = await datasource.createReport(
+          title: 'Indikasi okupasi tanah kas desa',
+          description: 'Terdapat patok baru di sisi selatan',
+          address: '± 500 m arah barat Balai Desa',
+          latitude: -7.983921,
+          longitude: 112.621508,
+          attachments: [sampleVideo],
+          categoryId: 21,
+          subCategoryId: 22,
+          locationAccess: 'Jalan lingkungan',
+          fieldCondition: 'Sebagian dimanfaatkan',
+          dominantLandCover: 'Semak belukar',
+          visibleUsage: 'Perkebunan',
+          usageLevel: 'Rendah (< 25% dari luas)',
+          maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
+          conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+          tenureInfoSource: 'Papan di lokasi',
+          possessionMarkers: 'Ada papan, tanpa pagar',
+          conflictInfo: 'Tidak ada informasi',
+          idempotencyKey: 'jgt-idemp-001',
+        );
+
+        expect(result.id?.toString(), '89');
+        expect(result.ticketNumber, 'JGT-2611200001');
+        expect(capturedOptions, isNotNull);
+        expect(capturedOptions!.method, 'POST');
+        expect(capturedOptions!.path, ApiConstants.jagaTanahReports);
+        expect(
+          capturedOptions!.headers['X-Idempotency-Key'],
+          equals('jgt-idemp-001'),
+        );
+
+        final formData = capturedOptions!.data as FormData;
+        final fields = Map.fromEntries(formData.fields);
+        expect(fields['category_id'], '21');
+        expect(fields['sub_category_id'], '22');
+        expect(fields['title'], 'Indikasi okupasi tanah kas desa');
+        expect(fields['description'], 'Terdapat patok baru di sisi selatan');
+        expect(fields['address'], '± 500 m arah barat Balai Desa');
+        expect(fields['type'], 'point');
+        expect(fields['latitude'], '-7.983921');
+        expect(fields['longitude'], '112.621508');
+        expect(fields['location_access'], 'Jalan lingkungan');
+        expect(fields['field_condition'], 'Sebagian dimanfaatkan');
+        expect(fields['dominant_land_cover'], 'Semak belukar');
+        expect(fields['visible_usage'], 'Perkebunan');
+        expect(fields['usage_level'], 'Rendah (< 25% dari luas)');
+        expect(
+          fields['maintenance_status'],
+          'Tidak terpelihara (tidak ada aktivitas)',
+        );
+        expect(
+          fields['condition_info_source'],
+          'Pengamatan langsung oleh Linmas',
+        );
+        expect(fields['tenure_info_source'], 'Papan di lokasi');
+        expect(fields['possession_markers'], 'Ada papan, tanpa pagar');
+        expect(fields['conflict_info'], 'Tidak ada informasi');
+        expect(formData.files.map((e) => e.key), contains('attachments[]'));
+      },
+    );
+
+    test('melempar ValidationException saat server membalas 422', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+        ..httpClientAdapter = _FakeDioAdapter((_) async {
+          return ResponseBody.fromString(
+            jsonEncode({
+              'success': false,
+              'message': 'Validasi gagal.',
+              'errors': [
+                {
+                  'field': 'latitude',
+                  'error': 'The latitude field is required.',
+                },
+              ],
+            }),
+            422,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
+        });
+      final datasource = JagaTanahRemoteDatasourceImpl(dio: dio);
+
+      await expectLater(
+        datasource.createReport(
+          title: 'Tes validasi',
+          description: '',
+          address: 'Jl. Uji',
+          latitude: -6.2,
+          longitude: 106.8,
+          attachments: const [],
+          categoryId: 20,
+        ),
+        throwsA(
+          isA<ValidationException>().having(
+            (e) => e.message,
+            'message',
+            'Validasi gagal.: The latitude field is required.',
+          ),
+        ),
+      );
+    });
+
+    test(
+      'melempar ServerException saat server membalas 409 conflict',
+      () async {
+        final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+          ..httpClientAdapter = _FakeDioAdapter((_) async {
+            return ResponseBody.fromString(
+              jsonEncode({
+                'success': false,
+                'message':
+                    'Laporan dengan idempotency key ini sedang diproses.',
+              }),
+              409,
+              headers: {
+                Headers.contentTypeHeader: [Headers.jsonContentType],
+              },
+            );
+          });
+        final datasource = JagaTanahRemoteDatasourceImpl(dio: dio);
+
+        await expectLater(
+          datasource.createReport(
+            title: 'Tes conflict',
+            description: '',
+            address: 'Jl. Uji',
+            latitude: -6.2,
+            longitude: 106.8,
+            attachments: const [],
+            categoryId: 20,
+            idempotencyKey: 'dup-key',
+          ),
+          throwsA(
+            isA<ServerException>().having(
+              (e) => e.message,
+              'message',
+              'Laporan dengan idempotency key ini sedang diproses.',
+            ),
+          ),
+        );
       },
     );
   });
