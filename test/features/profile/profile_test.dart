@@ -340,4 +340,98 @@ void main() {
       await tester.binding.setSurfaceSize(null);
     });
   });
+
+  group('Profile Screen Points Badge Tests', () {
+    testWidgets(
+      'MasyarakatProfileScreen menampilkan ProfilePointsCard dan membuka info sheet saat di-tap',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(600, 900));
+        final user = testUser.copyWith(
+          role: 'member',
+          profilePic: '',
+          points: 150,
+        );
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: user, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+            ],
+            child: const MaterialApp(home: MasyarakatProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('150 Poin'), findsOneWidget);
+        expect(
+          find.text('Diperoleh dari laporan yang telah dibuat'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.text('150 Poin'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Poin Laporan'), findsOneWidget);
+        expect(find.text('Total Poin Saat Ini'), findsOneWidget);
+        expect(
+          find.textContaining('laporan pengaduan yang telah Anda buat'),
+          findsOneWidget,
+        );
+        expect(find.text('Segera Hadir'), findsOneWidget);
+
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
+
+    testWidgets(
+      'LinmasProfileScreen menampilkan ProfilePointsCard dan membuka info sheet saat di-tap',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(600, 900));
+        final user = testUser.copyWith(
+          role: 'officer',
+          profilePic: '',
+          points: 350,
+        );
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: user, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+            ],
+            child: const MaterialApp(home: LinmasProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('350 Poin'), findsOneWidget);
+        expect(
+          find.text('Diperoleh dari laporan yang telah dibuat'),
+          findsOneWidget,
+        );
+
+        await tester.tap(find.text('350 Poin'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Poin Laporan'), findsOneWidget);
+        expect(find.text('Total Poin Saat Ini'), findsOneWidget);
+        expect(
+          find.textContaining('laporan tugas yang telah Anda buat'),
+          findsOneWidget,
+        );
+        expect(find.text('Segera Hadir'), findsOneWidget);
+
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
+  });
 }

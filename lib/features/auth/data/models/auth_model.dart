@@ -72,6 +72,35 @@ Object? _readProfilePic(Map json, String key) {
           : null);
 }
 
+Object? _readPoints(Map json, String key) {
+  dynamic raw = json['points'] ?? json['total_points'] ?? json['point'];
+  if (raw == null && json['public_member'] is Map) {
+    raw = json['public_member']['points'] ??
+        json['public_member']['total_points'] ??
+        json['public_member']['point'];
+  }
+  if (raw == null && json['village_member'] is Map) {
+    raw = json['village_member']['points'] ??
+        json['village_member']['total_points'] ??
+        json['village_member']['point'];
+  }
+  if (raw is num) {
+    final val = raw.toInt();
+    return val > 0 ? val : 0;
+  }
+  if (raw is String) {
+    final cleaned = raw.trim();
+    final intVal = int.tryParse(cleaned);
+    if (intVal != null) return intVal > 0 ? intVal : 0;
+    final doubleVal = double.tryParse(cleaned);
+    if (doubleVal != null) {
+      final val = doubleVal.toInt();
+      return val > 0 ? val : 0;
+    }
+  }
+  return 0;
+}
+
 @freezed
 abstract class UserModel with _$UserModel {
   const UserModel._();
@@ -96,6 +125,7 @@ abstract class UserModel with _$UserModel {
     @JsonKey(name: "address", readValue: _readAddress) String? address,
     @JsonKey(name: "profile_pic", readValue: _readProfilePic)
     String? profilePic,
+    @JsonKey(name: "points", readValue: _readPoints) @Default(0) int points,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>

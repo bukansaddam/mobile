@@ -42,6 +42,7 @@ extension UserModelMapper on UserModel {
       birthDate: birthDate,
       address: address,
       profilePic: profilePic,
+      points: points,
     );
   }
 }
@@ -67,6 +68,7 @@ extension UserEntityMapper on UserEntity {
       birthDate: birthDate,
       address: address,
       profilePic: profilePic,
+      points: points,
     );
   }
 }

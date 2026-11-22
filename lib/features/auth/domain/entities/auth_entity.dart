@@ -36,6 +36,7 @@ abstract class UserEntity with _$UserEntity {
     String? birthDate,
     String? address,
     String? profilePic,
+    @Default(0) int points,
   }) = _UserEntity;
 }
 

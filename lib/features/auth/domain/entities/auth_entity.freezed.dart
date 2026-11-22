@@ -312,7 +312,7 @@ $UserEntityCopyWith<$Res> get user {
 /// @nodoc
 mixin _$UserEntity {
 
- int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; String? get role; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId; bool? get isInitialQuizCompleted; bool? get isInitialQuizFilled; String? get birthDate; String? get address; String? get profilePic;
+ int get id; String? get name; String? get email; String? get username; String? get phoneNumber; String? get nik; String? get role; double? get latitude; double? get longitude; dynamic get emailVerifiedAt; DateTime? get createdAt; DateTime? get updatedAt; int? get villageMembersId; bool? get isInitialQuizCompleted; bool? get isInitialQuizFilled; String? get birthDate; String? get address; String? get profilePic; int get points;
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -324,20 +324,20 @@ $UserEntityCopyWith<UserEntity> get copyWith => _$UserEntityCopyWithImpl<UserEnt
 @override
 bool operator ==(Object other) {
   final _this = this as UserEntity;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.username, _this.username) || other.username == _this.username)&&(identical(other.phoneNumber, _this.phoneNumber) || other.phoneNumber == _this.phoneNumber)&&(identical(other.nik, _this.nik) || other.nik == _this.nik)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, _this.emailVerifiedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.villageMembersId, _this.villageMembersId) || other.villageMembersId == _this.villageMembersId)&&(identical(other.isInitialQuizCompleted, _this.isInitialQuizCompleted) || other.isInitialQuizCompleted == _this.isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, _this.isInitialQuizFilled) || other.isInitialQuizFilled == _this.isInitialQuizFilled)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.profilePic, _this.profilePic) || other.profilePic == _this.profilePic));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.username, _this.username) || other.username == _this.username)&&(identical(other.phoneNumber, _this.phoneNumber) || other.phoneNumber == _this.phoneNumber)&&(identical(other.nik, _this.nik) || other.nik == _this.nik)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, _this.emailVerifiedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.villageMembersId, _this.villageMembersId) || other.villageMembersId == _this.villageMembersId)&&(identical(other.isInitialQuizCompleted, _this.isInitialQuizCompleted) || other.isInitialQuizCompleted == _this.isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, _this.isInitialQuizFilled) || other.isInitialQuizFilled == _this.isInitialQuizFilled)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.profilePic, _this.profilePic) || other.profilePic == _this.profilePic)&&(identical(other.points, _this.points) || other.points == _this.points));
 }
 
 
 @override
 int get hashCode {
   final _this = this as UserEntity;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.email,_this.username,_this.phoneNumber,_this.nik,_this.role,_this.latitude,_this.longitude,const DeepCollectionEquality().hash(_this.emailVerifiedAt),_this.createdAt,_this.updatedAt,_this.villageMembersId,_this.isInitialQuizCompleted,_this.isInitialQuizFilled,_this.birthDate,_this.address,_this.profilePic);
+  return Object.hashAll([runtimeType,_this.id,_this.name,_this.email,_this.username,_this.phoneNumber,_this.nik,_this.role,_this.latitude,_this.longitude,const DeepCollectionEquality().hash(_this.emailVerifiedAt),_this.createdAt,_this.updatedAt,_this.villageMembersId,_this.isInitialQuizCompleted,_this.isInitialQuizFilled,_this.birthDate,_this.address,_this.profilePic,_this.points]);
 }
 
 @override
 String toString() {
   final _this = this as UserEntity;
-  return 'UserEntity(id: ${_this.id}, name: ${_this.name}, email: ${_this.email}, username: ${_this.username}, phoneNumber: ${_this.phoneNumber}, nik: ${_this.nik}, role: ${_this.role}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, emailVerifiedAt: ${_this.emailVerifiedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, villageMembersId: ${_this.villageMembersId}, isInitialQuizCompleted: ${_this.isInitialQuizCompleted}, isInitialQuizFilled: ${_this.isInitialQuizFilled}, birthDate: ${_this.birthDate}, address: ${_this.address}, profilePic: ${_this.profilePic})';
+  return 'UserEntity(id: ${_this.id}, name: ${_this.name}, email: ${_this.email}, username: ${_this.username}, phoneNumber: ${_this.phoneNumber}, nik: ${_this.nik}, role: ${_this.role}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, emailVerifiedAt: ${_this.emailVerifiedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, villageMembersId: ${_this.villageMembersId}, isInitialQuizCompleted: ${_this.isInitialQuizCompleted}, isInitialQuizFilled: ${_this.isInitialQuizFilled}, birthDate: ${_this.birthDate}, address: ${_this.address}, profilePic: ${_this.profilePic}, points: ${_this.points})';
 }
 
 
@@ -348,7 +348,7 @@ abstract mixin class $UserEntityCopyWith<$Res>  {
   factory $UserEntityCopyWith(UserEntity value, $Res Function(UserEntity) _then) = _$UserEntityCopyWithImpl;
 @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, String? birthDate, String? address, String? profilePic
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, String? birthDate, String? address, String? profilePic, int points
 });
 
 
@@ -365,7 +365,7 @@ class _$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,Object? points = null,}) {
   return _then(UserEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -385,7 +385,8 @@ as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQu
 as bool?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String?,address: freezed == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String?,profilePic: freezed == profilePic ? _self.profilePic : profilePic // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,points: null == points ? _self.points : points // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -470,10 +471,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic,  int points)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic,_that.points);case _:
   return orElse();
 
 }
@@ -491,10 +492,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic,  int points)  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity():
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic,_that.points);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -511,10 +512,10 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String? name,  String? email,  String? username,  String? phoneNumber,  String? nik,  String? role,  double? latitude,  double? longitude,  dynamic emailVerifiedAt,  DateTime? createdAt,  DateTime? updatedAt,  int? villageMembersId,  bool? isInitialQuizCompleted,  bool? isInitialQuizFilled,  String? birthDate,  String? address,  String? profilePic,  int points)?  $default,) {final _that = this;
 switch (_that) {
 case _UserEntity() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic);case _:
+return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber,_that.nik,_that.role,_that.latitude,_that.longitude,_that.emailVerifiedAt,_that.createdAt,_that.updatedAt,_that.villageMembersId,_that.isInitialQuizCompleted,_that.isInitialQuizFilled,_that.birthDate,_that.address,_that.profilePic,_that.points);case _:
   return null;
 
 }
@@ -526,7 +527,7 @@ return $default(_that.id,_that.name,_that.email,_that.username,_that.phoneNumber
 
 
 class _UserEntity implements UserEntity {
-  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.role, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId, this.isInitialQuizCompleted, this.isInitialQuizFilled, this.birthDate, this.address, this.profilePic});
+  const _UserEntity({required this.id, this.name, this.email, this.username, this.phoneNumber, this.nik, this.role, this.latitude, this.longitude, this.emailVerifiedAt, this.createdAt, this.updatedAt, this.villageMembersId, this.isInitialQuizCompleted, this.isInitialQuizFilled, this.birthDate, this.address, this.profilePic, this.points = 0});
   
 
 @override final  int id;
@@ -547,6 +548,7 @@ class _UserEntity implements UserEntity {
 @override final  String? birthDate;
 @override final  String? address;
 @override final  String? profilePic;
+@override@JsonKey() final  int points;
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -558,18 +560,18 @@ _$UserEntityCopyWith<_UserEntity> get copyWith => __$UserEntityCopyWithImpl<_Use
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address)&&(identical(other.profilePic, profilePic) || other.profilePic == profilePic));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.username, username) || other.username == username)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.role, role) || other.role == role)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.emailVerifiedAt, emailVerifiedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.villageMembersId, villageMembersId) || other.villageMembersId == villageMembersId)&&(identical(other.isInitialQuizCompleted, isInitialQuizCompleted) || other.isInitialQuizCompleted == isInitialQuizCompleted)&&(identical(other.isInitialQuizFilled, isInitialQuizFilled) || other.isInitialQuizFilled == isInitialQuizFilled)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address)&&(identical(other.profilePic, profilePic) || other.profilePic == profilePic)&&(identical(other.points, points) || other.points == points));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled,birthDate,address,profilePic);
+    return Object.hashAll([runtimeType,id,name,email,username,phoneNumber,nik,role,latitude,longitude,const DeepCollectionEquality().hash(emailVerifiedAt),createdAt,updatedAt,villageMembersId,isInitialQuizCompleted,isInitialQuizFilled,birthDate,address,profilePic,points]);
 }
 
 @override
 String toString() {
-    return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, birthDate: $birthDate, address: $address, profilePic: $profilePic)';
+    return 'UserEntity(id: $id, name: $name, email: $email, username: $username, phoneNumber: $phoneNumber, nik: $nik, role: $role, latitude: $latitude, longitude: $longitude, emailVerifiedAt: $emailVerifiedAt, createdAt: $createdAt, updatedAt: $updatedAt, villageMembersId: $villageMembersId, isInitialQuizCompleted: $isInitialQuizCompleted, isInitialQuizFilled: $isInitialQuizFilled, birthDate: $birthDate, address: $address, profilePic: $profilePic, points: $points)';
 }
 
 
@@ -580,7 +582,7 @@ abstract mixin class _$UserEntityCopyWith<$Res> implements $UserEntityCopyWith<$
   factory _$UserEntityCopyWith(_UserEntity value, $Res Function(_UserEntity) _then) = __$UserEntityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, String? birthDate, String? address, String? profilePic
+ int id, String? name, String? email, String? username, String? phoneNumber, String? nik, String? role, double? latitude, double? longitude, dynamic emailVerifiedAt, DateTime? createdAt, DateTime? updatedAt, int? villageMembersId, bool? isInitialQuizCompleted, bool? isInitialQuizFilled, String? birthDate, String? address, String? profilePic, int points
 });
 
 
@@ -597,7 +599,7 @@ class __$UserEntityCopyWithImpl<$Res>
 
 /// Create a copy of UserEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = freezed,Object? email = freezed,Object? username = freezed,Object? phoneNumber = freezed,Object? nik = freezed,Object? role = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? emailVerifiedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,Object? villageMembersId = freezed,Object? isInitialQuizCompleted = freezed,Object? isInitialQuizFilled = freezed,Object? birthDate = freezed,Object? address = freezed,Object? profilePic = freezed,Object? points = null,}) {
   return _then(_UserEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -617,7 +619,8 @@ as bool?,isInitialQuizFilled: freezed == isInitialQuizFilled ? _self.isInitialQu
 as bool?,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
 as String?,address: freezed == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String?,profilePic: freezed == profilePic ? _self.profilePic : profilePic // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,points: null == points ? _self.points : points // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

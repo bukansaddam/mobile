@@ -50,6 +50,7 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
   birthDate: _readBirthDate(json, 'birth_date') as String?,
   address: _readAddress(json, 'address') as String?,
   profilePic: _readProfilePic(json, 'profile_pic') as String?,
+  points: (_readPoints(json, 'points') as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
@@ -72,4 +73,5 @@ Map<String, dynamic> _$UserModelToJson(_UserModel instance) =>
       'birth_date': instance.birthDate,
       'address': instance.address,
       'profile_pic': instance.profilePic,
+      'points': instance.points,
     };

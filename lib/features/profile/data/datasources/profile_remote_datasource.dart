@@ -158,6 +158,28 @@ class ProfileRemoteDatasourceImpl extends BaseRemoteDataSource
           map['profile_pic'] = map['public_member']['profile_pic'];
         }
       }
+      if (map['points'] == null) {
+        if (json['points'] != null ||
+            json['total_points'] != null ||
+            json['point'] != null) {
+          map['points'] =
+              json['points'] ?? json['total_points'] ?? json['point'];
+        } else if (map['public_member'] is Map &&
+            (map['public_member']['points'] != null ||
+                map['public_member']['total_points'] != null ||
+                map['public_member']['point'] != null)) {
+          map['points'] = map['public_member']['points'] ??
+              map['public_member']['total_points'] ??
+              map['public_member']['point'];
+        } else if (map['village_member'] is Map &&
+            (map['village_member']['points'] != null ||
+                map['village_member']['total_points'] != null ||
+                map['village_member']['point'] != null)) {
+          map['points'] = map['village_member']['points'] ??
+              map['village_member']['total_points'] ??
+              map['village_member']['point'];
+        }
+      }
       return UserModel.fromJson(map);
     }
     throw const FormatException('Format data profil tidak sesuai');
