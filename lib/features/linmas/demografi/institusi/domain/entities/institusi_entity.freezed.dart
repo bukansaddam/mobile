@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'institusi_entity.dart';
@@ -9,6 +9,7 @@ part of 'institusi_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $InstitusiRegionEntityCopyWith<InstitusiRegionEntity> get copyWith => _$Institus
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiRegionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
+  final _this = this as InstitusiRegionEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiRegionEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.code, _this.code) || other.code == _this.code));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,code);
+int get hashCode {
+  final _this = this as InstitusiRegionEntity;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.code);
+}
 
 @override
 String toString() {
-  return 'InstitusiRegionEntity(id: $id, name: $name, code: $code)';
+  final _this = this as InstitusiRegionEntity;
+  return 'InstitusiRegionEntity(id: ${_this.id}, name: ${_this.name}, code: ${_this.code})';
 }
 
 
@@ -63,7 +69,7 @@ class _$InstitusiRegionEntityCopyWithImpl<$Res>
 /// Create a copy of InstitusiRegionEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? name = freezed,Object? code = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiRegionEntity(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$InstitusiRegionEntityCopyWith<_InstitusiRegionEntity> get copyWith => __$Insti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiRegionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiRegionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,code);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,code);
+}
 
 @override
 String toString() {
-  return 'InstitusiRegionEntity(id: $id, name: $name, code: $code)';
+    return 'InstitusiRegionEntity(id: $id, name: $name, code: $code)';
 }
 
 
@@ -288,16 +296,21 @@ $InstitusiEntityCopyWith<InstitusiEntity> get copyWith => _$InstitusiEntityCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as InstitusiEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nama, _this.nama) || other.nama == _this.nama)&&(identical(other.scope, _this.scope) || other.scope == _this.scope)&&(identical(other.kategori, _this.kategori) || other.kategori == _this.kategori)&&(identical(other.categoryId, _this.categoryId) || other.categoryId == _this.categoryId)&&(identical(other.alamat, _this.alamat) || other.alamat == _this.alamat)&&(identical(other.provinceId, _this.provinceId) || other.provinceId == _this.provinceId)&&(identical(other.regencyId, _this.regencyId) || other.regencyId == _this.regencyId)&&(identical(other.districtId, _this.districtId) || other.districtId == _this.districtId)&&(identical(other.villageId, _this.villageId) || other.villageId == _this.villageId)&&(identical(other.figuresCount, _this.figuresCount) || other.figuresCount == _this.figuresCount)&&(identical(other.province, _this.province) || other.province == _this.province)&&(identical(other.regency, _this.regency) || other.regency == _this.regency)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.village, _this.village) || other.village == _this.village)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as InstitusiEntity;
+  return Object.hash(runtimeType,_this.id,_this.nama,_this.scope,_this.kategori,_this.categoryId,_this.alamat,_this.provinceId,_this.regencyId,_this.districtId,_this.villageId,_this.figuresCount,_this.province,_this.regency,_this.district,_this.village,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'InstitusiEntity(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as InstitusiEntity;
+  return 'InstitusiEntity(id: ${_this.id}, nama: ${_this.nama}, scope: ${_this.scope}, kategori: ${_this.kategori}, categoryId: ${_this.categoryId}, alamat: ${_this.alamat}, provinceId: ${_this.provinceId}, regencyId: ${_this.regencyId}, districtId: ${_this.districtId}, villageId: ${_this.villageId}, figuresCount: ${_this.figuresCount}, province: ${_this.province}, regency: ${_this.regency}, district: ${_this.district}, village: ${_this.village}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -326,7 +339,7 @@ class _$InstitusiEntityCopyWithImpl<$Res>
 /// Create a copy of InstitusiEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? nama = null,Object? scope = null,Object? kategori = freezed,Object? categoryId = freezed,Object? alamat = freezed,Object? provinceId = freezed,Object? regencyId = freezed,Object? districtId = freezed,Object? villageId = freezed,Object? figuresCount = freezed,Object? province = freezed,Object? regency = freezed,Object? district = freezed,Object? village = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiEntity(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,scope: null == scope ? _self.scope : scope // ignore: cast_nullable_to_non_nullable
@@ -564,16 +577,18 @@ _$InstitusiEntityCopyWith<_InstitusiEntity> get copyWith => __$InstitusiEntityCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'InstitusiEntity(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'InstitusiEntity(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -689,16 +704,21 @@ $InstitusiPaginatedEntityCopyWith<InstitusiPaginatedEntity> get copyWith => _$In
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.message, message) || other.message == message));
+  final _this = this as InstitusiPaginatedEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiPaginatedEntity&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(data),message);
+int get hashCode {
+  final _this = this as InstitusiPaginatedEntity;
+  return Object.hash(runtimeType,_this.success,_this.total,_this.currentPage,_this.lastPage,_this.perPage,const DeepCollectionEquality().hash(_this.data),_this.message);
+}
 
 @override
 String toString() {
-  return 'InstitusiPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+  final _this = this as InstitusiPaginatedEntity;
+  return 'InstitusiPaginatedEntity(success: ${_this.success}, total: ${_this.total}, currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, data: ${_this.data}, message: ${_this.message})';
 }
 
 
@@ -727,7 +747,7 @@ class _$InstitusiPaginatedEntityCopyWithImpl<$Res>
 /// Create a copy of InstitusiPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? total = null,Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? data = null,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiPaginatedEntity(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
@@ -876,7 +896,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _InstitusiPaginatedEntity implements InstitusiPaginatedEntity {
-  const _InstitusiPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<InstitusiEntity> data = const [], this.message}): _data = data;
+  const _InstitusiPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<InstitusiEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;
@@ -903,16 +923,18 @@ _$InstitusiPaginatedEntityCopyWith<_InstitusiPaginatedEntity> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+int get hashCode {
+    return Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+}
 
 @override
 String toString() {
-  return 'InstitusiPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+    return 'InstitusiPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
 }
 
 

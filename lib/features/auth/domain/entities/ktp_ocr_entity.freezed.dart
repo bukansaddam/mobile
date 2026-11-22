@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'ktp_ocr_entity.dart';
@@ -9,6 +9,7 @@ part of 'ktp_ocr_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $KtpOcrEntityCopyWith<KtpOcrEntity> get copyWith => _$KtpOcrEntityCopyWithImpl<K
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is KtpOcrEntity&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthPlace, birthPlace) || other.birthPlace == birthPlace)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address));
+  final _this = this as KtpOcrEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is KtpOcrEntity&&(identical(other.nik, _this.nik) || other.nik == _this.nik)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.birthPlace, _this.birthPlace) || other.birthPlace == _this.birthPlace)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.address, _this.address) || other.address == _this.address));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,nik,name,birthPlace,birthDate,address);
+int get hashCode {
+  final _this = this as KtpOcrEntity;
+  return Object.hash(runtimeType,_this.nik,_this.name,_this.birthPlace,_this.birthDate,_this.address);
+}
 
 @override
 String toString() {
-  return 'KtpOcrEntity(nik: $nik, name: $name, birthPlace: $birthPlace, birthDate: $birthDate, address: $address)';
+  final _this = this as KtpOcrEntity;
+  return 'KtpOcrEntity(nik: ${_this.nik}, name: ${_this.name}, birthPlace: ${_this.birthPlace}, birthDate: ${_this.birthDate}, address: ${_this.address})';
 }
 
 
@@ -63,7 +69,7 @@ class _$KtpOcrEntityCopyWithImpl<$Res>
 /// Create a copy of KtpOcrEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? nik = null,Object? name = null,Object? birthPlace = null,Object? birthDate = freezed,Object? address = null,}) {
-  return _then(_self.copyWith(
+  return _then(KtpOcrEntity(
 nik: null == nik ? _self.nik : nik // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,birthPlace: null == birthPlace ? _self.birthPlace : birthPlace // ignore: cast_nullable_to_non_nullable
@@ -229,16 +235,18 @@ _$KtpOcrEntityCopyWith<_KtpOcrEntity> get copyWith => __$KtpOcrEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _KtpOcrEntity&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthPlace, birthPlace) || other.birthPlace == birthPlace)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _KtpOcrEntity&&(identical(other.nik, nik) || other.nik == nik)&&(identical(other.name, name) || other.name == name)&&(identical(other.birthPlace, birthPlace) || other.birthPlace == birthPlace)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.address, address) || other.address == address));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,nik,name,birthPlace,birthDate,address);
+int get hashCode {
+    return Object.hash(runtimeType,nik,name,birthPlace,birthDate,address);
+}
 
 @override
 String toString() {
-  return 'KtpOcrEntity(nik: $nik, name: $name, birthPlace: $birthPlace, birthDate: $birthDate, address: $address)';
+    return 'KtpOcrEntity(nik: $nik, name: $name, birthPlace: $birthPlace, birthDate: $birthDate, address: $address)';
 }
 
 

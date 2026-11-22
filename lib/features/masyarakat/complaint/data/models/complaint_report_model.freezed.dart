@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'complaint_report_model.dart';
@@ -9,6 +9,7 @@ part of 'complaint_report_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ComplaintAttachmentModelCopyWith<ComplaintAttachmentModel> get copyWith => _$Co
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintAttachmentModel&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
+  final _this = this as ComplaintAttachmentModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintAttachmentModel&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.url, _this.url) || other.url == _this.url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mimeType,url);
+int get hashCode {
+  final _this = this as ComplaintAttachmentModel;
+  return Object.hash(runtimeType,_this.mimeType,_this.url);
+}
 
 @override
 String toString() {
-  return 'ComplaintAttachmentModel(mimeType: $mimeType, url: $url)';
+  final _this = this as ComplaintAttachmentModel;
+  return 'ComplaintAttachmentModel(mimeType: ${_this.mimeType}, url: ${_this.url})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ComplaintAttachmentModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintAttachmentModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? mimeType = null,Object? url = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintAttachmentModel(
 mimeType: null == mimeType ? _self.mimeType : mimeType // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,
@@ -229,16 +235,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintAttachmentModel&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintAttachmentModel&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mimeType,url);
+int get hashCode {
+    return Object.hash(runtimeType,mimeType,url);
+}
 
 @override
 String toString() {
-  return 'ComplaintAttachmentModel(mimeType: $mimeType, url: $url)';
+    return 'ComplaintAttachmentModel(mimeType: $mimeType, url: $url)';
 }
 
 
@@ -294,16 +302,21 @@ $ComplaintSlaModelCopyWith<ComplaintSlaModel> get copyWith => _$ComplaintSlaMode
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintSlaModel&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
+  final _this = this as ComplaintSlaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintSlaModel&&(identical(other.stageLabel, _this.stageLabel) || other.stageLabel == _this.stageLabel)&&(identical(other.remainingMinutes, _this.remainingMinutes) || other.remainingMinutes == _this.remainingMinutes)&&(identical(other.progressPct, _this.progressPct) || other.progressPct == _this.progressPct)&&(identical(other.state, _this.state) || other.state == _this.state));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+int get hashCode {
+  final _this = this as ComplaintSlaModel;
+  return Object.hash(runtimeType,_this.stageLabel,_this.remainingMinutes,_this.progressPct,_this.state);
+}
 
 @override
 String toString() {
-  return 'ComplaintSlaModel(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
+  final _this = this as ComplaintSlaModel;
+  return 'ComplaintSlaModel(stageLabel: ${_this.stageLabel}, remainingMinutes: ${_this.remainingMinutes}, progressPct: ${_this.progressPct}, state: ${_this.state})';
 }
 
 
@@ -332,7 +345,7 @@ class _$ComplaintSlaModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintSlaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? stageLabel = null,Object? remainingMinutes = freezed,Object? progressPct = freezed,Object? state = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintSlaModel(
 stageLabel: null == stageLabel ? _self.stageLabel : stageLabel // ignore: cast_nullable_to_non_nullable
 as String,remainingMinutes: freezed == remainingMinutes ? _self.remainingMinutes : remainingMinutes // ignore: cast_nullable_to_non_nullable
 as num?,progressPct: freezed == progressPct ? _self.progressPct : progressPct // ignore: cast_nullable_to_non_nullable
@@ -499,16 +512,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintSlaModel&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintSlaModel&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+int get hashCode {
+    return Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+}
 
 @override
 String toString() {
-  return 'ComplaintSlaModel(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
+    return 'ComplaintSlaModel(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
 }
 
 
@@ -566,16 +581,21 @@ $ComplaintActorModelCopyWith<ComplaintActorModel> get copyWith => _$ComplaintAct
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintActorModel&&(identical(other.name, name) || other.name == name));
+  final _this = this as ComplaintActorModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintActorModel&&(identical(other.name, _this.name) || other.name == _this.name));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name);
+int get hashCode {
+  final _this = this as ComplaintActorModel;
+  return Object.hash(runtimeType,_this.name);
+}
 
 @override
 String toString() {
-  return 'ComplaintActorModel(name: $name)';
+  final _this = this as ComplaintActorModel;
+  return 'ComplaintActorModel(name: ${_this.name})';
 }
 
 
@@ -604,7 +624,7 @@ class _$ComplaintActorModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintActorModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintActorModel(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -765,16 +785,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintActorModel&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintActorModel&&(identical(other.name, name) || other.name == name));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,name);
+int get hashCode {
+    return Object.hash(runtimeType,name);
+}
 
 @override
 String toString() {
-  return 'ComplaintActorModel(name: $name)';
+    return 'ComplaintActorModel(name: $name)';
 }
 
 
@@ -829,16 +851,21 @@ $ComplaintTimelineModelCopyWith<ComplaintTimelineModel> get copyWith => _$Compla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintTimelineModel&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actor, actor) || other.actor == actor)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  final _this = this as ComplaintTimelineModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintTimelineModel&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.actor, _this.actor) || other.actor == _this.actor)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,description,actor,createdAt);
+int get hashCode {
+  final _this = this as ComplaintTimelineModel;
+  return Object.hash(runtimeType,_this.type,_this.description,_this.actor,_this.createdAt);
+}
 
 @override
 String toString() {
-  return 'ComplaintTimelineModel(type: $type, description: $description, actor: $actor, createdAt: $createdAt)';
+  final _this = this as ComplaintTimelineModel;
+  return 'ComplaintTimelineModel(type: ${_this.type}, description: ${_this.description}, actor: ${_this.actor}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -867,7 +894,7 @@ class _$ComplaintTimelineModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintTimelineModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? description = null,Object? actor = freezed,Object? createdAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintTimelineModel(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,actor: freezed == actor ? _self.actor : actor // ignore: cast_nullable_to_non_nullable
@@ -1046,16 +1073,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintTimelineModel&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actor, actor) || other.actor == actor)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintTimelineModel&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actor, actor) || other.actor == actor)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,type,description,actor,createdAt);
+int get hashCode {
+    return Object.hash(runtimeType,type,description,actor,createdAt);
+}
 
 @override
 String toString() {
-  return 'ComplaintTimelineModel(type: $type, description: $description, actor: $actor, createdAt: $createdAt)';
+    return 'ComplaintTimelineModel(type: $type, description: $description, actor: $actor, createdAt: $createdAt)';
 }
 
 
@@ -1125,16 +1154,21 @@ $ComplaintReportModelCopyWith<ComplaintReportModel> get copyWith => _$ComplaintR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, timeline));
+  final _this = this as ComplaintReportModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.ticketNumber, _this.ticketNumber) || other.ticketNumber == _this.ticketNumber)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.statusLabel, _this.statusLabel) || other.statusLabel == _this.statusLabel)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.reportedAt, _this.reportedAt) || other.reportedAt == _this.reportedAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.sla, _this.sla) || other.sla == _this.sla)&&const DeepCollectionEquality().equals(other.timeline, _this.timeline));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,updatedAt,const DeepCollectionEquality().hash(attachments),sla,const DeepCollectionEquality().hash(timeline));
+int get hashCode {
+  final _this = this as ComplaintReportModel;
+  return Object.hash(runtimeType,_this.id,_this.ticketNumber,_this.title,_this.description,_this.status,_this.statusLabel,_this.category,_this.address,_this.latitude,_this.longitude,_this.reportedAt,_this.updatedAt,const DeepCollectionEquality().hash(_this.attachments),_this.sla,const DeepCollectionEquality().hash(_this.timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportModel(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, updatedAt: $updatedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
+  final _this = this as ComplaintReportModel;
+  return 'ComplaintReportModel(id: ${_this.id}, ticketNumber: ${_this.ticketNumber}, title: ${_this.title}, description: ${_this.description}, status: ${_this.status}, statusLabel: ${_this.statusLabel}, category: ${_this.category}, address: ${_this.address}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, reportedAt: ${_this.reportedAt}, updatedAt: ${_this.updatedAt}, attachments: ${_this.attachments}, sla: ${_this.sla}, timeline: ${_this.timeline})';
 }
 
 
@@ -1163,7 +1197,7 @@ class _$ComplaintReportModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintReportModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? updatedAt = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintReportModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -1332,7 +1366,7 @@ return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.
 @JsonSerializable()
 
 class _ComplaintReportModel extends ComplaintReportModel {
-  const _ComplaintReportModel({this.id, @JsonKey(name: 'ticketNumber', readValue: _readTicketNumber) this.ticketNumber = '', this.title = '', this.description = '', this.status = '', @JsonKey(name: 'statusLabel', readValue: _readStatusLabel) this.statusLabel = '', @JsonKey(name: 'category', readValue: _readCategory) this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt, this.updatedAt, final  List<ComplaintAttachmentModel> attachments = const [], this.sla, final  List<ComplaintTimelineModel> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
+  const _ComplaintReportModel({this.id, @JsonKey(name: 'ticketNumber', readValue: _readTicketNumber) this.ticketNumber = '', this.title = '', this.description = '', this.status = '', @JsonKey(name: 'statusLabel', readValue: _readStatusLabel) this.statusLabel = '', @JsonKey(name: 'category', readValue: _readCategory) this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt, this.updatedAt,  List<ComplaintAttachmentModel> attachments = const [], this.sla,  List<ComplaintTimelineModel> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
   factory _ComplaintReportModel.fromJson(Map<String, dynamic> json) => _$ComplaintReportModelFromJson(json);
 
 @override final  int? id;
@@ -1376,16 +1410,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other._timeline, _timeline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, _timeline));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,updatedAt,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+int get hashCode {
+    return Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,updatedAt,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportModel(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, updatedAt: $updatedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
+    return 'ComplaintReportModel(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, updatedAt: $updatedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
 }
 
 
@@ -1466,16 +1502,21 @@ $ComplaintLocationModelCopyWith<ComplaintLocationModel> get copyWith => _$Compla
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintLocationModel&&(identical(other.address, address) || other.address == address)&&(identical(other.village, village) || other.village == village)&&(identical(other.district, district) || other.district == district)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.province, province) || other.province == province)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+  final _this = this as ComplaintLocationModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintLocationModel&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.village, _this.village) || other.village == _this.village)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.regency, _this.regency) || other.regency == _this.regency)&&(identical(other.province, _this.province) || other.province == _this.province)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,address,village,district,regency,province,latitude,longitude);
+int get hashCode {
+  final _this = this as ComplaintLocationModel;
+  return Object.hash(runtimeType,_this.address,_this.village,_this.district,_this.regency,_this.province,_this.latitude,_this.longitude);
+}
 
 @override
 String toString() {
-  return 'ComplaintLocationModel(address: $address, village: $village, district: $district, regency: $regency, province: $province, latitude: $latitude, longitude: $longitude)';
+  final _this = this as ComplaintLocationModel;
+  return 'ComplaintLocationModel(address: ${_this.address}, village: ${_this.village}, district: ${_this.district}, regency: ${_this.regency}, province: ${_this.province}, latitude: ${_this.latitude}, longitude: ${_this.longitude})';
 }
 
 
@@ -1504,7 +1545,7 @@ class _$ComplaintLocationModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintLocationModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? address = null,Object? village = freezed,Object? district = freezed,Object? regency = freezed,Object? province = freezed,Object? latitude = freezed,Object? longitude = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintLocationModel(
 address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String,village: freezed == village ? _self.village : village // ignore: cast_nullable_to_non_nullable
 as String?,district: freezed == district ? _self.district : district // ignore: cast_nullable_to_non_nullable
@@ -1677,16 +1718,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintLocationModel&&(identical(other.address, address) || other.address == address)&&(identical(other.village, village) || other.village == village)&&(identical(other.district, district) || other.district == district)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.province, province) || other.province == province)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintLocationModel&&(identical(other.address, address) || other.address == address)&&(identical(other.village, village) || other.village == village)&&(identical(other.district, district) || other.district == district)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.province, province) || other.province == province)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,address,village,district,regency,province,latitude,longitude);
+int get hashCode {
+    return Object.hash(runtimeType,address,village,district,regency,province,latitude,longitude);
+}
 
 @override
 String toString() {
-  return 'ComplaintLocationModel(address: $address, village: $village, district: $district, regency: $regency, province: $province, latitude: $latitude, longitude: $longitude)';
+    return 'ComplaintLocationModel(address: $address, village: $village, district: $district, regency: $regency, province: $province, latitude: $latitude, longitude: $longitude)';
 }
 
 
@@ -1747,16 +1790,21 @@ $ComplaintReportDetailModelCopyWith<ComplaintReportDetailModel> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportDetailModel&&(identical(other.complaint, complaint) || other.complaint == complaint)&&(identical(other.location, location) || other.location == location)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, timeline));
+  final _this = this as ComplaintReportDetailModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportDetailModel&&(identical(other.complaint, _this.complaint) || other.complaint == _this.complaint)&&(identical(other.location, _this.location) || other.location == _this.location)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.sla, _this.sla) || other.sla == _this.sla)&&const DeepCollectionEquality().equals(other.timeline, _this.timeline));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,complaint,location,const DeepCollectionEquality().hash(attachments),sla,const DeepCollectionEquality().hash(timeline));
+int get hashCode {
+  final _this = this as ComplaintReportDetailModel;
+  return Object.hash(runtimeType,_this.complaint,_this.location,const DeepCollectionEquality().hash(_this.attachments),_this.sla,const DeepCollectionEquality().hash(_this.timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportDetailModel(complaint: $complaint, location: $location, attachments: $attachments, sla: $sla, timeline: $timeline)';
+  final _this = this as ComplaintReportDetailModel;
+  return 'ComplaintReportDetailModel(complaint: ${_this.complaint}, location: ${_this.location}, attachments: ${_this.attachments}, sla: ${_this.sla}, timeline: ${_this.timeline})';
 }
 
 
@@ -1785,7 +1833,7 @@ class _$ComplaintReportDetailModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintReportDetailModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? complaint = null,Object? location = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintReportDetailModel(
 complaint: null == complaint ? _self.complaint : complaint // ignore: cast_nullable_to_non_nullable
 as ComplaintReportModel,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as ComplaintLocationModel?,attachments: null == attachments ? _self.attachments : attachments // ignore: cast_nullable_to_non_nullable
@@ -1965,7 +2013,7 @@ return $default(_that.complaint,_that.location,_that.attachments,_that.sla,_that
 @JsonSerializable()
 
 class _ComplaintReportDetailModel implements ComplaintReportDetailModel {
-  const _ComplaintReportDetailModel({this.complaint = const ComplaintReportModel(), this.location, final  List<ComplaintAttachmentModel> attachments = const [], this.sla, final  List<ComplaintTimelineModel> timeline = const []}): _attachments = attachments,_timeline = timeline;
+  const _ComplaintReportDetailModel({this.complaint = const ComplaintReportModel(), this.location,  List<ComplaintAttachmentModel> attachments = const [], this.sla,  List<ComplaintTimelineModel> timeline = const []}): _attachments = attachments,_timeline = timeline;
   factory _ComplaintReportDetailModel.fromJson(Map<String, dynamic> json) => _$ComplaintReportDetailModelFromJson(json);
 
 @override@JsonKey() final  ComplaintReportModel complaint;
@@ -1999,16 +2047,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportDetailModel&&(identical(other.complaint, complaint) || other.complaint == complaint)&&(identical(other.location, location) || other.location == location)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other._timeline, _timeline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportDetailModel&&(identical(other.complaint, complaint) || other.complaint == complaint)&&(identical(other.location, location) || other.location == location)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, _timeline));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,complaint,location,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+int get hashCode {
+    return Object.hash(runtimeType,complaint,location,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportDetailModel(complaint: $complaint, location: $location, attachments: $attachments, sla: $sla, timeline: $timeline)';
+    return 'ComplaintReportDetailModel(complaint: $complaint, location: $location, attachments: $attachments, sla: $sla, timeline: $timeline)';
 }
 
 
@@ -2100,16 +2150,21 @@ $ComplaintMetaModelCopyWith<ComplaintMetaModel> get copyWith => _$ComplaintMetaM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+  final _this = this as ComplaintMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintMetaModel&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+  final _this = this as ComplaintMetaModel;
+  return Object.hash(runtimeType,_this.currentPage,_this.lastPage,_this.perPage,_this.total);
+}
 
 @override
 String toString() {
-  return 'ComplaintMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+  final _this = this as ComplaintMetaModel;
+  return 'ComplaintMetaModel(currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, total: ${_this.total})';
 }
 
 
@@ -2138,7 +2193,7 @@ class _$ComplaintMetaModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintMetaModel(
 currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
@@ -2305,16 +2360,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+    return Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+}
 
 @override
 String toString() {
-  return 'ComplaintMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+    return 'ComplaintMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
 }
 
 
@@ -2372,16 +2429,21 @@ $ComplaintPaginatedModelCopyWith<ComplaintPaginatedModel> get copyWith => _$Comp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintPaginatedModel&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.meta, meta) || other.meta == meta));
+  final _this = this as ComplaintPaginatedModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintPaginatedModel&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.meta, _this.meta) || other.meta == _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),meta);
+int get hashCode {
+  final _this = this as ComplaintPaginatedModel;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.data),_this.meta);
+}
 
 @override
 String toString() {
-  return 'ComplaintPaginatedModel(data: $data, meta: $meta)';
+  final _this = this as ComplaintPaginatedModel;
+  return 'ComplaintPaginatedModel(data: ${_this.data}, meta: ${_this.meta})';
 }
 
 
@@ -2410,7 +2472,7 @@ class _$ComplaintPaginatedModelCopyWithImpl<$Res>
 /// Create a copy of ComplaintPaginatedModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? meta = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintPaginatedModel(
 data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<ComplaintReportModel>,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
 as ComplaintMetaModel?,
@@ -2566,7 +2628,7 @@ return $default(_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _ComplaintPaginatedModel implements ComplaintPaginatedModel {
-  const _ComplaintPaginatedModel({final  List<ComplaintReportModel> data = const [], this.meta}): _data = data;
+  const _ComplaintPaginatedModel({ List<ComplaintReportModel> data = const [], this.meta}): _data = data;
   factory _ComplaintPaginatedModel.fromJson(Map<String, dynamic> json) => _$ComplaintPaginatedModelFromJson(json);
 
  final  List<ComplaintReportModel> _data;
@@ -2591,16 +2653,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintPaginatedModel&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.meta, meta) || other.meta == meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintPaginatedModel&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.meta, meta) || other.meta == meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),meta);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),meta);
+}
 
 @override
 String toString() {
-  return 'ComplaintPaginatedModel(data: $data, meta: $meta)';
+    return 'ComplaintPaginatedModel(data: $data, meta: $meta)';
 }
 
 

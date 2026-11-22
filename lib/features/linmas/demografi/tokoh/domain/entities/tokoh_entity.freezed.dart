@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'tokoh_entity.dart';
@@ -9,6 +9,7 @@ part of 'tokoh_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $TokohEntityCopyWith<TokohEntity> get copyWith => _$TokohEntityCopyWithImpl<Toko
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as TokohEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nama, _this.nama) || other.nama == _this.nama)&&(identical(other.noTelp, _this.noTelp) || other.noTelp == _this.noTelp)&&(identical(other.jenisKelamin, _this.jenisKelamin) || other.jenisKelamin == _this.jenisKelamin)&&(identical(other.profesi, _this.profesi) || other.profesi == _this.profesi)&&(identical(other.wilayah, _this.wilayah) || other.wilayah == _this.wilayah)&&(identical(other.instituteId, _this.instituteId) || other.instituteId == _this.instituteId)&&(identical(other.namaInstitusi, _this.namaInstitusi) || other.namaInstitusi == _this.namaInstitusi)&&(identical(other.jabatanInstitusi, _this.jabatanInstitusi) || other.jabatanInstitusi == _this.jabatanInstitusi)&&(identical(other.afiliasi, _this.afiliasi) || other.afiliasi == _this.afiliasi)&&(identical(other.organizationId, _this.organizationId) || other.organizationId == _this.organizationId)&&(identical(other.namaOrganisasi, _this.namaOrganisasi) || other.namaOrganisasi == _this.namaOrganisasi)&&(identical(other.jabatanOrganisasi, _this.jabatanOrganisasi) || other.jabatanOrganisasi == _this.jabatanOrganisasi)&&(identical(other.suku, _this.suku) || other.suku == _this.suku)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as TokohEntity;
+  return Object.hash(runtimeType,_this.id,_this.nama,_this.noTelp,_this.jenisKelamin,_this.profesi,_this.wilayah,_this.instituteId,_this.namaInstitusi,_this.jabatanInstitusi,_this.afiliasi,_this.organizationId,_this.namaOrganisasi,_this.jabatanOrganisasi,_this.suku,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'TokohEntity(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as TokohEntity;
+  return 'TokohEntity(id: ${_this.id}, nama: ${_this.nama}, noTelp: ${_this.noTelp}, jenisKelamin: ${_this.jenisKelamin}, profesi: ${_this.profesi}, wilayah: ${_this.wilayah}, instituteId: ${_this.instituteId}, namaInstitusi: ${_this.namaInstitusi}, jabatanInstitusi: ${_this.jabatanInstitusi}, afiliasi: ${_this.afiliasi}, organizationId: ${_this.organizationId}, namaOrganisasi: ${_this.namaOrganisasi}, jabatanOrganisasi: ${_this.jabatanOrganisasi}, suku: ${_this.suku}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -63,7 +69,7 @@ class _$TokohEntityCopyWithImpl<$Res>
 /// Create a copy of TokohEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? nama = null,Object? noTelp = null,Object? jenisKelamin = null,Object? profesi = null,Object? wilayah = null,Object? instituteId = freezed,Object? namaInstitusi = null,Object? jabatanInstitusi = null,Object? afiliasi = null,Object? organizationId = freezed,Object? namaOrganisasi = null,Object? jabatanOrganisasi = null,Object? suku = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TokohEntity(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,noTelp: null == noTelp ? _self.noTelp : noTelp // ignore: cast_nullable_to_non_nullable
@@ -251,16 +257,18 @@ _$TokohEntityCopyWith<_TokohEntity> get copyWith => __$TokohEntityCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'TokohEntity(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TokohEntity(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -327,16 +335,21 @@ $TokohPaginatedEntityCopyWith<TokohPaginatedEntity> get copyWith => _$TokohPagin
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.message, message) || other.message == message));
+  final _this = this as TokohPaginatedEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohPaginatedEntity&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(data),message);
+int get hashCode {
+  final _this = this as TokohPaginatedEntity;
+  return Object.hash(runtimeType,_this.success,_this.total,_this.currentPage,_this.lastPage,_this.perPage,const DeepCollectionEquality().hash(_this.data),_this.message);
+}
 
 @override
 String toString() {
-  return 'TokohPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+  final _this = this as TokohPaginatedEntity;
+  return 'TokohPaginatedEntity(success: ${_this.success}, total: ${_this.total}, currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, data: ${_this.data}, message: ${_this.message})';
 }
 
 
@@ -365,7 +378,7 @@ class _$TokohPaginatedEntityCopyWithImpl<$Res>
 /// Create a copy of TokohPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? total = null,Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? data = null,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TokohPaginatedEntity(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
@@ -514,7 +527,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _TokohPaginatedEntity implements TokohPaginatedEntity {
-  const _TokohPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<TokohEntity> data = const [], this.message}): _data = data;
+  const _TokohPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<TokohEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;
@@ -541,16 +554,18 @@ _$TokohPaginatedEntityCopyWith<_TokohPaginatedEntity> get copyWith => __$TokohPa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+int get hashCode {
+    return Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+}
 
 @override
 String toString() {
-  return 'TokohPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+    return 'TokohPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
 }
 
 

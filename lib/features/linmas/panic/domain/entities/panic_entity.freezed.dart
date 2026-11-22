@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'panic_entity.dart';
@@ -9,6 +9,7 @@ part of 'panic_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $NearbyMemberEntityCopyWith<NearbyMemberEntity> get copyWith => _$NearbyMemberEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NearbyMemberEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.distanceText, distanceText) || other.distanceText == distanceText)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.isOnline, isOnline) || other.isOnline == isOnline));
+  final _this = this as NearbyMemberEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NearbyMemberEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.distanceText, _this.distanceText) || other.distanceText == _this.distanceText)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.phone, _this.phone) || other.phone == _this.phone)&&(identical(other.isOnline, _this.isOnline) || other.isOnline == _this.isOnline));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,role,distanceText,latitude,longitude,phone,isOnline);
+int get hashCode {
+  final _this = this as NearbyMemberEntity;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.role,_this.distanceText,_this.latitude,_this.longitude,_this.phone,_this.isOnline);
+}
 
 @override
 String toString() {
-  return 'NearbyMemberEntity(id: $id, name: $name, role: $role, distanceText: $distanceText, latitude: $latitude, longitude: $longitude, phone: $phone, isOnline: $isOnline)';
+  final _this = this as NearbyMemberEntity;
+  return 'NearbyMemberEntity(id: ${_this.id}, name: ${_this.name}, role: ${_this.role}, distanceText: ${_this.distanceText}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, phone: ${_this.phone}, isOnline: ${_this.isOnline})';
 }
 
 
@@ -63,7 +69,7 @@ class _$NearbyMemberEntityCopyWithImpl<$Res>
 /// Create a copy of NearbyMemberEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? role = null,Object? distanceText = null,Object? latitude = null,Object? longitude = null,Object? phone = null,Object? isOnline = null,}) {
-  return _then(_self.copyWith(
+  return _then(NearbyMemberEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ _$NearbyMemberEntityCopyWith<_NearbyMemberEntity> get copyWith => __$NearbyMembe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _NearbyMemberEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.distanceText, distanceText) || other.distanceText == distanceText)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.isOnline, isOnline) || other.isOnline == isOnline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NearbyMemberEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.distanceText, distanceText) || other.distanceText == distanceText)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.isOnline, isOnline) || other.isOnline == isOnline));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,role,distanceText,latitude,longitude,phone,isOnline);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,role,distanceText,latitude,longitude,phone,isOnline);
+}
 
 @override
 String toString() {
-  return 'NearbyMemberEntity(id: $id, name: $name, role: $role, distanceText: $distanceText, latitude: $latitude, longitude: $longitude, phone: $phone, isOnline: $isOnline)';
+    return 'NearbyMemberEntity(id: $id, name: $name, role: $role, distanceText: $distanceText, latitude: $latitude, longitude: $longitude, phone: $phone, isOnline: $isOnline)';
 }
 
 
@@ -303,16 +311,21 @@ $PanicAlertResultEntityCopyWith<PanicAlertResultEntity> get copyWith => _$PanicA
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PanicAlertResultEntity&&(identical(other.isSuccess, isSuccess) || other.isSuccess == isSuccess)&&(identical(other.alertId, alertId) || other.alertId == alertId)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.message, message) || other.message == message));
+  final _this = this as PanicAlertResultEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PanicAlertResultEntity&&(identical(other.isSuccess, _this.isSuccess) || other.isSuccess == _this.isSuccess)&&(identical(other.alertId, _this.alertId) || other.alertId == _this.alertId)&&(identical(other.timestamp, _this.timestamp) || other.timestamp == _this.timestamp)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSuccess,alertId,timestamp,message);
+int get hashCode {
+  final _this = this as PanicAlertResultEntity;
+  return Object.hash(runtimeType,_this.isSuccess,_this.alertId,_this.timestamp,_this.message);
+}
 
 @override
 String toString() {
-  return 'PanicAlertResultEntity(isSuccess: $isSuccess, alertId: $alertId, timestamp: $timestamp, message: $message)';
+  final _this = this as PanicAlertResultEntity;
+  return 'PanicAlertResultEntity(isSuccess: ${_this.isSuccess}, alertId: ${_this.alertId}, timestamp: ${_this.timestamp}, message: ${_this.message})';
 }
 
 
@@ -341,7 +354,7 @@ class _$PanicAlertResultEntityCopyWithImpl<$Res>
 /// Create a copy of PanicAlertResultEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? isSuccess = null,Object? alertId = null,Object? timestamp = null,Object? message = null,}) {
-  return _then(_self.copyWith(
+  return _then(PanicAlertResultEntity(
 isSuccess: null == isSuccess ? _self.isSuccess : isSuccess // ignore: cast_nullable_to_non_nullable
 as bool,alertId: null == alertId ? _self.alertId : alertId // ignore: cast_nullable_to_non_nullable
 as String,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
@@ -505,16 +518,18 @@ _$PanicAlertResultEntityCopyWith<_PanicAlertResultEntity> get copyWith => __$Pan
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PanicAlertResultEntity&&(identical(other.isSuccess, isSuccess) || other.isSuccess == isSuccess)&&(identical(other.alertId, alertId) || other.alertId == alertId)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PanicAlertResultEntity&&(identical(other.isSuccess, isSuccess) || other.isSuccess == isSuccess)&&(identical(other.alertId, alertId) || other.alertId == alertId)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isSuccess,alertId,timestamp,message);
+int get hashCode {
+    return Object.hash(runtimeType,isSuccess,alertId,timestamp,message);
+}
 
 @override
 String toString() {
-  return 'PanicAlertResultEntity(isSuccess: $isSuccess, alertId: $alertId, timestamp: $timestamp, message: $message)';
+    return 'PanicAlertResultEntity(isSuccess: $isSuccess, alertId: $alertId, timestamp: $timestamp, message: $message)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'survey_model.dart';
@@ -9,6 +9,7 @@ part of 'survey_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $SurveyConditionalFieldModelCopyWith<SurveyConditionalFieldModel> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyConditionalFieldModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.options, options));
+  final _this = this as SurveyConditionalFieldModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyConditionalFieldModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.value, _this.value) || other.value == _this.value)&&const DeepCollectionEquality().equals(other.options, _this.options));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(options));
+int get hashCode {
+  final _this = this as SurveyConditionalFieldModel;
+  return Object.hash(runtimeType,_this.id,_this.label,_this.type,_this.value,const DeepCollectionEquality().hash(_this.options));
+}
 
 @override
 String toString() {
-  return 'SurveyConditionalFieldModel(id: $id, label: $label, type: $type, value: $value, options: $options)';
+  final _this = this as SurveyConditionalFieldModel;
+  return 'SurveyConditionalFieldModel(id: ${_this.id}, label: ${_this.label}, type: ${_this.type}, value: ${_this.value}, options: ${_this.options})';
 }
 
 
@@ -66,7 +72,7 @@ class _$SurveyConditionalFieldModelCopyWithImpl<$Res>
 /// Create a copy of SurveyConditionalFieldModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = freezed,Object? type = freezed,Object? value = freezed,Object? options = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyConditionalFieldModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: freezed == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -213,7 +219,7 @@ return $default(_that.id,_that.label,_that.type,_that.value,_that.options);case 
 @JsonSerializable()
 
 class _SurveyConditionalFieldModel extends SurveyConditionalFieldModel {
-  const _SurveyConditionalFieldModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "label") this.label, @JsonKey(name: "type") this.type, @JsonKey(name: "value") this.value, @JsonKey(name: "options") final  List<String> options = const []}): _options = options,super._();
+  const _SurveyConditionalFieldModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "label") this.label, @JsonKey(name: "type") this.type, @JsonKey(name: "value") this.value, @JsonKey(name: "options")  List<String> options = const []}): _options = options,super._();
   factory _SurveyConditionalFieldModel.fromJson(Map<String, dynamic> json) => _$SurveyConditionalFieldModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -241,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyConditionalFieldModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._options, _options));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyConditionalFieldModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.options, _options));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(_options));
+int get hashCode {
+    return Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(_options));
+}
 
 @override
 String toString() {
-  return 'SurveyConditionalFieldModel(id: $id, label: $label, type: $type, value: $value, options: $options)';
+    return 'SurveyConditionalFieldModel(id: $id, label: $label, type: $type, value: $value, options: $options)';
 }
 
 
@@ -309,16 +317,21 @@ $SurveyQuestionModelCopyWith<SurveyQuestionModel> get copyWith => _$SurveyQuesti
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, conditionalFields));
+  final _this = this as SurveyQuestionModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.options, _this.options)&&(identical(other.showFieldsWhen, _this.showFieldsWhen) || other.showFieldsWhen == _this.showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, _this.conditionalFields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(options),showFieldsWhen,const DeepCollectionEquality().hash(conditionalFields));
+int get hashCode {
+  final _this = this as SurveyQuestionModel;
+  return Object.hash(runtimeType,_this.id,_this.text,_this.type,const DeepCollectionEquality().hash(_this.options),_this.showFieldsWhen,const DeepCollectionEquality().hash(_this.conditionalFields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionModel(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
+  final _this = this as SurveyQuestionModel;
+  return 'SurveyQuestionModel(id: ${_this.id}, text: ${_this.text}, type: ${_this.type}, options: ${_this.options}, showFieldsWhen: ${_this.showFieldsWhen}, conditionalFields: ${_this.conditionalFields})';
 }
 
 
@@ -347,7 +360,7 @@ class _$SurveyQuestionModelCopyWithImpl<$Res>
 /// Create a copy of SurveyQuestionModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? type = null,Object? options = null,Object? showFieldsWhen = freezed,Object? conditionalFields = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyQuestionModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -495,7 +508,7 @@ return $default(_that.id,_that.text,_that.type,_that.options,_that.showFieldsWhe
 @JsonSerializable()
 
 class _SurveyQuestionModel extends SurveyQuestionModel {
-  const _SurveyQuestionModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "text") required this.text, @JsonKey(name: "type") required this.type, @JsonKey(name: "options") final  List<String> options = const [], @JsonKey(name: "showFieldsWhen") this.showFieldsWhen, @JsonKey(name: "conditionalFields") final  List<SurveyConditionalFieldModel> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
+  const _SurveyQuestionModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "text") required this.text, @JsonKey(name: "type") required this.type, @JsonKey(name: "options")  List<String> options = const [], @JsonKey(name: "showFieldsWhen") this.showFieldsWhen, @JsonKey(name: "conditionalFields")  List<SurveyConditionalFieldModel> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
   factory _SurveyQuestionModel.fromJson(Map<String, dynamic> json) => _$SurveyQuestionModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -530,16 +543,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other._conditionalFields, _conditionalFields));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, _options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, _conditionalFields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(_options),showFieldsWhen,const DeepCollectionEquality().hash(_conditionalFields));
+int get hashCode {
+    return Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(_options),showFieldsWhen,const DeepCollectionEquality().hash(_conditionalFields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionModel(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
+    return 'SurveyQuestionModel(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
 }
 
 
@@ -599,16 +614,21 @@ $SurveyItemModelCopyWith<SurveyItemModel> get copyWith => _$SurveyItemModelCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyItemModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other.questions, questions));
+  final _this = this as SurveyItemModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyItemModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.period, _this.period) || other.period == _this.period)&&(identical(other.deadline, _this.deadline) || other.deadline == _this.deadline)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.requireAllQuestions, _this.requireAllQuestions) || other.requireAllQuestions == _this.requireAllQuestions)&&(identical(other.estimatedMinutes, _this.estimatedMinutes) || other.estimatedMinutes == _this.estimatedMinutes)&&(identical(other.questionsCount, _this.questionsCount) || other.questionsCount == _this.questionsCount)&&(identical(other.respondentsCount, _this.respondentsCount) || other.respondentsCount == _this.respondentsCount)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt)&&const DeepCollectionEquality().equals(other.questions, _this.questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(questions));
+int get hashCode {
+  final _this = this as SurveyItemModel;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.description,_this.period,_this.deadline,_this.status,_this.requireAllQuestions,_this.estimatedMinutes,_this.questionsCount,_this.respondentsCount,_this.createdAt,_this.publishedAt,const DeepCollectionEquality().hash(_this.questions));
+}
 
 @override
 String toString() {
-  return 'SurveyItemModel(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
+  final _this = this as SurveyItemModel;
+  return 'SurveyItemModel(id: ${_this.id}, title: ${_this.title}, description: ${_this.description}, period: ${_this.period}, deadline: ${_this.deadline}, status: ${_this.status}, requireAllQuestions: ${_this.requireAllQuestions}, estimatedMinutes: ${_this.estimatedMinutes}, questionsCount: ${_this.questionsCount}, respondentsCount: ${_this.respondentsCount}, createdAt: ${_this.createdAt}, publishedAt: ${_this.publishedAt}, questions: ${_this.questions})';
 }
 
 
@@ -637,7 +657,7 @@ class _$SurveyItemModelCopyWithImpl<$Res>
 /// Create a copy of SurveyItemModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? period = freezed,Object? deadline = freezed,Object? status = freezed,Object? requireAllQuestions = null,Object? estimatedMinutes = freezed,Object? questionsCount = freezed,Object? respondentsCount = freezed,Object? createdAt = freezed,Object? publishedAt = freezed,Object? questions = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyItemModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -792,7 +812,7 @@ return $default(_that.id,_that.title,_that.description,_that.period,_that.deadli
 @JsonSerializable()
 
 class _SurveyItemModel extends SurveyItemModel {
-  const _SurveyItemModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "description") this.description, @JsonKey(name: "period") this.period, @JsonKey(name: "deadline") this.deadline, @JsonKey(name: "status") this.status, @JsonKey(name: "requireAllQuestions") this.requireAllQuestions = true, @JsonKey(name: "estimatedMinutes") this.estimatedMinutes, @JsonKey(name: "questionsCount") this.questionsCount, @JsonKey(name: "respondentsCount") this.respondentsCount, @JsonKey(name: "createdAt") this.createdAt, @JsonKey(name: "publishedAt") this.publishedAt, @JsonKey(name: "questions") final  List<SurveyQuestionModel> questions = const []}): _questions = questions,super._();
+  const _SurveyItemModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "title") required this.title, @JsonKey(name: "description") this.description, @JsonKey(name: "period") this.period, @JsonKey(name: "deadline") this.deadline, @JsonKey(name: "status") this.status, @JsonKey(name: "requireAllQuestions") this.requireAllQuestions = true, @JsonKey(name: "estimatedMinutes") this.estimatedMinutes, @JsonKey(name: "questionsCount") this.questionsCount, @JsonKey(name: "respondentsCount") this.respondentsCount, @JsonKey(name: "createdAt") this.createdAt, @JsonKey(name: "publishedAt") this.publishedAt, @JsonKey(name: "questions")  List<SurveyQuestionModel> questions = const []}): _questions = questions,super._();
   factory _SurveyItemModel.fromJson(Map<String, dynamic> json) => _$SurveyItemModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -828,16 +848,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyItemModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other._questions, _questions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyItemModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other.questions, _questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(_questions));
+int get hashCode {
+    return Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(_questions));
+}
 
 @override
 String toString() {
-  return 'SurveyItemModel(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
+    return 'SurveyItemModel(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
 }
 
 
@@ -904,16 +926,21 @@ $SurveyListResponseModelCopyWith<SurveyListResponseModel> get copyWith => _$Surv
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyListResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.message, message) || other.message == message));
+  final _this = this as SurveyListResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyListResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,const DeepCollectionEquality().hash(data),message);
+int get hashCode {
+  final _this = this as SurveyListResponseModel;
+  return Object.hash(runtimeType,_this.success,const DeepCollectionEquality().hash(_this.data),_this.message);
+}
 
 @override
 String toString() {
-  return 'SurveyListResponseModel(success: $success, data: $data, message: $message)';
+  final _this = this as SurveyListResponseModel;
+  return 'SurveyListResponseModel(success: ${_this.success}, data: ${_this.data}, message: ${_this.message})';
 }
 
 
@@ -942,7 +969,7 @@ class _$SurveyListResponseModelCopyWithImpl<$Res>
 /// Create a copy of SurveyListResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? data = null,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyListResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<SurveyItemModel>,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
@@ -1087,7 +1114,7 @@ return $default(_that.success,_that.data,_that.message);case _:
 @JsonSerializable()
 
 class _SurveyListResponseModel extends SurveyListResponseModel {
-  const _SurveyListResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data") final  List<SurveyItemModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
+  const _SurveyListResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data")  List<SurveyItemModel> data = const [], @JsonKey(name: "message") this.message}): _data = data,super._();
   factory _SurveyListResponseModel.fromJson(Map<String, dynamic> json) => _$SurveyListResponseModelFromJson(json);
 
 @override@JsonKey(name: "success") final  bool success;
@@ -1113,16 +1140,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyListResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyListResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,const DeepCollectionEquality().hash(_data),message);
+int get hashCode {
+    return Object.hash(runtimeType,success,const DeepCollectionEquality().hash(_data),message);
+}
 
 @override
 String toString() {
-  return 'SurveyListResponseModel(success: $success, data: $data, message: $message)';
+    return 'SurveyListResponseModel(success: $success, data: $data, message: $message)';
 }
 
 
@@ -1179,16 +1208,21 @@ $SurveyFieldAnswerModelCopyWith<SurveyFieldAnswerModel> get copyWith => _$Survey
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyFieldAnswerModel&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
+  final _this = this as SurveyFieldAnswerModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyFieldAnswerModel&&(identical(other.fieldId, _this.fieldId) || other.fieldId == _this.fieldId)&&(identical(other.value, _this.value) || other.value == _this.value));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,fieldId,value);
+int get hashCode {
+  final _this = this as SurveyFieldAnswerModel;
+  return Object.hash(runtimeType,_this.fieldId,_this.value);
+}
 
 @override
 String toString() {
-  return 'SurveyFieldAnswerModel(fieldId: $fieldId, value: $value)';
+  final _this = this as SurveyFieldAnswerModel;
+  return 'SurveyFieldAnswerModel(fieldId: ${_this.fieldId}, value: ${_this.value})';
 }
 
 
@@ -1217,7 +1251,7 @@ class _$SurveyFieldAnswerModelCopyWithImpl<$Res>
 /// Create a copy of SurveyFieldAnswerModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? fieldId = null,Object? value = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyFieldAnswerModel(
 fieldId: null == fieldId ? _self.fieldId : fieldId // ignore: cast_nullable_to_non_nullable
 as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
@@ -1380,16 +1414,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyFieldAnswerModel&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyFieldAnswerModel&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,fieldId,value);
+int get hashCode {
+    return Object.hash(runtimeType,fieldId,value);
+}
 
 @override
 String toString() {
-  return 'SurveyFieldAnswerModel(fieldId: $fieldId, value: $value)';
+    return 'SurveyFieldAnswerModel(fieldId: $fieldId, value: $value)';
 }
 
 
@@ -1445,16 +1481,21 @@ $SurveyQuestionAnswerModelCopyWith<SurveyQuestionAnswerModel> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionAnswerModel&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.fields, fields));
+  final _this = this as SurveyQuestionAnswerModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionAnswerModel&&(identical(other.questionId, _this.questionId) || other.questionId == _this.questionId)&&(identical(other.value, _this.value) || other.value == _this.value)&&const DeepCollectionEquality().equals(other.fields, _this.fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(fields));
+int get hashCode {
+  final _this = this as SurveyQuestionAnswerModel;
+  return Object.hash(runtimeType,_this.questionId,_this.value,const DeepCollectionEquality().hash(_this.fields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionAnswerModel(questionId: $questionId, value: $value, fields: $fields)';
+  final _this = this as SurveyQuestionAnswerModel;
+  return 'SurveyQuestionAnswerModel(questionId: ${_this.questionId}, value: ${_this.value}, fields: ${_this.fields})';
 }
 
 
@@ -1483,7 +1524,7 @@ class _$SurveyQuestionAnswerModelCopyWithImpl<$Res>
 /// Create a copy of SurveyQuestionAnswerModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? questionId = null,Object? value = null,Object? fields = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyQuestionAnswerModel(
 questionId: null == questionId ? _self.questionId : questionId // ignore: cast_nullable_to_non_nullable
 as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
@@ -1628,7 +1669,7 @@ return $default(_that.questionId,_that.value,_that.fields);case _:
 @JsonSerializable()
 
 class _SurveyQuestionAnswerModel extends SurveyQuestionAnswerModel {
-  const _SurveyQuestionAnswerModel({@JsonKey(name: "questionId") required this.questionId, @JsonKey(name: "value") required this.value, @JsonKey(name: "fields") final  List<SurveyFieldAnswerModel> fields = const []}): _fields = fields,super._();
+  const _SurveyQuestionAnswerModel({@JsonKey(name: "questionId") required this.questionId, @JsonKey(name: "value") required this.value, @JsonKey(name: "fields")  List<SurveyFieldAnswerModel> fields = const []}): _fields = fields,super._();
   factory _SurveyQuestionAnswerModel.fromJson(Map<String, dynamic> json) => _$SurveyQuestionAnswerModelFromJson(json);
 
 @override@JsonKey(name: "questionId") final  int questionId;
@@ -1654,16 +1695,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionAnswerModel&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._fields, _fields));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionAnswerModel&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.fields, _fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(_fields));
+int get hashCode {
+    return Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(_fields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionAnswerModel(questionId: $questionId, value: $value, fields: $fields)';
+    return 'SurveyQuestionAnswerModel(questionId: $questionId, value: $value, fields: $fields)';
 }
 
 
@@ -1720,16 +1763,21 @@ $SurveySubmitRequestModelCopyWith<SurveySubmitRequestModel> get copyWith => _$Su
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveySubmitRequestModel&&const DeepCollectionEquality().equals(other.answers, answers));
+  final _this = this as SurveySubmitRequestModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveySubmitRequestModel&&const DeepCollectionEquality().equals(other.answers, _this.answers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(answers));
+int get hashCode {
+  final _this = this as SurveySubmitRequestModel;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.answers));
+}
 
 @override
 String toString() {
-  return 'SurveySubmitRequestModel(answers: $answers)';
+  final _this = this as SurveySubmitRequestModel;
+  return 'SurveySubmitRequestModel(answers: ${_this.answers})';
 }
 
 
@@ -1758,7 +1806,7 @@ class _$SurveySubmitRequestModelCopyWithImpl<$Res>
 /// Create a copy of SurveySubmitRequestModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? answers = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveySubmitRequestModel(
 answers: null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as List<SurveyQuestionAnswerModel>,
   ));
@@ -1901,7 +1949,7 @@ return $default(_that.answers);case _:
 @JsonSerializable()
 
 class _SurveySubmitRequestModel extends SurveySubmitRequestModel {
-  const _SurveySubmitRequestModel({@JsonKey(name: "answers") final  List<SurveyQuestionAnswerModel> answers = const []}): _answers = answers,super._();
+  const _SurveySubmitRequestModel({@JsonKey(name: "answers")  List<SurveyQuestionAnswerModel> answers = const []}): _answers = answers,super._();
   factory _SurveySubmitRequestModel.fromJson(Map<String, dynamic> json) => _$SurveySubmitRequestModelFromJson(json);
 
  final  List<SurveyQuestionAnswerModel> _answers;
@@ -1925,16 +1973,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveySubmitRequestModel&&const DeepCollectionEquality().equals(other._answers, _answers));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveySubmitRequestModel&&const DeepCollectionEquality().equals(other.answers, _answers));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_answers));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_answers));
+}
 
 @override
 String toString() {
-  return 'SurveySubmitRequestModel(answers: $answers)';
+    return 'SurveySubmitRequestModel(answers: $answers)';
 }
 
 

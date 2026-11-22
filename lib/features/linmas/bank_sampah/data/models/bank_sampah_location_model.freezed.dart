@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'bank_sampah_location_model.dart';
@@ -9,6 +9,7 @@ part of 'bank_sampah_location_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BankSampahLocationModelCopyWith<BankSampahLocationModel> get copyWith => _$Bank
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahLocationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.kelurahan, kelurahan) || other.kelurahan == kelurahan)&&(identical(other.pengelola, pengelola) || other.pengelola == pengelola)&&(identical(other.kontak, kontak) || other.kontak == kontak)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.latOffset, latOffset) || other.latOffset == latOffset)&&(identical(other.lngOffset, lngOffset) || other.lngOffset == lngOffset)&&(identical(other.distanceMeters, distanceMeters) || other.distanceMeters == distanceMeters));
+  final _this = this as BankSampahLocationModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahLocationModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nama, _this.nama) || other.nama == _this.nama)&&(identical(other.alamat, _this.alamat) || other.alamat == _this.alamat)&&(identical(other.kelurahan, _this.kelurahan) || other.kelurahan == _this.kelurahan)&&(identical(other.pengelola, _this.pengelola) || other.pengelola == _this.pengelola)&&(identical(other.kontak, _this.kontak) || other.kontak == _this.kontak)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.latOffset, _this.latOffset) || other.latOffset == _this.latOffset)&&(identical(other.lngOffset, _this.lngOffset) || other.lngOffset == _this.lngOffset)&&(identical(other.distanceMeters, _this.distanceMeters) || other.distanceMeters == _this.distanceMeters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,alamat,kelurahan,pengelola,kontak,latitude,longitude,latOffset,lngOffset,distanceMeters);
+int get hashCode {
+  final _this = this as BankSampahLocationModel;
+  return Object.hash(runtimeType,_this.id,_this.nama,_this.alamat,_this.kelurahan,_this.pengelola,_this.kontak,_this.latitude,_this.longitude,_this.latOffset,_this.lngOffset,_this.distanceMeters);
+}
 
 @override
 String toString() {
-  return 'BankSampahLocationModel(id: $id, nama: $nama, alamat: $alamat, kelurahan: $kelurahan, pengelola: $pengelola, kontak: $kontak, latitude: $latitude, longitude: $longitude, latOffset: $latOffset, lngOffset: $lngOffset, distanceMeters: $distanceMeters)';
+  final _this = this as BankSampahLocationModel;
+  return 'BankSampahLocationModel(id: ${_this.id}, nama: ${_this.nama}, alamat: ${_this.alamat}, kelurahan: ${_this.kelurahan}, pengelola: ${_this.pengelola}, kontak: ${_this.kontak}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, latOffset: ${_this.latOffset}, lngOffset: ${_this.lngOffset}, distanceMeters: ${_this.distanceMeters})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BankSampahLocationModelCopyWithImpl<$Res>
 /// Create a copy of BankSampahLocationModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nama = null,Object? alamat = null,Object? kelurahan = null,Object? pengelola = null,Object? kontak = null,Object? latitude = freezed,Object? longitude = freezed,Object? latOffset = freezed,Object? lngOffset = freezed,Object? distanceMeters = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(BankSampahLocationModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,alamat: null == alamat ? _self.alamat : alamat // ignore: cast_nullable_to_non_nullable
@@ -247,16 +253,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahLocationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.kelurahan, kelurahan) || other.kelurahan == kelurahan)&&(identical(other.pengelola, pengelola) || other.pengelola == pengelola)&&(identical(other.kontak, kontak) || other.kontak == kontak)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.latOffset, latOffset) || other.latOffset == latOffset)&&(identical(other.lngOffset, lngOffset) || other.lngOffset == lngOffset)&&(identical(other.distanceMeters, distanceMeters) || other.distanceMeters == distanceMeters));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahLocationModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.kelurahan, kelurahan) || other.kelurahan == kelurahan)&&(identical(other.pengelola, pengelola) || other.pengelola == pengelola)&&(identical(other.kontak, kontak) || other.kontak == kontak)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.latOffset, latOffset) || other.latOffset == latOffset)&&(identical(other.lngOffset, lngOffset) || other.lngOffset == lngOffset)&&(identical(other.distanceMeters, distanceMeters) || other.distanceMeters == distanceMeters));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,alamat,kelurahan,pengelola,kontak,latitude,longitude,latOffset,lngOffset,distanceMeters);
+int get hashCode {
+    return Object.hash(runtimeType,id,nama,alamat,kelurahan,pengelola,kontak,latitude,longitude,latOffset,lngOffset,distanceMeters);
+}
 
 @override
 String toString() {
-  return 'BankSampahLocationModel(id: $id, nama: $nama, alamat: $alamat, kelurahan: $kelurahan, pengelola: $pengelola, kontak: $kontak, latitude: $latitude, longitude: $longitude, latOffset: $latOffset, lngOffset: $lngOffset, distanceMeters: $distanceMeters)';
+    return 'BankSampahLocationModel(id: $id, nama: $nama, alamat: $alamat, kelurahan: $kelurahan, pengelola: $pengelola, kontak: $kontak, latitude: $latitude, longitude: $longitude, latOffset: $latOffset, lngOffset: $lngOffset, distanceMeters: $distanceMeters)';
 }
 
 

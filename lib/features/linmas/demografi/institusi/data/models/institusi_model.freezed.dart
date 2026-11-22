@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'institusi_model.dart';
@@ -9,6 +9,7 @@ part of 'institusi_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $InstitusiRegionModelCopyWith<InstitusiRegionModel> get copyWith => _$InstitusiR
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiRegionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
+  final _this = this as InstitusiRegionModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiRegionModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.code, _this.code) || other.code == _this.code));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,code);
+int get hashCode {
+  final _this = this as InstitusiRegionModel;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.code);
+}
 
 @override
 String toString() {
-  return 'InstitusiRegionModel(id: $id, name: $name, code: $code)';
+  final _this = this as InstitusiRegionModel;
+  return 'InstitusiRegionModel(id: ${_this.id}, name: ${_this.name}, code: ${_this.code})';
 }
 
 
@@ -66,7 +72,7 @@ class _$InstitusiRegionModelCopyWithImpl<$Res>
 /// Create a copy of InstitusiRegionModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? name = freezed,Object? code = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiRegionModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String?,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
@@ -231,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiRegionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiRegionModel&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.code, code) || other.code == code));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,code);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,code);
+}
 
 @override
 String toString() {
-  return 'InstitusiRegionModel(id: $id, name: $name, code: $code)';
+    return 'InstitusiRegionModel(id: $id, name: $name, code: $code)';
 }
 
 
@@ -297,16 +305,21 @@ $InstitusiMetaModelCopyWith<InstitusiMetaModel> get copyWith => _$InstitusiMetaM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+  final _this = this as InstitusiMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiMetaModel&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+  final _this = this as InstitusiMetaModel;
+  return Object.hash(runtimeType,_this.currentPage,_this.lastPage,_this.perPage,_this.total);
+}
 
 @override
 String toString() {
-  return 'InstitusiMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+  final _this = this as InstitusiMetaModel;
+  return 'InstitusiMetaModel(currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, total: ${_this.total})';
 }
 
 
@@ -335,7 +348,7 @@ class _$InstitusiMetaModelCopyWithImpl<$Res>
 /// Create a copy of InstitusiMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiMetaModel(
 currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
@@ -502,16 +515,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+    return Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+}
 
 @override
 String toString() {
-  return 'InstitusiMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+    return 'InstitusiMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
 }
 
 
@@ -569,16 +584,21 @@ $InstitusiResponseModelCopyWith<InstitusiResponseModel> get copyWith => _$Instit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.meta, meta) || other.meta == meta));
+  final _this = this as InstitusiResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.meta, _this.meta) || other.meta == _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(data),meta);
+int get hashCode {
+  final _this = this as InstitusiResponseModel;
+  return Object.hash(runtimeType,_this.success,_this.message,const DeepCollectionEquality().hash(_this.data),_this.meta);
+}
 
 @override
 String toString() {
-  return 'InstitusiResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
+  final _this = this as InstitusiResponseModel;
+  return 'InstitusiResponseModel(success: ${_this.success}, message: ${_this.message}, data: ${_this.data}, meta: ${_this.meta})';
 }
 
 
@@ -607,7 +627,7 @@ class _$InstitusiResponseModelCopyWithImpl<$Res>
 /// Create a copy of InstitusiResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? message = freezed,Object? data = null,Object? meta = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
@@ -765,7 +785,7 @@ return $default(_that.success,_that.message,_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _InstitusiResponseModel extends InstitusiResponseModel {
-  const _InstitusiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data') final  List<InstitusiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
+  const _InstitusiResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data')  List<InstitusiModel> data = const [], @JsonKey(name: 'meta') this.meta}): _data = data,super._();
   factory _InstitusiResponseModel.fromJson(Map<String, dynamic> json) => _$InstitusiResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;
@@ -792,16 +812,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.meta, meta) || other.meta == meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.meta, meta) || other.meta == meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),meta);
+int get hashCode {
+    return Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),meta);
+}
 
 @override
 String toString() {
-  return 'InstitusiResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
+    return 'InstitusiResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
 }
 
 
@@ -871,16 +893,21 @@ $InstitusiModelCopyWith<InstitusiModel> get copyWith => _$InstitusiModelCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as InstitusiModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nama, _this.nama) || other.nama == _this.nama)&&(identical(other.scope, _this.scope) || other.scope == _this.scope)&&(identical(other.kategori, _this.kategori) || other.kategori == _this.kategori)&&(identical(other.categoryId, _this.categoryId) || other.categoryId == _this.categoryId)&&(identical(other.alamat, _this.alamat) || other.alamat == _this.alamat)&&(identical(other.provinceId, _this.provinceId) || other.provinceId == _this.provinceId)&&(identical(other.regencyId, _this.regencyId) || other.regencyId == _this.regencyId)&&(identical(other.districtId, _this.districtId) || other.districtId == _this.districtId)&&(identical(other.villageId, _this.villageId) || other.villageId == _this.villageId)&&(identical(other.figuresCount, _this.figuresCount) || other.figuresCount == _this.figuresCount)&&(identical(other.province, _this.province) || other.province == _this.province)&&(identical(other.regency, _this.regency) || other.regency == _this.regency)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.village, _this.village) || other.village == _this.village)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as InstitusiModel;
+  return Object.hash(runtimeType,_this.id,_this.nama,_this.scope,_this.kategori,_this.categoryId,_this.alamat,_this.provinceId,_this.regencyId,_this.districtId,_this.villageId,_this.figuresCount,_this.province,_this.regency,_this.district,_this.village,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'InstitusiModel(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as InstitusiModel;
+  return 'InstitusiModel(id: ${_this.id}, nama: ${_this.nama}, scope: ${_this.scope}, kategori: ${_this.kategori}, categoryId: ${_this.categoryId}, alamat: ${_this.alamat}, provinceId: ${_this.provinceId}, regencyId: ${_this.regencyId}, districtId: ${_this.districtId}, villageId: ${_this.villageId}, figuresCount: ${_this.figuresCount}, province: ${_this.province}, regency: ${_this.regency}, district: ${_this.district}, village: ${_this.village}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -909,7 +936,7 @@ class _$InstitusiModelCopyWithImpl<$Res>
 /// Create a copy of InstitusiModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? nama = null,Object? scope = null,Object? kategori = freezed,Object? categoryId = freezed,Object? alamat = freezed,Object? provinceId = freezed,Object? regencyId = freezed,Object? districtId = freezed,Object? villageId = freezed,Object? figuresCount = freezed,Object? province = freezed,Object? regency = freezed,Object? district = freezed,Object? village = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,scope: null == scope ? _self.scope : scope // ignore: cast_nullable_to_non_nullable
@@ -1150,16 +1177,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.scope, scope) || other.scope == scope)&&(identical(other.kategori, kategori) || other.kategori == kategori)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.alamat, alamat) || other.alamat == alamat)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.figuresCount, figuresCount) || other.figuresCount == figuresCount)&&(identical(other.province, province) || other.province == province)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.district, district) || other.district == district)&&(identical(other.village, village) || other.village == village)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,nama,scope,kategori,categoryId,alamat,provinceId,regencyId,districtId,villageId,figuresCount,province,regency,district,village,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'InstitusiModel(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'InstitusiModel(id: $id, nama: $nama, scope: $scope, kategori: $kategori, categoryId: $categoryId, alamat: $alamat, provinceId: $provinceId, regencyId: $regencyId, districtId: $districtId, villageId: $villageId, figuresCount: $figuresCount, province: $province, regency: $regency, district: $district, village: $village, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

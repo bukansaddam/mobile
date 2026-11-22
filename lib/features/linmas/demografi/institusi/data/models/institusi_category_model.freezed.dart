@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'institusi_category_model.dart';
@@ -9,6 +9,7 @@ part of 'institusi_category_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $InstitusiCategoryModelCopyWith<InstitusiCategoryModel> get copyWith => _$Instit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiCategoryModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.code, code) || other.code == code)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.domain, domain) || other.domain == domain)&&(identical(other.color, color) || other.color == color));
+  final _this = this as InstitusiCategoryModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InstitusiCategoryModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.code, _this.code) || other.code == _this.code)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.domain, _this.domain) || other.domain == _this.domain)&&(identical(other.color, _this.color) || other.color == _this.color));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,code,isActive,domain,color);
+int get hashCode {
+  final _this = this as InstitusiCategoryModel;
+  return Object.hash(runtimeType,_this.id,_this.label,_this.code,_this.isActive,_this.domain,_this.color);
+}
 
 @override
 String toString() {
-  return 'InstitusiCategoryModel(id: $id, label: $label, code: $code, isActive: $isActive, domain: $domain, color: $color)';
+  final _this = this as InstitusiCategoryModel;
+  return 'InstitusiCategoryModel(id: ${_this.id}, label: ${_this.label}, code: ${_this.code}, isActive: ${_this.isActive}, domain: ${_this.domain}, color: ${_this.color})';
 }
 
 
@@ -66,7 +72,7 @@ class _$InstitusiCategoryModelCopyWithImpl<$Res>
 /// Create a copy of InstitusiCategoryModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? label = null,Object? code = freezed,Object? isActive = null,Object? domain = freezed,Object? color = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(InstitusiCategoryModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
@@ -237,16 +243,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiCategoryModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.code, code) || other.code == code)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.domain, domain) || other.domain == domain)&&(identical(other.color, color) || other.color == color));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _InstitusiCategoryModel&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.code, code) || other.code == code)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.domain, domain) || other.domain == domain)&&(identical(other.color, color) || other.color == color));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,code,isActive,domain,color);
+int get hashCode {
+    return Object.hash(runtimeType,id,label,code,isActive,domain,color);
+}
 
 @override
 String toString() {
-  return 'InstitusiCategoryModel(id: $id, label: $label, code: $code, isActive: $isActive, domain: $domain, color: $color)';
+    return 'InstitusiCategoryModel(id: $id, label: $label, code: $code, isActive: $isActive, domain: $domain, color: $color)';
 }
 
 

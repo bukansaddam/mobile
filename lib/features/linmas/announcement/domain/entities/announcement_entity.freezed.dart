@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'announcement_entity.dart';
@@ -9,6 +9,7 @@ part of 'announcement_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $AnnouncementEntityCopyWith<AnnouncementEntity> get copyWith => _$AnnouncementEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnnouncementEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.category, category) || other.category == category)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.content, content) || other.content == content)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&const DeepCollectionEquality().equals(other.images, images)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.viewsCount, viewsCount) || other.viewsCount == viewsCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as AnnouncementEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnnouncementEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.slug, _this.slug) || other.slug == _this.slug)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.summary, _this.summary) || other.summary == _this.summary)&&(identical(other.content, _this.content) || other.content == _this.content)&&(identical(other.coverImage, _this.coverImage) || other.coverImage == _this.coverImage)&&const DeepCollectionEquality().equals(other.images, _this.images)&&(identical(other.authorName, _this.authorName) || other.authorName == _this.authorName)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.isPinned, _this.isPinned) || other.isPinned == _this.isPinned)&&(identical(other.viewsCount, _this.viewsCount) || other.viewsCount == _this.viewsCount)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,slug,category,summary,content,coverImage,const DeepCollectionEquality().hash(images),authorName,status,isPinned,viewsCount,publishedAt,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as AnnouncementEntity;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.slug,_this.category,_this.summary,_this.content,_this.coverImage,const DeepCollectionEquality().hash(_this.images),_this.authorName,_this.status,_this.isPinned,_this.viewsCount,_this.publishedAt,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'AnnouncementEntity(id: $id, title: $title, slug: $slug, category: $category, summary: $summary, content: $content, coverImage: $coverImage, images: $images, authorName: $authorName, status: $status, isPinned: $isPinned, viewsCount: $viewsCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as AnnouncementEntity;
+  return 'AnnouncementEntity(id: ${_this.id}, title: ${_this.title}, slug: ${_this.slug}, category: ${_this.category}, summary: ${_this.summary}, content: ${_this.content}, coverImage: ${_this.coverImage}, images: ${_this.images}, authorName: ${_this.authorName}, status: ${_this.status}, isPinned: ${_this.isPinned}, viewsCount: ${_this.viewsCount}, publishedAt: ${_this.publishedAt}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -63,7 +69,7 @@ class _$AnnouncementEntityCopyWithImpl<$Res>
 /// Create a copy of AnnouncementEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? slug = freezed,Object? category = freezed,Object? summary = freezed,Object? content = freezed,Object? coverImage = freezed,Object? images = null,Object? authorName = freezed,Object? status = freezed,Object? isPinned = null,Object? viewsCount = null,Object? publishedAt = freezed,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AnnouncementEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,slug: freezed == slug ? _self.slug : slug // ignore: cast_nullable_to_non_nullable
@@ -220,7 +226,7 @@ return $default(_that.id,_that.title,_that.slug,_that.category,_that.summary,_th
 
 
 class _AnnouncementEntity extends AnnouncementEntity {
-  const _AnnouncementEntity({required this.id, required this.title, this.slug, this.category, this.summary, this.content, this.coverImage, final  List<String> images = const [], this.authorName, this.status, this.isPinned = false, this.viewsCount = 0, this.publishedAt, this.createdAt, this.updatedAt}): _images = images,super._();
+  const _AnnouncementEntity({required this.id, required this.title, this.slug, this.category, this.summary, this.content, this.coverImage,  List<String> images = const [], this.authorName, this.status, this.isPinned = false, this.viewsCount = 0, this.publishedAt, this.createdAt, this.updatedAt}): _images = images,super._();
   
 
 @override final  int id;
@@ -255,16 +261,18 @@ _$AnnouncementEntityCopyWith<_AnnouncementEntity> get copyWith => __$Announcemen
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnnouncementEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.category, category) || other.category == category)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.content, content) || other.content == content)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&const DeepCollectionEquality().equals(other._images, _images)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.viewsCount, viewsCount) || other.viewsCount == viewsCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnnouncementEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.category, category) || other.category == category)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.content, content) || other.content == content)&&(identical(other.coverImage, coverImage) || other.coverImage == coverImage)&&const DeepCollectionEquality().equals(other.images, _images)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.status, status) || other.status == status)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.viewsCount, viewsCount) || other.viewsCount == viewsCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,slug,category,summary,content,coverImage,const DeepCollectionEquality().hash(_images),authorName,status,isPinned,viewsCount,publishedAt,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,slug,category,summary,content,coverImage,const DeepCollectionEquality().hash(_images),authorName,status,isPinned,viewsCount,publishedAt,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'AnnouncementEntity(id: $id, title: $title, slug: $slug, category: $category, summary: $summary, content: $content, coverImage: $coverImage, images: $images, authorName: $authorName, status: $status, isPinned: $isPinned, viewsCount: $viewsCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'AnnouncementEntity(id: $id, title: $title, slug: $slug, category: $category, summary: $summary, content: $content, coverImage: $coverImage, images: $images, authorName: $authorName, status: $status, isPinned: $isPinned, viewsCount: $viewsCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -330,16 +338,21 @@ $AnnouncementPaginatedEntityCopyWith<AnnouncementPaginatedEntity> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnnouncementPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.message, message) || other.message == message));
+  final _this = this as AnnouncementPaginatedEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnnouncementPaginatedEntity&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(data),message);
+int get hashCode {
+  final _this = this as AnnouncementPaginatedEntity;
+  return Object.hash(runtimeType,_this.success,_this.total,_this.currentPage,_this.lastPage,_this.perPage,const DeepCollectionEquality().hash(_this.data),_this.message);
+}
 
 @override
 String toString() {
-  return 'AnnouncementPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+  final _this = this as AnnouncementPaginatedEntity;
+  return 'AnnouncementPaginatedEntity(success: ${_this.success}, total: ${_this.total}, currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, data: ${_this.data}, message: ${_this.message})';
 }
 
 
@@ -368,7 +381,7 @@ class _$AnnouncementPaginatedEntityCopyWithImpl<$Res>
 /// Create a copy of AnnouncementPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? total = null,Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? data = null,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(AnnouncementPaginatedEntity(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
@@ -517,7 +530,7 @@ return $default(_that.success,_that.total,_that.currentPage,_that.lastPage,_that
 
 
 class _AnnouncementPaginatedEntity implements AnnouncementPaginatedEntity {
-  const _AnnouncementPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10, final  List<AnnouncementEntity> data = const [], this.message}): _data = data;
+  const _AnnouncementPaginatedEntity({this.success = false, this.total = 0, this.currentPage = 1, this.lastPage = 1, this.perPage = 10,  List<AnnouncementEntity> data = const [], this.message}): _data = data;
   
 
 @override@JsonKey() final  bool success;
@@ -544,16 +557,18 @@ _$AnnouncementPaginatedEntityCopyWith<_AnnouncementPaginatedEntity> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnnouncementPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnnouncementPaginatedEntity&&(identical(other.success, success) || other.success == success)&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+int get hashCode {
+    return Object.hash(runtimeType,success,total,currentPage,lastPage,perPage,const DeepCollectionEquality().hash(_data),message);
+}
 
 @override
 String toString() {
-  return 'AnnouncementPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
+    return 'AnnouncementPaginatedEntity(success: $success, total: $total, currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, data: $data, message: $message)';
 }
 
 

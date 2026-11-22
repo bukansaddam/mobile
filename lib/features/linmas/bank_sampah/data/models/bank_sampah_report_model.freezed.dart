@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'bank_sampah_report_model.dart';
@@ -9,6 +9,7 @@ part of 'bank_sampah_report_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BankSampahSummaryModelCopyWith<BankSampahSummaryModel> get copyWith => _$BankSa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahSummaryModel&&(identical(other.totalKg, totalKg) || other.totalKg == totalKg)&&(identical(other.totalPendapatan, totalPendapatan) || other.totalPendapatan == totalPendapatan)&&(identical(other.totalSetoran, totalSetoran) || other.totalSetoran == totalSetoran)&&(identical(other.verifiedKg, verifiedKg) || other.verifiedKg == verifiedKg)&&(identical(other.verifiedPendapatan, verifiedPendapatan) || other.verifiedPendapatan == verifiedPendapatan)&&(identical(other.pendingKg, pendingKg) || other.pendingKg == pendingKg)&&(identical(other.pendingPendapatan, pendingPendapatan) || other.pendingPendapatan == pendingPendapatan)&&(identical(other.conversionPricePerKg, conversionPricePerKg) || other.conversionPricePerKg == conversionPricePerKg));
+  final _this = this as BankSampahSummaryModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahSummaryModel&&(identical(other.totalKg, _this.totalKg) || other.totalKg == _this.totalKg)&&(identical(other.totalPendapatan, _this.totalPendapatan) || other.totalPendapatan == _this.totalPendapatan)&&(identical(other.totalSetoran, _this.totalSetoran) || other.totalSetoran == _this.totalSetoran)&&(identical(other.verifiedKg, _this.verifiedKg) || other.verifiedKg == _this.verifiedKg)&&(identical(other.verifiedPendapatan, _this.verifiedPendapatan) || other.verifiedPendapatan == _this.verifiedPendapatan)&&(identical(other.pendingKg, _this.pendingKg) || other.pendingKg == _this.pendingKg)&&(identical(other.pendingPendapatan, _this.pendingPendapatan) || other.pendingPendapatan == _this.pendingPendapatan)&&(identical(other.conversionPricePerKg, _this.conversionPricePerKg) || other.conversionPricePerKg == _this.conversionPricePerKg));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalKg,totalPendapatan,totalSetoran,verifiedKg,verifiedPendapatan,pendingKg,pendingPendapatan,conversionPricePerKg);
+int get hashCode {
+  final _this = this as BankSampahSummaryModel;
+  return Object.hash(runtimeType,_this.totalKg,_this.totalPendapatan,_this.totalSetoran,_this.verifiedKg,_this.verifiedPendapatan,_this.pendingKg,_this.pendingPendapatan,_this.conversionPricePerKg);
+}
 
 @override
 String toString() {
-  return 'BankSampahSummaryModel(totalKg: $totalKg, totalPendapatan: $totalPendapatan, totalSetoran: $totalSetoran, verifiedKg: $verifiedKg, verifiedPendapatan: $verifiedPendapatan, pendingKg: $pendingKg, pendingPendapatan: $pendingPendapatan, conversionPricePerKg: $conversionPricePerKg)';
+  final _this = this as BankSampahSummaryModel;
+  return 'BankSampahSummaryModel(totalKg: ${_this.totalKg}, totalPendapatan: ${_this.totalPendapatan}, totalSetoran: ${_this.totalSetoran}, verifiedKg: ${_this.verifiedKg}, verifiedPendapatan: ${_this.verifiedPendapatan}, pendingKg: ${_this.pendingKg}, pendingPendapatan: ${_this.pendingPendapatan}, conversionPricePerKg: ${_this.conversionPricePerKg})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BankSampahSummaryModelCopyWithImpl<$Res>
 /// Create a copy of BankSampahSummaryModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? totalKg = null,Object? totalPendapatan = null,Object? totalSetoran = null,Object? verifiedKg = null,Object? verifiedPendapatan = null,Object? pendingKg = null,Object? pendingPendapatan = null,Object? conversionPricePerKg = null,}) {
-  return _then(_self.copyWith(
+  return _then(BankSampahSummaryModel(
 totalKg: null == totalKg ? _self.totalKg : totalKg // ignore: cast_nullable_to_non_nullable
 as double,totalPendapatan: null == totalPendapatan ? _self.totalPendapatan : totalPendapatan // ignore: cast_nullable_to_non_nullable
 as double,totalSetoran: null == totalSetoran ? _self.totalSetoran : totalSetoran // ignore: cast_nullable_to_non_nullable
@@ -241,16 +247,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahSummaryModel&&(identical(other.totalKg, totalKg) || other.totalKg == totalKg)&&(identical(other.totalPendapatan, totalPendapatan) || other.totalPendapatan == totalPendapatan)&&(identical(other.totalSetoran, totalSetoran) || other.totalSetoran == totalSetoran)&&(identical(other.verifiedKg, verifiedKg) || other.verifiedKg == verifiedKg)&&(identical(other.verifiedPendapatan, verifiedPendapatan) || other.verifiedPendapatan == verifiedPendapatan)&&(identical(other.pendingKg, pendingKg) || other.pendingKg == pendingKg)&&(identical(other.pendingPendapatan, pendingPendapatan) || other.pendingPendapatan == pendingPendapatan)&&(identical(other.conversionPricePerKg, conversionPricePerKg) || other.conversionPricePerKg == conversionPricePerKg));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahSummaryModel&&(identical(other.totalKg, totalKg) || other.totalKg == totalKg)&&(identical(other.totalPendapatan, totalPendapatan) || other.totalPendapatan == totalPendapatan)&&(identical(other.totalSetoran, totalSetoran) || other.totalSetoran == totalSetoran)&&(identical(other.verifiedKg, verifiedKg) || other.verifiedKg == verifiedKg)&&(identical(other.verifiedPendapatan, verifiedPendapatan) || other.verifiedPendapatan == verifiedPendapatan)&&(identical(other.pendingKg, pendingKg) || other.pendingKg == pendingKg)&&(identical(other.pendingPendapatan, pendingPendapatan) || other.pendingPendapatan == pendingPendapatan)&&(identical(other.conversionPricePerKg, conversionPricePerKg) || other.conversionPricePerKg == conversionPricePerKg));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalKg,totalPendapatan,totalSetoran,verifiedKg,verifiedPendapatan,pendingKg,pendingPendapatan,conversionPricePerKg);
+int get hashCode {
+    return Object.hash(runtimeType,totalKg,totalPendapatan,totalSetoran,verifiedKg,verifiedPendapatan,pendingKg,pendingPendapatan,conversionPricePerKg);
+}
 
 @override
 String toString() {
-  return 'BankSampahSummaryModel(totalKg: $totalKg, totalPendapatan: $totalPendapatan, totalSetoran: $totalSetoran, verifiedKg: $verifiedKg, verifiedPendapatan: $verifiedPendapatan, pendingKg: $pendingKg, pendingPendapatan: $pendingPendapatan, conversionPricePerKg: $conversionPricePerKg)';
+    return 'BankSampahSummaryModel(totalKg: $totalKg, totalPendapatan: $totalPendapatan, totalSetoran: $totalSetoran, verifiedKg: $verifiedKg, verifiedPendapatan: $verifiedPendapatan, pendingKg: $pendingKg, pendingPendapatan: $pendingPendapatan, conversionPricePerKg: $conversionPricePerKg)';
 }
 
 
@@ -312,16 +320,21 @@ $BankSampahMetaModelCopyWith<BankSampahMetaModel> get copyWith => _$BankSampahMe
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahMetaModel&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage));
+  final _this = this as BankSampahMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahMetaModel&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total,currentPage,perPage,lastPage);
+int get hashCode {
+  final _this = this as BankSampahMetaModel;
+  return Object.hash(runtimeType,_this.total,_this.currentPage,_this.perPage,_this.lastPage);
+}
 
 @override
 String toString() {
-  return 'BankSampahMetaModel(total: $total, currentPage: $currentPage, perPage: $perPage, lastPage: $lastPage)';
+  final _this = this as BankSampahMetaModel;
+  return 'BankSampahMetaModel(total: ${_this.total}, currentPage: ${_this.currentPage}, perPage: ${_this.perPage}, lastPage: ${_this.lastPage})';
 }
 
 
@@ -350,7 +363,7 @@ class _$BankSampahMetaModelCopyWithImpl<$Res>
 /// Create a copy of BankSampahMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? total = null,Object? currentPage = null,Object? perPage = null,Object? lastPage = null,}) {
-  return _then(_self.copyWith(
+  return _then(BankSampahMetaModel(
 total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
 as int,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
@@ -517,16 +530,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahMetaModel&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahMetaModel&&(identical(other.total, total) || other.total == total)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,total,currentPage,perPage,lastPage);
+int get hashCode {
+    return Object.hash(runtimeType,total,currentPage,perPage,lastPage);
+}
 
 @override
 String toString() {
-  return 'BankSampahMetaModel(total: $total, currentPage: $currentPage, perPage: $perPage, lastPage: $lastPage)';
+    return 'BankSampahMetaModel(total: $total, currentPage: $currentPage, perPage: $perPage, lastPage: $lastPage)';
 }
 
 
@@ -584,16 +599,21 @@ $BankSampahReportModelCopyWith<BankSampahReportModel> get copyWith => _$BankSamp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.bankSampahId, bankSampahId) || other.bankSampahId == bankSampahId)&&(identical(other.bankSampahNama, bankSampahNama) || other.bankSampahNama == bankSampahNama)&&(identical(other.bankSampahRegion, bankSampahRegion) || other.bankSampahRegion == bankSampahRegion)&&(identical(other.jenisSampah, jenisSampah) || other.jenisSampah == jenisSampah)&&(identical(other.beratKg, beratKg) || other.beratKg == beratKg)&&(identical(other.nilaiRupiah, nilaiRupiah) || other.nilaiRupiah == nilaiRupiah)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.fotoPath, fotoPath) || other.fotoPath == fotoPath)&&(identical(other.fotoUrl, fotoUrl) || other.fotoUrl == fotoUrl)&&(identical(other.catatan, catatan) || other.catatan == catatan)&&(identical(other.petugasNama, petugasNama) || other.petugasNama == petugasNama)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  final _this = this as BankSampahReportModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahReportModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.bankSampahId, _this.bankSampahId) || other.bankSampahId == _this.bankSampahId)&&(identical(other.bankSampahNama, _this.bankSampahNama) || other.bankSampahNama == _this.bankSampahNama)&&(identical(other.bankSampahRegion, _this.bankSampahRegion) || other.bankSampahRegion == _this.bankSampahRegion)&&(identical(other.jenisSampah, _this.jenisSampah) || other.jenisSampah == _this.jenisSampah)&&(identical(other.beratKg, _this.beratKg) || other.beratKg == _this.beratKg)&&(identical(other.nilaiRupiah, _this.nilaiRupiah) || other.nilaiRupiah == _this.nilaiRupiah)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.statusLabel, _this.statusLabel) || other.statusLabel == _this.statusLabel)&&(identical(other.fotoPath, _this.fotoPath) || other.fotoPath == _this.fotoPath)&&(identical(other.fotoUrl, _this.fotoUrl) || other.fotoUrl == _this.fotoUrl)&&(identical(other.catatan, _this.catatan) || other.catatan == _this.catatan)&&(identical(other.petugasNama, _this.petugasNama) || other.petugasNama == _this.petugasNama)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bankSampahId,bankSampahNama,bankSampahRegion,jenisSampah,beratKg,nilaiRupiah,status,statusLabel,fotoPath,fotoUrl,catatan,petugasNama,createdAt);
+int get hashCode {
+  final _this = this as BankSampahReportModel;
+  return Object.hash(runtimeType,_this.id,_this.bankSampahId,_this.bankSampahNama,_this.bankSampahRegion,_this.jenisSampah,_this.beratKg,_this.nilaiRupiah,_this.status,_this.statusLabel,_this.fotoPath,_this.fotoUrl,_this.catatan,_this.petugasNama,_this.createdAt);
+}
 
 @override
 String toString() {
-  return 'BankSampahReportModel(id: $id, bankSampahId: $bankSampahId, bankSampahNama: $bankSampahNama, bankSampahRegion: $bankSampahRegion, jenisSampah: $jenisSampah, beratKg: $beratKg, nilaiRupiah: $nilaiRupiah, status: $status, statusLabel: $statusLabel, fotoPath: $fotoPath, fotoUrl: $fotoUrl, catatan: $catatan, petugasNama: $petugasNama, createdAt: $createdAt)';
+  final _this = this as BankSampahReportModel;
+  return 'BankSampahReportModel(id: ${_this.id}, bankSampahId: ${_this.bankSampahId}, bankSampahNama: ${_this.bankSampahNama}, bankSampahRegion: ${_this.bankSampahRegion}, jenisSampah: ${_this.jenisSampah}, beratKg: ${_this.beratKg}, nilaiRupiah: ${_this.nilaiRupiah}, status: ${_this.status}, statusLabel: ${_this.statusLabel}, fotoPath: ${_this.fotoPath}, fotoUrl: ${_this.fotoUrl}, catatan: ${_this.catatan}, petugasNama: ${_this.petugasNama}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -622,7 +642,7 @@ class _$BankSampahReportModelCopyWithImpl<$Res>
 /// Create a copy of BankSampahReportModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bankSampahId = null,Object? bankSampahNama = null,Object? bankSampahRegion = null,Object? jenisSampah = null,Object? beratKg = null,Object? nilaiRupiah = null,Object? status = null,Object? statusLabel = null,Object? fotoPath = freezed,Object? fotoUrl = freezed,Object? catatan = null,Object? petugasNama = null,Object? createdAt = null,}) {
-  return _then(_self.copyWith(
+  return _then(BankSampahReportModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,bankSampahId: null == bankSampahId ? _self.bankSampahId : bankSampahId // ignore: cast_nullable_to_non_nullable
 as String,bankSampahNama: null == bankSampahNama ? _self.bankSampahNama : bankSampahNama // ignore: cast_nullable_to_non_nullable
@@ -809,16 +829,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.bankSampahId, bankSampahId) || other.bankSampahId == bankSampahId)&&(identical(other.bankSampahNama, bankSampahNama) || other.bankSampahNama == bankSampahNama)&&(identical(other.bankSampahRegion, bankSampahRegion) || other.bankSampahRegion == bankSampahRegion)&&(identical(other.jenisSampah, jenisSampah) || other.jenisSampah == jenisSampah)&&(identical(other.beratKg, beratKg) || other.beratKg == beratKg)&&(identical(other.nilaiRupiah, nilaiRupiah) || other.nilaiRupiah == nilaiRupiah)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.fotoPath, fotoPath) || other.fotoPath == fotoPath)&&(identical(other.fotoUrl, fotoUrl) || other.fotoUrl == fotoUrl)&&(identical(other.catatan, catatan) || other.catatan == catatan)&&(identical(other.petugasNama, petugasNama) || other.petugasNama == petugasNama)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahReportModel&&(identical(other.id, id) || other.id == id)&&(identical(other.bankSampahId, bankSampahId) || other.bankSampahId == bankSampahId)&&(identical(other.bankSampahNama, bankSampahNama) || other.bankSampahNama == bankSampahNama)&&(identical(other.bankSampahRegion, bankSampahRegion) || other.bankSampahRegion == bankSampahRegion)&&(identical(other.jenisSampah, jenisSampah) || other.jenisSampah == jenisSampah)&&(identical(other.beratKg, beratKg) || other.beratKg == beratKg)&&(identical(other.nilaiRupiah, nilaiRupiah) || other.nilaiRupiah == nilaiRupiah)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.fotoPath, fotoPath) || other.fotoPath == fotoPath)&&(identical(other.fotoUrl, fotoUrl) || other.fotoUrl == fotoUrl)&&(identical(other.catatan, catatan) || other.catatan == catatan)&&(identical(other.petugasNama, petugasNama) || other.petugasNama == petugasNama)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,bankSampahId,bankSampahNama,bankSampahRegion,jenisSampah,beratKg,nilaiRupiah,status,statusLabel,fotoPath,fotoUrl,catatan,petugasNama,createdAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,bankSampahId,bankSampahNama,bankSampahRegion,jenisSampah,beratKg,nilaiRupiah,status,statusLabel,fotoPath,fotoUrl,catatan,petugasNama,createdAt);
+}
 
 @override
 String toString() {
-  return 'BankSampahReportModel(id: $id, bankSampahId: $bankSampahId, bankSampahNama: $bankSampahNama, bankSampahRegion: $bankSampahRegion, jenisSampah: $jenisSampah, beratKg: $beratKg, nilaiRupiah: $nilaiRupiah, status: $status, statusLabel: $statusLabel, fotoPath: $fotoPath, fotoUrl: $fotoUrl, catatan: $catatan, petugasNama: $petugasNama, createdAt: $createdAt)';
+    return 'BankSampahReportModel(id: $id, bankSampahId: $bankSampahId, bankSampahNama: $bankSampahNama, bankSampahRegion: $bankSampahRegion, jenisSampah: $jenisSampah, beratKg: $beratKg, nilaiRupiah: $nilaiRupiah, status: $status, statusLabel: $statusLabel, fotoPath: $fotoPath, fotoUrl: $fotoUrl, catatan: $catatan, petugasNama: $petugasNama, createdAt: $createdAt)';
 }
 
 
@@ -886,16 +908,21 @@ $BankSampahMyDepositsResponseModelCopyWith<BankSampahMyDepositsResponseModel> ge
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahMyDepositsResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.meta, meta) || other.meta == meta));
+  final _this = this as BankSampahMyDepositsResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BankSampahMyDepositsResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.summary, _this.summary) || other.summary == _this.summary)&&(identical(other.meta, _this.meta) || other.meta == _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(data),summary,meta);
+int get hashCode {
+  final _this = this as BankSampahMyDepositsResponseModel;
+  return Object.hash(runtimeType,_this.success,_this.message,const DeepCollectionEquality().hash(_this.data),_this.summary,_this.meta);
+}
 
 @override
 String toString() {
-  return 'BankSampahMyDepositsResponseModel(success: $success, message: $message, data: $data, summary: $summary, meta: $meta)';
+  final _this = this as BankSampahMyDepositsResponseModel;
+  return 'BankSampahMyDepositsResponseModel(success: ${_this.success}, message: ${_this.message}, data: ${_this.data}, summary: ${_this.summary}, meta: ${_this.meta})';
 }
 
 
@@ -924,7 +951,7 @@ class _$BankSampahMyDepositsResponseModelCopyWithImpl<$Res>
 /// Create a copy of BankSampahMyDepositsResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? message = freezed,Object? data = null,Object? summary = freezed,Object? meta = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(BankSampahMyDepositsResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
@@ -1095,7 +1122,7 @@ return $default(_that.success,_that.message,_that.data,_that.summary,_that.meta)
 @JsonSerializable()
 
 class _BankSampahMyDepositsResponseModel extends BankSampahMyDepositsResponseModel {
-  const _BankSampahMyDepositsResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data') final  List<BankSampahReportModel> data = const [], @JsonKey(name: 'summary') this.summary, @JsonKey(name: 'meta') this.meta}): _data = data,super._();
+  const _BankSampahMyDepositsResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data')  List<BankSampahReportModel> data = const [], @JsonKey(name: 'summary') this.summary, @JsonKey(name: 'meta') this.meta}): _data = data,super._();
   factory _BankSampahMyDepositsResponseModel.fromJson(Map<String, dynamic> json) => _$BankSampahMyDepositsResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;
@@ -1123,16 +1150,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahMyDepositsResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.meta, meta) || other.meta == meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BankSampahMyDepositsResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.summary, summary) || other.summary == summary)&&(identical(other.meta, meta) || other.meta == meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),summary,meta);
+int get hashCode {
+    return Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),summary,meta);
+}
 
 @override
 String toString() {
-  return 'BankSampahMyDepositsResponseModel(success: $success, message: $message, data: $data, summary: $summary, meta: $meta)';
+    return 'BankSampahMyDepositsResponseModel(success: $success, message: $message, data: $data, summary: $summary, meta: $meta)';
 }
 
 

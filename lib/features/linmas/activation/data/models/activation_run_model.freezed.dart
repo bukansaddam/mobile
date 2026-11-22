@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'activation_run_model.dart';
@@ -9,6 +9,7 @@ part of 'activation_run_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ActivationRunModelCopyWith<ActivationRunModel> get copyWith => _$ActivationRunM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunModel&&(identical(other.id, id) || other.id == id)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.province, province) || other.province == province)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.district, district) || other.district == district)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.village, village) || other.village == village)&&const DeepCollectionEquality().equals(other.reportId, reportId)&&const DeepCollectionEquality().equals(other.report, report)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.sourcePriority, sourcePriority) || other.sourcePriority == sourcePriority)&&(identical(other.sourceCategory, sourceCategory) || other.sourceCategory == sourceCategory)&&(identical(other.sourceApproach, sourceApproach) || other.sourceApproach == sourceApproach)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.targetParticipants, targetParticipants) || other.targetParticipants == targetParticipants)&&(identical(other.targetQuota, targetQuota) || other.targetQuota == targetQuota)&&(identical(other.participantsCount, participantsCount) || other.participantsCount == participantsCount)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.budgetPlan, budgetPlan) || other.budgetPlan == budgetPlan)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.daysUntilDue, daysUntilDue) || other.daysUntilDue == daysUntilDue)&&(identical(other.isOverdue, isOverdue) || other.isOverdue == isOverdue)&&(identical(other.isWarning, isWarning) || other.isWarning == isWarning)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.warningLevel, warningLevel) || other.warningLevel == warningLevel));
+  final _this = this as ActivationRunModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.provinceId, _this.provinceId) || other.provinceId == _this.provinceId)&&(identical(other.province, _this.province) || other.province == _this.province)&&(identical(other.regencyId, _this.regencyId) || other.regencyId == _this.regencyId)&&(identical(other.regency, _this.regency) || other.regency == _this.regency)&&(identical(other.districtId, _this.districtId) || other.districtId == _this.districtId)&&(identical(other.district, _this.district) || other.district == _this.district)&&(identical(other.villageId, _this.villageId) || other.villageId == _this.villageId)&&(identical(other.village, _this.village) || other.village == _this.village)&&const DeepCollectionEquality().equals(other.reportId, _this.reportId)&&const DeepCollectionEquality().equals(other.report, _this.report)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.owner, _this.owner) || other.owner == _this.owner)&&(identical(other.sourcePriority, _this.sourcePriority) || other.sourcePriority == _this.sourcePriority)&&(identical(other.sourceCategory, _this.sourceCategory) || other.sourceCategory == _this.sourceCategory)&&(identical(other.sourceApproach, _this.sourceApproach) || other.sourceApproach == _this.sourceApproach)&&(identical(other.startDate, _this.startDate) || other.startDate == _this.startDate)&&(identical(other.dueDate, _this.dueDate) || other.dueDate == _this.dueDate)&&(identical(other.completedAt, _this.completedAt) || other.completedAt == _this.completedAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.progressPct, _this.progressPct) || other.progressPct == _this.progressPct)&&(identical(other.targetParticipants, _this.targetParticipants) || other.targetParticipants == _this.targetParticipants)&&(identical(other.targetQuota, _this.targetQuota) || other.targetQuota == _this.targetQuota)&&(identical(other.participantsCount, _this.participantsCount) || other.participantsCount == _this.participantsCount)&&(identical(other.budget, _this.budget) || other.budget == _this.budget)&&(identical(other.budgetPlan, _this.budgetPlan) || other.budgetPlan == _this.budgetPlan)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&(identical(other.daysUntilDue, _this.daysUntilDue) || other.daysUntilDue == _this.daysUntilDue)&&(identical(other.isOverdue, _this.isOverdue) || other.isOverdue == _this.isOverdue)&&(identical(other.isWarning, _this.isWarning) || other.isWarning == _this.isWarning)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.warningLevel, _this.warningLevel) || other.warningLevel == _this.warningLevel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,provinceId,province,regencyId,regency,districtId,district,villageId,village,const DeepCollectionEquality().hash(reportId),const DeepCollectionEquality().hash(report),title,description,owner,sourcePriority,sourceCategory,sourceApproach,startDate,dueDate,completedAt,updatedAt,status,progressPct,targetParticipants,targetQuota,participantsCount,budget,budgetPlan,notes,daysUntilDue,isOverdue,isWarning,isActive,warningLevel]);
+int get hashCode {
+  final _this = this as ActivationRunModel;
+  return Object.hashAll([runtimeType,_this.id,_this.provinceId,_this.province,_this.regencyId,_this.regency,_this.districtId,_this.district,_this.villageId,_this.village,const DeepCollectionEquality().hash(_this.reportId),const DeepCollectionEquality().hash(_this.report),_this.title,_this.description,_this.owner,_this.sourcePriority,_this.sourceCategory,_this.sourceApproach,_this.startDate,_this.dueDate,_this.completedAt,_this.updatedAt,_this.status,_this.progressPct,_this.targetParticipants,_this.targetQuota,_this.participantsCount,_this.budget,_this.budgetPlan,_this.notes,_this.daysUntilDue,_this.isOverdue,_this.isWarning,_this.isActive,_this.warningLevel]);
+}
 
 @override
 String toString() {
-  return 'ActivationRunModel(id: $id, provinceId: $provinceId, province: $province, regencyId: $regencyId, regency: $regency, districtId: $districtId, district: $district, villageId: $villageId, village: $village, reportId: $reportId, report: $report, title: $title, description: $description, owner: $owner, sourcePriority: $sourcePriority, sourceCategory: $sourceCategory, sourceApproach: $sourceApproach, startDate: $startDate, dueDate: $dueDate, completedAt: $completedAt, updatedAt: $updatedAt, status: $status, progressPct: $progressPct, targetParticipants: $targetParticipants, targetQuota: $targetQuota, participantsCount: $participantsCount, budget: $budget, budgetPlan: $budgetPlan, notes: $notes, daysUntilDue: $daysUntilDue, isOverdue: $isOverdue, isWarning: $isWarning, isActive: $isActive, warningLevel: $warningLevel)';
+  final _this = this as ActivationRunModel;
+  return 'ActivationRunModel(id: ${_this.id}, provinceId: ${_this.provinceId}, province: ${_this.province}, regencyId: ${_this.regencyId}, regency: ${_this.regency}, districtId: ${_this.districtId}, district: ${_this.district}, villageId: ${_this.villageId}, village: ${_this.village}, reportId: ${_this.reportId}, report: ${_this.report}, title: ${_this.title}, description: ${_this.description}, owner: ${_this.owner}, sourcePriority: ${_this.sourcePriority}, sourceCategory: ${_this.sourceCategory}, sourceApproach: ${_this.sourceApproach}, startDate: ${_this.startDate}, dueDate: ${_this.dueDate}, completedAt: ${_this.completedAt}, updatedAt: ${_this.updatedAt}, status: ${_this.status}, progressPct: ${_this.progressPct}, targetParticipants: ${_this.targetParticipants}, targetQuota: ${_this.targetQuota}, participantsCount: ${_this.participantsCount}, budget: ${_this.budget}, budgetPlan: ${_this.budgetPlan}, notes: ${_this.notes}, daysUntilDue: ${_this.daysUntilDue}, isOverdue: ${_this.isOverdue}, isWarning: ${_this.isWarning}, isActive: ${_this.isActive}, warningLevel: ${_this.warningLevel})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ActivationRunModelCopyWithImpl<$Res>
 /// Create a copy of ActivationRunModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? provinceId = freezed,Object? province = freezed,Object? regencyId = freezed,Object? regency = freezed,Object? districtId = freezed,Object? district = freezed,Object? villageId = freezed,Object? village = freezed,Object? reportId = freezed,Object? report = freezed,Object? title = null,Object? description = freezed,Object? owner = freezed,Object? sourcePriority = freezed,Object? sourceCategory = freezed,Object? sourceApproach = freezed,Object? startDate = freezed,Object? dueDate = freezed,Object? completedAt = freezed,Object? updatedAt = freezed,Object? status = freezed,Object? progressPct = null,Object? targetParticipants = freezed,Object? targetQuota = freezed,Object? participantsCount = freezed,Object? budget = freezed,Object? budgetPlan = freezed,Object? notes = freezed,Object? daysUntilDue = freezed,Object? isOverdue = null,Object? isWarning = null,Object? isActive = null,Object? warningLevel = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationRunModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,provinceId: freezed == provinceId ? _self.provinceId : provinceId // ignore: cast_nullable_to_non_nullable
 as int?,province: freezed == province ? _self.province : province // ignore: cast_nullable_to_non_nullable
@@ -293,16 +299,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunModel&&(identical(other.id, id) || other.id == id)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.province, province) || other.province == province)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.district, district) || other.district == district)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.village, village) || other.village == village)&&const DeepCollectionEquality().equals(other.reportId, reportId)&&const DeepCollectionEquality().equals(other.report, report)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.sourcePriority, sourcePriority) || other.sourcePriority == sourcePriority)&&(identical(other.sourceCategory, sourceCategory) || other.sourceCategory == sourceCategory)&&(identical(other.sourceApproach, sourceApproach) || other.sourceApproach == sourceApproach)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.targetParticipants, targetParticipants) || other.targetParticipants == targetParticipants)&&(identical(other.targetQuota, targetQuota) || other.targetQuota == targetQuota)&&(identical(other.participantsCount, participantsCount) || other.participantsCount == participantsCount)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.budgetPlan, budgetPlan) || other.budgetPlan == budgetPlan)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.daysUntilDue, daysUntilDue) || other.daysUntilDue == daysUntilDue)&&(identical(other.isOverdue, isOverdue) || other.isOverdue == isOverdue)&&(identical(other.isWarning, isWarning) || other.isWarning == isWarning)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.warningLevel, warningLevel) || other.warningLevel == warningLevel));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunModel&&(identical(other.id, id) || other.id == id)&&(identical(other.provinceId, provinceId) || other.provinceId == provinceId)&&(identical(other.province, province) || other.province == province)&&(identical(other.regencyId, regencyId) || other.regencyId == regencyId)&&(identical(other.regency, regency) || other.regency == regency)&&(identical(other.districtId, districtId) || other.districtId == districtId)&&(identical(other.district, district) || other.district == district)&&(identical(other.villageId, villageId) || other.villageId == villageId)&&(identical(other.village, village) || other.village == village)&&const DeepCollectionEquality().equals(other.reportId, reportId)&&const DeepCollectionEquality().equals(other.report, report)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.sourcePriority, sourcePriority) || other.sourcePriority == sourcePriority)&&(identical(other.sourceCategory, sourceCategory) || other.sourceCategory == sourceCategory)&&(identical(other.sourceApproach, sourceApproach) || other.sourceApproach == sourceApproach)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.completedAt, completedAt) || other.completedAt == completedAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.targetParticipants, targetParticipants) || other.targetParticipants == targetParticipants)&&(identical(other.targetQuota, targetQuota) || other.targetQuota == targetQuota)&&(identical(other.participantsCount, participantsCount) || other.participantsCount == participantsCount)&&(identical(other.budget, budget) || other.budget == budget)&&(identical(other.budgetPlan, budgetPlan) || other.budgetPlan == budgetPlan)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.daysUntilDue, daysUntilDue) || other.daysUntilDue == daysUntilDue)&&(identical(other.isOverdue, isOverdue) || other.isOverdue == isOverdue)&&(identical(other.isWarning, isWarning) || other.isWarning == isWarning)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.warningLevel, warningLevel) || other.warningLevel == warningLevel));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,provinceId,province,regencyId,regency,districtId,district,villageId,village,const DeepCollectionEquality().hash(reportId),const DeepCollectionEquality().hash(report),title,description,owner,sourcePriority,sourceCategory,sourceApproach,startDate,dueDate,completedAt,updatedAt,status,progressPct,targetParticipants,targetQuota,participantsCount,budget,budgetPlan,notes,daysUntilDue,isOverdue,isWarning,isActive,warningLevel]);
+int get hashCode {
+    return Object.hashAll([runtimeType,id,provinceId,province,regencyId,regency,districtId,district,villageId,village,const DeepCollectionEquality().hash(reportId),const DeepCollectionEquality().hash(report),title,description,owner,sourcePriority,sourceCategory,sourceApproach,startDate,dueDate,completedAt,updatedAt,status,progressPct,targetParticipants,targetQuota,participantsCount,budget,budgetPlan,notes,daysUntilDue,isOverdue,isWarning,isActive,warningLevel]);
+}
 
 @override
 String toString() {
-  return 'ActivationRunModel(id: $id, provinceId: $provinceId, province: $province, regencyId: $regencyId, regency: $regency, districtId: $districtId, district: $district, villageId: $villageId, village: $village, reportId: $reportId, report: $report, title: $title, description: $description, owner: $owner, sourcePriority: $sourcePriority, sourceCategory: $sourceCategory, sourceApproach: $sourceApproach, startDate: $startDate, dueDate: $dueDate, completedAt: $completedAt, updatedAt: $updatedAt, status: $status, progressPct: $progressPct, targetParticipants: $targetParticipants, targetQuota: $targetQuota, participantsCount: $participantsCount, budget: $budget, budgetPlan: $budgetPlan, notes: $notes, daysUntilDue: $daysUntilDue, isOverdue: $isOverdue, isWarning: $isWarning, isActive: $isActive, warningLevel: $warningLevel)';
+    return 'ActivationRunModel(id: $id, provinceId: $provinceId, province: $province, regencyId: $regencyId, regency: $regency, districtId: $districtId, district: $district, villageId: $villageId, village: $village, reportId: $reportId, report: $report, title: $title, description: $description, owner: $owner, sourcePriority: $sourcePriority, sourceCategory: $sourceCategory, sourceApproach: $sourceApproach, startDate: $startDate, dueDate: $dueDate, completedAt: $completedAt, updatedAt: $updatedAt, status: $status, progressPct: $progressPct, targetParticipants: $targetParticipants, targetQuota: $targetQuota, participantsCount: $participantsCount, budget: $budget, budgetPlan: $budgetPlan, notes: $notes, daysUntilDue: $daysUntilDue, isOverdue: $isOverdue, isWarning: $isWarning, isActive: $isActive, warningLevel: $warningLevel)';
 }
 
 
@@ -390,16 +398,21 @@ $ActivationRunMetaModelCopyWith<ActivationRunMetaModel> get copyWith => _$Activa
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPageUrl, nextPageUrl) || other.nextPageUrl == nextPageUrl)&&(identical(other.prevPageUrl, prevPageUrl) || other.prevPageUrl == prevPageUrl)&&(identical(other.today, today) || other.today == today)&&(identical(other.warningDays, warningDays) || other.warningDays == warningDays));
+  final _this = this as ActivationRunMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunMetaModel&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&(identical(other.total, _this.total) || other.total == _this.total)&&(identical(other.hasMore, _this.hasMore) || other.hasMore == _this.hasMore)&&(identical(other.nextPageUrl, _this.nextPageUrl) || other.nextPageUrl == _this.nextPageUrl)&&(identical(other.prevPageUrl, _this.prevPageUrl) || other.prevPageUrl == _this.prevPageUrl)&&(identical(other.today, _this.today) || other.today == _this.today)&&(identical(other.warningDays, _this.warningDays) || other.warningDays == _this.warningDays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total,hasMore,nextPageUrl,prevPageUrl,today,warningDays);
+int get hashCode {
+  final _this = this as ActivationRunMetaModel;
+  return Object.hash(runtimeType,_this.currentPage,_this.lastPage,_this.perPage,_this.total,_this.hasMore,_this.nextPageUrl,_this.prevPageUrl,_this.today,_this.warningDays);
+}
 
 @override
 String toString() {
-  return 'ActivationRunMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total, hasMore: $hasMore, nextPageUrl: $nextPageUrl, prevPageUrl: $prevPageUrl, today: $today, warningDays: $warningDays)';
+  final _this = this as ActivationRunMetaModel;
+  return 'ActivationRunMetaModel(currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, total: ${_this.total}, hasMore: ${_this.hasMore}, nextPageUrl: ${_this.nextPageUrl}, prevPageUrl: ${_this.prevPageUrl}, today: ${_this.today}, warningDays: ${_this.warningDays})';
 }
 
 
@@ -428,7 +441,7 @@ class _$ActivationRunMetaModelCopyWithImpl<$Res>
 /// Create a copy of ActivationRunMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? currentPage = freezed,Object? lastPage = freezed,Object? perPage = freezed,Object? total = freezed,Object? hasMore = freezed,Object? nextPageUrl = freezed,Object? prevPageUrl = freezed,Object? today = freezed,Object? warningDays = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationRunMetaModel(
 currentPage: freezed == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int?,lastPage: freezed == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
 as int?,perPage: freezed == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
@@ -605,16 +618,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPageUrl, nextPageUrl) || other.nextPageUrl == nextPageUrl)&&(identical(other.prevPageUrl, prevPageUrl) || other.prevPageUrl == prevPageUrl)&&(identical(other.today, today) || other.today == today)&&(identical(other.warningDays, warningDays) || other.warningDays == warningDays));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total)&&(identical(other.hasMore, hasMore) || other.hasMore == hasMore)&&(identical(other.nextPageUrl, nextPageUrl) || other.nextPageUrl == nextPageUrl)&&(identical(other.prevPageUrl, prevPageUrl) || other.prevPageUrl == prevPageUrl)&&(identical(other.today, today) || other.today == today)&&(identical(other.warningDays, warningDays) || other.warningDays == warningDays));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total,hasMore,nextPageUrl,prevPageUrl,today,warningDays);
+int get hashCode {
+    return Object.hash(runtimeType,currentPage,lastPage,perPage,total,hasMore,nextPageUrl,prevPageUrl,today,warningDays);
+}
 
 @override
 String toString() {
-  return 'ActivationRunMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total, hasMore: $hasMore, nextPageUrl: $nextPageUrl, prevPageUrl: $prevPageUrl, today: $today, warningDays: $warningDays)';
+    return 'ActivationRunMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total, hasMore: $hasMore, nextPageUrl: $nextPageUrl, prevPageUrl: $prevPageUrl, today: $today, warningDays: $warningDays)';
 }
 
 
@@ -677,16 +692,21 @@ $ActivationRunResponseModelCopyWith<ActivationRunResponseModel> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
+  final _this = this as ActivationRunResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationRunResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.meta, _this.meta) || other.meta == _this.meta)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,const DeepCollectionEquality().hash(data),meta,message);
+int get hashCode {
+  final _this = this as ActivationRunResponseModel;
+  return Object.hash(runtimeType,_this.success,const DeepCollectionEquality().hash(_this.data),_this.meta,_this.message);
+}
 
 @override
 String toString() {
-  return 'ActivationRunResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
+  final _this = this as ActivationRunResponseModel;
+  return 'ActivationRunResponseModel(success: ${_this.success}, data: ${_this.data}, meta: ${_this.meta}, message: ${_this.message})';
 }
 
 
@@ -715,7 +735,7 @@ class _$ActivationRunResponseModelCopyWithImpl<$Res>
 /// Create a copy of ActivationRunResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? data = null,Object? meta = freezed,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationRunResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<ActivationRunModel>,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
@@ -873,7 +893,7 @@ return $default(_that.success,_that.data,_that.meta,_that.message);case _:
 @JsonSerializable()
 
 class _ActivationRunResponseModel extends ActivationRunResponseModel {
-  const _ActivationRunResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data") final  List<ActivationRunModel> data = const [], @JsonKey(name: "meta") this.meta, @JsonKey(name: "message") this.message}): _data = data,super._();
+  const _ActivationRunResponseModel({@JsonKey(name: "success") this.success = false, @JsonKey(name: "data")  List<ActivationRunModel> data = const [], @JsonKey(name: "meta") this.meta, @JsonKey(name: "message") this.message}): _data = data,super._();
   factory _ActivationRunResponseModel.fromJson(Map<String, dynamic> json) => _$ActivationRunResponseModelFromJson(json);
 
 @override@JsonKey(name: "success") final  bool success;
@@ -900,16 +920,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationRunResponseModel&&(identical(other.success, success) || other.success == success)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,const DeepCollectionEquality().hash(_data),meta,message);
+int get hashCode {
+    return Object.hash(runtimeType,success,const DeepCollectionEquality().hash(_data),meta,message);
+}
 
 @override
 String toString() {
-  return 'ActivationRunResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
+    return 'ActivationRunResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
 }
 
 

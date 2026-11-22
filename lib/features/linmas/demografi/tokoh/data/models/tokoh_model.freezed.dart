@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'tokoh_model.dart';
@@ -9,6 +9,7 @@ part of 'tokoh_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $TokohMetaModelCopyWith<TokohMetaModel> get copyWith => _$TokohMetaModelCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+  final _this = this as TokohMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohMetaModel&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.perPage, _this.perPage) || other.perPage == _this.perPage)&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+  final _this = this as TokohMetaModel;
+  return Object.hash(runtimeType,_this.currentPage,_this.lastPage,_this.perPage,_this.total);
+}
 
 @override
 String toString() {
-  return 'TokohMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+  final _this = this as TokohMetaModel;
+  return 'TokohMetaModel(currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, perPage: ${_this.perPage}, total: ${_this.total})';
 }
 
 
@@ -66,7 +72,7 @@ class _$TokohMetaModelCopyWithImpl<$Res>
 /// Create a copy of TokohMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? currentPage = null,Object? lastPage = null,Object? perPage = null,Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(TokohMetaModel(
 currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
 as int,perPage: null == perPage ? _self.perPage : perPage // ignore: cast_nullable_to_non_nullable
@@ -233,16 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohMetaModel&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.perPage, perPage) || other.perPage == perPage)&&(identical(other.total, total) || other.total == total));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+int get hashCode {
+    return Object.hash(runtimeType,currentPage,lastPage,perPage,total);
+}
 
 @override
 String toString() {
-  return 'TokohMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
+    return 'TokohMetaModel(currentPage: $currentPage, lastPage: $lastPage, perPage: $perPage, total: $total)';
 }
 
 
@@ -300,16 +308,21 @@ $TokohResponseModelCopyWith<TokohResponseModel> get copyWith => _$TokohResponseM
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.meta, meta) || other.meta == meta));
+  final _this = this as TokohResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.message, _this.message) || other.message == _this.message)&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.meta, _this.meta) || other.meta == _this.meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(data),meta);
+int get hashCode {
+  final _this = this as TokohResponseModel;
+  return Object.hash(runtimeType,_this.success,_this.message,const DeepCollectionEquality().hash(_this.data),_this.meta);
+}
 
 @override
 String toString() {
-  return 'TokohResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
+  final _this = this as TokohResponseModel;
+  return 'TokohResponseModel(success: ${_this.success}, message: ${_this.message}, data: ${_this.data}, meta: ${_this.meta})';
 }
 
 
@@ -338,7 +351,7 @@ class _$TokohResponseModelCopyWithImpl<$Res>
 /// Create a copy of TokohResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? message = freezed,Object? data = null,Object? meta = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TokohResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
@@ -496,7 +509,7 @@ return $default(_that.success,_that.message,_that.data,_that.meta);case _:
 @JsonSerializable()
 
 class _TokohResponseModel extends TokohResponseModel {
-  const _TokohResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data', readValue: _readDataList) final  List<TokohModel> data = const [], @JsonKey(name: 'meta', readValue: _readMeta) this.meta}): _data = data,super._();
+  const _TokohResponseModel({@JsonKey(name: 'success') this.success = false, @JsonKey(name: 'message') this.message, @JsonKey(name: 'data', readValue: _readDataList)  List<TokohModel> data = const [], @JsonKey(name: 'meta', readValue: _readMeta) this.meta}): _data = data,super._();
   factory _TokohResponseModel.fromJson(Map<String, dynamic> json) => _$TokohResponseModelFromJson(json);
 
 @override@JsonKey(name: 'success') final  bool success;
@@ -523,16 +536,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.meta, meta) || other.meta == meta));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.message, message) || other.message == message)&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.meta, meta) || other.meta == meta));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),meta);
+int get hashCode {
+    return Object.hash(runtimeType,success,message,const DeepCollectionEquality().hash(_data),meta);
+}
 
 @override
 String toString() {
-  return 'TokohResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
+    return 'TokohResponseModel(success: $success, message: $message, data: $data, meta: $meta)';
 }
 
 
@@ -602,16 +617,21 @@ $TokohModelCopyWith<TokohModel> get copyWith => _$TokohModelCopyWithImpl<TokohMo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as TokohModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TokohModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nama, _this.nama) || other.nama == _this.nama)&&(identical(other.noTelp, _this.noTelp) || other.noTelp == _this.noTelp)&&(identical(other.jenisKelamin, _this.jenisKelamin) || other.jenisKelamin == _this.jenisKelamin)&&(identical(other.profesi, _this.profesi) || other.profesi == _this.profesi)&&(identical(other.wilayah, _this.wilayah) || other.wilayah == _this.wilayah)&&(identical(other.instituteId, _this.instituteId) || other.instituteId == _this.instituteId)&&(identical(other.namaInstitusi, _this.namaInstitusi) || other.namaInstitusi == _this.namaInstitusi)&&(identical(other.jabatanInstitusi, _this.jabatanInstitusi) || other.jabatanInstitusi == _this.jabatanInstitusi)&&(identical(other.afiliasi, _this.afiliasi) || other.afiliasi == _this.afiliasi)&&(identical(other.organizationId, _this.organizationId) || other.organizationId == _this.organizationId)&&(identical(other.namaOrganisasi, _this.namaOrganisasi) || other.namaOrganisasi == _this.namaOrganisasi)&&(identical(other.jabatanOrganisasi, _this.jabatanOrganisasi) || other.jabatanOrganisasi == _this.jabatanOrganisasi)&&(identical(other.suku, _this.suku) || other.suku == _this.suku)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+int get hashCode {
+  final _this = this as TokohModel;
+  return Object.hash(runtimeType,_this.id,_this.nama,_this.noTelp,_this.jenisKelamin,_this.profesi,_this.wilayah,_this.instituteId,_this.namaInstitusi,_this.jabatanInstitusi,_this.afiliasi,_this.organizationId,_this.namaOrganisasi,_this.jabatanOrganisasi,_this.suku,_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'TokohModel(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as TokohModel;
+  return 'TokohModel(id: ${_this.id}, nama: ${_this.nama}, noTelp: ${_this.noTelp}, jenisKelamin: ${_this.jenisKelamin}, profesi: ${_this.profesi}, wilayah: ${_this.wilayah}, instituteId: ${_this.instituteId}, namaInstitusi: ${_this.namaInstitusi}, jabatanInstitusi: ${_this.jabatanInstitusi}, afiliasi: ${_this.afiliasi}, organizationId: ${_this.organizationId}, namaOrganisasi: ${_this.namaOrganisasi}, jabatanOrganisasi: ${_this.jabatanOrganisasi}, suku: ${_this.suku}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -640,7 +660,7 @@ class _$TokohModelCopyWithImpl<$Res>
 /// Create a copy of TokohModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? nama = null,Object? noTelp = null,Object? jenisKelamin = null,Object? profesi = null,Object? wilayah = null,Object? instituteId = freezed,Object? namaInstitusi = null,Object? jabatanInstitusi = null,Object? afiliasi = null,Object? organizationId = freezed,Object? namaOrganisasi = null,Object? jabatanOrganisasi = null,Object? suku = null,Object? createdAt = freezed,Object? updatedAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TokohModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,noTelp: null == noTelp ? _self.noTelp : noTelp // ignore: cast_nullable_to_non_nullable
@@ -831,16 +851,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TokohModel&&(identical(other.id, id) || other.id == id)&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.noTelp, noTelp) || other.noTelp == noTelp)&&(identical(other.jenisKelamin, jenisKelamin) || other.jenisKelamin == jenisKelamin)&&(identical(other.profesi, profesi) || other.profesi == profesi)&&(identical(other.wilayah, wilayah) || other.wilayah == wilayah)&&(identical(other.instituteId, instituteId) || other.instituteId == instituteId)&&(identical(other.namaInstitusi, namaInstitusi) || other.namaInstitusi == namaInstitusi)&&(identical(other.jabatanInstitusi, jabatanInstitusi) || other.jabatanInstitusi == jabatanInstitusi)&&(identical(other.afiliasi, afiliasi) || other.afiliasi == afiliasi)&&(identical(other.organizationId, organizationId) || other.organizationId == organizationId)&&(identical(other.namaOrganisasi, namaOrganisasi) || other.namaOrganisasi == namaOrganisasi)&&(identical(other.jabatanOrganisasi, jabatanOrganisasi) || other.jabatanOrganisasi == jabatanOrganisasi)&&(identical(other.suku, suku) || other.suku == suku)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,nama,noTelp,jenisKelamin,profesi,wilayah,instituteId,namaInstitusi,jabatanInstitusi,afiliasi,organizationId,namaOrganisasi,jabatanOrganisasi,suku,createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'TokohModel(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TokohModel(id: $id, nama: $nama, noTelp: $noTelp, jenisKelamin: $jenisKelamin, profesi: $profesi, wilayah: $wilayah, instituteId: $instituteId, namaInstitusi: $namaInstitusi, jabatanInstitusi: $jabatanInstitusi, afiliasi: $afiliasi, organizationId: $organizationId, namaOrganisasi: $namaOrganisasi, jabatanOrganisasi: $jabatanOrganisasi, suku: $suku, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

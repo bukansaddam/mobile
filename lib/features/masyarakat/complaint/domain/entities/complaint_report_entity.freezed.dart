@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'complaint_report_entity.dart';
@@ -9,6 +9,7 @@ part of 'complaint_report_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ComplaintAttachmentEntityCopyWith<ComplaintAttachmentEntity> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintAttachmentEntity&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
+  final _this = this as ComplaintAttachmentEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintAttachmentEntity&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.url, _this.url) || other.url == _this.url));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,mimeType,url);
+int get hashCode {
+  final _this = this as ComplaintAttachmentEntity;
+  return Object.hash(runtimeType,_this.mimeType,_this.url);
+}
 
 @override
 String toString() {
-  return 'ComplaintAttachmentEntity(mimeType: $mimeType, url: $url)';
+  final _this = this as ComplaintAttachmentEntity;
+  return 'ComplaintAttachmentEntity(mimeType: ${_this.mimeType}, url: ${_this.url})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ComplaintAttachmentEntityCopyWithImpl<$Res>
 /// Create a copy of ComplaintAttachmentEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? mimeType = null,Object? url = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintAttachmentEntity(
 mimeType: null == mimeType ? _self.mimeType : mimeType // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,
@@ -223,16 +229,18 @@ _$ComplaintAttachmentEntityCopyWith<_ComplaintAttachmentEntity> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintAttachmentEntity&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintAttachmentEntity&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.url, url) || other.url == url));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,mimeType,url);
+int get hashCode {
+    return Object.hash(runtimeType,mimeType,url);
+}
 
 @override
 String toString() {
-  return 'ComplaintAttachmentEntity(mimeType: $mimeType, url: $url)';
+    return 'ComplaintAttachmentEntity(mimeType: $mimeType, url: $url)';
 }
 
 
@@ -285,16 +293,21 @@ $ComplaintSlaEntityCopyWith<ComplaintSlaEntity> get copyWith => _$ComplaintSlaEn
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintSlaEntity&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
+  final _this = this as ComplaintSlaEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintSlaEntity&&(identical(other.stageLabel, _this.stageLabel) || other.stageLabel == _this.stageLabel)&&(identical(other.remainingMinutes, _this.remainingMinutes) || other.remainingMinutes == _this.remainingMinutes)&&(identical(other.progressPct, _this.progressPct) || other.progressPct == _this.progressPct)&&(identical(other.state, _this.state) || other.state == _this.state));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+int get hashCode {
+  final _this = this as ComplaintSlaEntity;
+  return Object.hash(runtimeType,_this.stageLabel,_this.remainingMinutes,_this.progressPct,_this.state);
+}
 
 @override
 String toString() {
-  return 'ComplaintSlaEntity(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
+  final _this = this as ComplaintSlaEntity;
+  return 'ComplaintSlaEntity(stageLabel: ${_this.stageLabel}, remainingMinutes: ${_this.remainingMinutes}, progressPct: ${_this.progressPct}, state: ${_this.state})';
 }
 
 
@@ -323,7 +336,7 @@ class _$ComplaintSlaEntityCopyWithImpl<$Res>
 /// Create a copy of ComplaintSlaEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? stageLabel = null,Object? remainingMinutes = null,Object? progressPct = null,Object? state = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintSlaEntity(
 stageLabel: null == stageLabel ? _self.stageLabel : stageLabel // ignore: cast_nullable_to_non_nullable
 as String,remainingMinutes: null == remainingMinutes ? _self.remainingMinutes : remainingMinutes // ignore: cast_nullable_to_non_nullable
 as int,progressPct: null == progressPct ? _self.progressPct : progressPct // ignore: cast_nullable_to_non_nullable
@@ -487,16 +500,18 @@ _$ComplaintSlaEntityCopyWith<_ComplaintSlaEntity> get copyWith => __$ComplaintSl
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintSlaEntity&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintSlaEntity&&(identical(other.stageLabel, stageLabel) || other.stageLabel == stageLabel)&&(identical(other.remainingMinutes, remainingMinutes) || other.remainingMinutes == remainingMinutes)&&(identical(other.progressPct, progressPct) || other.progressPct == progressPct)&&(identical(other.state, state) || other.state == state));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+int get hashCode {
+    return Object.hash(runtimeType,stageLabel,remainingMinutes,progressPct,state);
+}
 
 @override
 String toString() {
-  return 'ComplaintSlaEntity(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
+    return 'ComplaintSlaEntity(stageLabel: $stageLabel, remainingMinutes: $remainingMinutes, progressPct: $progressPct, state: $state)';
 }
 
 
@@ -551,16 +566,21 @@ $ComplaintTimelineEntityCopyWith<ComplaintTimelineEntity> get copyWith => _$Comp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintTimelineEntity&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actorName, actorName) || other.actorName == actorName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  final _this = this as ComplaintTimelineEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintTimelineEntity&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.actorName, _this.actorName) || other.actorName == _this.actorName)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,description,actorName,createdAt);
+int get hashCode {
+  final _this = this as ComplaintTimelineEntity;
+  return Object.hash(runtimeType,_this.type,_this.description,_this.actorName,_this.createdAt);
+}
 
 @override
 String toString() {
-  return 'ComplaintTimelineEntity(type: $type, description: $description, actorName: $actorName, createdAt: $createdAt)';
+  final _this = this as ComplaintTimelineEntity;
+  return 'ComplaintTimelineEntity(type: ${_this.type}, description: ${_this.description}, actorName: ${_this.actorName}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -589,7 +609,7 @@ class _$ComplaintTimelineEntityCopyWithImpl<$Res>
 /// Create a copy of ComplaintTimelineEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? type = null,Object? description = null,Object? actorName = null,Object? createdAt = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintTimelineEntity(
 type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,actorName: null == actorName ? _self.actorName : actorName // ignore: cast_nullable_to_non_nullable
@@ -753,16 +773,18 @@ _$ComplaintTimelineEntityCopyWith<_ComplaintTimelineEntity> get copyWith => __$C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintTimelineEntity&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actorName, actorName) || other.actorName == actorName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintTimelineEntity&&(identical(other.type, type) || other.type == type)&&(identical(other.description, description) || other.description == description)&&(identical(other.actorName, actorName) || other.actorName == actorName)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,type,description,actorName,createdAt);
+int get hashCode {
+    return Object.hash(runtimeType,type,description,actorName,createdAt);
+}
 
 @override
 String toString() {
-  return 'ComplaintTimelineEntity(type: $type, description: $description, actorName: $actorName, createdAt: $createdAt)';
+    return 'ComplaintTimelineEntity(type: $type, description: $description, actorName: $actorName, createdAt: $createdAt)';
 }
 
 
@@ -817,16 +839,21 @@ $ComplaintReportEntityCopyWith<ComplaintReportEntity> get copyWith => _$Complain
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&const DeepCollectionEquality().equals(other.attachments, attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, timeline));
+  final _this = this as ComplaintReportEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.ticketNumber, _this.ticketNumber) || other.ticketNumber == _this.ticketNumber)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.statusLabel, _this.statusLabel) || other.statusLabel == _this.statusLabel)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.reportedAt, _this.reportedAt) || other.reportedAt == _this.reportedAt)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.sla, _this.sla) || other.sla == _this.sla)&&const DeepCollectionEquality().equals(other.timeline, _this.timeline));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,const DeepCollectionEquality().hash(attachments),sla,const DeepCollectionEquality().hash(timeline));
+int get hashCode {
+  final _this = this as ComplaintReportEntity;
+  return Object.hash(runtimeType,_this.id,_this.ticketNumber,_this.title,_this.description,_this.status,_this.statusLabel,_this.category,_this.address,_this.latitude,_this.longitude,_this.reportedAt,const DeepCollectionEquality().hash(_this.attachments),_this.sla,const DeepCollectionEquality().hash(_this.timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportEntity(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
+  final _this = this as ComplaintReportEntity;
+  return 'ComplaintReportEntity(id: ${_this.id}, ticketNumber: ${_this.ticketNumber}, title: ${_this.title}, description: ${_this.description}, status: ${_this.status}, statusLabel: ${_this.statusLabel}, category: ${_this.category}, address: ${_this.address}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, reportedAt: ${_this.reportedAt}, attachments: ${_this.attachments}, sla: ${_this.sla}, timeline: ${_this.timeline})';
 }
 
 
@@ -855,7 +882,7 @@ class _$ComplaintReportEntityCopyWithImpl<$Res>
 /// Create a copy of ComplaintReportEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintReportEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -1023,7 +1050,7 @@ return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.
 
 
 class _ComplaintReportEntity extends ComplaintReportEntity {
-  const _ComplaintReportEntity({this.id = '', this.ticketNumber = '', this.title = '', this.description = '', this.status = '', this.statusLabel = '', this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt, final  List<ComplaintAttachmentEntity> attachments = const [], this.sla, final  List<ComplaintTimelineEntity> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
+  const _ComplaintReportEntity({this.id = '', this.ticketNumber = '', this.title = '', this.description = '', this.status = '', this.statusLabel = '', this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt,  List<ComplaintAttachmentEntity> attachments = const [], this.sla,  List<ComplaintTimelineEntity> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
   
 
 @override@JsonKey() final  String id;
@@ -1063,16 +1090,18 @@ _$ComplaintReportEntityCopyWith<_ComplaintReportEntity> get copyWith => __$Compl
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&const DeepCollectionEquality().equals(other._attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other._timeline, _timeline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, _timeline));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+int get hashCode {
+    return Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+}
 
 @override
 String toString() {
-  return 'ComplaintReportEntity(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
+    return 'ComplaintReportEntity(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
 }
 
 
@@ -1149,16 +1178,21 @@ $ComplaintPaginatedEntityCopyWith<ComplaintPaginatedEntity> get copyWith => _$Co
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintPaginatedEntity&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.total, total) || other.total == total));
+  final _this = this as ComplaintPaginatedEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintPaginatedEntity&&const DeepCollectionEquality().equals(other.data, _this.data)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastPage, _this.lastPage) || other.lastPage == _this.lastPage)&&(identical(other.total, _this.total) || other.total == _this.total));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),currentPage,lastPage,total);
+int get hashCode {
+  final _this = this as ComplaintPaginatedEntity;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.data),_this.currentPage,_this.lastPage,_this.total);
+}
 
 @override
 String toString() {
-  return 'ComplaintPaginatedEntity(data: $data, currentPage: $currentPage, lastPage: $lastPage, total: $total)';
+  final _this = this as ComplaintPaginatedEntity;
+  return 'ComplaintPaginatedEntity(data: ${_this.data}, currentPage: ${_this.currentPage}, lastPage: ${_this.lastPage}, total: ${_this.total})';
 }
 
 
@@ -1187,7 +1221,7 @@ class _$ComplaintPaginatedEntityCopyWithImpl<$Res>
 /// Create a copy of ComplaintPaginatedEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? currentPage = null,Object? lastPage = null,Object? total = null,}) {
-  return _then(_self.copyWith(
+  return _then(ComplaintPaginatedEntity(
 data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as List<ComplaintReportEntity>,currentPage: null == currentPage ? _self.currentPage : currentPage // ignore: cast_nullable_to_non_nullable
 as int,lastPage: null == lastPage ? _self.lastPage : lastPage // ignore: cast_nullable_to_non_nullable
@@ -1333,7 +1367,7 @@ return $default(_that.data,_that.currentPage,_that.lastPage,_that.total);case _:
 
 
 class _ComplaintPaginatedEntity implements ComplaintPaginatedEntity {
-  const _ComplaintPaginatedEntity({final  List<ComplaintReportEntity> data = const [], this.currentPage = 1, this.lastPage = 1, this.total = 0}): _data = data;
+  const _ComplaintPaginatedEntity({ List<ComplaintReportEntity> data = const [], this.currentPage = 1, this.lastPage = 1, this.total = 0}): _data = data;
   
 
  final  List<ComplaintReportEntity> _data;
@@ -1357,16 +1391,18 @@ _$ComplaintPaginatedEntityCopyWith<_ComplaintPaginatedEntity> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintPaginatedEntity&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.total, total) || other.total == total));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintPaginatedEntity&&const DeepCollectionEquality().equals(other.data, _data)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastPage, lastPage) || other.lastPage == lastPage)&&(identical(other.total, total) || other.total == total));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),currentPage,lastPage,total);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),currentPage,lastPage,total);
+}
 
 @override
 String toString() {
-  return 'ComplaintPaginatedEntity(data: $data, currentPage: $currentPage, lastPage: $lastPage, total: $total)';
+    return 'ComplaintPaginatedEntity(data: $data, currentPage: $currentPage, lastPage: $lastPage, total: $total)';
 }
 
 

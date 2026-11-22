@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'survey_api_entity.dart';
@@ -9,6 +9,7 @@ part of 'survey_api_entity.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $SurveyConditionalFieldEntityCopyWith<SurveyConditionalFieldEntity> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyConditionalFieldEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.options, options));
+  final _this = this as SurveyConditionalFieldEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyConditionalFieldEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.label, _this.label) || other.label == _this.label)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.value, _this.value) || other.value == _this.value)&&const DeepCollectionEquality().equals(other.options, _this.options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(options));
+int get hashCode {
+  final _this = this as SurveyConditionalFieldEntity;
+  return Object.hash(runtimeType,_this.id,_this.label,_this.type,_this.value,const DeepCollectionEquality().hash(_this.options));
+}
 
 @override
 String toString() {
-  return 'SurveyConditionalFieldEntity(id: $id, label: $label, type: $type, value: $value, options: $options)';
+  final _this = this as SurveyConditionalFieldEntity;
+  return 'SurveyConditionalFieldEntity(id: ${_this.id}, label: ${_this.label}, type: ${_this.type}, value: ${_this.value}, options: ${_this.options})';
 }
 
 
@@ -63,7 +69,7 @@ class _$SurveyConditionalFieldEntityCopyWithImpl<$Res>
 /// Create a copy of SurveyConditionalFieldEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = freezed,Object? type = freezed,Object? value = freezed,Object? options = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyConditionalFieldEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,label: freezed == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String?,type: freezed == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -210,7 +216,7 @@ return $default(_that.id,_that.label,_that.type,_that.value,_that.options);case 
 
 
 class _SurveyConditionalFieldEntity extends SurveyConditionalFieldEntity {
-  const _SurveyConditionalFieldEntity({required this.id, this.label, this.type, this.value, final  List<String> options = const []}): _options = options,super._();
+  const _SurveyConditionalFieldEntity({required this.id, this.label, this.type, this.value,  List<String> options = const []}): _options = options,super._();
   
 
 @override final  int id;
@@ -235,16 +241,18 @@ _$SurveyConditionalFieldEntityCopyWith<_SurveyConditionalFieldEntity> get copyWi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyConditionalFieldEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._options, _options));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyConditionalFieldEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.type, type) || other.type == type)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.options, _options));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(_options));
+int get hashCode {
+    return Object.hash(runtimeType,id,label,type,value,const DeepCollectionEquality().hash(_options));
+}
 
 @override
 String toString() {
-  return 'SurveyConditionalFieldEntity(id: $id, label: $label, type: $type, value: $value, options: $options)';
+    return 'SurveyConditionalFieldEntity(id: $id, label: $label, type: $type, value: $value, options: $options)';
 }
 
 
@@ -300,16 +308,21 @@ $SurveyQuestionEntityCopyWith<SurveyQuestionEntity> get copyWith => _$SurveyQues
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, conditionalFields));
+  final _this = this as SurveyQuestionEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.type, _this.type) || other.type == _this.type)&&const DeepCollectionEquality().equals(other.options, _this.options)&&(identical(other.showFieldsWhen, _this.showFieldsWhen) || other.showFieldsWhen == _this.showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, _this.conditionalFields));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(options),showFieldsWhen,const DeepCollectionEquality().hash(conditionalFields));
+int get hashCode {
+  final _this = this as SurveyQuestionEntity;
+  return Object.hash(runtimeType,_this.id,_this.text,_this.type,const DeepCollectionEquality().hash(_this.options),_this.showFieldsWhen,const DeepCollectionEquality().hash(_this.conditionalFields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionEntity(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
+  final _this = this as SurveyQuestionEntity;
+  return 'SurveyQuestionEntity(id: ${_this.id}, text: ${_this.text}, type: ${_this.type}, options: ${_this.options}, showFieldsWhen: ${_this.showFieldsWhen}, conditionalFields: ${_this.conditionalFields})';
 }
 
 
@@ -338,7 +351,7 @@ class _$SurveyQuestionEntityCopyWithImpl<$Res>
 /// Create a copy of SurveyQuestionEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? type = null,Object? options = null,Object? showFieldsWhen = freezed,Object? conditionalFields = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyQuestionEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
@@ -486,7 +499,7 @@ return $default(_that.id,_that.text,_that.type,_that.options,_that.showFieldsWhe
 
 
 class _SurveyQuestionEntity extends SurveyQuestionEntity {
-  const _SurveyQuestionEntity({required this.id, required this.text, required this.type, final  List<String> options = const [], this.showFieldsWhen, final  List<SurveyConditionalFieldEntity> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
+  const _SurveyQuestionEntity({required this.id, required this.text, required this.type,  List<String> options = const [], this.showFieldsWhen,  List<SurveyConditionalFieldEntity> conditionalFields = const []}): _options = options,_conditionalFields = conditionalFields,super._();
   
 
 @override final  int id;
@@ -518,16 +531,18 @@ _$SurveyQuestionEntityCopyWith<_SurveyQuestionEntity> get copyWith => __$SurveyQ
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other._conditionalFields, _conditionalFields));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.options, _options)&&(identical(other.showFieldsWhen, showFieldsWhen) || other.showFieldsWhen == showFieldsWhen)&&const DeepCollectionEquality().equals(other.conditionalFields, _conditionalFields));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(_options),showFieldsWhen,const DeepCollectionEquality().hash(_conditionalFields));
+int get hashCode {
+    return Object.hash(runtimeType,id,text,type,const DeepCollectionEquality().hash(_options),showFieldsWhen,const DeepCollectionEquality().hash(_conditionalFields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionEntity(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
+    return 'SurveyQuestionEntity(id: $id, text: $text, type: $type, options: $options, showFieldsWhen: $showFieldsWhen, conditionalFields: $conditionalFields)';
 }
 
 
@@ -584,16 +599,21 @@ $SurveyItemEntityCopyWith<SurveyItemEntity> get copyWith => _$SurveyItemEntityCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyItemEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other.questions, questions));
+  final _this = this as SurveyItemEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyItemEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.period, _this.period) || other.period == _this.period)&&(identical(other.deadline, _this.deadline) || other.deadline == _this.deadline)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.requireAllQuestions, _this.requireAllQuestions) || other.requireAllQuestions == _this.requireAllQuestions)&&(identical(other.estimatedMinutes, _this.estimatedMinutes) || other.estimatedMinutes == _this.estimatedMinutes)&&(identical(other.questionsCount, _this.questionsCount) || other.questionsCount == _this.questionsCount)&&(identical(other.respondentsCount, _this.respondentsCount) || other.respondentsCount == _this.respondentsCount)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.publishedAt, _this.publishedAt) || other.publishedAt == _this.publishedAt)&&const DeepCollectionEquality().equals(other.questions, _this.questions));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(questions));
+int get hashCode {
+  final _this = this as SurveyItemEntity;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.description,_this.period,_this.deadline,_this.status,_this.requireAllQuestions,_this.estimatedMinutes,_this.questionsCount,_this.respondentsCount,_this.createdAt,_this.publishedAt,const DeepCollectionEquality().hash(_this.questions));
+}
 
 @override
 String toString() {
-  return 'SurveyItemEntity(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
+  final _this = this as SurveyItemEntity;
+  return 'SurveyItemEntity(id: ${_this.id}, title: ${_this.title}, description: ${_this.description}, period: ${_this.period}, deadline: ${_this.deadline}, status: ${_this.status}, requireAllQuestions: ${_this.requireAllQuestions}, estimatedMinutes: ${_this.estimatedMinutes}, questionsCount: ${_this.questionsCount}, respondentsCount: ${_this.respondentsCount}, createdAt: ${_this.createdAt}, publishedAt: ${_this.publishedAt}, questions: ${_this.questions})';
 }
 
 
@@ -622,7 +642,7 @@ class _$SurveyItemEntityCopyWithImpl<$Res>
 /// Create a copy of SurveyItemEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = freezed,Object? period = freezed,Object? deadline = freezed,Object? status = freezed,Object? requireAllQuestions = null,Object? estimatedMinutes = freezed,Object? questionsCount = freezed,Object? respondentsCount = freezed,Object? createdAt = freezed,Object? publishedAt = freezed,Object? questions = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyItemEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -777,7 +797,7 @@ return $default(_that.id,_that.title,_that.description,_that.period,_that.deadli
 
 
 class _SurveyItemEntity extends SurveyItemEntity {
-  const _SurveyItemEntity({required this.id, required this.title, this.description, this.period, this.deadline, this.status, this.requireAllQuestions = true, this.estimatedMinutes, this.questionsCount, this.respondentsCount, this.createdAt, this.publishedAt, final  List<SurveyQuestionEntity> questions = const []}): _questions = questions,super._();
+  const _SurveyItemEntity({required this.id, required this.title, this.description, this.period, this.deadline, this.status, this.requireAllQuestions = true, this.estimatedMinutes, this.questionsCount, this.respondentsCount, this.createdAt, this.publishedAt,  List<SurveyQuestionEntity> questions = const []}): _questions = questions,super._();
   
 
 @override final  int id;
@@ -810,16 +830,18 @@ _$SurveyItemEntityCopyWith<_SurveyItemEntity> get copyWith => __$SurveyItemEntit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyItemEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other._questions, _questions));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyItemEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.period, period) || other.period == period)&&(identical(other.deadline, deadline) || other.deadline == deadline)&&(identical(other.status, status) || other.status == status)&&(identical(other.requireAllQuestions, requireAllQuestions) || other.requireAllQuestions == requireAllQuestions)&&(identical(other.estimatedMinutes, estimatedMinutes) || other.estimatedMinutes == estimatedMinutes)&&(identical(other.questionsCount, questionsCount) || other.questionsCount == questionsCount)&&(identical(other.respondentsCount, respondentsCount) || other.respondentsCount == respondentsCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&const DeepCollectionEquality().equals(other.questions, _questions));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(_questions));
+int get hashCode {
+    return Object.hash(runtimeType,id,title,description,period,deadline,status,requireAllQuestions,estimatedMinutes,questionsCount,respondentsCount,createdAt,publishedAt,const DeepCollectionEquality().hash(_questions));
+}
 
 @override
 String toString() {
-  return 'SurveyItemEntity(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
+    return 'SurveyItemEntity(id: $id, title: $title, description: $description, period: $period, deadline: $deadline, status: $status, requireAllQuestions: $requireAllQuestions, estimatedMinutes: $estimatedMinutes, questionsCount: $questionsCount, respondentsCount: $respondentsCount, createdAt: $createdAt, publishedAt: $publishedAt, questions: $questions)';
 }
 
 
@@ -883,16 +905,21 @@ $SurveyFieldAnswerEntityCopyWith<SurveyFieldAnswerEntity> get copyWith => _$Surv
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyFieldAnswerEntity&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
+  final _this = this as SurveyFieldAnswerEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyFieldAnswerEntity&&(identical(other.fieldId, _this.fieldId) || other.fieldId == _this.fieldId)&&(identical(other.value, _this.value) || other.value == _this.value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,fieldId,value);
+int get hashCode {
+  final _this = this as SurveyFieldAnswerEntity;
+  return Object.hash(runtimeType,_this.fieldId,_this.value);
+}
 
 @override
 String toString() {
-  return 'SurveyFieldAnswerEntity(fieldId: $fieldId, value: $value)';
+  final _this = this as SurveyFieldAnswerEntity;
+  return 'SurveyFieldAnswerEntity(fieldId: ${_this.fieldId}, value: ${_this.value})';
 }
 
 
@@ -921,7 +948,7 @@ class _$SurveyFieldAnswerEntityCopyWithImpl<$Res>
 /// Create a copy of SurveyFieldAnswerEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? fieldId = null,Object? value = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyFieldAnswerEntity(
 fieldId: null == fieldId ? _self.fieldId : fieldId // ignore: cast_nullable_to_non_nullable
 as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,
@@ -1081,16 +1108,18 @@ _$SurveyFieldAnswerEntityCopyWith<_SurveyFieldAnswerEntity> get copyWith => __$S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyFieldAnswerEntity&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyFieldAnswerEntity&&(identical(other.fieldId, fieldId) || other.fieldId == fieldId)&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,fieldId,value);
+int get hashCode {
+    return Object.hash(runtimeType,fieldId,value);
+}
 
 @override
 String toString() {
-  return 'SurveyFieldAnswerEntity(fieldId: $fieldId, value: $value)';
+    return 'SurveyFieldAnswerEntity(fieldId: $fieldId, value: $value)';
 }
 
 
@@ -1143,16 +1172,21 @@ $SurveyQuestionAnswerEntityCopyWith<SurveyQuestionAnswerEntity> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionAnswerEntity&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.fields, fields));
+  final _this = this as SurveyQuestionAnswerEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveyQuestionAnswerEntity&&(identical(other.questionId, _this.questionId) || other.questionId == _this.questionId)&&(identical(other.value, _this.value) || other.value == _this.value)&&const DeepCollectionEquality().equals(other.fields, _this.fields));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(fields));
+int get hashCode {
+  final _this = this as SurveyQuestionAnswerEntity;
+  return Object.hash(runtimeType,_this.questionId,_this.value,const DeepCollectionEquality().hash(_this.fields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionAnswerEntity(questionId: $questionId, value: $value, fields: $fields)';
+  final _this = this as SurveyQuestionAnswerEntity;
+  return 'SurveyQuestionAnswerEntity(questionId: ${_this.questionId}, value: ${_this.value}, fields: ${_this.fields})';
 }
 
 
@@ -1181,7 +1215,7 @@ class _$SurveyQuestionAnswerEntityCopyWithImpl<$Res>
 /// Create a copy of SurveyQuestionAnswerEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? questionId = null,Object? value = null,Object? fields = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveyQuestionAnswerEntity(
 questionId: null == questionId ? _self.questionId : questionId // ignore: cast_nullable_to_non_nullable
 as int,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as String,fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
@@ -1326,7 +1360,7 @@ return $default(_that.questionId,_that.value,_that.fields);case _:
 
 
 class _SurveyQuestionAnswerEntity extends SurveyQuestionAnswerEntity {
-  const _SurveyQuestionAnswerEntity({required this.questionId, required this.value, final  List<SurveyFieldAnswerEntity> fields = const []}): _fields = fields,super._();
+  const _SurveyQuestionAnswerEntity({required this.questionId, required this.value,  List<SurveyFieldAnswerEntity> fields = const []}): _fields = fields,super._();
   
 
 @override final  int questionId;
@@ -1349,16 +1383,18 @@ _$SurveyQuestionAnswerEntityCopyWith<_SurveyQuestionAnswerEntity> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionAnswerEntity&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._fields, _fields));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveyQuestionAnswerEntity&&(identical(other.questionId, questionId) || other.questionId == questionId)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other.fields, _fields));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(_fields));
+int get hashCode {
+    return Object.hash(runtimeType,questionId,value,const DeepCollectionEquality().hash(_fields));
+}
 
 @override
 String toString() {
-  return 'SurveyQuestionAnswerEntity(questionId: $questionId, value: $value, fields: $fields)';
+    return 'SurveyQuestionAnswerEntity(questionId: $questionId, value: $value, fields: $fields)';
 }
 
 
@@ -1412,16 +1448,21 @@ $SurveySubmitRequestEntityCopyWith<SurveySubmitRequestEntity> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveySubmitRequestEntity&&const DeepCollectionEquality().equals(other.answers, answers));
+  final _this = this as SurveySubmitRequestEntity;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SurveySubmitRequestEntity&&const DeepCollectionEquality().equals(other.answers, _this.answers));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(answers));
+int get hashCode {
+  final _this = this as SurveySubmitRequestEntity;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.answers));
+}
 
 @override
 String toString() {
-  return 'SurveySubmitRequestEntity(answers: $answers)';
+  final _this = this as SurveySubmitRequestEntity;
+  return 'SurveySubmitRequestEntity(answers: ${_this.answers})';
 }
 
 
@@ -1450,7 +1491,7 @@ class _$SurveySubmitRequestEntityCopyWithImpl<$Res>
 /// Create a copy of SurveySubmitRequestEntity
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? answers = null,}) {
-  return _then(_self.copyWith(
+  return _then(SurveySubmitRequestEntity(
 answers: null == answers ? _self.answers : answers // ignore: cast_nullable_to_non_nullable
 as List<SurveyQuestionAnswerEntity>,
   ));
@@ -1593,7 +1634,7 @@ return $default(_that.answers);case _:
 
 
 class _SurveySubmitRequestEntity extends SurveySubmitRequestEntity {
-  const _SurveySubmitRequestEntity({final  List<SurveyQuestionAnswerEntity> answers = const []}): _answers = answers,super._();
+  const _SurveySubmitRequestEntity({ List<SurveyQuestionAnswerEntity> answers = const []}): _answers = answers,super._();
   
 
  final  List<SurveyQuestionAnswerEntity> _answers;
@@ -1614,16 +1655,18 @@ _$SurveySubmitRequestEntityCopyWith<_SurveySubmitRequestEntity> get copyWith => 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveySubmitRequestEntity&&const DeepCollectionEquality().equals(other._answers, _answers));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SurveySubmitRequestEntity&&const DeepCollectionEquality().equals(other.answers, _answers));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_answers));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_answers));
+}
 
 @override
 String toString() {
-  return 'SurveySubmitRequestEntity(answers: $answers)';
+    return 'SurveySubmitRequestEntity(answers: $answers)';
 }
 
 

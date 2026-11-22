@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'activation_submission_model.dart';
@@ -9,6 +9,7 @@ part of 'activation_submission_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ActivationAttachmentModelCopyWith<ActivationAttachmentModel> get copyWith => _$
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationAttachmentModel&&(identical(other.id, id) || other.id == id)&&(identical(other.submissionId, submissionId) || other.submissionId == submissionId)&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.size, size) || other.size == size)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+  final _this = this as ActivationAttachmentModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationAttachmentModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.submissionId, _this.submissionId) || other.submissionId == _this.submissionId)&&(identical(other.fileName, _this.fileName) || other.fileName == _this.fileName)&&(identical(other.savedAt, _this.savedAt) || other.savedAt == _this.savedAt)&&(identical(other.mimeType, _this.mimeType) || other.mimeType == _this.mimeType)&&(identical(other.size, _this.size) || other.size == _this.size)&&(identical(other.filePath, _this.filePath) || other.filePath == _this.filePath)&&(identical(other.fileUrl, _this.fileUrl) || other.fileUrl == _this.fileUrl)&&const DeepCollectionEquality().equals(other.metadata, _this.metadata));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,submissionId,fileName,savedAt,mimeType,size,filePath,fileUrl,const DeepCollectionEquality().hash(metadata));
+int get hashCode {
+  final _this = this as ActivationAttachmentModel;
+  return Object.hash(runtimeType,_this.id,_this.submissionId,_this.fileName,_this.savedAt,_this.mimeType,_this.size,_this.filePath,_this.fileUrl,const DeepCollectionEquality().hash(_this.metadata));
+}
 
 @override
 String toString() {
-  return 'ActivationAttachmentModel(id: $id, submissionId: $submissionId, fileName: $fileName, savedAt: $savedAt, mimeType: $mimeType, size: $size, filePath: $filePath, fileUrl: $fileUrl, metadata: $metadata)';
+  final _this = this as ActivationAttachmentModel;
+  return 'ActivationAttachmentModel(id: ${_this.id}, submissionId: ${_this.submissionId}, fileName: ${_this.fileName}, savedAt: ${_this.savedAt}, mimeType: ${_this.mimeType}, size: ${_this.size}, filePath: ${_this.filePath}, fileUrl: ${_this.fileUrl}, metadata: ${_this.metadata})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ActivationAttachmentModelCopyWithImpl<$Res>
 /// Create a copy of ActivationAttachmentModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? submissionId = freezed,Object? fileName = freezed,Object? savedAt = freezed,Object? mimeType = freezed,Object? size = freezed,Object? filePath = freezed,Object? fileUrl = freezed,Object? metadata = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationAttachmentModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,submissionId: freezed == submissionId ? _self.submissionId : submissionId // ignore: cast_nullable_to_non_nullable
 as int?,fileName: freezed == fileName ? _self.fileName : fileName // ignore: cast_nullable_to_non_nullable
@@ -243,16 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationAttachmentModel&&(identical(other.id, id) || other.id == id)&&(identical(other.submissionId, submissionId) || other.submissionId == submissionId)&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.size, size) || other.size == size)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationAttachmentModel&&(identical(other.id, id) || other.id == id)&&(identical(other.submissionId, submissionId) || other.submissionId == submissionId)&&(identical(other.fileName, fileName) || other.fileName == fileName)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt)&&(identical(other.mimeType, mimeType) || other.mimeType == mimeType)&&(identical(other.size, size) || other.size == size)&&(identical(other.filePath, filePath) || other.filePath == filePath)&&(identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl)&&const DeepCollectionEquality().equals(other.metadata, metadata));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,submissionId,fileName,savedAt,mimeType,size,filePath,fileUrl,const DeepCollectionEquality().hash(metadata));
+int get hashCode {
+    return Object.hash(runtimeType,id,submissionId,fileName,savedAt,mimeType,size,filePath,fileUrl,const DeepCollectionEquality().hash(metadata));
+}
 
 @override
 String toString() {
-  return 'ActivationAttachmentModel(id: $id, submissionId: $submissionId, fileName: $fileName, savedAt: $savedAt, mimeType: $mimeType, size: $size, filePath: $filePath, fileUrl: $fileUrl, metadata: $metadata)';
+    return 'ActivationAttachmentModel(id: $id, submissionId: $submissionId, fileName: $fileName, savedAt: $savedAt, mimeType: $mimeType, size: $size, filePath: $filePath, fileUrl: $fileUrl, metadata: $metadata)';
 }
 
 
@@ -315,16 +323,21 @@ $ActivationSubmissionDataModelCopyWith<ActivationSubmissionDataModel> get copyWi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionDataModel&&(identical(other.id, id) || other.id == id)&&(identical(other.receiverNik, receiverNik) || other.receiverNik == receiverNik)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.creator, creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.attachments, attachments));
+  final _this = this as ActivationSubmissionDataModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionDataModel&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.receiverNik, _this.receiverNik) || other.receiverNik == _this.receiverNik)&&(identical(other.receiverName, _this.receiverName) || other.receiverName == _this.receiverName)&&(identical(other.notes, _this.notes) || other.notes == _this.notes)&&const DeepCollectionEquality().equals(other.creator, _this.creator)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,receiverNik,receiverName,notes,const DeepCollectionEquality().hash(creator),createdAt,const DeepCollectionEquality().hash(attachments));
+int get hashCode {
+  final _this = this as ActivationSubmissionDataModel;
+  return Object.hash(runtimeType,_this.id,_this.receiverNik,_this.receiverName,_this.notes,const DeepCollectionEquality().hash(_this.creator),_this.createdAt,const DeepCollectionEquality().hash(_this.attachments));
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionDataModel(id: $id, receiverNik: $receiverNik, receiverName: $receiverName, notes: $notes, creator: $creator, createdAt: $createdAt, attachments: $attachments)';
+  final _this = this as ActivationSubmissionDataModel;
+  return 'ActivationSubmissionDataModel(id: ${_this.id}, receiverNik: ${_this.receiverNik}, receiverName: ${_this.receiverName}, notes: ${_this.notes}, creator: ${_this.creator}, createdAt: ${_this.createdAt}, attachments: ${_this.attachments})';
 }
 
 
@@ -353,7 +366,7 @@ class _$ActivationSubmissionDataModelCopyWithImpl<$Res>
 /// Create a copy of ActivationSubmissionDataModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? receiverNik = freezed,Object? receiverName = freezed,Object? notes = freezed,Object? creator = freezed,Object? createdAt = freezed,Object? attachments = null,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationSubmissionDataModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,receiverNik: freezed == receiverNik ? _self.receiverNik : receiverNik // ignore: cast_nullable_to_non_nullable
 as String?,receiverName: freezed == receiverName ? _self.receiverName : receiverName // ignore: cast_nullable_to_non_nullable
@@ -502,7 +515,7 @@ return $default(_that.id,_that.receiverNik,_that.receiverName,_that.notes,_that.
 @JsonSerializable()
 
 class _ActivationSubmissionDataModel extends ActivationSubmissionDataModel {
-  const _ActivationSubmissionDataModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "receiver_nik") this.receiverNik, @JsonKey(name: "receiver_name") this.receiverName, @JsonKey(name: "notes") this.notes, @JsonKey(name: "creator") this.creator, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "attachments") final  List<ActivationAttachmentModel> attachments = const []}): _attachments = attachments,super._();
+  const _ActivationSubmissionDataModel({@JsonKey(name: "id") required this.id, @JsonKey(name: "receiver_nik") this.receiverNik, @JsonKey(name: "receiver_name") this.receiverName, @JsonKey(name: "notes") this.notes, @JsonKey(name: "creator") this.creator, @JsonKey(name: "created_at") this.createdAt, @JsonKey(name: "attachments")  List<ActivationAttachmentModel> attachments = const []}): _attachments = attachments,super._();
   factory _ActivationSubmissionDataModel.fromJson(Map<String, dynamic> json) => _$ActivationSubmissionDataModelFromJson(json);
 
 @override@JsonKey(name: "id") final  int id;
@@ -532,16 +545,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionDataModel&&(identical(other.id, id) || other.id == id)&&(identical(other.receiverNik, receiverNik) || other.receiverNik == receiverNik)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.creator, creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._attachments, _attachments));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionDataModel&&(identical(other.id, id) || other.id == id)&&(identical(other.receiverNik, receiverNik) || other.receiverNik == receiverNik)&&(identical(other.receiverName, receiverName) || other.receiverName == receiverName)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.creator, creator)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.attachments, _attachments));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,receiverNik,receiverName,notes,const DeepCollectionEquality().hash(creator),createdAt,const DeepCollectionEquality().hash(_attachments));
+int get hashCode {
+    return Object.hash(runtimeType,id,receiverNik,receiverName,notes,const DeepCollectionEquality().hash(creator),createdAt,const DeepCollectionEquality().hash(_attachments));
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionDataModel(id: $id, receiverNik: $receiverNik, receiverName: $receiverName, notes: $notes, creator: $creator, createdAt: $createdAt, attachments: $attachments)';
+    return 'ActivationSubmissionDataModel(id: $id, receiverNik: $receiverNik, receiverName: $receiverName, notes: $notes, creator: $creator, createdAt: $createdAt, attachments: $attachments)';
 }
 
 
@@ -602,16 +617,21 @@ $ActivationSubmissionMetaModelCopyWith<ActivationSubmissionMetaModel> get copyWi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionMetaModel&&(identical(other.totalTarget, totalTarget) || other.totalTarget == totalTarget)&&(identical(other.targetDone, targetDone) || other.targetDone == targetDone));
+  final _this = this as ActivationSubmissionMetaModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionMetaModel&&(identical(other.totalTarget, _this.totalTarget) || other.totalTarget == _this.totalTarget)&&(identical(other.targetDone, _this.targetDone) || other.targetDone == _this.targetDone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalTarget,targetDone);
+int get hashCode {
+  final _this = this as ActivationSubmissionMetaModel;
+  return Object.hash(runtimeType,_this.totalTarget,_this.targetDone);
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionMetaModel(totalTarget: $totalTarget, targetDone: $targetDone)';
+  final _this = this as ActivationSubmissionMetaModel;
+  return 'ActivationSubmissionMetaModel(totalTarget: ${_this.totalTarget}, targetDone: ${_this.targetDone})';
 }
 
 
@@ -640,7 +660,7 @@ class _$ActivationSubmissionMetaModelCopyWithImpl<$Res>
 /// Create a copy of ActivationSubmissionMetaModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? totalTarget = freezed,Object? targetDone = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationSubmissionMetaModel(
 totalTarget: freezed == totalTarget ? _self.totalTarget : totalTarget // ignore: cast_nullable_to_non_nullable
 as int?,targetDone: freezed == targetDone ? _self.targetDone : targetDone // ignore: cast_nullable_to_non_nullable
 as int?,
@@ -803,16 +823,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionMetaModel&&(identical(other.totalTarget, totalTarget) || other.totalTarget == totalTarget)&&(identical(other.targetDone, targetDone) || other.targetDone == targetDone));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionMetaModel&&(identical(other.totalTarget, totalTarget) || other.totalTarget == totalTarget)&&(identical(other.targetDone, targetDone) || other.targetDone == targetDone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalTarget,targetDone);
+int get hashCode {
+    return Object.hash(runtimeType,totalTarget,targetDone);
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionMetaModel(totalTarget: $totalTarget, targetDone: $targetDone)';
+    return 'ActivationSubmissionMetaModel(totalTarget: $totalTarget, targetDone: $targetDone)';
 }
 
 
@@ -868,16 +890,21 @@ $ActivationSubmissionResponseModelCopyWith<ActivationSubmissionResponseModel> ge
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.data, data) || other.data == data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
+  final _this = this as ActivationSubmissionResponseModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivationSubmissionResponseModel&&(identical(other.success, _this.success) || other.success == _this.success)&&(identical(other.data, _this.data) || other.data == _this.data)&&(identical(other.meta, _this.meta) || other.meta == _this.meta)&&(identical(other.message, _this.message) || other.message == _this.message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,data,meta,message);
+int get hashCode {
+  final _this = this as ActivationSubmissionResponseModel;
+  return Object.hash(runtimeType,_this.success,_this.data,_this.meta,_this.message);
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
+  final _this = this as ActivationSubmissionResponseModel;
+  return 'ActivationSubmissionResponseModel(success: ${_this.success}, data: ${_this.data}, meta: ${_this.meta}, message: ${_this.message})';
 }
 
 
@@ -906,7 +933,7 @@ class _$ActivationSubmissionResponseModelCopyWithImpl<$Res>
 /// Create a copy of ActivationSubmissionResponseModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? success = null,Object? data = freezed,Object? meta = freezed,Object? message = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(ActivationSubmissionResponseModel(
 success: null == success ? _self.success : success // ignore: cast_nullable_to_non_nullable
 as bool,data: freezed == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
 as ActivationSubmissionDataModel?,meta: freezed == meta ? _self.meta : meta // ignore: cast_nullable_to_non_nullable
@@ -1097,16 +1124,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.data, data) || other.data == data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivationSubmissionResponseModel&&(identical(other.success, success) || other.success == success)&&(identical(other.data, data) || other.data == data)&&(identical(other.meta, meta) || other.meta == meta)&&(identical(other.message, message) || other.message == message));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,success,data,meta,message);
+int get hashCode {
+    return Object.hash(runtimeType,success,data,meta,message);
+}
 
 @override
 String toString() {
-  return 'ActivationSubmissionResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
+    return 'ActivationSubmissionResponseModel(success: $success, data: $data, meta: $meta, message: $message)';
 }
 
 
