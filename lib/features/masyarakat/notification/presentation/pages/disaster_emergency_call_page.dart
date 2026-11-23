@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 
 typedef DisasterEmergencyCallPage = DisasterEmergencyWarningPage;
 typedef MemberEmergencyCallPage = DisasterEmergencyWarningPage;
@@ -57,7 +57,7 @@ class _DisasterEmergencyWarningPageState
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF0F172A),
+        systemNavigationBarColor: Color(0xFF0F172A), // media-overlay
       ),
     );
 
@@ -169,16 +169,18 @@ class _DisasterEmergencyWarningPageState
   }
 
   void _showContactOptions() {
+    final colors = context.appColors;
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E293B),
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) {
+        final sheetColors = ctx.appColors;
         final phone = widget.event.senderPhone ?? '';
         return Material(
-          color: const Color(0xFF1E293B),
+          color: sheetColors.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           child: SafeArea(
             child: Padding(
@@ -188,8 +190,8 @@ class _DisasterEmergencyWarningPageState
                 children: [
                   Text(
                     'Hubungi Pemanggil (${widget.event.senderName ?? "Anggota"})',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: sheetColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -197,8 +199,8 @@ class _DisasterEmergencyWarningPageState
                   const SizedBox(height: 6),
                   Text(
                     phone,
-                    style: const TextStyle(
-                      color: Color(0xFF94A3B8),
+                    style: TextStyle(
+                      color: sheetColors.textMuted,
                       fontSize: 14,
                     ),
                   ),
@@ -207,24 +209,27 @@ class _DisasterEmergencyWarningPageState
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF25D366).withAlpha(40),
+                        color: sheetColors.successLight,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.chat_bubble_rounded,
-                        color: Color(0xFF25D366),
+                        color: sheetColors.success,
                       ),
                     ),
-                    title: const Text(
+                    title: Text(
                       'Chat via WhatsApp',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: sheetColors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    subtitle: const Text(
+                    subtitle: Text(
                       'Kirim konfirmasi respon cepat',
-                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                      style: TextStyle(
+                        color: sheetColors.textMuted,
+                        fontSize: 12,
+                      ),
                     ),
                     onTap: () {
                       Navigator.pop(ctx);
@@ -235,24 +240,27 @@ class _DisasterEmergencyWarningPageState
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF38BDF8).withAlpha(40),
+                        color: sheetColors.infoLight,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.phone_in_talk_rounded,
-                        color: Color(0xFF38BDF8),
+                        color: sheetColors.info,
                       ),
                     ),
-                    title: const Text(
+                    title: Text(
                       'Panggil Telepon Langsung',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: sheetColors.textPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    subtitle: const Text(
+                    subtitle: Text(
                       'Panggilan suara biasa (GSM)',
-                      style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                      style: TextStyle(
+                        color: sheetColors.textMuted,
+                        fontSize: 12,
+                      ),
                     ),
                     onTap: () {
                       Navigator.pop(ctx);
@@ -270,6 +278,11 @@ class _DisasterEmergencyWarningPageState
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    const hudWhite = Colors.white; // media-overlay
+    const hudDarkCard = Color(0xFF1E293B); // media-overlay
+    const hudMutedBg = Color(0xFF334155); // media-overlay
+    const hudCrimsonBg = Color(0xFF7F1D1D); // media-overlay
     final callerName =
         widget.event.senderName ??
         widget.event.title.replaceAll('🚨', '').trim();
@@ -279,7 +292,7 @@ class _DisasterEmergencyWarningPageState
     return PopScope(
       canPop: false,
       child: Scaffold(
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: const Color(0xFF0F172A), // media-overlay
         body: Stack(
           fit: StackFit.expand,
           children: [
@@ -293,11 +306,11 @@ class _DisasterEmergencyWarningPageState
                       center: const Alignment(0, -0.3),
                       radius: 1.2 + (_pulseController.value * 0.25),
                       colors: [
-                        AppColors.error.withAlpha(
+                        colors.errorSolid.withAlpha(
                           (150 + (_pulseController.value * 70)).toInt(),
                         ),
-                        const Color(0xFF7F1D1D).withAlpha(200),
-                        const Color(0xFF0F172A),
+                        hudCrimsonBg.withAlpha(200),
+                        const Color(0xFF0F172A), // media-overlay
                       ],
                       stops: const [0.0, 0.55, 1.0],
                     ),
@@ -323,20 +336,20 @@ class _DisasterEmergencyWarningPageState
                         vertical: 9,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.error,
+                        color: colors.errorSolid,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.error.withAlpha(160),
+                            color: colors.errorSolid.withAlpha(160),
                             blurRadius: 18,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: const Text(
+                      child: Text(
                         'PANGGILAN DARURAT SOS ANGGOTA',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: colors.onErrorSolid,
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 0.8,
@@ -362,7 +375,7 @@ class _DisasterEmergencyWarningPageState
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: AppColors.error.withAlpha(
+                                    color: colors.errorSolid.withAlpha(
                                       (120 * (1 - _pulseController.value))
                                           .toInt(),
                                     ),
@@ -377,9 +390,9 @@ class _DisasterEmergencyWarningPageState
                               height: 130,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withAlpha(20),
+                                color: hudWhite.withAlpha(20),
                                 border: Border.all(
-                                  color: Colors.white.withAlpha(80),
+                                  color: hudWhite.withAlpha(80),
                                   width: 2,
                                 ),
                               ),
@@ -392,25 +405,18 @@ class _DisasterEmergencyWarningPageState
                                 height: 100,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      AppColors.error,
-                                      AppColors.errorDark,
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
+                                  color: colors.errorSolid,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.error.withAlpha(200),
+                                      color: colors.errorSolid.withAlpha(200),
                                       blurRadius: 35,
                                       spreadRadius: 8,
                                     ),
                                   ],
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.person_pin_circle_rounded,
-                                  color: Colors.white,
+                                  color: colors.onErrorSolid,
                                   size: 54,
                                 ),
                               ),
@@ -427,7 +433,7 @@ class _DisasterEmergencyWarningPageState
                       callerName.isNotEmpty ? callerName : 'Anggota / Petugas',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.white, // media-overlay
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.2,
@@ -444,16 +450,18 @@ class _DisasterEmergencyWarningPageState
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(25),
+                        color: Colors.white.withAlpha(25), // media-overlay
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withAlpha(50)),
+                        border: Border.all(
+                          color: Colors.white.withAlpha(50), // media-overlay
+                        ),
                       ),
                       child: Text(
                         phone != null && phone.isNotEmpty
                             ? '📞 $phone'
                             : 'Petugas / Anggota Linmas',
                         style: const TextStyle(
-                          color: Color(0xFFF1F5F9),
+                          color: Color(0xFFF1F5F9), // media-overlay
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -467,12 +475,14 @@ class _DisasterEmergencyWarningPageState
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1E293B).withAlpha(230),
+                        color: hudDarkCard.withAlpha(230),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFF334155)),
+                        border: Border.all(
+                          color: const Color(0xFF334155), // media-overlay
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withAlpha(80),
+                            color: Colors.black.withAlpha(80), // media-overlay
                             blurRadius: 16,
                             offset: const Offset(0, 6),
                           ),
@@ -481,18 +491,18 @@ class _DisasterEmergencyWarningPageState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
                               Icon(
                                 Icons.location_on_rounded,
-                                color: AppColors.error,
+                                color: colors.errorSolid,
                                 size: 20,
                               ),
-                              SizedBox(width: 8),
-                              Text(
+                              const SizedBox(width: 8),
+                              const Text(
                                 'Titik Lokasi Pemanggil:',
                                 style: TextStyle(
-                                  color: Color(0xFF94A3B8),
+                                  color: Color(0xFF94A3B8), // media-overlay
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -505,7 +515,7 @@ class _DisasterEmergencyWarningPageState
                                 ? locationText
                                 : 'Lokasi pemanggil sedang diproses',
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.white, // media-overlay
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                               height: 1.3,
@@ -525,13 +535,13 @@ class _DisasterEmergencyWarningPageState
                       ),
                       decoration: BoxDecoration(
                         color: _isRinging
-                            ? AppColors.errorLight.withAlpha(25)
-                            : const Color(0xFF334155).withAlpha(80),
+                            ? colors.errorSolid.withAlpha(35)
+                            : hudMutedBg.withAlpha(80),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: _isRinging
-                              ? AppColors.error.withAlpha(100)
-                              : const Color(0xFF475569),
+                              ? colors.errorSolid.withAlpha(120)
+                              : const Color(0xFF475569), // media-overlay
                         ),
                       ),
                       child: Row(
@@ -541,8 +551,8 @@ class _DisasterEmergencyWarningPageState
                                 ? Icons.notifications_active_rounded
                                 : Icons.notifications_off_rounded,
                             color: _isRinging
-                                ? AppColors.error
-                                : const Color(0xFF94A3B8),
+                                ? colors.errorSolid
+                                : const Color(0xFF94A3B8), // media-overlay
                             size: 18,
                           ),
                           const SizedBox(width: 8),
@@ -553,8 +563,8 @@ class _DisasterEmergencyWarningPageState
                                   : 'Sirine dimatikan',
                               style: TextStyle(
                                 color: _isRinging
-                                    ? AppColors.errorBorder
-                                    : const Color(0xFF94A3B8),
+                                    ? const Color(0xFFFCA5A5) // media-overlay
+                                    : const Color(0xFF94A3B8), // media-overlay
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -567,18 +577,18 @@ class _DisasterEmergencyWarningPageState
                                   ? Icons.volume_off_rounded
                                   : Icons.volume_up_rounded,
                               size: 16,
-                              color: Colors.white,
+                              color: Colors.white, // media-overlay
                             ),
                             label: Text(
                               _isRinging ? 'Mute' : 'Bunyikan',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: Colors.white, // media-overlay
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: TextButton.styleFrom(
-                              backgroundColor: Colors.white.withAlpha(25),
+                              backgroundColor: hudWhite.withAlpha(25),
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
                                 vertical: 4,
@@ -601,7 +611,8 @@ class _DisasterEmergencyWarningPageState
                         _buildCallActionButton(
                           icon: Icons.call_end_rounded,
                           label: 'Tolak',
-                          color: AppColors.error,
+                          color: colors.errorSolid,
+                          iconColor: colors.onErrorSolid,
                           onTap: _dismissCall,
                         ),
 
@@ -610,7 +621,10 @@ class _DisasterEmergencyWarningPageState
                           _buildCallActionButton(
                             icon: Icons.chat_bubble_rounded,
                             label: 'Hubungi',
-                            color: AppColors.info,
+                            color: colors.info,
+                            iconColor: colors.isDark
+                                ? colors.onSecondary
+                                : colors.surface,
                             onTap: _showContactOptions,
                           ),
 
@@ -618,7 +632,8 @@ class _DisasterEmergencyWarningPageState
                         _buildCallActionButton(
                           icon: Icons.navigation_rounded,
                           label: 'Terima & Rute',
-                          color: AppColors.primary,
+                          color: colors.primary,
+                          iconColor: colors.onPrimary,
                           onTap: _acceptCall,
                         ),
                       ],
@@ -639,6 +654,7 @@ class _DisasterEmergencyWarningPageState
     required IconData icon,
     required String label,
     required Color color,
+    required Color iconColor,
     required VoidCallback onTap,
   }) {
     return Column(
@@ -660,14 +676,14 @@ class _DisasterEmergencyWarningPageState
                 ),
               ],
             ),
-            child: Icon(icon, color: Colors.white, size: 30),
+            child: Icon(icon, color: iconColor, size: 30),
           ),
         ),
         const SizedBox(height: 8),
         Text(
           label,
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.white, // media-overlay
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),

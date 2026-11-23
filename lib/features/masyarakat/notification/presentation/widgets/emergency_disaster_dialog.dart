@@ -1,7 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 
@@ -71,15 +71,16 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: AppColors.error, width: 2.5),
+        border: Border.all(color: colors.errorSolid, width: 2.5),
         boxShadow: [
           BoxShadow(
-            color: AppColors.error.withAlpha(100),
+            color: colors.errorSolid.withAlpha(100),
             blurRadius: 30,
             spreadRadius: 4,
           ),
@@ -92,13 +93,11 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.error, AppColors.errorDark],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+            decoration: BoxDecoration(
+              color: colors.errorSolid,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(29.5),
               ),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(29.5)),
             ),
             child: Column(
               children: [
@@ -107,21 +106,21 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                   child: Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: Colors.white.withAlpha(50),
+                      color: colors.onErrorSolid.withAlpha(50),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.warning_amber_rounded,
-                      color: Colors.white,
+                      color: colors.onErrorSolid,
                       size: 44,
                     ),
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'PERINGATAN DARURAT',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colors.onErrorSolid,
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
@@ -131,8 +130,8 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                 Text(
                   widget.event.title,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colors.onErrorSolid,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -156,13 +155,11 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                     ),
                     decoration: BoxDecoration(
                       color: _isRinging
-                          ? AppColors.errorLight
-                          : const Color(0xFFF1F5F9),
+                          ? colors.errorLight
+                          : colors.surfaceElevated,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: _isRinging
-                            ? AppColors.errorBorder
-                            : const Color(0xFFE2E8F0),
+                        color: _isRinging ? colors.errorBorder : colors.border,
                       ),
                     ),
                     child: Row(
@@ -171,9 +168,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                           _isRinging
                               ? Icons.notifications_active_rounded
                               : Icons.notifications_off_rounded,
-                          color: _isRinging
-                              ? AppColors.error
-                              : const Color(0xFF64748B),
+                          color: _isRinging ? colors.error : colors.textMuted,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
@@ -186,8 +181,8 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: _isRinging
-                                  ? AppColors.errorDark
-                                  : AppColors.secondary,
+                                  ? colors.errorDark
+                                  : colors.secondary,
                             ),
                           ),
                         ),
@@ -206,9 +201,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                             style: TextStyle(
                               fontSize: 11.5,
                               fontWeight: FontWeight.bold,
-                              color: _isRinging
-                                  ? AppColors.error
-                                  : AppColors.primary,
+                              color: _isRinging ? colors.error : colors.primary,
                             ),
                           ),
                         ),
@@ -220,6 +213,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
 
                   // Detail Lokasi & Deskripsi
                   _buildInfoRow(
+                    colors: colors,
                     icon: Icons.location_on_rounded,
                     label: 'Lokasi Bencana',
                     value: widget.event.location,
@@ -227,6 +221,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                   const SizedBox(height: 10),
                   if (widget.event.magnitude != null) ...[
                     _buildInfoRow(
+                      colors: colors,
                       icon: Icons.waves_rounded,
                       label: 'Kekuatan / Skala',
                       value: 'M ${widget.event.magnitude}',
@@ -234,6 +229,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                     const SizedBox(height: 10),
                   ],
                   _buildInfoRow(
+                    colors: colors,
                     icon: Icons.info_outline_rounded,
                     label: 'Keterangan',
                     value: widget.event.description,
@@ -245,26 +241,26 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.warningLight,
+                        color: colors.warningLight,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.warningBorder),
+                        border: Border.all(color: colors.warningBorder),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.health_and_safety_rounded,
-                            color: AppColors.warning,
+                            color: colors.warning,
                             size: 20,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               widget.event.recommendedAction!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.warningDark,
+                                color: colors.warningDark,
                                 height: 1.3,
                               ),
                             ),
@@ -286,17 +282,17 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
               child: OutlinedButton(
                 onPressed: _stopAlarmAndDismiss,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.secondary,
-                  side: const BorderSide(color: AppColors.grey300),
+                  foregroundColor: colors.secondary,
+                  side: BorderSide(color: colors.divider),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Saya Aman',
                   style: TextStyle(
-                    color: AppColors.secondary,
+                    color: colors.secondary,
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
                   ),
@@ -310,6 +306,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
   }
 
   Widget _buildInfoRow({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String value,
@@ -317,7 +314,7 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF64748B)),
+        Icon(icon, size: 18, color: colors.textMuted),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -325,19 +322,19 @@ class _EmergencyDisasterDialogState extends State<EmergencyDisasterDialog>
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF94A3B8),
+                  color: colors.textHint,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E293B),
+                  color: colors.textPrimary,
                 ),
               ),
             ],

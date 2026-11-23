@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
@@ -83,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocProvider(
       create: (context) => sl<AnnouncementBloc>()
         ..add(const FetchAnnouncements())
@@ -90,11 +91,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            backgroundColor: const Color(0xFFF8FAFC),
+            backgroundColor: colors.background,
             body: SafeArea(
               child: RefreshIndicator(
                 onRefresh: () => _onRefresh(context),
-                color: AppColors.primary,
+                color: colors.primary,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
@@ -114,12 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Pengaduan Saya',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF0F172A),
+                                color: colors.textPrimary,
                                 letterSpacing: 0.2,
                               ),
                             ),
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: AppTextStyles.labelMedium.copyWith(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                 ),
                               ),
                             ),

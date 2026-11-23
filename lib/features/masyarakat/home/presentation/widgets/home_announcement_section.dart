@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
@@ -16,18 +16,19 @@ class HomeAnnouncementSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Informasi Terbaru',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF0F172A),
+                color: colors.textPrimary,
                 letterSpacing: 0.2,
               ),
             ),
@@ -38,7 +39,7 @@ class HomeAnnouncementSection extends StatelessWidget {
                 style: AppTextStyles.labelMedium.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ),
@@ -66,15 +67,15 @@ class HomeAnnouncementSection extends StatelessWidget {
           builder: (context, state) {
             if (state.status == AnnouncementStatus.loading &&
                 state.announcements.isEmpty) {
-              return const Center(
+              return Center(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -87,17 +88,17 @@ class HomeAnnouncementSection extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
                     Text(
                       state.errorMessage ?? 'Gagal memuat informasi terbaru',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -117,8 +118,8 @@ class HomeAnnouncementSection extends StatelessWidget {
                         style: TextStyle(fontSize: 12),
                       ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.primary,
-                        side: const BorderSide(color: AppColors.primary),
+                        foregroundColor: colors.primary,
+                        side: BorderSide(color: colors.primary),
                         visualDensity: VisualDensity.compact,
                       ),
                     ),
@@ -137,17 +138,14 @@ class HomeAnnouncementSection extends StatelessWidget {
                   horizontal: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'Belum ada informasi terbaru',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 13, color: colors.textSecondary),
                   ),
                 ),
               );

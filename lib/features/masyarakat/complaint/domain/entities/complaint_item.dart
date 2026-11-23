@@ -1,3 +1,4 @@
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category.dart';
@@ -57,6 +58,28 @@ enum ComplaintStatus {
   final IconData icon;
 
   const ComplaintStatus(this.label, this.textColor, this.bgColor, this.icon);
+
+  /// Resolves semantic foreground color from the active [AppColorScheme].
+  Color resolveTextColor(AppColorScheme colors) => switch (this) {
+    ComplaintStatus.received => colors.info,
+    ComplaintStatus.pending => colors.warning,
+    ComplaintStatus.verified => colors.info,
+    ComplaintStatus.rejected => colors.error,
+    ComplaintStatus.inProgress => colors.orange,
+    ComplaintStatus.completed => colors.success,
+    ComplaintStatus.cancelled => colors.textMuted,
+  };
+
+  /// Resolves semantic pill/container background color from [AppColorScheme].
+  Color resolveBgColor(AppColorScheme colors) => switch (this) {
+    ComplaintStatus.received => colors.infoLight,
+    ComplaintStatus.pending => colors.warningLight,
+    ComplaintStatus.verified => colors.infoLight,
+    ComplaintStatus.rejected => colors.errorLight,
+    ComplaintStatus.inProgress => colors.orangeLight,
+    ComplaintStatus.completed => colors.successLight,
+    ComplaintStatus.cancelled => colors.surfaceElevated,
+  };
 }
 
 ComplaintStatus complaintStatusFromCode(String code) {

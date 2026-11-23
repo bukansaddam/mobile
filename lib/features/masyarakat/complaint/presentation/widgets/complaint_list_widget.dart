@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +60,9 @@ class _ComplaintEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconBgColor = isError ? AppColors.errorLight : AppColors.primaryLight;
-    final iconColor = isError ? AppColors.error : AppColors.primaryDark;
+    final colors = context.appColors;
+    final iconBgColor = isError ? colors.errorLight : colors.primaryLight;
+    final iconColor = isError ? colors.error : colors.primaryDark;
     final icon = isError ? Icons.cloud_off_rounded : Icons.post_add_rounded;
     final title = isError
         ? 'Gagal Memuat Pengaduan'
@@ -74,9 +75,9 @@ class _ComplaintEmptyState extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -96,7 +97,7 @@ class _ComplaintEmptyState extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTextStyles.titleMedium.copyWith(
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -104,7 +105,7 @@ class _ComplaintEmptyState extends StatelessWidget {
             subtitle,
             textAlign: TextAlign.center,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               height: 1.4,
             ),
           ),
@@ -114,15 +115,15 @@ class _ComplaintEmptyState extends StatelessWidget {
               onPressed: onRefreshTap,
               icon: const Icon(Icons.refresh_rounded, size: 18),
               label: const Text('Coba Lagi'),
-              style: _outlinedActionStyle(),
+              style: _outlinedActionStyle(colors),
             ),
           ] else if (!isError && onCreateTap != null) ...[
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: onCreateTap,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
                 elevation: 0,
                 minimumSize: const Size(0, 44),
                 tapTargetSize: MaterialTapTargetSize.padded,
@@ -146,11 +147,11 @@ class _ComplaintEmptyState extends StatelessWidget {
     );
   }
 
-  ButtonStyle _outlinedActionStyle() {
+  ButtonStyle _outlinedActionStyle(AppColorScheme colors) {
     return OutlinedButton.styleFrom(
-      foregroundColor: AppColors.primaryDark,
-      backgroundColor: AppColors.primaryLight.withValues(alpha: 0.45),
-      side: BorderSide(color: AppColors.primaryDark.withValues(alpha: 0.25)),
+      foregroundColor: colors.primaryDark,
+      backgroundColor: colors.primaryLight.withValues(alpha: 0.45),
+      side: BorderSide(color: colors.primaryDark.withValues(alpha: 0.25)),
       minimumSize: const Size(0, 44),
       tapTargetSize: MaterialTapTargetSize.padded,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -168,16 +169,17 @@ class _ComplaintCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: colors.surface,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(6),
+              color: colors.shadow,
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -189,10 +191,10 @@ class _ComplaintCard extends StatelessWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: colors.surfaceElevated,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(item.icon, color: const Color(0xFF64748B), size: 22),
+              child: Icon(item.icon, color: colors.textMuted, size: 22),
             ),
 
             const SizedBox(width: 12),
@@ -206,7 +208,7 @@ class _ComplaintCard extends StatelessWidget {
                     style: AppTextStyles.titleMedium.copyWith(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF0F172A),
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -216,7 +218,7 @@ class _ComplaintCard extends StatelessWidget {
                     item.timeAgo,
                     style: AppTextStyles.caption.copyWith(
                       fontSize: 12,
-                      color: const Color(0xFF94A3B8),
+                      color: colors.textMuted,
                     ),
                   ),
                 ],
@@ -228,13 +230,13 @@ class _ComplaintCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: item.status.bgColor,
+                color: item.status.resolveBgColor(colors),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 item.status.label,
                 style: AppTextStyles.labelSmall.copyWith(
-                  color: item.status.textColor,
+                  color: item.status.resolveTextColor(colors),
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                 ),

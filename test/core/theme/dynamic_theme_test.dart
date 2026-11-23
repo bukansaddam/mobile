@@ -1,7 +1,12 @@
+import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/services/audio_alarm_service.dart';
+import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/theme/bloc/theme_bloc.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/notification/presentation/widgets/emergency_disaster_dialog.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
@@ -9,6 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class _TestAudioAlarmService extends Fake implements AudioAlarmService {
+  @override
+  bool get isPlaying => false;
+}
 
 void main() {
   double contrastRatio(Color a, Color b) {
@@ -375,6 +385,78 @@ void main() {
               .first,
         );
         expect(pointsMaterial.color, AppColorScheme.dark.surface);
+      },
+    );
+
+    test('ComplaintStatus.resolveTextColor and resolveBgColor use AppColorScheme tokens in Dark Mode', () {
+      const dark = AppColorScheme.dark;
+      expect(ComplaintStatus.received.resolveTextColor(dark), dark.info);
+      expect(ComplaintStatus.received.resolveBgColor(dark), dark.infoLight);
+      expect(ComplaintStatus.pending.resolveTextColor(dark), dark.warning);
+      expect(ComplaintStatus.pending.resolveBgColor(dark), dark.warningLight);
+      expect(ComplaintStatus.verified.resolveTextColor(dark), dark.info);
+      expect(ComplaintStatus.rejected.resolveTextColor(dark), dark.error);
+      expect(ComplaintStatus.inProgress.resolveTextColor(dark), dark.orange);
+      expect(ComplaintStatus.completed.resolveTextColor(dark), dark.success);
+      expect(
+        ComplaintStatus.cancelled.resolveBgColor(dark),
+        dark.surfaceElevated,
+      );
+    });
+
+    testWidgets(
+      'EmergencyDisasterDialog uses AppColorScheme.dark surface, errorSolid header, and high-contrast Saya Aman button',
+      (tester) async {
+        if (sl.isRegistered<AudioAlarmService>()) {
+          await sl.unregister<AudioAlarmService>();
+        }
+        sl.registerSingleton<AudioAlarmService>(_TestAudioAlarmService());
+        addTearDown(() async {
+          if (sl.isRegistered<AudioAlarmService>()) {
+            await sl.unregister<AudioAlarmService>();
+          }
+        });
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Scaffold(
+              body: EmergencyDisasterDialog(
+                event: DisasterAlertEvent(
+                  id: 'ALT-DARK',
+                  title: 'Peringatan Gempa',
+                  type: 'Gempa Bumi',
+                  description: 'Uji tema gelap',
+                  location: 'Posko Utama',
+                  severity: DisasterSeverity.critical,
+                  timestamp: DateTime(2026, 11, 23, 15, 0),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final card = tester.widget<Container>(
+          find
+              .ancestor(
+                of: find.text('PERINGATAN DARURAT'),
+                matching: find.byWidgetPredicate((widget) {
+                  if (widget is! Container) return false;
+                  final dec = widget.decoration;
+                  return dec is BoxDecoration &&
+                      dec.borderRadius == BorderRadius.circular(32);
+                }),
+              )
+              .first,
+        );
+        final cardDec = card.decoration! as BoxDecoration;
+        expect(cardDec.color, AppColorScheme.dark.surface);
+
+        final headerText = tester.widget<Text>(find.text('PERINGATAN DARURAT'));
+        expect(headerText.style?.color, AppColorScheme.dark.onErrorSolid);
+
+        final safeLabel = tester.widget<Text>(find.text('Saya Aman'));
+        expect(safeLabel.style?.color, AppColorScheme.dark.secondary);
       },
     );
   });

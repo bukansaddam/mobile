@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
@@ -64,14 +64,16 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
     ComplaintStatus? tempStatus = _selectedStatusFilter;
     ComplaintCategory? tempCategory = _selectedCategoryFilter;
 
+    final colors = context.appColors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final sheetColors = sheetContext.appColors;
         return StatefulBuilder(
           builder: (context, setModalState) {
             final hasFilter = tempStatus != null || tempCategory != null;
@@ -87,7 +89,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE2E8F0),
+                        color: sheetColors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -96,12 +98,12 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Filter Pengaduan',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0F172A),
+                          color: sheetColors.textPrimary,
                         ),
                       ),
                       if (hasFilter)
@@ -112,11 +114,11 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                               tempCategory = null;
                             });
                           },
-                          child: const Text(
+                          child: Text(
                             'Reset Filter',
                             style: TextStyle(
                               fontSize: 13,
-                              color: AppColors.error,
+                              color: sheetColors.error,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -125,12 +127,12 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                   ),
                   const SizedBox(height: 18),
 
-                  const Text(
+                  Text(
                     'Status Pengaduan',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF334155),
+                      color: sheetColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -139,6 +141,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                     runSpacing: 8,
                     children: [
                       _buildChipItem(
+                        colors: sheetColors,
                         label: 'Semua Status',
                         isSelected: tempStatus == null,
                         onTap: () {
@@ -150,10 +153,11 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                       ...ComplaintStatus.values.map((status) {
                         final isSelected = tempStatus == status;
                         return _buildChipItem(
+                          colors: sheetColors,
                           label: status.label,
                           isSelected: isSelected,
-                          activeBgColor: status.bgColor,
-                          activeTextColor: status.textColor,
+                          activeBgColor: status.resolveBgColor(sheetColors),
+                          activeTextColor: status.resolveTextColor(sheetColors),
                           onTap: () {
                             setModalState(() {
                               tempStatus = isSelected ? null : status;
@@ -165,15 +169,15 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                   ),
 
                   const SizedBox(height: 18),
-                  const Divider(height: 1, color: Color(0xFFF1F5F9)),
+                  Divider(height: 1, color: sheetColors.divider),
                   const SizedBox(height: 18),
 
-                  const Text(
+                  Text(
                     'Kategori Pengaduan',
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF334155),
+                      color: sheetColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -182,6 +186,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                     runSpacing: 8,
                     children: [
                       _buildChipItem(
+                        colors: sheetColors,
                         label: 'Semua Kategori',
                         isSelected: tempCategory == null,
                         onTap: () {
@@ -193,6 +198,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                       ...ComplaintCategory.values.map((cat) {
                         final isSelected = tempCategory == cat;
                         return _buildChipItem(
+                          colors: sheetColors,
                           label: cat.label,
                           icon: cat.icon,
                           isSelected: isSelected,
@@ -218,11 +224,11 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                           _selectedCategoryFilter = tempCategory;
                         });
                         _fetch();
-                        Navigator.pop(context);
+                        Navigator.pop(sheetContext);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        backgroundColor: sheetColors.primary,
+                        foregroundColor: sheetColors.onPrimary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -247,6 +253,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
   }
 
   Widget _buildChipItem({
+    required AppColorScheme colors,
     required String label,
     required bool isSelected,
     required VoidCallback onTap,
@@ -255,14 +262,14 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
     Color? activeTextColor,
   }) {
     final bgColor = isSelected
-        ? (activeBgColor ?? AppColors.successLight)
-        : const Color(0xFFF8FAFC);
+        ? (activeBgColor ?? colors.primaryLight)
+        : colors.surfaceVariant;
     final textColor = isSelected
-        ? (activeTextColor ?? AppColors.primary)
-        : const Color(0xFF64748B);
+        ? (activeTextColor ?? colors.primary)
+        : colors.textMuted;
     final borderColor = isSelected
-        ? (activeTextColor ?? AppColors.primary)
-        : const Color(0xFFE2E8F0);
+        ? (activeTextColor ?? colors.primary)
+        : colors.border;
 
     return GestureDetector(
       onTap: onTap,
@@ -297,6 +304,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocProvider.value(
       value: _bloc,
       child: BlocBuilder<ComplaintListBloc, ComplaintListState>(
@@ -309,7 +317,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
               (_selectedCategoryFilter != null ? 1 : 0);
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF8FAFC),
+            backgroundColor: colors.background,
             body: SafeArea(
               child: Column(
                 children: [
@@ -323,10 +331,10 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: AppColors.white,
+                                  color: colors.surface,
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: const Color(0xFFE2E8F0),
+                                    color: colors.border,
                                     width: 1,
                                   ),
                                 ),
@@ -342,19 +350,19 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         'Cari pengaduan, lokasi, atau ID...',
                                     hintStyle: AppTextStyles.bodyMedium
                                         .copyWith(
-                                          color: const Color(0xFF94A3B8),
+                                          color: colors.textHint,
                                           fontSize: 13.5,
                                         ),
-                                    prefixIcon: const Icon(
+                                    prefixIcon: Icon(
                                       Icons.search_rounded,
-                                      color: Color(0xFF64748B),
+                                      color: colors.textMuted,
                                       size: 22,
                                     ),
                                     suffixIcon: _searchQuery.isNotEmpty
                                         ? IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.cancel_rounded,
-                                              color: Color(0xFF94A3B8),
+                                              color: colors.textHint,
                                               size: 18,
                                             ),
                                             onPressed: () {
@@ -381,13 +389,13 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                 width: 48,
                                 decoration: BoxDecoration(
                                   color: hasActiveFilter
-                                      ? AppColors.successLight
-                                      : AppColors.white,
+                                      ? colors.primaryLight
+                                      : colors.surface,
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
                                     color: hasActiveFilter
-                                        ? AppColors.primary
-                                        : const Color(0xFFE2E8F0),
+                                        ? colors.primary
+                                        : colors.border,
                                     width: 1.5,
                                   ),
                                 ),
@@ -397,8 +405,8 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                     Icon(
                                       Icons.tune_rounded,
                                       color: hasActiveFilter
-                                          ? AppColors.primary
-                                          : const Color(0xFF64748B),
+                                          ? colors.primary
+                                          : colors.textMuted,
                                       size: 22,
                                     ),
                                     if (hasActiveFilter)
@@ -407,14 +415,14 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         right: 8,
                                         child: Container(
                                           padding: const EdgeInsets.all(4),
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.primary,
+                                          decoration: BoxDecoration(
+                                            color: colors.primary,
                                             shape: BoxShape.circle,
                                           ),
                                           child: Text(
                                             '$activeFilterCount',
-                                            style: const TextStyle(
-                                              color: Colors.white,
+                                            style: TextStyle(
+                                              color: colors.onPrimary,
                                               fontSize: 9,
                                               fontWeight: FontWeight.bold,
                                               height: 1.0,
@@ -439,11 +447,11 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Filter: ',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: Color(0xFF64748B),
+                                      color: colors.textMuted,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -454,7 +462,8 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: _selectedStatusFilter!.bgColor,
+                                        color: _selectedStatusFilter!
+                                            .resolveBgColor(colors),
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Row(
@@ -466,7 +475,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
                                               color: _selectedStatusFilter!
-                                                  .textColor,
+                                                  .resolveTextColor(colors),
                                             ),
                                           ),
                                           const SizedBox(width: 4),
@@ -481,7 +490,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                               Icons.close_rounded,
                                               size: 14,
                                               color: _selectedStatusFilter!
-                                                  .textColor,
+                                                  .resolveTextColor(colors),
                                             ),
                                           ),
                                         ],
@@ -496,10 +505,10 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppColors.successLight,
+                                        color: colors.primaryLight,
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                          color: const Color(0xFFBBF7D0),
+                                          color: colors.primaryBorder,
                                         ),
                                       ),
                                       child: Row(
@@ -508,15 +517,15 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                           Icon(
                                             _selectedCategoryFilter!.icon,
                                             size: 12,
-                                            color: AppColors.primary,
+                                            color: colors.primary,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             'Kategori: ${_selectedCategoryFilter!.label}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.primary,
+                                              color: colors.primary,
                                             ),
                                           ),
                                           const SizedBox(width: 4),
@@ -527,10 +536,10 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                               });
                                               _fetch();
                                             },
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.close_rounded,
                                               size: 14,
-                                              color: AppColors.primary,
+                                              color: colors.primary,
                                             ),
                                           ),
                                         ],
@@ -552,12 +561,12 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           'Daftar Pengaduan',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF0F172A),
+                            color: colors.textPrimary,
                             letterSpacing: 0.2,
                           ),
                         ),
@@ -569,19 +578,19 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.successLight,
+                                color: colors.primaryLight,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: const Color(0xFFBBF7D0),
+                                  color: colors.primaryBorder,
                                   width: 1,
                                 ),
                               ),
                               child: Text(
                                 'Total: ${state.total}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                 ),
                               ),
                             ),
@@ -597,12 +606,12 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                   });
                                   _fetch();
                                 },
-                                child: const Text(
+                                child: Text(
                                   'Reset',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.error,
+                                    color: colors.error,
                                   ),
                                 ),
                               ),
@@ -615,7 +624,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
 
                   Expanded(
                     child: RefreshIndicator(
-                      color: AppColors.primary,
+                      color: colors.primary,
                       onRefresh: () async {
                         _fetch(isRefresh: true);
                         try {
@@ -662,15 +671,15 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                     horizontal: 20,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.white,
+                                    color: colors.surface,
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Column(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.cloud_off_rounded,
                                         size: 48,
-                                        color: Color(0xFFCBD5E1),
+                                        color: colors.borderStrong,
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
@@ -678,7 +687,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                             'Gagal memuat daftar pengaduan.',
                                         textAlign: TextAlign.center,
                                         style: AppTextStyles.bodySmall.copyWith(
-                                          color: const Color(0xFF64748B),
+                                          color: colors.textMuted,
                                           fontSize: 12.5,
                                         ),
                                       ),
@@ -686,7 +695,8 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                       ElevatedButton(
                                         onPressed: _fetch,
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.primary,
+                                          backgroundColor: colors.primary,
+                                          foregroundColor: colors.onPrimary,
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -694,11 +704,11 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                             ),
                                           ),
                                         ),
-                                        child: const Text(
+                                        child: Text(
                                           'Coba Lagi',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.white,
+                                            color: colors.onPrimary,
                                           ),
                                         ),
                                       ),
@@ -713,16 +723,16 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                     horizontal: 20,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.white,
+                                    color: colors.surface,
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.search_off_rounded,
                                         size: 56,
-                                        color: Color(0xFFCBD5E1),
+                                        color: colors.borderStrong,
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
@@ -731,7 +741,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                             .copyWith(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
-                                              color: const Color(0xFF0F172A),
+                                              color: colors.textPrimary,
                                             ),
                                       ),
                                       const SizedBox(height: 4),
@@ -739,7 +749,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         'Coba kata kunci pencarian lain atau ubah filter status.',
                                         textAlign: TextAlign.center,
                                         style: AppTextStyles.bodySmall.copyWith(
-                                          color: const Color(0xFF64748B),
+                                          color: colors.textMuted,
                                           fontSize: 12.5,
                                         ),
                                       ),

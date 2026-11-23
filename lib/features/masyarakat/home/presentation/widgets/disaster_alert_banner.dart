@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,14 +12,16 @@ class DisasterAlertBanner extends StatelessWidget {
   const DisasterAlertBanner({super.key});
 
   static void showSimulateMenu(BuildContext context) {
+    final colors = context.appColors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final sheetColors = sheetContext.appColors;
         return Container(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           child: Column(
@@ -32,46 +34,49 @@ class DisasterAlertBanner extends StatelessWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFCBD5E1),
+                    color: sheetColors.borderStrong,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
-              const Row(
+              Row(
                 children: [
                   Icon(
                     Icons.notifications_active_rounded,
-                    color: AppColors.error,
+                    color: sheetColors.error,
                     size: 24,
                   ),
-                  SizedBox(width: 10),
-                  Text(
-                    'Simulasi Peringatan Bencana Alam',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Simulasi Peringatan Bencana Alam',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: sheetColors.textPrimary,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Pilih jenis bencana di bawah ini untuk menguji notifikasi berdering sirine darurat:',
-                style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                style: TextStyle(fontSize: 12.5, color: sheetColors.textMuted),
               ),
               const SizedBox(height: 16),
               _buildSimulateOption(
-                context,
+                sheetContext,
                 title: '📋 Salin Token FCM Perangkat',
                 subtitle: 'Salin token unik HP ini untuk test notifikasi dari Firebase Console',
                 onTap: () async {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   final token = await sl<FirebaseNotificationService>()
                       .getToken();
                   if (token != null && token.isNotEmpty) {
                     await Clipboard.setData(ClipboardData(text: token));
                     if (context.mounted) {
+                      final dialogColors = context.appColors;
                       AppDialogs.showSuccess<void>(
                         context,
                         title: 'Token FCM Berhasil Disalin',
@@ -85,25 +90,25 @@ class DisasterAlertBanner extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: AppColors.grey100,
+                                color: dialogColors.surfaceElevated,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: SelectableText(
                                 token,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
                                   fontFamily: 'monospace',
-                                  color: AppColors.textPrimary,
+                                  color: dialogColors.textPrimary,
                                 ),
                               ),
                             ),
                             const SizedBox(height: 10),
-                            const Text(
+                            Text(
                               'Gunakan token ini di Firebase Console -> Messaging -> Send test message.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: AppColors.textSecondary,
+                                color: dialogColors.textSecondary,
                               ),
                             ),
                           ],
@@ -112,12 +117,14 @@ class DisasterAlertBanner extends StatelessWidget {
                     }
                   } else {
                     if (context.mounted) {
+                      final snackColors = context.appColors;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
                             '⚠️ Gagal mengambil token FCM. Pastikan internet & izin notifikasi aktif.',
+                            style: TextStyle(color: snackColors.onErrorSolid),
                           ),
-                          backgroundColor: AppColors.error,
+                          backgroundColor: snackColors.errorSolid,
                         ),
                       );
                     }
@@ -126,21 +133,21 @@ class DisasterAlertBanner extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               _buildSimulateOption(
-                context,
+                sheetContext,
                 title: '📱 Tes Push Notifikasi Sistem (Luar Aplikasi)',
                 subtitle: 'Picu peringatan dalam 8 detik (minimize app sekarang untuk menguji)',
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   DisasterSimulateCountdownDialog.show(context);
                 },
               ),
               const SizedBox(height: 10),
               _buildSimulateOption(
-                context,
+                sheetContext,
                 title: '🌊 Peringatan Banjir Bandang',
                 subtitle: 'Debit air meningkat drastis di hulu sungai',
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   sl<DisasterAlertService>().triggerSimulatedDisaster(
                     type: 'Banjir Bandang',
                     magnitude: 3.5,
@@ -162,6 +169,7 @@ class DisasterAlertBanner extends StatelessWidget {
     required String subtitle,
     required VoidCallback onTap,
   }) {
+    final colors = context.appColors;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -169,9 +177,9 @@ class DisasterAlertBanner extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.errorLight,
+          color: colors.errorLight,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.errorBorder),
+          border: Border.all(color: colors.errorBorder),
         ),
         child: Row(
           children: [
@@ -181,28 +189,21 @@ class DisasterAlertBanner extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.errorDark,
+                      color: colors.errorDark,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      color: AppColors.errorDark,
-                    ),
+                    style: TextStyle(fontSize: 11.5, color: colors.errorDark),
                   ),
                 ],
               ),
             ),
-            const Icon(
-              Icons.play_circle_fill_rounded,
-              color: AppColors.error,
-              size: 28,
-            ),
+            Icon(Icons.play_circle_fill_rounded, color: colors.error, size: 28),
           ],
         ),
       ),
@@ -211,19 +212,24 @@ class DisasterAlertBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final cardColors = colors.isDark
+        ? [colors.surface, colors.surfaceElevated]
+        : [colors.textPrimary, colors.secondary];
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+        gradient: LinearGradient(
+          colors: cardColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
+        border: colors.isDark ? Border.all(color: colors.border) : null,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(25),
+            color: colors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -234,15 +240,11 @@ class DisasterAlertBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.error.withAlpha(40),
+              color: colors.error.withAlpha(40),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.error, width: 1.5),
+              border: Border.all(color: colors.error, width: 1.5),
             ),
-            child: const Icon(
-              Icons.shield_outlined,
-              color: AppColors.error,
-              size: 22,
-            ),
+            child: Icon(Icons.shield_outlined, color: colors.error, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -254,17 +256,19 @@ class DisasterAlertBanner extends StatelessWidget {
                     Container(
                       width: 7,
                       height: 7,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF22C55E),
+                      decoration: BoxDecoration(
+                        color: colors.primary,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'PERINGATAN DINI BENCANA',
                         style: TextStyle(
-                          color: Color(0xFF94A3B8),
+                          color: colors.isDark
+                              ? colors.textMuted
+                              : colors.textHint,
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.3,
@@ -276,10 +280,10 @@ class DisasterAlertBanner extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                const Text(
+                Text(
                   'Deteksi Berdering 24/7 Aktif',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: colors.isDark ? colors.textPrimary : colors.surface,
                     fontSize: 12.5,
                     fontWeight: FontWeight.bold,
                   ),
@@ -359,6 +363,7 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final progress = _remainingSeconds / _totalSeconds;
 
     return SingleChildScrollView(
@@ -367,34 +372,34 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
         children: [
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: const BoxDecoration(
-              color: AppColors.errorLight,
+            decoration: BoxDecoration(
+              color: colors.errorLight,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.phonelink_ring_rounded,
-              color: AppColors.error,
+              color: colors.error,
               size: 36,
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'MINIMIZE APLIKASI SEKARANG',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w900,
-              color: Color(0xFF0F172A),
+              color: colors.textPrimary,
               letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Peringatan sistem darurat akan terpicu secara otomatis di luar aplikasi saat timer 8 detik habis:',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 12.5,
-              color: Color(0xFF64748B),
+              color: colors.textMuted,
               height: 1.35,
             ),
           ),
@@ -410,8 +415,8 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                 child: CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 8,
-                  backgroundColor: AppColors.errorLight,
-                  color: AppColors.error,
+                  backgroundColor: colors.errorLight,
+                  color: colors.error,
                 ),
               ),
               Column(
@@ -419,18 +424,18 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                 children: [
                   Text(
                     '$_remainingSeconds',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.error,
+                      color: colors.error,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'detik',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF94A3B8),
+                      color: colors.textHint,
                     ),
                   ),
                 ],
@@ -454,8 +459,8 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error,
-                foregroundColor: AppColors.white,
+                backgroundColor: colors.errorSolid,
+                foregroundColor: colors.onErrorSolid,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

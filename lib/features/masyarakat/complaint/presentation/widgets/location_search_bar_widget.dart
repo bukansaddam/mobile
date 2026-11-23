@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 
 import '../../domain/entities/location_suggestion.dart';
 
@@ -29,17 +29,18 @@ class LocationSearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.12),
+                color: colors.shadow,
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -52,36 +53,30 @@ class LocationSearchBarWidget extends StatelessWidget {
             onTapOutside: (_) => FocusScope.of(context).unfocus(),
             onSubmitted: onSubmitted,
             onChanged: onChanged,
-            style: const TextStyle(fontSize: 14.5, color: Color(0xFF0F172A)),
+            style: TextStyle(fontSize: 14.5, color: colors.textPrimary),
             decoration: InputDecoration(
               hintText: 'Cari alamat atau nama jalan...',
-              hintStyle: const TextStyle(
-                color: Color(0xFF94A3B8),
-                fontSize: 14,
-              ),
-              prefixIcon: const Icon(
-                Icons.search_rounded,
-                color: AppColors.primary,
-              ),
+              hintStyle: TextStyle(color: colors.textHint, fontSize: 14),
+              prefixIcon: Icon(Icons.search_rounded, color: colors.primary),
               suffixIcon: isSearching || isLoadingSuggestions
-                  ? const Padding(
-                      padding: EdgeInsets.all(12.0),
+                  ? Padding(
+                      padding: const EdgeInsets.all(12.0),
                       child: SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
+                            colors.primary,
                           ),
                         ),
                       ),
                     )
                   : (controller.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.clear_rounded,
-                              color: Color(0xFF64748B),
+                              color: colors.textMuted,
                             ),
                             onPressed: onClear,
                           )
@@ -99,11 +94,11 @@ class LocationSearchBarWidget extends StatelessWidget {
           Container(
             constraints: const BoxConstraints(maxHeight: 240),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
+                  color: colors.shadow,
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -115,12 +110,12 @@ class LocationSearchBarWidget extends StatelessWidget {
                 shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 itemCount: suggestions.length,
-                separatorBuilder: (context, index) => const Divider(
+                separatorBuilder: (context, index) => Divider(
                   height: 1,
                   thickness: 0.8,
                   indent: 16,
                   endIndent: 16,
-                  color: Color(0xFFF1F5F9),
+                  color: colors.divider,
                 ),
                 itemBuilder: (context, index) {
                   final item = suggestions[index];
@@ -132,24 +127,24 @@ class LocationSearchBarWidget extends StatelessWidget {
                     ),
                     leading: Container(
                       padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: AppColors.infoLight,
+                      decoration: BoxDecoration(
+                        color: colors.infoLight,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.location_on_rounded,
                         size: 18,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                     ),
                     title: Text(
                       item.displayName,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xFF0F172A),
+                        color: colors.textPrimary,
                       ),
                     ),
                     onTap: () => onSelectSuggestion(item),

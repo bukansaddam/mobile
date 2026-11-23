@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 
 class ComplaintBannerCard extends StatelessWidget {
   final VoidCallback onCreateComplaint;
@@ -9,13 +9,15 @@ class ComplaintBannerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final bannerColor = colors.primaryGradient.colors.last;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(20),
+            color: colors.shadow,
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -33,7 +35,7 @@ class ComplaintBannerCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   cacheHeight: 450,
                   errorBuilder: (context, error, stackTrace) {
-                    return Container(color: AppColors.primaryDark);
+                    return Container(color: bannerColor);
                   },
                 ),
               ),
@@ -46,9 +48,9 @@ class ComplaintBannerCard extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      AppColors.primaryDark,
-                      AppColors.primaryDark.withAlpha(245),
-                      AppColors.primaryDark.withAlpha(180),
+                      bannerColor,
+                      bannerColor.withAlpha(245),
+                      bannerColor.withAlpha(180),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.45, 0.65, 0.95],
@@ -66,7 +68,7 @@ class ComplaintBannerCard extends StatelessWidget {
                   const Text(
                     'DUMAS',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.white, // media-overlay
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       height: 1.15,
@@ -77,7 +79,7 @@ class ComplaintBannerCard extends StatelessWidget {
                   Text(
                     'Dukungan masyarakat untuk\nlingkungan yang lebih baik',
                     style: TextStyle(
-                      color: Colors.white.withAlpha(230),
+                      color: Colors.white.withAlpha(230), // media-overlay
                       fontSize: 12.5,
                       height: 1.35,
                       fontWeight: FontWeight.w400,
@@ -92,20 +94,20 @@ class ComplaintBannerCard extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: onCreateComplaint,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: AppColors.primaryDark,
+                            backgroundColor: colors.surface,
+                            foregroundColor: colors.primaryDark,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          child: const FittedBox(
+                          child: FittedBox(
                             fit: BoxFit.scaleDown,
                             child: Text(
                               'BUAT PENGADUAN',
                               style: TextStyle(
-                                color: AppColors.primaryDark,
+                                color: colors.primaryDark,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 0.5,

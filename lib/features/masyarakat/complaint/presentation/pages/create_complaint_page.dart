@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/network/dio_client.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
@@ -173,15 +173,17 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   void _showCategoryPickerSheet() {
     final searchController = TextEditingController();
     List<IncidentCategoryItem> filteredList = List.from(_categories);
+    final colors = context.appColors;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
+        final sheetColors = bottomSheetContext.appColors;
         return StatefulBuilder(
           builder: (context, setModalState) {
             final searchText = searchController.text.trim();
@@ -206,7 +208,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                           width: 38,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppColors.grey300,
+                            color: sheetColors.borderStrong,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -217,18 +219,18 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Pilih Kategori Laporan',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: sheetColors.textPrimary,
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close_rounded,
-                                color: AppColors.grey600,
+                                color: sheetColors.textMuted,
                               ),
                               onPressed: () =>
                                   Navigator.pop(bottomSheetContext),
@@ -256,19 +258,19 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                           },
                           decoration: InputDecoration(
                             hintText: 'Cari kategori kejadian...',
-                            hintStyle: const TextStyle(
-                              color: Color(0xFF94A3B8),
+                            hintStyle: TextStyle(
+                              color: sheetColors.textHint,
                               fontSize: 14,
                             ),
-                            prefixIcon: const Icon(
+                            prefixIcon: Icon(
                               Icons.search_rounded,
-                              color: AppColors.primary,
+                              color: sheetColors.primary,
                             ),
                             suffixIcon: searchController.text.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.clear_rounded,
-                                      color: Color(0xFF94A3B8),
+                                      color: sheetColors.textHint,
                                     ),
                                     onPressed: () {
                                       searchController.clear();
@@ -279,7 +281,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor: const Color(0xFFF1F5F9),
+                            fillColor: sheetColors.surfaceElevated,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
@@ -292,7 +294,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Divider(height: 1, color: Color(0xFFE2E8F0)),
+                      Divider(height: 1, color: sheetColors.divider),
                       Expanded(
                         child: filteredList.isEmpty
                             ? Center(
@@ -301,18 +303,18 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.search_off_rounded,
                                         size: 48,
-                                        color: Color(0xFF94A3B8),
+                                        color: sheetColors.textHint,
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
                                         hasSearch
                                             ? '"$searchText" tidak ditemukan'
                                             : 'Kategori tidak ditemukan',
-                                        style: const TextStyle(
-                                          color: Color(0xFF64748B),
+                                        style: TextStyle(
+                                          color: sheetColors.textMuted,
                                           fontSize: 14,
                                         ),
                                         textAlign: TextAlign.center,
@@ -339,8 +341,15 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                         '#',
                                         '',
                                       );
-                                      dotColor = Color(
-                                        int.parse('FF$hex', radix: 16),
+                                      final argb = int.parse(
+                                        'FF$hex',
+                                        radix: 16,
+                                      );
+                                      dotColor = Color.fromARGB(
+                                        (argb >> 24) & 0xFF,
+                                        (argb >> 16) & 0xFF,
+                                        (argb >> 8) & 0xFF,
+                                        argb & 0xFF,
                                       );
                                     } catch (_) {}
                                   }
@@ -351,7 +360,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                       height: 10,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: dotColor ?? AppColors.primary,
+                                        color: dotColor ?? sheetColors.primary,
                                       ),
                                     ),
                                     title: Text(
@@ -361,14 +370,14 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                                             ? FontWeight.bold
                                             : FontWeight.normal,
                                         color: isSelected
-                                            ? AppColors.primary
-                                            : const Color(0xFF0F172A),
+                                            ? sheetColors.primary
+                                            : sheetColors.textPrimary,
                                       ),
                                     ),
                                     trailing: isSelected
-                                        ? const Icon(
+                                        ? Icon(
                                             Icons.check_circle_rounded,
-                                            color: AppColors.primary,
+                                            color: sheetColors.primary,
                                           )
                                         : null,
                                     onTap: () {
@@ -479,20 +488,21 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   }
 
   Widget _buildFieldLabel(String labelText, {bool isRequired = true}) {
+    final colors = context.appColors;
     return Text.rich(
       TextSpan(
         text: labelText,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF0F172A),
+          color: colors.textPrimary,
         ),
         children: isRequired
-            ? const [
+            ? [
                 TextSpan(
                   text: ' *',
                   style: TextStyle(
-                    color: AppColors.error,
+                    color: colors.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -617,10 +627,11 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
     required String label,
     required VoidCallback onTap,
   }) {
+    final colors = context.appColors;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Material(
-        color: const Color(0xFFF1F5F9),
+        color: colors.surfaceElevated,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           onTap: onTap,
@@ -630,19 +641,19 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
             height: 86,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFCBD5E1), width: 1.5),
+              border: Border.all(color: colors.borderStrong, width: 1.5),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: const Color(0xFF64748B), size: 26),
+                Icon(icon, color: colors.textMuted, size: 26),
                 const SizedBox(height: 4),
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF64748B),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -654,6 +665,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
   }
 
   Widget _buildAttachmentTile(int index) {
+    final colors = context.appColors;
     final path = _attachments[index];
     final isVideo = FileSecurityUtils.isVideoPath(path);
 
@@ -687,25 +699,28 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: colors.border),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(13),
               child: isVideo
                   ? Container(
-                      color: const Color(0xFF0F172A),
+                      color: const Color(0xFF0F172A), // media-overlay
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.play_circle_fill_rounded,
-                            color: Colors.white,
+                            color: Colors.white, // media-overlay
                             size: 28,
                           ),
                           SizedBox(height: 4),
                           Text(
                             'Video',
-                            style: TextStyle(fontSize: 11, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white, // media-overlay
+                            ),
                           ),
                         ],
                       ),
@@ -715,9 +730,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                       fit: BoxFit.cover,
                       cacheWidth: 300,
                       cacheHeight: 300,
-                      errorBuilder: (context, error, stackTrace) => const Icon(
+                      errorBuilder: (context, error, stackTrace) => Icon(
                         Icons.broken_image_rounded,
-                        color: Colors.black38,
+                        color: colors.textMuted,
                       ),
                     ),
             ),
@@ -730,13 +745,13 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
             onTap: () => _removeAttachment(index),
             child: Container(
               padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: AppColors.error,
+              decoration: BoxDecoration(
+                color: colors.errorSolid,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.close_rounded,
-                color: Colors.white,
+                color: colors.onErrorSolid,
                 size: 14,
               ),
             ),
@@ -748,6 +763,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocListener<CreateComplaintBloc, CreateComplaintState>(
       bloc: _bloc,
       listenWhen: (previous, current) =>
@@ -761,7 +777,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: colors.background,
         appBar: AppPageBar(
           title: widget.isInsidentil ? 'Laporan Insidentil' : 'Buat Pengaduan',
         ),
@@ -777,18 +793,18 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
+                    color: colors.primaryLight,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                      color: colors.primary.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.info_outline_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                         size: 22,
                       ),
                       const SizedBox(width: 10),
@@ -797,9 +813,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                           widget.isInsidentil
                               ? 'Isi formulir laporan insidentil dengan data yang akurat agar dapat segera ditindaklanjuti.'
                               : 'Isi formulir pengaduan dengan data yang jujur & jelas agar petugas dapat menindaklanjuti secara cepat.',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
-                            color: AppColors.primaryDark,
+                            color: colors.primaryDark,
                             height: 1.35,
                           ),
                         ),
@@ -819,57 +835,55 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                     child: InputDecorator(
                       decoration: InputDecoration(
                         hintText: 'Pilih kategori laporan',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF94A3B8),
+                        hintStyle: TextStyle(
+                          color: colors.textHint,
                           fontSize: 14,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.category_outlined,
-                          color: AppColors.primary,
+                          color: colors.primary,
                           size: 20,
                         ),
                         suffixIcon: _isLoadingCategories
-                            ? const UnconstrainedBox(
+                            ? UnconstrainedBox(
                                 child: SizedBox(
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.primary,
+                                      colors.primary,
                                     ),
                                   ),
                                 ),
                               )
-                            : const Icon(
+                            : Icon(
                                 Icons.keyboard_arrow_down_rounded,
-                                color: Color(0xFF64748B),
+                                color: colors.textMuted,
                                 size: 24,
                               ),
                         filled: true,
-                        fillColor: AppColors.white,
+                        fillColor: colors.surface,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE2E8F0),
-                          ),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide(
                             color: _categoryError != null
-                                ? AppColors.error
-                                : const Color(0xFFE2E8F0),
+                                ? colors.error
+                                : colors.border,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
+                          borderSide: BorderSide(
+                            color: colors.primary,
                             width: 1.5,
                           ),
                         ),
@@ -880,8 +894,8 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         style: TextStyle(
                           fontSize: 14,
                           color: _selectedCategory != null
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFF94A3B8),
+                              ? colors.textPrimary
+                              : colors.textHint,
                           fontWeight: _selectedCategory != null
                               ? FontWeight.w500
                               : FontWeight.normal,
@@ -900,38 +914,29 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                   controller: _titleController,
                   onTapOutside: (event) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF0F172A),
-                  ),
+                  style: TextStyle(fontSize: 14, color: colors.textPrimary),
                   decoration: InputDecoration(
                     hintText: widget.isInsidentil
                         ? 'Contoh: Pohon Tumbang Menutup Jalan'
                         : 'Contoh: Jalan Berlubang di Depan Sekolah',
-                    hintStyle: const TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: colors.textHint, fontSize: 14),
                     filled: true,
-                    fillColor: AppColors.white,
+                    fillColor: colors.surface,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 14,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
-                      ),
+                      borderSide: BorderSide(color: colors.primary, width: 1.5),
                     ),
                   ),
                   validator: (value) {
@@ -960,35 +965,26 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                   onTapOutside: (event) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
                   maxLines: 4,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF0F172A),
-                  ),
+                  style: TextStyle(fontSize: 14, color: colors.textPrimary),
                   decoration: InputDecoration(
                     hintText: widget.isInsidentil
                         ? 'Jelaskan kronologi atau rincian kejadian secara detail...'
                         : 'Jelaskan rincian permasalahan yang terjadi secara detail...',
-                    hintStyle: const TextStyle(
-                      color: Color(0xFF94A3B8),
-                      fontSize: 14,
-                    ),
+                    hintStyle: TextStyle(color: colors.textHint, fontSize: 14),
                     filled: true,
-                    fillColor: AppColors.white,
+                    fillColor: colors.surface,
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                      borderSide: BorderSide(color: colors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(
-                        color: AppColors.primary,
-                        width: 1.5,
-                      ),
+                      borderSide: BorderSide(color: colors.primary, width: 1.5),
                     ),
                   ),
                   validator: (value) {
@@ -1012,44 +1008,39 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                     child: TextFormField(
                       controller: _locationController,
                       enabled: false,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF0F172A),
-                      ),
+                      style: TextStyle(fontSize: 14, color: colors.textPrimary),
                       decoration: InputDecoration(
                         hintText: _isFetchingLocation
                             ? 'Mendeteksi lokasi saat ini...'
                             : 'Ketuk untuk memilih lokasi di map',
-                        hintStyle: const TextStyle(
-                          color: Color(0xFF94A3B8),
+                        hintStyle: TextStyle(
+                          color: colors.textHint,
                           fontSize: 14,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.location_on_outlined,
-                          color: AppColors.error,
+                          color: colors.error,
                           size: 20,
                         ),
                         suffixIcon: _isFetchingLocation
-                            ? const UnconstrainedBox(
+                            ? UnconstrainedBox(
                                 child: SizedBox(
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.primary,
+                                      colors.primary,
                                     ),
                                   ),
                                 ),
                               )
                             : null,
                         filled: true,
-                        fillColor: AppColors.white,
+                        fillColor: colors.surface,
                         disabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE2E8F0),
-                          ),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -1057,20 +1048,16 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE2E8F0),
-                          ),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE2E8F0),
-                          ),
+                          borderSide: BorderSide(color: colors.border),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
+                          borderSide: BorderSide(
+                            color: colors.primary,
                             width: 1.5,
                           ),
                         ),
@@ -1090,12 +1077,12 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Lampiran Foto / Video',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
+                        color: colors.textPrimary,
                       ),
                     ),
                     Text(
@@ -1104,8 +1091,8 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: _attachments.length >= _maxAttachments
-                            ? AppColors.warning
-                            : const Color(0xFF64748B),
+                            ? colors.warning
+                            : colors.textMuted,
                       ),
                     ),
                   ],
@@ -1113,9 +1100,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
                 const SizedBox(height: 4),
 
-                const Text(
+                Text(
                   'Maksimal 1 video, sisanya foto. Diambil langsung dari kamera.',
-                  style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                  style: TextStyle(fontSize: 11.5, color: colors.textMuted),
                 ),
 
                 const SizedBox(height: 10),
@@ -1157,10 +1144,10 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         bottomNavigationBar: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(12),
+                color: colors.shadow,
                 blurRadius: 10,
                 offset: const Offset(0, -3),
               ),
@@ -1178,28 +1165,28 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                   child: ElevatedButton(
                     onPressed: isSubmitting ? null : _submitComplaint,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: isSubmitting
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+                                colors.onPrimary,
                               ),
                             ),
                           )
-                        : const Text(
+                        : Text(
                             'KIRIM',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: colors.onPrimary,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 0.5,

@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -14,10 +14,11 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BottomAppBar(
       shape: const CircularNotchedRectangle(),
       notchMargin: 8,
-      color: AppColors.surface,
+      color: colors.surface,
       elevation: 12,
       padding: EdgeInsets.zero,
       child: SizedBox(
@@ -90,9 +91,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = isSelected
-        ? AppColors.primary
-        : AppColors.textSecondary;
+    final colors = context.appColors;
+    final Color color = isSelected ? colors.primary : colors.textSecondary;
 
     return InkWell(
       onTap: onTap,

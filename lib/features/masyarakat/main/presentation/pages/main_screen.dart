@@ -1,5 +1,5 @@
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_list_page.dart';
@@ -39,6 +39,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocProvider(
       create: (_) =>
           sl<MyComplaintListBloc>()..add(const FetchMyComplaintsEvent()),
@@ -62,20 +63,20 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: colors.primary,
                   shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
+                  gradient: colors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withAlpha(100),
+                      color: colors.primary.withAlpha(100),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.add_rounded,
-                  color: AppColors.white,
+                  color: colors.isDark ? colors.textPrimary : colors.onPrimary,
                   size: 32,
                 ),
               ),

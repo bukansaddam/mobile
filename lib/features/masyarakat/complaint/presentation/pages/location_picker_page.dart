@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -126,10 +126,12 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         }
       },
       builder: (context, state) {
+        final colors = context.appColors;
+        const pinShadow = Colors.black; // map-overlay
         final cubit = context.read<LocationPickerCubit>();
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: const AppPageBar(title: 'Pilih Lokasi Kejadian'),
           body: Stack(
             children: [
@@ -192,20 +194,20 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.error,
+                          color: colors.errorSolid,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.error.withValues(alpha: 0.4),
+                              color: colors.errorSolid.withValues(alpha: 0.4),
                               blurRadius: 12,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.location_on_rounded,
-                          color: Colors.white,
+                          color: colors.onErrorSolid,
                           size: 28,
                         ),
                       ),
@@ -213,7 +215,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                         width: 4,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: AppColors.error,
+                          color: colors.errorSolid,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -221,7 +223,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                         width: 14,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.25),
+                          color: pinShadow.withValues(alpha: 0.25),
                           borderRadius: const BorderRadius.all(
                             Radius.elliptical(14, 5),
                           ),
@@ -240,23 +242,20 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   onPressed: state.isLocatingUser
                       ? null
                       : cubit.determineUserPosition,
-                  backgroundColor: Colors.white,
+                  backgroundColor: colors.surface,
                   elevation: 4,
                   child: state.isLocatingUser
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+                              colors.primary,
                             ),
                           ),
                         )
-                      : const Icon(
-                          Icons.my_location_rounded,
-                          color: AppColors.primary,
-                        ),
+                      : Icon(Icons.my_location_rounded, color: colors.primary),
                 ),
               ),
 
@@ -266,16 +265,16 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                 bottom: 0,
                 child: Container(
                   padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black12,
+                        color: colors.shadow,
                         blurRadius: 16,
-                        offset: Offset(0, -4),
+                        offset: const Offset(0, -4),
                       ),
                     ],
                   ),
@@ -293,23 +292,23 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.infoLight,
+                                color: colors.infoLight,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Row(
+                              child: Row(
                                 children: [
                                   Icon(
                                     Icons.pin_drop_rounded,
                                     size: 14,
-                                    color: Color(0xFF2563EB),
+                                    color: colors.info,
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(
                                     'Lokasi Terpilih',
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2563EB),
+                                      color: colors.info,
                                     ),
                                   ),
                                 ],
@@ -317,13 +316,13 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                             ),
                             const Spacer(),
                             if (state.isLoadingAddress)
-                              const SizedBox(
+                              SizedBox(
                                 width: 14,
                                 height: 14,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xFF2563EB),
+                                    colors.info,
                                   ),
                                 ),
                               ),
@@ -334,10 +333,10 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                           state.selectedAddress,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF0F172A),
+                            color: colors.textPrimary,
                             height: 1.35,
                           ),
                         ),
@@ -365,8 +364,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
+                              backgroundColor: colors.primary,
+                              foregroundColor: colors.onPrimary,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
