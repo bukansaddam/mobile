@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class RosetteBadge extends StatelessWidget {
@@ -95,7 +97,7 @@ class AppDialogs {
           badge: RosetteBadge(
             icon: badgeIcon,
             badgeColor: const Color(0xFFC7F8A5),
-            iconColor: const Color(0xFF14532D),
+            iconColor: AppColors.primaryDark,
           ),
           title: title,
           message: message,
@@ -147,8 +149,8 @@ class AppDialogs {
         return _AppDialogCard(
           badge: const RosetteBadge(
             icon: Icons.close_rounded,
-            badgeColor: Color(0xFFFEE2E2),
-            iconColor: Color(0xFFDC2626),
+            badgeColor: AppColors.errorLight,
+            iconColor: AppColors.error,
           ),
           title: title,
           message: message,
@@ -172,7 +174,7 @@ class AppDialogs {
                   Expanded(
                     child: _DialogPrimaryButton(
                       text: primaryButtonText,
-                      color: const Color(0xFFDC2626),
+                      color: AppColors.error,
                       onPressed: () {
                         Navigator.pop(dialogContext);
                         if (onPrimaryPressed != null) {
@@ -226,10 +228,10 @@ class AppDialogs {
                     ? Icons.warning_amber_rounded
                     : Icons.help_outline_rounded),
             badgeColor: isDestructive
-                ? const Color(0xFFFEE2E2)
+                ? AppColors.errorLight
                 : const Color(0xFFFEF3C7),
             iconColor: isDestructive
-                ? const Color(0xFFDC2626)
+                ? AppColors.error
                 : const Color(0xFFD97706),
           ),
           title: title,
@@ -241,19 +243,14 @@ class AppDialogs {
                 Expanded(
                   child: _DialogOutlinedButton(
                     text: cancelText,
-                    onPressed: () {
-                      Navigator.pop(dialogContext, false);
-                      if (onCancel != null) onCancel();
-                    },
+                    onPressed: () => Navigator.pop(dialogContext, false),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _DialogPrimaryButton(
                     text: confirmText,
-                    color: isDestructive
-                        ? const Color(0xFFDC2626)
-                        : AppColors.primary,
+                    color: isDestructive ? AppColors.error : AppColors.primary,
                     onPressed: () {
                       Navigator.pop(dialogContext, true);
                       if (onConfirm != null) onConfirm();
@@ -292,8 +289,8 @@ class AppDialogs {
         return _AppDialogCard(
           badge: RosetteBadge(
             icon: icon,
-            badgeColor: const Color(0xFFE0F2FE),
-            iconColor: const Color(0xFF0284C7),
+            badgeColor: AppColors.infoLight,
+            iconColor: AppColors.info,
           ),
           title: title,
           message: message,
@@ -313,9 +310,74 @@ class AppDialogs {
     );
   }
 
+  /// Menampilkan konten dialog kustom dalam gaya floating bottom card.
+  static Future<T?> showCustom<T>(
+    BuildContext context, {
+    required Widget Function(BuildContext dialogContext) builder,
+    bool barrierDismissible = true,
+    bool canPop = true,
+    bool useRootNavigator = true,
+    bool useCardDecoration = true,
+    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(24, 24, 24, 24),
+  }) {
+    return _showAnimatedDialog<T>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      canPop: canPop,
+      useRootNavigator: useRootNavigator,
+      builder: (dialogContext) {
+        final content = builder(dialogContext);
+        if (!useCardDecoration) {
+          return content;
+        }
+        return _FloatingDialogSurface(padding: padding, child: content);
+      },
+    );
+  }
+
+  /// Menampilkan dialog loading blocking (non-dismissible) dengan pesan proses.
+  static Future<void> showLoading(
+    BuildContext context, {
+    required String message,
+    bool useRootNavigator = true,
+  }) {
+    return showCustom<void>(
+      context,
+      barrierDismissible: false,
+      canPop: false,
+      useRootNavigator: useRootNavigator,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+      builder: (_) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              message,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   static Future<T?> _showAnimatedDialog<T>({
     required BuildContext context,
     required bool barrierDismissible,
+    bool canPop = true,
+    bool useRootNavigator = true,
     required Widget Function(BuildContext) builder,
   }) {
     return showGeneralDialog<T>(
@@ -324,31 +386,39 @@ class AppDialogs {
       barrierLabel: 'Dismiss Dialog',
       barrierColor: Colors.black.withValues(alpha: 0.45),
       transitionDuration: const Duration(milliseconds: 260),
+      useRootNavigator: useRootNavigator,
       pageBuilder: (ctx, anim1, anim2) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: barrierDismissible ? () => Navigator.of(ctx).pop() : null,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  16,
-                  0,
-                  16,
-                  MediaQuery.of(ctx).viewInsets.bottom > 0
-                      ? MediaQuery.of(ctx).viewInsets.bottom + 16
-                      : 16,
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 440),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {},
-                      child: builder(ctx),
+        final maxHeight = MediaQuery.sizeOf(ctx).height * 0.85;
+        return PopScope(
+          canPop: canPop,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: barrierDismissible ? () => Navigator.of(ctx).pop() : null,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    16,
+                    16,
+                    MediaQuery.of(ctx).viewInsets.bottom > 0
+                        ? MediaQuery.of(ctx).viewInsets.bottom + 16
+                        : 16,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: 440,
+                        maxHeight: maxHeight,
+                      ),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {},
+                        child: builder(ctx),
+                      ),
                     ),
                   ),
                 ),
@@ -385,6 +455,40 @@ class AppDialogs {
   }
 }
 
+class _FloatingDialogSurface extends StatelessWidget {
+  final EdgeInsetsGeometry padding;
+  final Widget child;
+
+  const _FloatingDialogSurface({required this.padding, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.12),
+            blurRadius: 36,
+            spreadRadius: 0,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
 class _AppDialogCard extends StatelessWidget {
   final Widget badge;
   final String title;
@@ -402,59 +506,48 @@ class _AppDialogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    return _FloatingDialogSurface(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 28),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 36,
-            spreadRadius: 0,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          badge,
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  badge,
+                  const SizedBox(height: 22),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.headlineSmall.copyWith(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                  if (customContent != null) ...[
+                    const SizedBox(height: 18),
+                    customContent!,
+                  ],
+                ],
+              ),
+            ),
+          ),
           const SizedBox(height: 22),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 21,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
-              letterSpacing: -0.4,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF64748B),
-              height: 1.5,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-          if (customContent != null) ...[
-            const SizedBox(height: 18),
-            customContent!,
-          ],
-          const SizedBox(height: 26),
           ...actions,
         ],
       ),
@@ -482,7 +575,7 @@ class _DialogPrimaryButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: Colors.white,
+          foregroundColor: AppColors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -490,9 +583,9 @@ class _DialogPrimaryButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
+          style: AppTextStyles.button.copyWith(
             fontSize: 15,
-            fontWeight: FontWeight.w600,
+            color: AppColors.white,
             letterSpacing: 0.2,
           ),
         ),
@@ -515,8 +608,8 @@ class _DialogOutlinedButton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFF1E293B),
-          side: const BorderSide(color: Color(0xFFCBD5E1), width: 1.4),
+          foregroundColor: AppColors.secondary,
+          side: const BorderSide(color: AppColors.grey300, width: 1.4),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -524,10 +617,9 @@ class _DialogOutlinedButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: const TextStyle(
+          style: AppTextStyles.button.copyWith(
             fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF334155),
+            color: AppColors.secondary,
           ),
         ),
       ),
