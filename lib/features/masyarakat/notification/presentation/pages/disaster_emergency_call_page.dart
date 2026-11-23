@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
+import 'package:akar/core/theme/app_colors.dart';
 
 typedef DisasterEmergencyCallPage = DisasterEmergencyWarningPage;
 typedef MemberEmergencyCallPage = DisasterEmergencyWarningPage;
@@ -292,7 +293,7 @@ class _DisasterEmergencyWarningPageState
                       center: const Alignment(0, -0.3),
                       radius: 1.2 + (_pulseController.value * 0.25),
                       colors: [
-                        const Color(0xFFDC2626).withAlpha(
+                        AppColors.error.withAlpha(
                           (150 + (_pulseController.value * 70)).toInt(),
                         ),
                         const Color(0xFF7F1D1D).withAlpha(200),
@@ -322,11 +323,11 @@ class _DisasterEmergencyWarningPageState
                         vertical: 9,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDC2626),
+                        color: AppColors.error,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFDC2626).withAlpha(160),
+                            color: AppColors.error.withAlpha(160),
                             blurRadius: 18,
                             offset: const Offset(0, 4),
                           ),
@@ -361,7 +362,7 @@ class _DisasterEmergencyWarningPageState
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: const Color(0xFFEF4444).withAlpha(
+                                    color: AppColors.error.withAlpha(
                                       (120 * (1 - _pulseController.value))
                                           .toInt(),
                                     ),
@@ -393,17 +394,15 @@ class _DisasterEmergencyWarningPageState
                                   shape: BoxShape.circle,
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color(0xFFEF4444),
-                                      Color(0xFFB91C1C),
+                                      AppColors.error,
+                                      AppColors.errorDark,
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(
-                                        0xFFEF4444,
-                                      ).withAlpha(200),
+                                      color: AppColors.error.withAlpha(200),
                                       blurRadius: 35,
                                       spreadRadius: 8,
                                     ),
@@ -486,7 +485,7 @@ class _DisasterEmergencyWarningPageState
                             children: [
                               Icon(
                                 Icons.location_on_rounded,
-                                color: Color(0xFFEF4444),
+                                color: AppColors.error,
                                 size: 20,
                               ),
                               SizedBox(width: 8),
@@ -526,12 +525,12 @@ class _DisasterEmergencyWarningPageState
                       ),
                       decoration: BoxDecoration(
                         color: _isRinging
-                            ? const Color(0xFFFEF2F2).withAlpha(25)
+                            ? AppColors.errorLight.withAlpha(25)
                             : const Color(0xFF334155).withAlpha(80),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: _isRinging
-                              ? const Color(0xFFEF4444).withAlpha(100)
+                              ? AppColors.error.withAlpha(100)
                               : const Color(0xFF475569),
                         ),
                       ),
@@ -542,7 +541,7 @@ class _DisasterEmergencyWarningPageState
                                 ? Icons.notifications_active_rounded
                                 : Icons.notifications_off_rounded,
                             color: _isRinging
-                                ? const Color(0xFFEF4444)
+                                ? AppColors.error
                                 : const Color(0xFF94A3B8),
                             size: 18,
                           ),
@@ -554,7 +553,7 @@ class _DisasterEmergencyWarningPageState
                                   : 'Sirine dimatikan',
                               style: TextStyle(
                                 color: _isRinging
-                                    ? const Color(0xFFFCA5A5)
+                                    ? AppColors.errorBorder
                                     : const Color(0xFF94A3B8),
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -602,7 +601,7 @@ class _DisasterEmergencyWarningPageState
                         _buildCallActionButton(
                           icon: Icons.call_end_rounded,
                           label: 'Tolak',
-                          color: const Color(0xFFDC2626),
+                          color: AppColors.error,
                           onTap: _dismissCall,
                         ),
 
@@ -611,7 +610,7 @@ class _DisasterEmergencyWarningPageState
                           _buildCallActionButton(
                             icon: Icons.chat_bubble_rounded,
                             label: 'Hubungi',
-                            color: const Color(0xFF0284C7),
+                            color: AppColors.info,
                             onTap: _showContactOptions,
                           ),
 
@@ -619,7 +618,7 @@ class _DisasterEmergencyWarningPageState
                         _buildCallActionButton(
                           icon: Icons.navigation_rounded,
                           label: 'Terima & Rute',
-                          color: const Color(0xFF16A34A),
+                          color: AppColors.primary,
                           onTap: _acceptCall,
                         ),
                       ],

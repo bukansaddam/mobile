@@ -166,10 +166,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 6),
                     _buildModalActionTile(
                       icon: Icons.delete_outline_rounded,
-                      iconColor: const Color(0xFFDC2626),
-                      iconBgColor: const Color(0xFFFEE2E2),
+                      iconColor: AppColors.error,
+                      iconBgColor: AppColors.errorLight,
                       title: 'Hapus Foto Baru',
-                      textColor: const Color(0xFFDC2626),
+                      textColor: AppColors.error,
                       onTap: () {
                         Navigator.pop(sheetContext);
                         setState(() {
@@ -990,7 +990,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   TextSpan(
                     text: ' *',
                     style: TextStyle(
-                      color: Color(0xFFDC2626),
+                      color: AppColors.error,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1026,11 +1026,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1),
+        borderSide: const BorderSide(color: AppColors.error, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1.5),
+        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
     );
   }

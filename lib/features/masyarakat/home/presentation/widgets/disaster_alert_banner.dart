@@ -41,7 +41,7 @@ class DisasterAlertBanner extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.notifications_active_rounded,
-                    color: Color(0xFFDC2626),
+                    color: AppColors.error,
                     size: 24,
                   ),
                   SizedBox(width: 10),
@@ -117,7 +117,7 @@ class DisasterAlertBanner extends StatelessWidget {
                           content: Text(
                             '⚠️ Gagal mengambil token FCM. Pastikan internet & izin notifikasi aktif.',
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: AppColors.error,
                         ),
                       );
                     }
@@ -169,9 +169,9 @@ class DisasterAlertBanner extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: const Color(0xFFFEF2F2),
+          color: AppColors.errorLight,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFFCA5A5)),
+          border: Border.all(color: AppColors.errorBorder),
         ),
         child: Row(
           children: [
@@ -184,7 +184,7 @@ class DisasterAlertBanner extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF991B1B),
+                      color: AppColors.errorDark,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -192,7 +192,7 @@ class DisasterAlertBanner extends StatelessWidget {
                     subtitle,
                     style: const TextStyle(
                       fontSize: 11.5,
-                      color: Color(0xFF7F1D1D),
+                      color: AppColors.errorDark,
                     ),
                   ),
                 ],
@@ -200,7 +200,7 @@ class DisasterAlertBanner extends StatelessWidget {
             ),
             const Icon(
               Icons.play_circle_fill_rounded,
-              color: Color(0xFFDC2626),
+              color: AppColors.error,
               size: 28,
             ),
           ],
@@ -234,13 +234,13 @@ class DisasterAlertBanner extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFDC2626).withAlpha(40),
+              color: AppColors.error.withAlpha(40),
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFEF4444), width: 1.5),
+              border: Border.all(color: AppColors.error, width: 1.5),
             ),
             child: const Icon(
               Icons.shield_outlined,
-              color: Color(0xFFEF4444),
+              color: AppColors.error,
               size: 22,
             ),
           ),
@@ -368,12 +368,12 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: const BoxDecoration(
-              color: Color(0xFFFEF2F2),
+              color: AppColors.errorLight,
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.phonelink_ring_rounded,
-              color: Color(0xFFDC2626),
+              color: AppColors.error,
               size: 36,
             ),
           ),
@@ -410,8 +410,8 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                 child: CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 8,
-                  backgroundColor: const Color(0xFFFEF2F2),
-                  color: const Color(0xFFDC2626),
+                  backgroundColor: AppColors.errorLight,
+                  color: AppColors.error,
                 ),
               ),
               Column(
@@ -422,7 +422,7 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                     style: const TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w900,
-                      color: Color(0xFFDC2626),
+                      color: AppColors.error,
                     ),
                   ),
                   const Text(
@@ -454,8 +454,8 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFDC2626),
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.error,
+                foregroundColor: AppColors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

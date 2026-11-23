@@ -65,12 +65,12 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: const BoxDecoration(
-                      color: Color(0xFFFEF3C7),
+                      color: AppColors.warningLight,
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.workspace_premium_rounded,
-                      color: Color(0xFFB45309),
+                      color: AppColors.earth,
                       size: 24,
                     ),
                   ),
@@ -107,9 +107,9 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBEB),
+                  color: AppColors.warningLight,
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: const Color(0xFFFDE68A), width: 1),
+                  border: Border.all(color: AppColors.warningBorder, width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +119,7 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF92400E),
+                        color: AppColors.warningDark,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -127,7 +127,7 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.stars_rounded,
-                          color: Color(0xFFB45309),
+                          color: AppColors.earth,
                           size: 26,
                         ),
                         const SizedBox(width: 8),

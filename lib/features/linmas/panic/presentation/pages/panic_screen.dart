@@ -108,7 +108,7 @@ class _PanicScreenState extends State<PanicScreen> {
                 content: Text(
                   'Sinyal darurat (SOS) telah berhasil dinonaktifkan. Anda dalam status aman.',
                 ),
-                backgroundColor: Color(0xFF16A34A),
+                backgroundColor: AppColors.success,
                 behavior: SnackBarBehavior.floating,
               ),
             );

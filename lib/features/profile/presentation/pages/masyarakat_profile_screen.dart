@@ -70,7 +70,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                       children: [
                         Icon(
                           Icons.notifications_active_rounded,
-                          color: Color(0xFFDC2626),
+                          color: AppColors.error,
                           size: 24,
                         ),
                         SizedBox(width: 10),
@@ -102,7 +102,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                         });
                         audioService.setSoundEnabled(val);
                       },
-                      activeTrackColor: const Color(0xFFDC2626),
+                      activeTrackColor: AppColors.error,
                       title: const Text(
                         'Dering Sirine Bencana Alam',
                         style: TextStyle(
@@ -141,7 +141,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                             value: volume,
                             min: 0.1,
                             max: 1.0,
-                            activeColor: const Color(0xFFDC2626),
+                            activeColor: AppColors.error,
                             onChanged: soundEnabled
                                 ? (val) {
                                     setModalState(() {
@@ -154,7 +154,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                         ),
                         const Icon(
                           Icons.volume_up_rounded,
-                          color: Color(0xFFDC2626),
+                          color: AppColors.error,
                         ),
                       ],
                     ),
@@ -170,25 +170,24 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 audioService.playTestAlarm();
                                 AppToast.showInfo(
                                   context,
-                                  message:
-                                      '🔔 Memutar sampel suara alarm sirine darurat (4 detik)...',
+                                  message: '🔔 Memutar sampel suara alarm sirine darurat (4 detik)...',
                                 );
                               }
                             : null,
                         icon: const Icon(
                           Icons.play_arrow_rounded,
-                          color: Color(0xFFDC2626),
+                          color: AppColors.error,
                         ),
                         label: const Text(
                           'Uji Dering Sirine (Sound Test)',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFFDC2626),
+                            color: AppColors.error,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFFFCA5A5)),
+                          side: const BorderSide(color: AppColors.errorBorder),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -488,16 +487,15 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                               _buildMenuItem(
                                 icon: Icons.logout_rounded,
                                 title: 'Keluar dari Akun',
-                                textColor: const Color(0xFFDC2626),
-                                iconColor: const Color(0xFFDC2626),
+                                textColor: AppColors.error,
+                                iconColor: AppColors.error,
                                 showChevron: false,
                                 onTap: () async {
                                   final confirmed =
                                       await AppDialogs.showConfirmation(
                                         context,
                                         title: 'Keluar dari Akun',
-                                        message:
-                                            'Apakah Anda yakin ingin keluar dari akun ini?',
+                                        message: 'Apakah Anda yakin ingin keluar dari akun ini?',
                                         confirmText: 'Keluar',
                                         cancelText: 'Batal',
                                         isDestructive: true,

@@ -450,8 +450,8 @@ class PanicBottomPanel extends StatelessWidget {
                           ? null
                           : onDeactivateButtonPressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF16A34A),
-                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.white,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -463,7 +463,7 @@ class PanicBottomPanel extends StatelessWidget {
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
-                                color: Colors.white,
+                                color: AppColors.white,
                               ),
                             )
                           : const Text(

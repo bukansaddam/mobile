@@ -1,3 +1,4 @@
+import 'package:akar/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -28,9 +29,9 @@ class ProfilePointsCard extends StatelessWidget {
     final formattedPoints = formatPoints(points);
 
     final backgroundColor = isEmbedded
-        ? const Color(0xFFFFFBEB)
-        : Colors.white;
-    const borderColor = Color(0xFFFDE68A);
+        ? AppColors.warningLight
+        : AppColors.white;
+    const borderColor = AppColors.warningBorder;
     final borderRadius = BorderRadius.circular(isEmbedded ? 16 : 18);
 
     return Semantics(
@@ -67,12 +68,12 @@ class ProfilePointsCard extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFEF3C7),
+                    color: AppColors.warningLight,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.workspace_premium_rounded,
-                    color: Color(0xFFB45309),
+                    color: AppColors.earth,
                     size: 22,
                   ),
                 ),
@@ -97,7 +98,7 @@ class ProfilePointsCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
-                          color: Color(0xFF92400E),
+                          color: AppColors.warningDark,
                         ),
                       ),
                     ],
@@ -105,7 +106,7 @@ class ProfilePointsCard extends StatelessWidget {
                 ),
                 const Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFFB45309),
+                  color: AppColors.earth,
                   size: 20,
                 ),
               ],

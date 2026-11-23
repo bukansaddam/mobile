@@ -186,14 +186,14 @@ class PanicMemberDetailSheet extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color:
                                     (member.isOnline
-                                            ? const Color(0xFF16A34A)
+                                            ? AppColors.success
                                             : AppColors.grey500)
                                         .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color:
                                       (member.isOnline
-                                              ? const Color(0xFF16A34A)
+                                              ? AppColors.success
                                               : AppColors.grey500)
                                           .withValues(alpha: 0.3),
                                 ),
@@ -207,7 +207,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: member.isOnline
-                                          ? const Color(0xFF16A34A)
+                                          ? AppColors.success
                                           : AppColors.grey500,
                                     ),
                                   ),
@@ -218,7 +218,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                                       fontSize: 11,
                                       fontWeight: FontWeight.w600,
                                       color: member.isOnline
-                                          ? const Color(0xFF16A34A)
+                                          ? AppColors.success
                                           : AppColors.grey500,
                                     ),
                                   ),
@@ -289,8 +289,8 @@ class PanicMemberDetailSheet extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF16A34A),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
