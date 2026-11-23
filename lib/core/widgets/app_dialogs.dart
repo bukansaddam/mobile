@@ -229,10 +229,8 @@ class AppDialogs {
                     : Icons.help_outline_rounded),
             badgeColor: isDestructive
                 ? AppColors.errorLight
-                : const Color(0xFFFEF3C7),
-            iconColor: isDestructive
-                ? AppColors.error
-                : const Color(0xFFD97706),
+                : AppColors.warningLight,
+            iconColor: isDestructive ? AppColors.error : AppColors.warning,
           ),
           title: title,
           message: message,

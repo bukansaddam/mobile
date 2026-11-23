@@ -87,7 +87,19 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: AppTextStyles.button.copyWith(fontSize: 16),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.white,
+          elevation: 0,
+          minimumSize: const Size(double.infinity, 52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          textStyle: AppTextStyles.button.copyWith(fontSize: 16),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -98,14 +110,20 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          textStyle: AppTextStyles.button.copyWith(fontSize: 16),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          textStyle: AppTextStyles.button,
         ),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
