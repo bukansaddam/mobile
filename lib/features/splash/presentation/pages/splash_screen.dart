@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_brand_logo.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -138,18 +138,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 207, 240, 209),
-              Color(0xFFF7FBF8),
-              Colors.white,
+              colors.primaryLight,
+              colors.surfaceVariant,
+              colors.isDark ? colors.background : colors.surface,
             ],
-            stops: [0.0, 0.45, 1.0],
+            stops: const [0.0, 0.45, 1.0],
           ),
         ),
         child: SafeArea(
@@ -199,10 +200,10 @@ class _SplashScreenState extends State<SplashScreen>
                         width: 96,
                         child: LinearProgressIndicator(
                           minHeight: 3,
-                          backgroundColor: AppColors.primary.withValues(
+                          backgroundColor: colors.primary.withValues(
                             alpha: 0.15,
                           ),
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
                     ),
@@ -217,7 +218,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Text(
                       'v${AppConstants.appVersion}',
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ),

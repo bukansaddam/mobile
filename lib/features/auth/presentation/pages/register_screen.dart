@@ -12,7 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -344,9 +344,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Future<void> _showPhotoSourceSheet() async {
+    final colors = context.appColors;
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -359,23 +360,20 @@ class _RegisterScreenState extends State<RegisterScreen>
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: colors.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 8),
             ListTile(
-              leading: const Icon(
-                Icons.photo_camera_outlined,
-                color: AppColors.primary,
-              ),
+              leading: Icon(Icons.photo_camera_outlined, color: colors.primary),
               title: const Text('Ambil dari Kamera'),
               onTap: () => Navigator.pop(sheetContext, ImageSource.camera),
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library_outlined,
-                color: AppColors.primary,
+                color: colors.primary,
               ),
               title: const Text('Ambil dari Galeri'),
               onTap: () => Navigator.pop(sheetContext, ImageSource.gallery),
@@ -417,6 +415,7 @@ class _RegisterScreenState extends State<RegisterScreen>
       );
       if (!mounted || picked == null) return;
 
+      final colors = context.appColors;
       final cropped = await ImageCropper().cropImage(
         sourcePath: picked.path,
         aspectRatio: const CropAspectRatio(ratioX: 85.6, ratioY: 53.98),
@@ -426,8 +425,8 @@ class _RegisterScreenState extends State<RegisterScreen>
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Sesuaikan e-KTP',
-            toolbarColor: AppColors.primary,
-            toolbarWidgetColor: AppColors.white,
+            toolbarColor: colors.primary,
+            toolbarWidgetColor: colors.onPrimary,
             lockAspectRatio: true,
             freeStyleCropEnabled: true,
           ),
@@ -660,20 +659,25 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return PopScope(
       canPop: _step == 0,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) _goToStep(_step - 1);
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFE8F5E9),
+        backgroundColor: colors.primaryLight,
         body: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFFE8F5E9), Color(0xFFF7FBF8), Colors.white],
-              stops: [0.0, 0.35, 1.0],
+              colors: [
+                colors.primaryLight,
+                colors.surfaceVariant,
+                colors.isDark ? colors.background : colors.surface,
+              ],
+              stops: const [0.0, 0.35, 1.0],
             ),
           ),
           child: BlocConsumer<AuthBloc, AuthState>(
@@ -805,13 +809,14 @@ class _RegisterScreenState extends State<RegisterScreen>
             _ => 'Lanjut',
           };
 
+    final colors = context.appColors;
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 8, 18, 16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.06),
+            color: colors.shadow,
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),
@@ -830,8 +835,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                         ? null
                         : (isFirstStep ? _showPhotoSourceSheet : _handleBack),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.grey300),
+                      foregroundColor: colors.textPrimary,
+                      side: BorderSide(color: colors.borderStrong),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -854,20 +859,20 @@ class _RegisterScreenState extends State<RegisterScreen>
                 child: ElevatedButton(
                   onPressed: onPrimary,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: AppColors.white,
+                            color: colors.onPrimary,
                           ),
                         )
                       : Text(
@@ -888,6 +893,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildHeader() {
+    final colors = context.appColors;
     final progress = (_step + 1) / _titles.length;
     final reduceMotion = MediaQuery.of(context).disableAnimations;
 
@@ -909,7 +915,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   TextButton(
                     onPressed: _applyCachedOcr,
                     style: TextButton.styleFrom(
-                      foregroundColor: AppColors.primary,
+                      foregroundColor: colors.primary,
                       textStyle: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -933,7 +939,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   style: AppTextStyles.bodySmall.copyWith(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF64748B),
+                    color: colors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -948,8 +954,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                     builder: (context, value, _) => LinearProgressIndicator(
                       value: value,
                       minHeight: 4,
-                      color: AppColors.primary,
-                      backgroundColor: const Color(0xFFE2E8F0),
+                      color: colors.primary,
+                      backgroundColor: colors.border,
                     ),
                   ),
                 ),
@@ -959,7 +965,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   style: AppTextStyles.headlineSmall.copyWith(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF111827),
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -967,7 +973,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   _subtitles[_step],
                   style: AppTextStyles.bodySmall.copyWith(
                     fontSize: 13,
-                    color: const Color(0xFF4B5563),
+                    color: colors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -981,6 +987,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildIdentityStep() {
+    final colors = context.appColors;
     return SingleChildScrollView(
       key: const ValueKey('identity'),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -1063,10 +1070,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                               readOnly: true,
                               onTap: _pickBirthDate,
                               decoration: _input('Pilih tanggal').copyWith(
-                                suffixIcon: const Icon(
+                                suffixIcon: Icon(
                                   Icons.calendar_today_outlined,
                                   size: 18,
-                                  color: Color(0xFF94A3B8),
+                                  color: colors.textHint,
                                 ),
                               ),
                               validator: (_) =>
@@ -1105,7 +1112,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 'belum sesuai.',
                 style: AppTextStyles.caption.copyWith(
                   fontSize: 11,
-                  color: const Color(0xFF64748B),
+                  color: colors.textMuted,
                 ),
               ),
             ),
@@ -1116,6 +1123,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildAccountStep() {
+    final colors = context.appColors;
     return SingleChildScrollView(
       key: const ValueKey('account'),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -1196,7 +1204,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                           size: 20,
-                          color: const Color(0xFF94A3B8),
+                          color: colors.textHint,
                         ),
                         onPressed: () {
                           setState(() {
@@ -1229,7 +1237,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                               ? Icons.visibility_off_outlined
                               : Icons.visibility_outlined,
                           size: 20,
-                          color: const Color(0xFF94A3B8),
+                          color: colors.textHint,
                         ),
                         onPressed: () {
                           setState(() {
@@ -1290,6 +1298,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildOtpStep() {
+    final colors = context.appColors;
     final phone = _phoneController.text.trim();
     final isExpired = _isOtpExpired;
     final hasChallenge = _validOtpChallenge != null;
@@ -1314,16 +1323,16 @@ class _RegisterScreenState extends State<RegisterScreen>
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: colors.primaryLight,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: const Color(0xFFBBF7D0)),
+                      border: Border.all(color: colors.primaryBorder),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.chat_outlined,
                           size: 18,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -1331,7 +1340,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                             'Kode OTP dikirim ke $phone',
                             style: AppTextStyles.caption.copyWith(
                               fontSize: 12,
-                              color: const Color(0xFF374151),
+                              color: colors.textSecondary,
                             ),
                           ),
                         ),
@@ -1366,36 +1375,36 @@ class _RegisterScreenState extends State<RegisterScreen>
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.timer_outlined,
                           size: 14,
-                          color: Color(0xFF64748B),
+                          color: colors.textMuted,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'Kode OTP masih berlaku $_formattedRemainingTime.',
                           style: AppTextStyles.caption.copyWith(
                             fontSize: 11,
-                            color: const Color(0xFF64748B),
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
                     ),
                   ] else if (hasChallenge && isExpired) ...[
                     const SizedBox(height: 8),
-                    const Row(
+                    Row(
                       children: [
                         Icon(
                           Icons.error_outline,
                           size: 14,
-                          color: AppColors.error,
+                          color: colors.error,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
                           'Kode OTP telah kedaluwarsa.',
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppColors.error,
+                            color: colors.error,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1408,17 +1417,17 @@ class _RegisterScreenState extends State<RegisterScreen>
                         ? Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.access_time_rounded,
                                 size: 14,
-                                color: Color(0xFF64748B),
+                                color: colors.textMuted,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'Kirim ulang kode dalam ${resendSeconds}s',
                                 style: AppTextStyles.caption.copyWith(
                                   fontSize: 12,
-                                  color: const Color(0xFF64748B),
+                                  color: colors.textMuted,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1429,12 +1438,12 @@ class _RegisterScreenState extends State<RegisterScreen>
                                 ? null
                                 : () => _handleSendOtp(force: true),
                             icon: _isSendingOtp
-                                ? const SizedBox(
+                                ? SizedBox(
                                     width: 14,
                                     height: 14,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: AppColors.primary,
+                                      color: colors.primary,
                                     ),
                                   )
                                 : const Icon(Icons.refresh_rounded, size: 16),
@@ -1442,10 +1451,10 @@ class _RegisterScreenState extends State<RegisterScreen>
                               _isSendingOtp
                                   ? 'Mengirim ulang...'
                                   : 'Kirim Ulang Kode OTP',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primary,
+                                color: colors.primary,
                               ),
                             ),
                           ),
@@ -1460,6 +1469,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildKtpPreview(File photo) {
+    final colors = context.appColors;
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: AspectRatio(
@@ -1467,9 +1477,9 @@ class _RegisterScreenState extends State<RegisterScreen>
         child: Image.file(
           photo,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const ColoredBox(
-            color: Color(0xFF1E293B),
-            child: Icon(Icons.broken_image_outlined, color: AppColors.white),
+          errorBuilder: (context, error, stackTrace) => ColoredBox(
+            color: colors.surfaceElevated,
+            child: Icon(Icons.broken_image_outlined, color: colors.textMuted),
           ),
         ),
       ),
@@ -1477,9 +1487,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildIdentitySummary() {
+    final colors = context.appColors;
     return _buildSummaryCard(
       headerIcon: Icons.badge_outlined,
-      headerColor: AppColors.success,
+      headerColor: colors.success,
       header: 'DATA IDENTITAS e-KTP',
       editLabel: 'Ubah Data',
       onEdit: () => _goToStep(1),
@@ -1499,9 +1510,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildAccountSummary() {
+    final colors = context.appColors;
     return _buildSummaryCard(
       headerIcon: Icons.person_outline_rounded,
-      headerColor: const Color(0xFF2563EB),
+      headerColor: colors.info,
       header: 'INFORMASI AKUN & KONTAK',
       editLabel: 'Ubah Akun',
       onEdit: () => _goToStep(2),
@@ -1526,12 +1538,13 @@ class _RegisterScreenState extends State<RegisterScreen>
     required VoidCallback onEdit,
     required List<(String, String)> rows,
   }) {
+    final colors = context.appColors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1554,7 +1567,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               TextButton(
                 onPressed: onEdit,
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
+                  foregroundColor: colors.primary,
                   padding: EdgeInsets.zero,
                   minimumSize: const Size(0, 24),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1564,7 +1577,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
+                    color: colors.primary,
                   ),
                 ),
               ),
@@ -1576,7 +1589,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               row.$1,
               style: AppTextStyles.caption.copyWith(
                 fontSize: 10,
-                color: const Color(0xFF64748B),
+                color: colors.textMuted,
               ),
             ),
             const SizedBox(height: 2),
@@ -1585,7 +1598,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               style: AppTextStyles.bodySmall.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF111827),
+                color: colors.textPrimary,
               ),
             ),
           ],
@@ -1595,20 +1608,17 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildSecurityPill() {
+    final colors = context.appColors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFECFDF5),
+        color: colors.successLight,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFA7F3D0)),
+        border: Border.all(color: colors.primaryBorder),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.lock_outline_rounded,
-            size: 15,
-            color: Color(0xFF065F46),
-          ),
+          Icon(Icons.lock_outline_rounded, size: 15, color: colors.primaryDark),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -1617,7 +1627,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               style: AppTextStyles.caption.copyWith(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF065F46),
+                color: colors.primaryDark,
               ),
             ),
           ),
@@ -1627,36 +1637,38 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Widget _buildLabel(String text) {
+    final colors = context.appColors;
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Text.rich(
         TextSpan(
           text: text,
-          children: const [
+          children: [
             TextSpan(
               text: ' *',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: colors.error),
             ),
           ],
         ),
         style: AppTextStyles.bodySmall.copyWith(
           fontSize: 13,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF374151),
+          color: colors.textSecondary,
         ),
       ),
     );
   }
 
   InputDecoration _input(String hint) {
+    final colors = context.appColors;
     return InputDecoration(
       hintText: hint,
       hintStyle: AppTextStyles.bodySmall.copyWith(
         fontSize: 13,
-        color: const Color(0xFF94A3B8),
+        color: colors.textHint,
       ),
       filled: true,
-      fillColor: const Color(0xFFF3F4F6),
+      fillColor: colors.surfaceElevated,
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       border: OutlineInputBorder(
@@ -1669,15 +1681,15 @@ class _RegisterScreenState extends State<RegisterScreen>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide: BorderSide(color: colors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error),
+        borderSide: BorderSide(color: colors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: BorderSide(color: colors.error, width: 1.5),
       ),
     );
   }

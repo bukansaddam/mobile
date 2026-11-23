@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_visual_config.dart';
@@ -14,7 +14,8 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visual = NotificationVisualConfig.fromEntity(item);
+    final colors = context.appColors;
+    final visual = NotificationVisualConfig.fromEntity(item, colors);
     final isUnread = item.isUnread;
     final timeText = NotificationVisualConfig.formatRelativeTime(
       item.createdAt,
@@ -26,15 +27,14 @@ class NotificationCard extends StatelessWidget {
       final isCritical =
           item.severity == NotificationSeverity.critical ||
           item.isEmergencyReport;
-      cardBg = isCritical
-          ? AppColors.errorLight.withValues(alpha: 0.45)
-          : AppColors.primaryLight.withValues(alpha: 0.45);
-      cardBorder = isCritical
-          ? AppColors.error.withValues(alpha: 0.30)
-          : AppColors.primary.withValues(alpha: 0.28);
+      cardBg = (isCritical ? colors.errorLight : colors.primaryLight)
+          .withValues(alpha: colors.isDark ? 0.85 : 0.45);
+      cardBorder = (isCritical ? colors.error : colors.primary).withValues(
+        alpha: colors.isDark ? 0.45 : 0.28,
+      );
     } else {
-      cardBg = AppColors.surface;
-      cardBorder = AppColors.grey200;
+      cardBg = colors.surface;
+      cardBorder = colors.border;
     }
 
     final metadataChips = _buildMetadataLabels(item);
@@ -103,7 +103,7 @@ class NotificationCard extends StatelessWidget {
                               Text(
                                 timeText,
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                   fontSize: 11,
                                 ),
                               ),
@@ -115,8 +115,8 @@ class NotificationCard extends StatelessWidget {
                                     color:
                                         item.severity ==
                                             NotificationSeverity.critical
-                                        ? AppColors.error
-                                        : AppColors.primaryDark,
+                                        ? colors.error
+                                        : colors.primaryDark,
                                     shape: BoxShape.circle,
                                   ),
                                 ),
@@ -134,7 +134,7 @@ class NotificationCard extends StatelessWidget {
                         fontWeight: isUnread
                             ? FontWeight.w700
                             : FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                         height: 1.3,
                       ),
                     ),
@@ -145,7 +145,7 @@ class NotificationCard extends StatelessWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                           fontSize: 13,
                           height: 1.4,
                         ),
@@ -164,13 +164,13 @@ class NotificationCard extends StatelessWidget {
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.grey100,
+                                  color: colors.surfaceElevated,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
                                   label,
                                   style: AppTextStyles.labelSmall.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 11,
                                   ),

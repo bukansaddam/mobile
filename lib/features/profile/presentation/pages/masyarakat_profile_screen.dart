@@ -1,10 +1,11 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
+import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
@@ -45,18 +46,20 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     final audioService = sl<AudioAlarmService>();
     bool soundEnabled = audioService.soundEnabled;
     double volume = audioService.volume;
+    final colors = context.appColors;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
+        final sheetColors = sheetContext.appColors;
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Material(
-              color: Colors.white,
+              color: sheetColors.surface,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
@@ -66,30 +69,32 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Icon(
                           Icons.notifications_active_rounded,
-                          color: AppColors.error,
+                          color: sheetColors.error,
                           size: 24,
                         ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Notifikasi & Alarm Dering Bencana',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0F172A),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Notifikasi & Alarm Dering Bencana',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: sheetColors.textPrimary,
+                            ),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    Text(
                       'Atur peringatan darurat berdering ketika ada potensi bencana alam di sekitar Anda.',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: Color(0xFF64748B),
+                        color: sheetColors.textMuted,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -102,46 +107,46 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                         });
                         audioService.setSoundEnabled(val);
                       },
-                      activeTrackColor: AppColors.error,
-                      title: const Text(
+                      activeTrackColor: sheetColors.errorSolid,
+                      title: Text(
                         'Dering Sirine Bencana Alam',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0F172A),
+                          color: sheetColors.textPrimary,
                         ),
                       ),
-                      subtitle: const Text(
+                      subtitle: Text(
                         'Memutar sirine berdurasi kontinu saat ada bahaya gempa/banjir.',
                         style: TextStyle(
                           fontSize: 11.5,
-                          color: Color(0xFF64748B),
+                          color: sheetColors.textMuted,
                         ),
                       ),
                     ),
 
                     const Divider(height: 20),
 
-                    const Text(
+                    Text(
                       'Volume Suara Sirine Alarm',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF334155),
+                        color: sheetColors.textSecondary,
                       ),
                     ),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.volume_down_rounded,
-                          color: Color(0xFF64748B),
+                          color: sheetColors.textMuted,
                         ),
                         Expanded(
                           child: Slider(
                             value: volume,
                             min: 0.1,
                             max: 1.0,
-                            activeColor: AppColors.error,
+                            activeColor: sheetColors.errorSolid,
                             onChanged: soundEnabled
                                 ? (val) {
                                     setModalState(() {
@@ -152,10 +157,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 : null,
                           ),
                         ),
-                        const Icon(
-                          Icons.volume_up_rounded,
-                          color: AppColors.error,
-                        ),
+                        Icon(Icons.volume_up_rounded, color: sheetColors.error),
                       ],
                     ),
 
@@ -174,20 +176,20 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 );
                               }
                             : null,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.play_arrow_rounded,
-                          color: AppColors.error,
+                          color: sheetColors.error,
                         ),
-                        label: const Text(
+                        label: Text(
                           'Uji Dering Sirine (Sound Test)',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.error,
+                            color: sheetColors.error,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: AppColors.errorBorder),
+                          side: BorderSide(color: sheetColors.errorBorder),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -224,6 +226,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final authState = context.watch<AuthBloc>().state;
     final complaintState = _watchMyComplaintState(context);
     final currentUser = authState is AuthAuthenticated ? authState.user : null;
@@ -267,7 +270,11 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
                     child: Column(
                       children: [
-                        _buildAvatar(userName, currentUser?.displayProfilePic),
+                        _buildAvatar(
+                          colors,
+                          userName,
+                          currentUser?.displayProfilePic,
+                        ),
 
                         const SizedBox(height: 16),
 
@@ -275,13 +282,16 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(24),
-                            boxShadow: const [
+                            border: colors.isDark
+                                ? Border.all(color: colors.border)
+                                : null,
+                            boxShadow: [
                               BoxShadow(
-                                color: Color(0x0D0F172A),
+                                color: colors.shadow,
                                 blurRadius: 20,
-                                offset: Offset(0, 8),
+                                offset: const Offset(0, 8),
                                 spreadRadius: 2,
                               ),
                             ],
@@ -301,20 +311,20 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                       children: [
                                         Text(
                                           userName,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.w800,
-                                            color: Color(0xFF0F172A),
+                                            color: colors.textPrimary,
                                             letterSpacing: -0.2,
                                           ),
                                         ),
                                         const SizedBox(height: 3),
                                         Text(
                                           userContact,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 12.5,
                                             fontWeight: FontWeight.w500,
-                                            color: Color(0xFF64748B),
+                                            color: colors.textMuted,
                                           ),
                                         ),
                                       ],
@@ -327,26 +337,26 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primaryLight,
+                                      color: colors.primaryLight,
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: AppColors.primary.withAlpha(40),
+                                        color: colors.primary.withAlpha(40),
                                         width: 1,
                                       ),
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(
                                           Icons.verified_user_rounded,
-                                          color: AppColors.primaryDark,
+                                          color: colors.primaryDark,
                                           size: 15,
                                         ),
-                                        SizedBox(width: 4),
+                                        const SizedBox(width: 4),
                                         Text(
                                           'Warga Terdaftar',
                                           style: TextStyle(
-                                            color: AppColors.primaryDark,
+                                            color: colors.primaryDark,
                                             fontSize: 11,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -375,16 +385,19 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                               Row(
                                 children: [
                                   _buildStatCard(
+                                    colors: colors,
                                     number: '$totalLaporanCount',
                                     label: 'Laporan',
                                   ),
                                   const SizedBox(width: 10),
                                   _buildStatCard(
+                                    colors: colors,
                                     number: '$inProgressCount',
                                     label: 'Proses',
                                   ),
                                   const SizedBox(width: 10),
                                   _buildStatCard(
+                                    colors: colors,
                                     number: '$completedCount',
                                     label: 'Selesai',
                                   ),
@@ -396,34 +409,31 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                               Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF8FAFC),
+                                  color: colors.surfaceVariant,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: const Color(0xFFE2E8F0),
+                                    color: colors.border,
                                     width: 1,
                                   ),
                                 ),
                                 child: Column(
                                   children: [
                                     _buildProfileDetailItem(
+                                      colors: colors,
                                       icon: Icons.badge_outlined,
                                       label: 'NIK',
                                       value: currentUser?.nik,
                                     ),
-                                    const Divider(
-                                      height: 16,
-                                      color: Color(0xFFE2E8F0),
-                                    ),
+                                    Divider(height: 16, color: colors.border),
                                     _buildProfileDetailItem(
+                                      colors: colors,
                                       icon: Icons.phone_outlined,
                                       label: 'No. Telepon',
                                       value: currentUser?.phoneNumber,
                                     ),
-                                    const Divider(
-                                      height: 16,
-                                      color: Color(0xFFE2E8F0),
-                                    ),
+                                    Divider(height: 16, color: colors.border),
                                     _buildProfileDetailItem(
+                                      colors: colors,
                                       icon: Icons.email_outlined,
                                       label: 'Email',
                                       value: currentUser?.email,
@@ -435,33 +445,39 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
+
+                        const ThemeModeSelectorTile(),
+
+                        const SizedBox(height: 16),
 
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(20),
-                            boxShadow: const [
+                            border: colors.isDark
+                                ? Border.all(color: colors.border)
+                                : null,
+                            boxShadow: [
                               BoxShadow(
-                                color: Color(0x080F172A),
+                                color: colors.shadow,
                                 blurRadius: 14,
-                                offset: Offset(0, 4),
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
                           child: Column(
                             children: [
                               _buildMenuItem(
+                                colors: colors,
                                 icon: Icons.person_outline_rounded,
                                 title: 'Edit Profil Saya',
                                 onTap: () => AppRouter.toEditProfile(context),
                               ),
                               if (widget.showNotificationSettings) ...[
-                                const Divider(
-                                  height: 1,
-                                  color: Color(0xFFF1F5F9),
-                                ),
+                                Divider(height: 1, color: colors.divider),
                                 _buildMenuItem(
+                                  colors: colors,
                                   icon: Icons.notifications_none_rounded,
                                   title:
                                       'Pengaturan Notifikasi & Alarm Bencana',
@@ -470,25 +486,21 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 ),
                               ],
                               if (widget.showChangePasswordMenu) ...[
-                                const Divider(
-                                  height: 1,
-                                  color: Color(0xFFF1F5F9),
-                                ),
+                                Divider(height: 1, color: colors.divider),
                                 _buildMenuItem(
+                                  colors: colors,
                                   icon: Icons.lock_outline_rounded,
                                   title: 'Ubah Kata Sandi',
                                   onTap: () => AppRouter.toEditProfile(context),
                                 ),
                               ],
-                              const Divider(
-                                height: 1,
-                                color: Color(0xFFF1F5F9),
-                              ),
+                              Divider(height: 1, color: colors.divider),
                               _buildMenuItem(
+                                colors: colors,
                                 icon: Icons.logout_rounded,
                                 title: 'Keluar dari Akun',
-                                textColor: AppColors.error,
-                                iconColor: AppColors.error,
+                                textColor: colors.error,
+                                iconColor: colors.error,
                                 showChevron: false,
                                 onTap: () async {
                                   final confirmed =
@@ -525,7 +537,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     );
   }
 
-  Widget _buildAvatar(String name, String? profilePic) {
+  Widget _buildAvatar(AppColorScheme colors, String name, String? profilePic) {
     final initials = name.trim().isNotEmpty
         ? name
               .trim()
@@ -542,13 +554,13 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
       height: 105,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.primaryLight,
-        border: Border.all(color: Colors.white, width: 4),
-        boxShadow: const [
+        color: colors.primaryLight,
+        border: Border.all(color: colors.surface, width: 4),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1F0F172A),
+            color: colors.shadow,
             blurRadius: 18,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -564,10 +576,10 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
             : Center(
                 child: Text(
                   initials,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primaryDark,
+                    color: colors.primaryDark,
                   ),
                 ),
               ),
@@ -575,33 +587,37 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     );
   }
 
-  Widget _buildStatCard({required String number, required String label}) {
+  Widget _buildStatCard({
+    required AppColorScheme colors,
+    required String number,
+    required String label,
+  }) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
+          color: colors.surfaceVariant,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F5F9), width: 1),
+          border: Border.all(color: colors.border, width: 1),
         ),
         child: Column(
           children: [
             Text(
               number,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: Color(0xFF0F172A),
+                color: colors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -611,6 +627,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
   }
 
   Widget _buildProfileDetailItem({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String? value,
@@ -619,14 +636,14 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
 
     return Row(
       children: [
-        Icon(icon, size: 18, color: AppColors.textSecondary),
+        Icon(icon, size: 18, color: colors.textSecondary),
         const SizedBox(width: 10),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w500,
-            color: AppColors.textSecondary,
+            color: colors.textSecondary,
           ),
         ),
         const Spacer(),
@@ -634,16 +651,16 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
           Icon(
             Icons.check_circle_rounded,
             size: 18,
-            color: AppColors.success,
+            color: colors.success,
             semanticLabel: '$label tersedia',
           )
         else
-          const Text(
+          Text(
             '-',
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF0F172A),
+              color: colors.textPrimary,
             ),
           ),
       ],
@@ -651,6 +668,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
   }
 
   Widget _buildMenuItem({
+    required AppColorScheme colors,
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -670,13 +688,13 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: (iconColor ?? const Color(0xFF64748B)).withAlpha(20),
+                color: (iconColor ?? colors.textMuted).withAlpha(20),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon,
                 size: 18,
-                color: iconColor ?? const Color(0xFF475569),
+                color: iconColor ?? colors.textSecondary,
               ),
             ),
             const SizedBox(width: 12),
@@ -689,7 +707,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                       style: TextStyle(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w600,
-                        color: textColor ?? const Color(0xFF1E293B),
+                        color: textColor ?? colors.textPrimary,
                       ),
                     ),
                   ),
@@ -701,15 +719,15 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: colors.surfaceElevated,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         badge,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ),
@@ -718,10 +736,10 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
               ),
             ),
             if (showChevron)
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
                 size: 18,
-                color: Color(0xFF94A3B8),
+                color: colors.textHint,
               ),
           ],
         ),

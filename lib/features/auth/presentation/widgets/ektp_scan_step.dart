@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 
@@ -60,6 +60,7 @@ class _EktpScanStepState extends State<EktpScanStep>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
       child: Column(
@@ -82,7 +83,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                         animation: widget.entrance,
                         start: 0,
                         end: 0.5,
-                        child: _buildScannerCard(),
+                        child: _buildScannerCard(colors),
                       ),
                     ),
                   ),
@@ -95,7 +96,7 @@ class _EktpScanStepState extends State<EktpScanStep>
             animation: widget.entrance,
             start: 0.15,
             end: 0.65,
-            child: _buildTips(),
+            child: _buildTips(colors),
           ),
           const SizedBox(height: 14),
           EntranceTransition(
@@ -105,11 +106,13 @@ class _EktpScanStepState extends State<EktpScanStep>
             child: Column(
               children: [
                 _buildNote(
+                  colors,
                   Icons.info_outline_rounded,
                   'Foto e-KTP wajib diambil untuk melanjutkan pendaftaran',
                 ),
                 const SizedBox(height: 6),
                 _buildNote(
+                  colors,
                   Icons.lock_outline_rounded,
                   'Data identitas Anda dienkripsi aman dan tidak dibagikan '
                   'ke pihak ketiga',
@@ -122,27 +125,27 @@ class _EktpScanStepState extends State<EktpScanStep>
     );
   }
 
-  Widget _buildScannerCard() {
+  Widget _buildScannerCard(AppColorScheme colors) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
+        border: Border.all(color: colors.border),
       ),
       child: widget.photo == null
-          ? _buildMockCard()
-          : _buildPhotoPreview(widget.photo!),
+          ? _buildMockCard(colors)
+          : _buildPhotoPreview(colors, widget.photo!),
     );
   }
 
-  Widget _buildMockCard() {
+  Widget _buildMockCard(AppColorScheme colors) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.infoLight,
+        color: colors.infoLight,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFBAE6FD)),
+        border: Border.all(color: colors.info.withValues(alpha: 0.35)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,9 +160,9 @@ class _EktpScanStepState extends State<EktpScanStep>
                       width: 30,
                       height: 22,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF08A),
+                        color: colors.warningLight,
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: const Color(0xFFFDE047)),
+                        border: Border.all(color: colors.warningBorder),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -168,7 +171,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                       style: AppTextStyles.caption.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF0369A1),
+                        color: colors.info,
                       ),
                     ),
                   ],
@@ -179,7 +182,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF0369A1),
+                    color: colors.info,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -187,7 +190,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                   'Nama: • • • • • • • • •',
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 9,
-                    color: AppColors.info,
+                    color: colors.info,
                   ),
                 ),
               ],
@@ -198,13 +201,13 @@ class _EktpScanStepState extends State<EktpScanStep>
             width: 56,
             height: 72,
             decoration: BoxDecoration(
-              color: const Color(0xFF94A3B8),
+              color: colors.borderStrong,
               borderRadius: BorderRadius.circular(6),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.person_outline_rounded,
               size: 28,
-              color: Color(0xFFE2E8F0),
+              color: colors.surfaceVariant,
             ),
           ),
         ],
@@ -212,7 +215,7 @@ class _EktpScanStepState extends State<EktpScanStep>
     );
   }
 
-  Widget _buildPhotoPreview(File photo) {
+  Widget _buildPhotoPreview(AppColorScheme colors, File photo) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: Stack(
@@ -221,15 +224,18 @@ class _EktpScanStepState extends State<EktpScanStep>
           Image.file(
             photo,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const ColoredBox(
-              color: Color(0xFF1E293B),
-              child: Icon(Icons.broken_image_outlined, color: AppColors.white),
+            errorBuilder: (context, error, stackTrace) => ColoredBox(
+              color: colors.surfaceElevated,
+              child: Icon(
+                Icons.broken_image_outlined,
+                color: colors.textPrimary,
+              ),
             ),
           ),
           IgnorePointer(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFF22C55E), width: 2),
+                border: Border.all(color: colors.primary, width: 2),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -245,11 +251,11 @@ class _EktpScanStepState extends State<EktpScanStep>
                   alignment: Alignment(0, -1 + 2 * t),
                   child: Container(
                     height: 3,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
                           Colors.transparent,
-                          Color(0xFF4ADE80),
+                          colors.success,
                           Colors.transparent,
                         ],
                       ),
@@ -266,8 +272,8 @@ class _EktpScanStepState extends State<EktpScanStep>
               onPressed: widget.onClearPhoto,
               tooltip: 'Hapus foto',
               style: IconButton.styleFrom(
-                backgroundColor: AppColors.white,
-                foregroundColor: AppColors.error,
+                backgroundColor: colors.surface,
+                foregroundColor: colors.error,
               ),
               icon: const Icon(Icons.delete_outline_rounded, size: 20),
             ),
@@ -277,40 +283,40 @@ class _EktpScanStepState extends State<EktpScanStep>
     );
   }
 
-  Widget _buildTips() {
+  Widget _buildTips(AppColorScheme colors) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildTip('Pencahayaan terang & tidak ada pantulan blitz'),
-          _buildTip('Seluruh 4 sudut e-KTP masuk ke dalam bingkai'),
-          _buildTip('Huruf NIK & Nama tidak tertutup jari tangan'),
-          _buildTip('Gunakan fisik e-KTP asli (bukan fotokopi)'),
+          _buildTip(colors, 'Pencahayaan terang & tidak ada pantulan blitz'),
+          _buildTip(colors, 'Seluruh 4 sudut e-KTP masuk ke dalam bingkai'),
+          _buildTip(colors, 'Huruf NIK & Nama tidak tertutup jari tangan'),
+          _buildTip(colors, 'Gunakan fisik e-KTP asli (bukan fotokopi)'),
         ],
       ),
     );
   }
 
-  Widget _buildTip(String text) {
+  Widget _buildTip(AppColorScheme colors, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_rounded, size: 15, color: AppColors.success),
+          Icon(Icons.check_rounded, size: 15, color: colors.success),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
               text,
               style: AppTextStyles.caption.copyWith(
                 fontSize: 12,
-                color: const Color(0xFF374151),
+                color: colors.textSecondary,
                 height: 1.3,
               ),
             ),
@@ -320,11 +326,11 @@ class _EktpScanStepState extends State<EktpScanStep>
     );
   }
 
-  Widget _buildNote(IconData icon, String text) {
+  Widget _buildNote(AppColorScheme colors, IconData icon, String text) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(icon, size: 13, color: const Color(0xFF94A3B8)),
+        Icon(icon, size: 13, color: colors.textHint),
         const SizedBox(width: 5),
         Flexible(
           child: Text(
@@ -332,7 +338,7 @@ class _EktpScanStepState extends State<EktpScanStep>
             textAlign: TextAlign.center,
             style: AppTextStyles.caption.copyWith(
               fontSize: 10.5,
-              color: const Color(0xFF94A3B8),
+              color: colors.textHint,
               height: 1.35,
             ),
           ),

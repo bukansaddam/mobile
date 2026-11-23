@@ -1,6 +1,8 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/auth/presentation/widgets/map_pin_data.dart';
 
 class MapPinBadge extends StatelessWidget {
@@ -34,7 +36,7 @@ class MapPinBadge extends StatelessWidget {
         decoration: BoxDecoration(
           color: pin.color,
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 2.5),
+          border: Border.all(color: context.appColors.surface, width: 2.5),
           boxShadow: [
             BoxShadow(
               color: pin.color.withValues(alpha: 0.4),
@@ -42,13 +44,17 @@ class MapPinBadge extends StatelessWidget {
               offset: const Offset(0, 3),
             ),
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: context.appColors.shadow,
               blurRadius: 4,
               offset: const Offset(0, 1),
             ),
           ],
         ),
-        child: Icon(pin.icon, size: 18, color: Colors.white),
+        child: Icon(
+          pin.icon,
+          size: 18,
+          color: Colors.white, // media-overlay
+        ),
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
@@ -77,8 +77,9 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: const AppPageBar(title: 'Notifikasi'),
       body: BlocConsumer<NotificationBloc, NotificationState>(
         listenWhen: (prev, curr) =>
@@ -106,7 +107,7 @@ class _NotificationPageState extends State<NotificationPage> {
             );
           }
           return RefreshIndicator(
-            color: AppColors.primaryDark,
+            color: colors.primaryDark,
             onRefresh: () async {
               bloc.add(const FetchNotificationsEvent(isRefresh: true));
               await bloc.stream
@@ -137,11 +138,11 @@ class _NotificationPageState extends State<NotificationPage> {
                     separatorBuilder: (_, _) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       if (index >= state.items.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           child: Center(
                             child: CircularProgressIndicator(
-                              color: AppColors.primaryDark,
+                              color: colors.primaryDark,
                               strokeWidth: 2.5,
                             ),
                           ),

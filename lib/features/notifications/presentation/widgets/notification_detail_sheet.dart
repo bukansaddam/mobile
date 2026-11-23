@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_visual_config.dart';
@@ -21,10 +21,11 @@ class NotificationDetailSheet extends StatelessWidget {
     AppNotificationEntity item, {
     VoidCallback? onOpenLaporanInsidentil,
   }) {
+    final colors = context.appColors;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -37,7 +38,8 @@ class NotificationDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visual = NotificationVisualConfig.fromEntity(item);
+    final colors = context.appColors;
+    final visual = NotificationVisualConfig.fromEntity(item, colors);
     final bottomInset = MediaQuery.of(context).viewPadding.bottom;
 
     return SafeArea(
@@ -53,7 +55,7 @@ class NotificationDetailSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colors.borderStrong,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -103,13 +105,13 @@ class NotificationDetailSheet extends StatelessWidget {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.grey100,
+                                color: colors.surfaceElevated,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 item.status!,
                                 style: AppTextStyles.labelSmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 11,
                                 ),
@@ -121,7 +123,7 @@ class NotificationDetailSheet extends StatelessWidget {
                       Text(
                         NotificationVisualConfig.formatDateTime(item.createdAt),
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -133,7 +135,7 @@ class NotificationDetailSheet extends StatelessWidget {
             Text(
               item.title,
               style: AppTextStyles.headlineSmall.copyWith(
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -143,7 +145,7 @@ class NotificationDetailSheet extends StatelessWidget {
                   ? item.body
                   : 'Tidak ada rincian tambahan pada notifikasi ini.',
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 height: 1.5,
               ),
             ),
@@ -155,9 +157,9 @@ class NotificationDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.grey50,
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Wrap(
                   spacing: 12,
@@ -167,7 +169,7 @@ class NotificationDetailSheet extends StatelessWidget {
                       Text(
                         'Tiket: #${item.ticketNumber}',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -175,7 +177,7 @@ class NotificationDetailSheet extends StatelessWidget {
                       Text(
                         'Target: ${item.totalTarget}',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -183,7 +185,7 @@ class NotificationDetailSheet extends StatelessWidget {
                       Text(
                         'Batas Waktu: ${NotificationVisualConfig.formatDateOnly(item.dueDate!)}',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -202,8 +204,8 @@ class NotificationDetailSheet extends StatelessWidget {
                     onOpenLaporanInsidentil!();
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -219,8 +221,8 @@ class NotificationDetailSheet extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.textPrimary,
-                  side: const BorderSide(color: AppColors.grey300),
+                  foregroundColor: colors.textPrimary,
+                  side: BorderSide(color: colors.borderStrong),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

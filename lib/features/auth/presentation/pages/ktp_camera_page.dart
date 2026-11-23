@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 
@@ -125,8 +125,9 @@ class _KtpCameraPageState extends State<KtpCameraPage>
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = context.appColors.primary;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black, // media-overlay
       body: Stack(
         children: [
           Positioned.fill(child: _buildPreview()),
@@ -134,7 +135,12 @@ class _KtpCameraPageState extends State<KtpCameraPage>
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final hole = computeKtpFrameRect(constraints.biggest);
-                return CustomPaint(painter: _KtpFramePainter(hole: hole));
+                return CustomPaint(
+                  painter: _KtpFramePainter(
+                    hole: hole,
+                    borderColor: primaryColor,
+                  ),
+                );
               },
             ),
           ),
@@ -158,7 +164,7 @@ class _KtpCameraPageState extends State<KtpCameraPage>
                       style: AppTextStyles.caption.copyWith(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.white,
+                        color: Colors.white, // media-overlay
                       ),
                     ),
                     const Spacer(),
@@ -183,11 +189,11 @@ class _KtpCameraPageState extends State<KtpCameraPage>
                       'Posisikan seluruh e-KTP di dalam bingkai',
                       style: AppTextStyles.caption.copyWith(
                         fontSize: 12,
-                        color: AppColors.white,
+                        color: Colors.white, // media-overlay
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildShutter(),
+                    _buildShutter(primaryColor),
                   ],
                 ),
               ),
@@ -204,13 +210,17 @@ class _KtpCameraPageState extends State<KtpCameraPage>
       return Center(
         child: Text(
           'Kamera tidak tersedia',
-          style: AppTextStyles.bodySmall.copyWith(color: AppColors.white),
+          style: AppTextStyles.bodySmall.copyWith(
+            color: Colors.white, // media-overlay
+          ),
         ),
       );
     }
     if (!_isReady || controller == null || !controller.value.isInitialized) {
       return const Center(
-        child: CircularProgressIndicator(color: AppColors.white),
+        child: CircularProgressIndicator(
+          color: Colors.white, // media-overlay
+        ),
       );
     }
 
@@ -229,7 +239,7 @@ class _KtpCameraPageState extends State<KtpCameraPage>
     );
   }
 
-  Widget _buildShutter() {
+  Widget _buildShutter(Color primaryColor) {
     return GestureDetector(
       onTap: _isTaking ? null : _capture,
       child: Container(
@@ -237,7 +247,10 @@ class _KtpCameraPageState extends State<KtpCameraPage>
         height: 72,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.white, width: 4),
+          border: Border.all(
+            color: Colors.white, // media-overlay
+            width: 4,
+          ),
         ),
         child: Center(
           child: Container(
@@ -245,14 +258,16 @@ class _KtpCameraPageState extends State<KtpCameraPage>
             height: 56,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _isTaking ? AppColors.grey400 : AppColors.white,
+              color: _isTaking
+                  ? const Color(0xFFBDBDBD) // media-overlay
+                  : Colors.white, // media-overlay
             ),
             child: _isTaking
-                ? const Padding(
-                    padding: EdgeInsets.all(16),
+                ? Padding(
+                    padding: const EdgeInsets.all(16),
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.primary,
+                      color: primaryColor,
                     ),
                   )
                 : null,
@@ -271,12 +286,16 @@ class _KtpCameraPageState extends State<KtpCameraPage>
       height: 44,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.black.withValues(alpha: 0.4),
+        color: Colors.black.withValues(alpha: 0.4), // media-overlay
       ),
       child: IconButton(
         onPressed: onPressed,
         tooltip: 'Tutup',
-        icon: Icon(icon, color: AppColors.white, size: 22),
+        icon: Icon(
+          icon,
+          color: Colors.white, // media-overlay
+          size: 22,
+        ),
       ),
     );
   }
@@ -393,9 +412,10 @@ Future<File?> _cropKtpImageTask(
 }
 
 class _KtpFramePainter extends CustomPainter {
-  const _KtpFramePainter({required this.hole});
+  const _KtpFramePainter({required this.hole, required this.borderColor});
 
   final Rect hole;
+  final Color borderColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -406,13 +426,13 @@ class _KtpFramePainter extends CustomPainter {
       ..fillType = PathFillType.evenOdd;
     canvas.drawPath(
       scrim,
-      Paint()..color = Colors.black.withValues(alpha: 0.55),
+      Paint()..color = Colors.black.withValues(alpha: 0.55), // media-overlay
     );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(hole, radius),
       Paint()
-        ..color = AppColors.primary
+        ..color = borderColor
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -420,6 +440,6 @@ class _KtpFramePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _KtpFramePainter oldDelegate) {
-    return oldDelegate.hole != hole;
+    return oldDelegate.hole != hole || oldDelegate.borderColor != borderColor;
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 import 'package:akar/features/auth/presentation/widgets/feature_avatar_triad.dart';
@@ -29,27 +29,27 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     super.dispose();
   }
 
-  static const List<FeatureHighlightItem> _features = [
+  List<FeatureHighlightItem> _buildFeatures(AppColorScheme colors) => [
     FeatureHighlightItem(
       title: 'Tanggap Darurat',
       description: 'Laporkan kejadian darurat secara instan untuk respon cepat dan terkoordinasi dari petugas Linmas terdekat.',
       icon: Icons.crisis_alert_rounded,
-      iconColor: AppColors.error,
-      backgroundColor: AppColors.errorLight,
+      iconColor: colors.error,
+      backgroundColor: colors.errorLight,
     ),
     FeatureHighlightItem(
       title: 'Kolaborasi Warga & Linmas',
       description: 'Sinergi aktif antara masyarakat dan petugas Linmas demi terciptanya lingkungan yang aman, tertib, dan harmonis.',
       icon: Icons.shield_rounded,
-      iconColor: AppColors.primary,
-      backgroundColor: Color(0xFFE8F5E9),
+      iconColor: colors.primary,
+      backgroundColor: colors.primaryLight,
     ),
     FeatureHighlightItem(
       title: 'Pemantauan Wilayah',
       description: 'Pantau situasi pos kamling dan rute patroli keamanan lingkungan sekitar Anda secara real-time.',
       icon: Icons.radar_rounded,
-      iconColor: AppColors.info,
-      backgroundColor: AppColors.infoLight,
+      iconColor: colors.info,
+      backgroundColor: colors.infoLight,
     ),
   ];
 
@@ -58,7 +58,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     if (velocity == null) return;
 
     if (velocity < -200) {
-      if (_selectedFeature < _features.length - 1) {
+      if (_selectedFeature < 2) {
         setState(() => _selectedFeature++);
       }
     } else if (velocity > 200) {
@@ -70,20 +70,22 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final activeItem = _features[_selectedFeature];
+    final colors = context.appColors;
+    final features = _buildFeatures(colors);
+    final activeItem = features[_selectedFeature];
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromARGB(255, 207, 240, 209),
-              Color(0xFFF7FBF8),
-              Colors.white,
+              colors.primaryLight,
+              colors.surfaceVariant,
+              colors.isDark ? colors.background : colors.surface,
             ],
-            stops: [0.0, 0.45, 1.0],
+            stops: const [0.0, 0.45, 1.0],
           ),
         ),
         child: SafeArea(
@@ -110,8 +112,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   animation: _entranceController,
                                   start: 0,
                                   end: 0.45,
-                                  child: const IndonesiaDottedMap(
-                                    mapColor: Color(0xFF9CA3AF),
+                                  child: IndonesiaDottedMap(
+                                    mapColor: colors.textHint,
                                   ),
                                 ),
                                 Transform.translate(
@@ -122,7 +124,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                     end: 0.55,
                                     child: FeatureAvatarTriad(
                                       selectedIndex: _selectedFeature,
-                                      items: _features,
+                                      items: features,
                                       onSelected: (index) {
                                         setState(
                                           () => _selectedFeature = index,
@@ -178,8 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                                   .copyWith(
                                                     fontSize: 24,
                                                     fontWeight: FontWeight.w800,
-                                                    color:
-                                                        AppColors.textPrimary,
+                                                    color: colors.textPrimary,
                                                     letterSpacing: -0.5,
                                                   ),
                                               textAlign: TextAlign.center,
@@ -194,8 +195,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                                 activeItem.description,
                                                 style: AppTextStyles.bodyMedium
                                                     .copyWith(
-                                                      color: AppColors
-                                                          .textSecondary,
+                                                      color:
+                                                          colors.textSecondary,
                                                       height: 1.5,
                                                     ),
                                                 textAlign: TextAlign.center,
@@ -218,7 +219,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                       children: [
                                         for (
                                           int i = 0;
-                                          i < _features.length;
+                                          i < features.length;
                                           i++
                                         )
                                           GestureDetector(
@@ -243,8 +244,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                                 height: 6.0,
                                                 decoration: BoxDecoration(
                                                   color: _selectedFeature == i
-                                                      ? AppColors.primary
-                                                      : AppColors.grey300,
+                                                      ? colors.primary
+                                                      : colors.borderStrong,
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                         3.0,
@@ -278,8 +279,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   queryParameters: {'role': 'masyarakat'},
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: AppColors.white,
+                                  backgroundColor: colors.primary,
+                                  foregroundColor: colors.onPrimary,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 16,
                                   ),
@@ -309,9 +310,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                   queryParameters: {'role': 'linmas'},
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors.primary,
-                                  side: const BorderSide(
-                                    color: AppColors.primary,
+                                  foregroundColor: colors.primary,
+                                  side: BorderSide(
+                                    color: colors.primary,
                                     width: 1.5,
                                   ),
                                   padding: const EdgeInsets.symmetric(

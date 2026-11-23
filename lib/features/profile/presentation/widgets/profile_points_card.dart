@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -26,12 +26,11 @@ class ProfilePointsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final formattedPoints = formatPoints(points);
 
-    final backgroundColor = isEmbedded
-        ? AppColors.warningLight
-        : AppColors.white;
-    const borderColor = AppColors.warningBorder;
+    final backgroundColor = isEmbedded ? colors.warningLight : colors.surface;
+    final borderColor = colors.warningBorder;
     final borderRadius = BorderRadius.circular(isEmbedded ? 16 : 18);
 
     return Semantics(
@@ -54,11 +53,11 @@ class ProfilePointsCard extends StatelessWidget {
               border: Border.all(color: borderColor, width: 1.2),
               boxShadow: isEmbedded
                   ? null
-                  : const [
+                  : [
                       BoxShadow(
-                        color: Color(0x0A0F172A),
+                        color: colors.shadow,
                         blurRadius: 10,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
             ),
@@ -67,13 +66,15 @@ class ProfilePointsCard extends StatelessWidget {
                 Container(
                   width: 40,
                   height: 40,
-                  decoration: const BoxDecoration(
-                    color: AppColors.warningLight,
+                  decoration: BoxDecoration(
+                    color: colors.isDark
+                        ? colors.warningBorder.withValues(alpha: 0.35)
+                        : colors.warningLight,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.workspace_premium_rounded,
-                    color: AppColors.earth,
+                    color: colors.earth,
                     size: 22,
                   ),
                 ),
@@ -85,28 +86,30 @@ class ProfilePointsCard extends StatelessWidget {
                     children: [
                       Text(
                         formattedPoints,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF78350F),
+                          color: colors.warningDark,
                           letterSpacing: -0.2,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Diperoleh dari laporan yang telah dibuat',
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.warningDark,
+                          color: colors.isDark
+                              ? colors.textSecondary
+                              : colors.warningDark,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: AppColors.earth,
+                  color: colors.earth,
                   size: 20,
                 ),
               ],

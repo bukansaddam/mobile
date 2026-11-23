@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:flutter/material.dart';
 
@@ -17,10 +17,11 @@ class ProfilePointsInfoSheet extends StatelessWidget {
     required int points,
     required bool isOfficer,
   }) {
+    final colors = context.appColors;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -31,13 +32,14 @@ class ProfilePointsInfoSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final formattedPoints = ProfilePointsCard.formatPoints(points);
     final roleDescription = isOfficer
         ? 'Poin diperoleh dari laporan tugas yang telah Anda buat dan diperbarui secara otomatis oleh sistem.'
         : 'Poin diperoleh dari laporan pengaduan yang telah Anda buat dan diperbarui secara otomatis oleh sistem.';
 
     return Material(
-      color: Colors.white,
+      color: colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       child: SafeArea(
         top: false,
@@ -53,7 +55,7 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE2E8F0),
+                    color: colors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -64,18 +66,18 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: const BoxDecoration(
-                      color: AppColors.warningLight,
+                    decoration: BoxDecoration(
+                      color: colors.warningLight,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.workspace_premium_rounded,
-                      color: AppColors.earth,
+                      color: colors.earth,
                       size: 24,
                     ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -84,16 +86,16 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF0F172A),
+                            color: colors.textPrimary,
                             letterSpacing: -0.2,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Poin partisipasi dan dedikasi Anda',
                           style: TextStyle(
                             fontSize: 12.5,
-                            color: Color(0xFF64748B),
+                            color: colors.textMuted,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -107,36 +109,36 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.warningLight,
+                  color: colors.warningLight,
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: AppColors.warningBorder, width: 1),
+                  border: Border.all(color: colors.warningBorder, width: 1),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Total Poin Saat Ini',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.warningDark,
+                        color: colors.warningDark,
                       ),
                     ),
                     const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.stars_rounded,
-                          color: AppColors.earth,
+                          color: colors.earth,
                           size: 26,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           formattedPoints,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF78350F),
+                            color: colors.warningDark,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -146,20 +148,20 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text(
+              Text(
                 'Cara Mendapatkan Poin',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E293B),
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 6),
               Text(
                 roleDescription,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: Color(0xFF475569),
+                  color: colors.textSecondary,
                   height: 1.45,
                 ),
               ),
@@ -168,9 +170,9 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,20 +184,20 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE0E7FF),
+                        color: colors.indigoLight,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Segera Hadir',
                         style: TextStyle(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF3730A3),
+                          color: colors.indigo,
                         ),
                       ),
                     ),
                     const SizedBox(width: 10),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -204,15 +206,15 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF0F172A),
+                              color: colors.textPrimary,
                             ),
                           ),
-                          SizedBox(height: 2),
+                          const SizedBox(height: 2),
                           Text(
                             'Fitur penukaran hadiah, voucher, dan manfaat poin akan hadir pada pembaruan mendatang.',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF64748B),
+                              color: colors.textMuted,
                               height: 1.35,
                             ),
                           ),
@@ -229,8 +231,8 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),

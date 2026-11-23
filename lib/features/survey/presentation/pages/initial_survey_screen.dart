@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
@@ -134,11 +134,12 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return PopScope(
       canPop:
           false, // Mengharuskan pengisian survey baseline saat login pertama
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: colors.background,
         appBar: const AppPageBar(
           title: 'Survey Profil Baseline Linmas',
           showBackButton: false,
@@ -167,16 +168,16 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
             }
 
             if (state is SurveyLoadingState && _loadedQuiz == null) {
-              return const Center(
+              return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CircularProgressIndicator(color: AppColors.primary),
-                    SizedBox(height: 16),
+                    CircularProgressIndicator(color: colors.primary),
+                    const SizedBox(height: 16),
                     Text(
                       'Memuat pertanyaan survey profil...',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -192,9 +193,9 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.error_outline_rounded,
-                        color: AppColors.error,
+                        color: colors.error,
                         size: 56,
                       ),
                       const SizedBox(height: 16),
@@ -202,7 +203,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                         'Gagal Memuat Survey',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -210,15 +211,15 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                         state.errorMessage,
                         textAlign: TextAlign.center,
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
                         onPressed: _fetchQuiz,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.white,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -253,10 +254,10 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: colors.surface,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.06),
+                        color: colors.shadow,
                         blurRadius: 10,
                         offset: const Offset(0, -4),
                       ),
@@ -274,32 +275,32 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                           child: ElevatedButton(
                             onPressed: isSubmitting ? null : _submitForm,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.white,
+                              backgroundColor: colors.primary,
+                              foregroundColor: colors.onPrimary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               elevation: 0,
                             ),
                             child: isSubmitting
-                                ? const Row(
+                                ? Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       SizedBox(
                                         width: 18,
                                         height: 18,
                                         child: CircularProgressIndicator(
-                                          color: AppColors.white,
+                                          color: colors.onPrimary,
                                           strokeWidth: 2,
                                         ),
                                       ),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Text(
                                         'Simpan...',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.white,
+                                          color: colors.onPrimary,
                                         ),
                                       ),
                                     ],
@@ -309,7 +310,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                                     style: AppTextStyles.bodyMedium.copyWith(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.white,
+                                      color: colors.onPrimary,
                                     ),
                                   ),
                           ),
@@ -324,6 +325,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
   }
 
   Widget _buildQuizContent(InitialQuizResponseEntity quiz) {
+    final colors = context.appColors;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -334,17 +336,17 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight,
+                color: colors.primaryLight,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.3),
+                  color: colors.primary.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.verified_user_rounded,
-                    color: AppColors.primary,
+                    color: colors.primary,
                     size: 32,
                   ),
                   const SizedBox(width: 12),
@@ -356,14 +358,14 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                           'Survey Profil Initial (Sekali Seumur Hidup)',
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primaryDark,
+                            color: colors.primaryDark,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Sebagai anggota Linmas, mohon lengkapi ${quiz.questions.length} pertanyaan baseline profil wilayah RT Anda sebelum melanjutkan.',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                       ],
@@ -392,6 +394,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
     required int number,
     required InitialQuizQuestionEntity question,
   }) {
+    final colors = context.appColors;
     final key = question.id.toString();
     final selectedValue = _answers[key];
 
@@ -399,12 +402,12 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow,
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -419,15 +422,15 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
               Container(
                 width: 28,
                 height: 28,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryLight,
+                decoration: BoxDecoration(
+                  color: colors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '$number',
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -438,7 +441,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                   question.text,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                     height: 1.3,
                   ),
                 ),
@@ -505,21 +508,21 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                                   : Icons.edit_note_rounded,
                             ),
                             filled: true,
-                            fillColor: AppColors.grey50,
+                            fillColor: colors.surfaceVariant,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 12,
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: AppColors.grey300,
+                              borderSide: BorderSide(
+                                color: colors.borderStrong,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(
-                                color: AppColors.primary,
+                              borderSide: BorderSide(
+                                color: colors.primary,
                                 width: 2,
                               ),
                             ),
@@ -545,24 +548,21 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                 decoration: InputDecoration(
                   hintText: 'Tuliskan jawaban Anda...',
                   hintStyle: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textHint,
+                    color: colors.textHint,
                   ),
                   filled: true,
-                  fillColor: AppColors.grey50,
+                  fillColor: colors.surfaceVariant,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.grey300),
+                    borderSide: BorderSide(color: colors.borderStrong),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
+                    borderSide: BorderSide(color: colors.primary, width: 2),
                   ),
                 ),
               ),
@@ -579,6 +579,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
     required T? groupValue,
     required ValueChanged<T?> onChanged,
   }) {
+    final colors = context.appColors;
     final isSelected = value == groupValue;
 
     return InkWell(
@@ -594,7 +595,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey400,
+                  color: isSelected ? colors.primary : colors.textHint,
                   width: isSelected ? 6 : 2,
                 ),
               ),
@@ -605,9 +606,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                 label,
                 style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? AppColors.primaryDark
-                      : AppColors.textPrimary,
+                  color: isSelected ? colors.primaryDark : colors.textPrimary,
                 ),
               ),
             ),

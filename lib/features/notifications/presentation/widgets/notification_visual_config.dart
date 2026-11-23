@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,74 +19,77 @@ class NotificationVisualConfig {
     required this.categoryLabel,
   });
 
-  factory NotificationVisualConfig.fromEntity(AppNotificationEntity item) {
+  factory NotificationVisualConfig.fromEntity(
+    AppNotificationEntity item,
+    AppColorScheme colors,
+  ) {
     if (item.severity == NotificationSeverity.critical ||
         item.isEmergencyReport) {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.warning_amber_rounded,
-        iconColor: AppColors.error,
-        chipBgColor: AppColors.errorLight,
-        chipTextColor: AppColors.error,
+        iconColor: colors.error,
+        chipBgColor: colors.errorLight,
+        chipTextColor: colors.error,
         categoryLabel: 'Darurat',
       );
     }
 
     if (item.kind == 'jaga_tanah_rejected') {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.gavel_rounded,
-        iconColor: AppColors.error,
-        chipBgColor: AppColors.errorLight,
-        chipTextColor: AppColors.error,
+        iconColor: colors.error,
+        chipBgColor: colors.errorLight,
+        chipTextColor: colors.error,
         categoryLabel: 'Jaga Tanah',
       );
     }
 
     if (item.kind.contains('escalation') ||
         item.severity == NotificationSeverity.warning) {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.priority_high_rounded,
-        iconColor: AppColors.earth,
-        chipBgColor: AppColors.warningLight,
-        chipTextColor: AppColors.accent,
+        iconColor: colors.earth,
+        chipBgColor: colors.warningLight,
+        chipTextColor: colors.warningDark,
         categoryLabel: 'Eskalasi',
       );
     }
 
     if (item.isJagaTanah) {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.landscape_rounded,
-        iconColor: AppColors.primaryDark,
-        chipBgColor: AppColors.primaryLight,
-        chipTextColor: AppColors.primaryDark,
+        iconColor: colors.primaryDark,
+        chipBgColor: colors.primaryLight,
+        chipTextColor: colors.primaryDark,
         categoryLabel: 'Jaga Tanah',
       );
     }
 
     if (item.isActivation) {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.campaign_rounded,
-        iconColor: AppColors.info,
-        chipBgColor: AppColors.infoLight,
-        chipTextColor: AppColors.secondary,
+        iconColor: colors.info,
+        chipBgColor: colors.infoLight,
+        chipTextColor: colors.secondary,
         categoryLabel: 'Aktivasi',
       );
     }
 
     if (item.isRegularReport) {
-      return const NotificationVisualConfig(
+      return NotificationVisualConfig(
         icon: Icons.assignment_turned_in_rounded,
-        iconColor: AppColors.info,
-        chipBgColor: AppColors.infoLight,
-        chipTextColor: AppColors.secondary,
+        iconColor: colors.info,
+        chipBgColor: colors.infoLight,
+        chipTextColor: colors.secondary,
         categoryLabel: 'Pengaduan',
       );
     }
 
-    return const NotificationVisualConfig(
+    return NotificationVisualConfig(
       icon: Icons.notifications_active_rounded,
-      iconColor: AppColors.secondary,
-      chipBgColor: AppColors.grey200,
-      chipTextColor: AppColors.textPrimary,
+      iconColor: colors.secondary,
+      chipBgColor: colors.surfaceElevated,
+      chipTextColor: colors.textPrimary,
       categoryLabel: 'Informasi',
     );
   }

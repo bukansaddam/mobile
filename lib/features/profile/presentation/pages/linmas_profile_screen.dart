@@ -1,12 +1,13 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/kta_card_dialog.dart';
+import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -79,34 +80,37 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final user = state is AuthAuthenticated ? state.user : null;
 
         if (user == null) {
           return Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: colors.background,
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.account_circle_outlined,
                       size: 80,
-                      color: AppColors.grey400,
+                      color: colors.textHint,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Sesi Pengguna Tidak Ditemukan',
-                      style: AppTextStyles.headlineSmall,
+                      style: AppTextStyles.headlineSmall.copyWith(
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Silakan masuk terlebih dahulu untuk mengakses profil.',
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -119,8 +123,8 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                       icon: const Icon(Icons.login),
                       label: const Text('Masuk'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 24,
                           vertical: 12,
@@ -140,7 +144,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
             : 'U';
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           body: RefreshIndicator(
             onRefresh: () async {
               context.read<ProfileBloc>().add(GetProfileEvent());
@@ -155,15 +159,11 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [AppColors.primary, AppColors.primaryDark],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      gradient: colors.primaryGradient,
                       borderRadius: BorderRadius.circular(22),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.28),
+                          color: colors.primary.withValues(alpha: 0.28),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),
@@ -176,11 +176,14 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                           height: 80,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(color: Colors.white, width: 3),
+                            color: Colors.white, // media-overlay
+                            border: Border.all(
+                              color: Colors.white, // media-overlay
+                              width: 3,
+                            ),
                             boxShadow: const [
                               BoxShadow(
-                                color: Colors.black12,
+                                color: Colors.black12, // media-overlay
                                 blurRadius: 8,
                                 offset: Offset(0, 3),
                               ),
@@ -200,14 +203,14 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                                 : Container(
                                     width: 80,
                                     height: 80,
-                                    color: AppColors.primaryLight,
+                                    color: colors.primaryLight,
                                     alignment: Alignment.center,
                                     child: Text(
                                       initialLetter,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 34,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryDark,
+                                        color: colors.primaryDark,
                                       ),
                                     ),
                                   ),
@@ -219,7 +222,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.white, // media-overlay
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -229,7 +232,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             user.username!,
                             style: TextStyle(
                               fontSize: 13,
-                              color: Colors.white.withValues(alpha: 0.85),
+                              color: Colors.white.withValues(
+                                alpha: 0.85,
+                              ), // media-overlay
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -240,10 +245,14 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.18),
+                            color: Colors.white.withValues(
+                              alpha: 0.18,
+                            ), // media-overlay
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color: Colors.white.withValues(
+                                alpha: 0.3,
+                              ), // media-overlay
                             ),
                           ),
                           child: const Row(
@@ -251,7 +260,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             children: [
                               Icon(
                                 Icons.shield_outlined,
-                                color: Colors.white,
+                                color: Colors.white, // media-overlay
                                 size: 14,
                               ),
                               SizedBox(width: 6),
@@ -260,7 +269,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: Colors.white, // media-overlay
                                 ),
                               ),
                             ],
@@ -285,28 +294,28 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryLight,
+                      color: colors.primaryLight,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.25),
+                        color: colors.primary.withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(12),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
+                          decoration: BoxDecoration(
+                            color: colors.primary,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.badge_rounded,
-                            color: Colors.white,
+                            color: colors.onPrimary,
                             size: 24,
                           ),
                         ),
                         const SizedBox(width: 14),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -315,15 +324,15 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
                                 'Lihat & unduh Kartu Tanda Anggota resmi',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -335,8 +344,8 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                           icon: const Icon(Icons.download_rounded, size: 16),
                           label: const Text('KTA'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
+                            backgroundColor: colors.primary,
+                            foregroundColor: colors.onPrimary,
                             elevation: 0,
                             minimumSize: const Size(0, 44),
                             padding: const EdgeInsets.symmetric(
@@ -361,12 +370,12 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: AppColors.white,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.grey200),
+                      border: Border.all(color: colors.border),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.black.withValues(alpha: 0.03),
+                          color: colors.shadow,
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -380,50 +389,55 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
+                                color: colors.primary.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.person_pin_rounded,
-                                color: AppColors.primary,
+                                color: colors.primary,
                                 size: 20,
                               ),
                             ),
                             const SizedBox(width: 10),
-                            const Text(
+                            Text(
                               'Informasi Personal',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 14),
-                        const Divider(height: 1, color: AppColors.grey200),
+                        Divider(height: 1, color: colors.divider),
                         const SizedBox(height: 12),
                         _buildProfileDetailItem(
+                          colors: colors,
                           icon: Icons.badge_outlined,
                           label: 'Nama Lengkap',
                           value: user.name,
                         ),
                         _buildProfileDetailItem(
+                          colors: colors,
                           icon: Icons.card_membership_rounded,
                           label: 'NIK',
                           value: user.nik,
                         ),
                         _buildProfileDetailItem(
+                          colors: colors,
                           icon: Icons.phone_android_rounded,
                           label: 'No. Telepon',
                           value: user.phoneNumber,
                         ),
                         _buildProfileDetailItem(
+                          colors: colors,
                           icon: Icons.email_outlined,
                           label: 'Alamat Email',
                           value: user.email,
                         ),
                         _buildProfileDetailItem(
+                          colors: colors,
                           icon: Icons.alternate_email_rounded,
                           label: 'Username',
                           value: user.username,
@@ -440,8 +454,8 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () => AppRouter.toEditProfile(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -460,21 +474,21 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                   ),
                   const SizedBox(height: 12),
 
+                  const ThemeModeSelectorTile(),
+                  const SizedBox(height: 12),
+
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton.icon(
                       onPressed: () => _showLogoutDialog(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.errorLight,
-                        foregroundColor: AppColors.error,
+                        backgroundColor: colors.errorLight,
+                        foregroundColor: colors.error,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
-                          side: const BorderSide(
-                            color: AppColors.error,
-                            width: 1.2,
-                          ),
+                          side: BorderSide(color: colors.error, width: 1.2),
                         ),
                       ),
                       icon: const Icon(Icons.logout_rounded, size: 20),
@@ -490,12 +504,12 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  const Center(
+                  Center(
                     child: Text(
                       '${AppConstants.appName} • versi ${AppConstants.appVersion}',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -510,6 +524,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
   }
 
   Widget _buildProfileDetailItem({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String? value,
@@ -527,11 +542,11 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryLight,
+                decoration: BoxDecoration(
+                  color: colors.primaryLight,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 18),
+                child: Icon(icon, color: colors.primary, size: 18),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -540,19 +555,19 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                   children: [
                     Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       displayValue,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -561,7 +576,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
             ],
           ),
         ),
-        if (!isLast) const Divider(height: 1, color: AppColors.grey200),
+        if (!isLast) Divider(height: 1, color: colors.divider),
       ],
     );
   }

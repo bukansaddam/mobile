@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/auth/presentation/widgets/feature_highlight_item.dart';
 
 class TriadBadgeItem extends StatelessWidget {
@@ -57,12 +58,12 @@ class TriadBadgeItem extends StatelessWidget {
                   color: item.backgroundColor,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white,
+                    color: context.appColors.surface,
                     width: isSelected ? 4.0 : 3.0,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
+                      color: context.appColors.shadow,
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),

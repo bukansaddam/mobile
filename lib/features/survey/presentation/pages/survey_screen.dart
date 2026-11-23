@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
@@ -172,8 +172,9 @@ class _SurveyScreenState extends State<SurveyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppPageBar(
         title: 'Survey Bulanan',
         onBackPressed: () => _handleBack(context),
@@ -238,6 +239,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Widget _buildApiSurveyBody(SurveyItemEntity survey, bool isSubmitted) {
+    final colors = context.appColors;
     return Column(
       children: [
         Expanded(
@@ -249,17 +251,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
+                    color: colors.primaryLight,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                      color: colors.primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.assignment_turned_in_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                         size: 30,
                       ),
                       const SizedBox(width: 12),
@@ -271,7 +273,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               survey.title,
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDark,
+                                color: colors.primaryDark,
                               ),
                             ),
                             if (survey.description != null &&
@@ -280,7 +282,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               Text(
                                 survey.description!,
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -308,10 +310,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.06),
+                color: colors.shadow,
                 blurRadius: 10,
                 offset: const Offset(0, -4),
               ),
@@ -330,32 +332,32 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         ? null
                         : () => _submitApiForm(survey),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
                     child: isSubmitting
-                        ? const Row(
+                        ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
-                                  color: AppColors.white,
+                                  color: colors.onPrimary,
                                   strokeWidth: 2,
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(
                                 'Mengirim...',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.white,
+                                  color: colors.onPrimary,
                                 ),
                               ),
                             ],
@@ -365,7 +367,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.white,
+                              color: colors.onPrimary,
                             ),
                           ),
                   ),
@@ -379,6 +381,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Widget _buildLegacyFormBody(MonthlySurveyFormEntity form, bool isSubmitted) {
+    final colors = context.appColors;
     return Column(
       children: [
         Expanded(
@@ -390,17 +393,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight,
+                    color: colors.primaryLight,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
+                      color: colors.primary.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.admin_panel_settings_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                         size: 30,
                       ),
                       const SizedBox(width: 12),
@@ -412,14 +415,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               '${form.title} (${form.periodLabel})',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primaryDark,
+                                color: colors.primaryDark,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               form.description,
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -446,10 +449,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.06),
+                color: colors.shadow,
                 blurRadius: 10,
                 offset: const Offset(0, -4),
               ),
@@ -468,32 +471,32 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         ? null
                         : () => _submitDynamicForm(form),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
                     child: isSubmitting
-                        ? const Row(
+                        ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SizedBox(
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
-                                  color: AppColors.white,
+                                  color: colors.onPrimary,
                                   strokeWidth: 2,
                                 ),
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(
                                 'Mengirim...',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.white,
+                                  color: colors.onPrimary,
                                 ),
                               ),
                             ],
@@ -503,7 +506,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.white,
+                              color: colors.onPrimary,
                             ),
                           ),
                   ),
@@ -521,6 +524,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     required SurveyQuestionEntity question,
     required bool isEnabled,
   }) {
+    final colors = context.appColors;
     final key = question.id.toString();
     final selectedValue = _answers[key]?.toString();
     final showConditional = question.shouldShowConditionalFields(selectedValue);
@@ -529,12 +533,12 @@ class _SurveyScreenState extends State<SurveyScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow,
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -549,15 +553,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
               Container(
                 width: 28,
                 height: 28,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryLight,
+                decoration: BoxDecoration(
+                  color: colors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '$number',
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -569,7 +573,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     text: question.text,
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       height: 1.3,
                     ),
                   ),
@@ -587,19 +591,19 @@ class _SurveyScreenState extends State<SurveyScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
+                color: colors.surfaceElevated,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFCBD5E1)),
+                border: Border.all(color: colors.borderStrong),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.alt_route_rounded,
                         size: 16,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -607,7 +611,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         style: AppTextStyles.bodySmall.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primaryDark,
+                          color: colors.primaryDark,
                         ),
                       ),
                     ],
@@ -630,6 +634,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   }
 
   Widget _buildApiQuestionInput(SurveyQuestionEntity question, bool isEnabled) {
+    final colors = context.appColors;
     final key = question.id.toString();
 
     if (question.isPilihanGanda) {
@@ -655,9 +660,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.grey400,
+                        color: isSelected ? colors.primary : colors.textHint,
                         width: isSelected ? 6 : 2,
                       ),
                     ),
@@ -671,8 +674,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             ? FontWeight.bold
                             : FontWeight.normal,
                         color: isSelected
-                            ? AppColors.primaryDark
-                            : AppColors.textPrimary,
+                            ? colors.primaryDark
+                            : colors.textPrimary,
                       ),
                     ),
                   ),
@@ -703,11 +706,11 @@ class _SurveyScreenState extends State<SurveyScreen> {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppColors.primaryLight.withValues(alpha: 0.5)
-                    : AppColors.grey50,
+                    ? colors.primaryLight.withValues(alpha: 0.5)
+                    : colors.surfaceVariant,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey300,
+                  color: isSelected ? colors.primary : colors.borderStrong,
                 ),
               ),
               child: Row(
@@ -718,9 +721,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.grey400,
+                        color: isSelected ? colors.primary : colors.textHint,
                         width: isSelected ? 6 : 2,
                       ),
                     ),
@@ -734,8 +735,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             ? FontWeight.bold
                             : FontWeight.normal,
                         color: isSelected
-                            ? AppColors.primaryDark
-                            : AppColors.textPrimary,
+                            ? colors.primaryDark
+                            : colors.textPrimary,
                       ),
                     ),
                   ),
@@ -749,7 +750,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     final controller = _getTextController(key);
     return TextFormField(
       controller: controller,
-      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
       onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
       enabled: isEnabled,
       maxLines: 3,
@@ -758,16 +759,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
       },
       decoration: InputDecoration(
         hintText: 'Tuliskan jawaban Anda...',
-        hintStyle: AppTextStyles.bodyMedium.copyWith(color: AppColors.textHint),
+        hintStyle: AppTextStyles.bodyMedium.copyWith(color: colors.textHint),
         filled: true,
-        fillColor: AppColors.grey50,
+        fillColor: colors.surfaceVariant,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 12,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.grey300),
+          borderSide: BorderSide(color: colors.borderStrong),
         ),
       ),
     );
@@ -778,6 +779,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     required SurveyConditionalFieldEntity field,
     required bool isEnabled,
   }) {
+    final colors = context.appColors;
     final condKey = '${questionId}_cond_${field.id}';
 
     return Padding(
@@ -791,7 +793,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               style: AppTextStyles.bodySmall.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
@@ -802,15 +804,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.grey300),
+                border: Border.all(color: colors.borderStrong),
               ),
               child: Text(
                 field.value ?? '-',
                 style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primaryDark,
+                  color: colors.primaryDark,
                 ),
               ),
             ),
@@ -819,20 +821,21 @@ class _SurveyScreenState extends State<SurveyScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.grey300),
+                border: Border.all(color: colors.borderStrong),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: _answers[condKey] as String?,
+                  dropdownColor: colors.surface,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   hint: Text(
                     'Pilih salah satu...',
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textHint,
+                      color: colors.textHint,
                     ),
                   ),
                   isExpanded: true,
@@ -849,7 +852,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       child: Text(
                         opt,
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                     );
@@ -862,7 +865,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
             TextFormField(
               controller: _getTextController(condKey),
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
               onTapOutside: (event) =>
                   FocusManager.instance.primaryFocus?.unfocus(),
@@ -873,25 +876,25 @@ class _SurveyScreenState extends State<SurveyScreen> {
               decoration: InputDecoration(
                 hintText: 'Tuliskan jawaban Anda...',
                 hintStyle: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textHint,
+                  color: colors.textHint,
                 ),
                 filled: true,
-                fillColor: AppColors.white,
+                fillColor: colors.surface,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 10,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.grey300),
+                  borderSide: BorderSide(color: colors.borderStrong),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.grey300),
+                  borderSide: BorderSide(color: colors.borderStrong),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: AppColors.primary),
+                  borderSide: BorderSide(color: colors.primary),
                 ),
               ),
             ),
@@ -924,36 +927,36 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 child: TextFormField(
                   controller: _getTextController(condKey),
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                   enabled: isEnabled,
                   decoration: InputDecoration(
                     hintText: 'Pilih jam (HH:mm)...',
                     hintStyle: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textHint,
+                      color: colors.textHint,
                     ),
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.access_time_rounded,
                       size: 18,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                     filled: true,
-                    fillColor: AppColors.white,
+                    fillColor: colors.surface,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 10,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: AppColors.grey300),
+                      borderSide: BorderSide(color: colors.borderStrong),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: AppColors.grey300),
+                      borderSide: BorderSide(color: colors.borderStrong),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: const BorderSide(color: AppColors.primary),
+                      borderSide: BorderSide(color: colors.primary),
                     ),
                   ),
                 ),
@@ -969,16 +972,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
     required DynamicQuestionEntity question,
     required bool isEnabled,
   }) {
+    final colors = context.appColors;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow,
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -993,15 +997,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
               Container(
                 width: 28,
                 height: 28,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryLight,
+                decoration: BoxDecoration(
+                  color: colors.primaryLight,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '$number',
                   style: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1013,14 +1017,14 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     text: question.question,
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       height: 1.3,
                     ),
                     children: [
                       if (question.isRequired)
-                        const TextSpan(
+                        TextSpan(
                           text: ' *',
-                          style: TextStyle(color: AppColors.error),
+                          style: TextStyle(color: colors.error),
                         ),
                     ],
                   ),
@@ -1041,6 +1045,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     DynamicQuestionEntity question,
     bool isEnabled,
   ) {
+    final colors = context.appColors;
     switch (question.type) {
       case DynamicQuestionType.singleChoice:
         return Column(
@@ -1065,9 +1070,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.grey400,
+                          color: isSelected ? colors.primary : colors.textHint,
                           width: isSelected ? 6 : 2,
                         ),
                       ),
@@ -1081,8 +1084,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
                               ? FontWeight.bold
                               : FontWeight.normal,
                           color: isSelected
-                              ? AppColors.primaryDark
-                              : AppColors.textPrimary,
+                              ? colors.primaryDark
+                              : colors.textPrimary,
                         ),
                       ),
                     ),
@@ -1115,9 +1118,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
@@ -1129,17 +1130,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
           decoration: InputDecoration(
             hintText: 'Masukkan angka',
             hintStyle: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textHint,
+              color: colors.textHint,
             ),
             filled: true,
-            fillColor: AppColors.grey50,
+            fillColor: colors.surfaceVariant,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
           ),
         );
@@ -1149,9 +1150,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         final controller = _getTextController(question.id);
         return TextFormField(
           controller: controller,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
           enabled: isEnabled,
@@ -1162,17 +1161,17 @@ class _SurveyScreenState extends State<SurveyScreen> {
           decoration: InputDecoration(
             hintText: 'Tuliskan jawaban Anda...',
             hintStyle: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textHint,
+              color: colors.textHint,
             ),
             filled: true,
-            fillColor: AppColors.grey50,
+            fillColor: colors.surfaceVariant,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 12,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
           ),
         );
@@ -1185,6 +1184,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
     required String questionId,
     required bool isEnabled,
   }) {
+    final colors = context.appColors;
     final isSelected = _answers[questionId] == value;
 
     return InkWell(
@@ -1206,7 +1206,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : AppColors.grey400,
+                  color: isSelected ? colors.primary : colors.textHint,
                   width: isSelected ? 6 : 2,
                 ),
               ),
@@ -1217,9 +1217,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                 label,
                 style: AppTextStyles.bodyMedium.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? AppColors.primaryDark
-                      : AppColors.textPrimary,
+                  color: isSelected ? colors.primaryDark : colors.textPrimary,
                 ),
               ),
             ),

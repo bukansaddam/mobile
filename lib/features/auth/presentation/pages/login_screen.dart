@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_brand_logo.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
@@ -147,22 +147,27 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final roleTitle = _roleTitle;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFE8F5E9),
+      backgroundColor: colors.primaryLight,
       appBar: AppPageBar(
         title: roleTitle,
         transparentBackground: true,
         onBackPressed: _handleBack,
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFE8F5E9), Color(0xFFF7FBF8), Colors.white],
-            stops: [0.0, 0.35, 1.0],
+            colors: [
+              colors.primaryLight,
+              colors.surfaceVariant,
+              colors.isDark ? colors.background : colors.surface,
+            ],
+            stops: const [0.0, 0.35, 1.0],
           ),
         ),
         child: SafeArea(
@@ -230,6 +235,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'Selamat Datang',
                             style: AppTextStyles.headlineLarge.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -243,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen>
                           child: Text(
                             _subtitle,
                             style: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -257,11 +263,14 @@ class _LoginScreenState extends State<LoginScreen>
                           child: Container(
                             padding: const EdgeInsets.all(24.0),
                             decoration: BoxDecoration(
-                              color: AppColors.white,
+                              color: colors.surface,
                               borderRadius: BorderRadius.circular(24),
+                              border: colors.isDark
+                                  ? Border.all(color: colors.border)
+                                  : null,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.07),
+                                  color: colors.shadow,
                                   blurRadius: 28,
                                   offset: const Offset(0, 12),
                                 ),
@@ -327,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             _loginMethod.fieldLabel,
                                             style: AppTextStyles.labelLarge
                                                 .copyWith(
-                                                  color: AppColors.textPrimary,
+                                                  color: colors.textPrimary,
                                                 ),
                                           ),
                                           const SizedBox(height: 8),
@@ -354,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen>
                                               hintText: _loginMethod.hint,
                                               prefixIcon: Icon(
                                                 _loginMethod.icon,
-                                                color: AppColors.grey600,
+                                                color: colors.textMuted,
                                               ),
                                             ),
                                             validator: _validateIdentifier,
@@ -378,7 +387,7 @@ class _LoginScreenState extends State<LoginScreen>
                                         'Kata Sandi',
                                         style: AppTextStyles.labelLarge
                                             .copyWith(
-                                              color: AppColors.textPrimary,
+                                              color: colors.textPrimary,
                                             ),
                                       ),
                                       const SizedBox(height: 8),
@@ -400,9 +409,9 @@ class _LoginScreenState extends State<LoginScreen>
                                         },
                                         decoration: InputDecoration(
                                           hintText: 'Masukkan kata sandi',
-                                          prefixIcon: const Icon(
+                                          prefixIcon: Icon(
                                             Icons.lock_outline,
-                                            color: AppColors.grey600,
+                                            color: colors.textMuted,
                                           ),
                                           suffixIcon: IconButton(
                                             tooltip: _isPasswordObscured
@@ -413,7 +422,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                   ? Icons
                                                         .visibility_off_outlined
                                                   : Icons.visibility_outlined,
-                                              color: AppColors.grey600,
+                                              color: colors.textMuted,
                                             ),
                                             onPressed: () {
                                               setState(() {
@@ -445,14 +454,14 @@ class _LoginScreenState extends State<LoginScreen>
                                   child: ElevatedButton(
                                     onPressed: isLoading ? null : _handleLogin,
                                     child: isLoading
-                                        ? const SizedBox(
+                                        ? SizedBox(
                                             height: 22,
                                             width: 22,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2.5,
                                               valueColor:
                                                   AlwaysStoppedAnimation<Color>(
-                                                    AppColors.white,
+                                                    colors.onPrimary,
                                                   ),
                                             ),
                                           )
@@ -485,13 +494,13 @@ class _LoginScreenState extends State<LoginScreen>
                                     Text(
                                       'Belum memiliki akun? ',
                                       style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                     Text(
                                       'Daftar Sekarang',
                                       style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.primary,
+                                        color: colors.primary,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

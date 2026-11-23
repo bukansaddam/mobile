@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +15,7 @@ class NotificationEmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final title = unreadOnlyFilter
         ? 'Tidak ada notifikasi belum dibaca'
         : 'Belum ada notifikasi';
@@ -39,14 +40,14 @@ class NotificationEmptyView extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(18),
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryLight,
+                    decoration: BoxDecoration(
+                      color: colors.primaryLight,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.notifications_none_rounded,
                       size: 40,
-                      color: AppColors.primaryDark,
+                      color: colors.primaryDark,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -54,7 +55,7 @@ class NotificationEmptyView extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.titleLarge.copyWith(
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -63,7 +64,7 @@ class NotificationEmptyView extends StatelessWidget {
                     subtitle,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       height: 1.45,
                     ),
                   ),
@@ -74,8 +75,8 @@ class NotificationEmptyView extends StatelessWidget {
                       child: FilledButton(
                         onPressed: onShowAll,
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.white,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

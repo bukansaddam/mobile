@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/auth/presentation/widgets/map_pin_badge.dart';
 import 'package:akar/features/auth/presentation/widgets/map_pin_data.dart';
 
@@ -26,46 +26,46 @@ class _IndonesiaDottedMapState extends State<IndonesiaDottedMap>
     with SingleTickerProviderStateMixin {
   late final AnimationController _floatController;
 
-  static const List<MapPinData> _defaultPins = [
+  List<MapPinData> _defaultPins(AppColorScheme colors) => [
     MapPinData(
       x: 0.147,
       y: 0.390,
-      color: AppColors.info, // Sky Blue (Sumatra)
+      color: colors.info,
       icon: Icons.security_rounded,
       phase: 0.0,
     ),
     MapPinData(
       x: 0.358,
       y: 0.795,
-      color: AppColors.primary, // Brand Green (Jawa)
+      color: colors.primary,
       icon: Icons.shield_rounded,
       phase: 1.2,
     ),
     MapPinData(
       x: 0.416,
       y: 0.372,
-      color: Color(0xFFEA580C), // Vibrant Orange (Kalimantan)
+      color: colors.orange,
       icon: Icons.radar_rounded,
       phase: 2.4,
     ),
     MapPinData(
       x: 0.574,
       y: 0.485,
-      color: Color(0xFF7C3AED), // Violet (Sulawesi)
+      color: colors.indigo,
       icon: Icons.people_alt_rounded,
       phase: 3.6,
     ),
     MapPinData(
       x: 0.600,
       y: 0.874,
-      color: Color(0xFF0D9488), // Teal (Bali / NTB)
+      color: colors.emerald,
       icon: Icons.location_on_rounded,
       phase: 4.5,
     ),
     MapPinData(
       x: 0.909,
       y: 0.594,
-      color: AppColors.error, // Rose Red (Papua)
+      color: colors.error,
       icon: Icons.notifications_active_rounded,
       phase: 5.4,
     ),
@@ -88,7 +88,8 @@ class _IndonesiaDottedMapState extends State<IndonesiaDottedMap>
 
   @override
   Widget build(BuildContext context) {
-    final pins = widget.pins ?? _defaultPins;
+    final colors = context.appColors;
+    final pins = widget.pins ?? _defaultPins(colors);
 
     final content = AspectRatio(
       aspectRatio: 968 / 384,

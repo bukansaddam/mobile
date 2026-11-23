@@ -2,6 +2,9 @@ import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/theme/bloc/theme_bloc.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
+import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -321,6 +324,57 @@ void main() {
           tester.widget<Text>(find.text('Tersimpan')).style?.color,
           AppColorScheme.dark.textPrimary,
         );
+      },
+    );
+
+    testWidgets(
+      'NotificationEmptyView, NotificationErrorView, and ProfilePointsCard '
+      'resolve AppColorScheme.dark tokens in Dark Mode',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Scaffold(
+              body: Column(
+                children: [
+                  const Expanded(
+                    child: NotificationEmptyView(unreadOnlyFilter: false),
+                  ),
+                  Expanded(
+                    child: NotificationErrorView(
+                      message: 'Koneksi terputus',
+                      onRetry: () {},
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: ProfilePointsCard(points: 1250),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        final emptyTitle = tester.widget<Text>(
+          find.text('Belum ada notifikasi'),
+        );
+        expect(emptyTitle.style?.color, AppColorScheme.dark.textPrimary);
+
+        final errorTitle = tester.widget<Text>(
+          find.text('Gagal memuat notifikasi'),
+        );
+        expect(errorTitle.style?.color, AppColorScheme.dark.textPrimary);
+
+        final pointsMaterial = tester.widget<Material>(
+          find
+              .descendant(
+                of: find.byType(ProfilePointsCard),
+                matching: find.byType(Material),
+              )
+              .first,
+        );
+        expect(pointsMaterial.color, AppColorScheme.dark.surface);
       },
     );
   });

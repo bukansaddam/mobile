@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +15,7 @@ class NotificationErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -23,14 +24,14 @@ class NotificationErrorView extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(18),
-              decoration: const BoxDecoration(
-                color: AppColors.errorLight,
+              decoration: BoxDecoration(
+                color: colors.errorLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.cloud_off_rounded,
                 size: 40,
-                color: AppColors.error,
+                color: colors.error,
               ),
             ),
             const SizedBox(height: 16),
@@ -38,7 +39,7 @@ class NotificationErrorView extends StatelessWidget {
               'Gagal memuat notifikasi',
               textAlign: TextAlign.center,
               style: AppTextStyles.titleLarge.copyWith(
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -47,7 +48,7 @@ class NotificationErrorView extends StatelessWidget {
               message,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 height: 1.45,
               ),
             ),
@@ -57,8 +58,8 @@ class NotificationErrorView extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onRetry,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.onPrimary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

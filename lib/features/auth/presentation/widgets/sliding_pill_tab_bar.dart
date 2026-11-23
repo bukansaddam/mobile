@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/auth/presentation/widgets/pill_tab_button.dart';
 import 'package:akar/features/auth/presentation/widgets/pill_tab_item.dart';
 
@@ -15,10 +15,10 @@ class SlidingPillTabBar extends StatelessWidget {
   final List<PillTabItem> tabs;
   final ValueChanged<int> onTabSelected;
   final double height;
-  final Color backgroundColor;
-  final Color activeColor;
-  final Color activeTextColor;
-  final Color inactiveTextColor;
+  final Color? backgroundColor;
+  final Color? activeColor;
+  final Color? activeTextColor;
+  final Color? inactiveTextColor;
 
   const SlidingPillTabBar({
     super.key,
@@ -26,21 +26,26 @@ class SlidingPillTabBar extends StatelessWidget {
     required this.tabs,
     required this.onTabSelected,
     this.height = 48.0,
-    this.backgroundColor = const Color(0xFFF1F3F6),
-    this.activeColor = AppColors.primary,
-    this.activeTextColor = AppColors.white,
-    this.inactiveTextColor = AppColors.textSecondary,
+    this.backgroundColor,
+    this.activeColor,
+    this.activeTextColor,
+    this.inactiveTextColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final resolvedBg = backgroundColor ?? colors.surfaceElevated;
+    final resolvedActive = activeColor ?? colors.primary;
+    final resolvedActiveText = activeTextColor ?? colors.onPrimary;
+    final resolvedInactiveText = inactiveTextColor ?? colors.textSecondary;
     const padding = 4.0;
     final innerHeight = height - (padding * 2);
 
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: resolvedBg,
         borderRadius: BorderRadius.circular(height / 2),
       ),
       padding: const EdgeInsets.all(padding),
@@ -59,11 +64,11 @@ class SlidingPillTabBar extends StatelessWidget {
                 height: innerHeight,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: activeColor,
+                    color: resolvedActive,
                     borderRadius: BorderRadius.circular(innerHeight / 2),
                     boxShadow: [
                       BoxShadow(
-                        color: activeColor.withValues(alpha: 0.3),
+                        color: resolvedActive.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -80,8 +85,8 @@ class SlidingPillTabBar extends StatelessWidget {
                         index: i,
                         tab: tabs[i],
                         isSelected: selectedIndex == i,
-                        activeTextColor: activeTextColor,
-                        inactiveTextColor: inactiveTextColor,
+                        activeTextColor: resolvedActiveText,
+                        inactiveTextColor: resolvedInactiveText,
                         onTabSelected: onTabSelected,
                       ),
                     ),

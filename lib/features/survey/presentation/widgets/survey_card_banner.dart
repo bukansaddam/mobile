@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/dashboard/domain/entities/member_dashboard_entity.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
@@ -94,21 +94,33 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
             ? 'Sudah Diisi'
             : (isAvailable ? 'Wajib Diisi' : 'Belum Tersedia');
 
+        final colors = context.appColors;
+        final isDark = colors.isDark;
         final badgeBgColor = isSubmitted
-            ? AppColors.white
-            : (isAvailable ? AppColors.warningLight : const Color(0xFFE2E8F0));
+            ? (isDark ? colors.surfaceElevated : colors.surface)
+            : (isAvailable
+                  ? colors.warningLight
+                  : (isDark ? colors.surfaceElevated : colors.border));
 
         final badgeTextColor = isSubmitted
-            ? AppColors.accent
-            : (isAvailable ? AppColors.warningDark : const Color(0xFF475569));
+            ? (isDark ? colors.textPrimary : colors.accent)
+            : (isAvailable ? colors.warningDark : colors.textSecondary);
+
+        final bannerFg = isDark ? colors.textPrimary : colors.onPrimary;
+        final bannerSubFg = isDark
+            ? colors.textSecondary
+            : colors.onPrimary.withValues(alpha: 0.9);
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppColors.accent,
+              color: isDark ? colors.surface : colors.accent,
               borderRadius: BorderRadius.circular(16),
+              border: isDark
+                  ? Border.all(color: colors.warning.withValues(alpha: 0.45))
+                  : null,
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -124,22 +136,28 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.white.withValues(alpha: 0.2),
+                          color: isDark
+                              ? colors.warningLight
+                              : colors.onPrimary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.calendar_today_rounded,
                               size: 12,
-                              color: AppColors.white,
+                              color: isDark
+                                  ? colors.warningDark
+                                  : colors.onPrimary,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               'Periode $periodLabel',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.white,
+                                color: isDark
+                                    ? colors.warningDark
+                                    : colors.onPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -190,7 +208,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                   Text(
                     surveyTitle,
                     style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.white,
+                      color: bannerFg,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -198,7 +216,7 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                   Text(
                     descriptionText,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.white.withValues(alpha: 0.9),
+                      color: bannerSubFg,
                       height: 1.3,
                     ),
                   ),
@@ -218,8 +236,12 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.white,
-                          foregroundColor: AppColors.accent,
+                          backgroundColor: isDark
+                              ? colors.primary
+                              : colors.surface,
+                          foregroundColor: isDark
+                              ? colors.onPrimary
+                              : colors.accent,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(horizontal: 14),
                           shape: RoundedRectangleBorder(
