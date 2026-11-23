@@ -1015,4 +1015,77 @@ class ApiConstants {
     41,
     2,
   ]);
+
+  // AI Chat (Siska)
+  static final String aiChatStatus = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    100,
+    200,
+    172,
+    64,
+    163,
+    224,
+    112,
+    106,
+    143,
+    224,
+    62,
+    107,
+    63,
+  ]);
+
+  static final String aiChatMessages = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    100,
+    200,
+    172,
+    64,
+    163,
+    224,
+    112,
+    116,
+    158,
+    242,
+    57,
+    127,
+    43,
+    10,
+    170,
+  ]);
+
+  static final String aiChatSessions = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    100,
+    200,
+    172,
+    64,
+    163,
+    224,
+    112,
+    106,
+    158,
+    242,
+    57,
+    119,
+    35,
+    1,
+    170,
+  ]);
+
+  static String aiChatSessionDetail(int id) => '$aiChatSessions/$id';
 }
