@@ -9,6 +9,7 @@ class CreateJagaTanahState extends Equatable {
   final CreateJagaTanahSubmitStatus submitStatus;
   final ComplaintReportEntity? submittedReport;
   final String? errorMessage;
+  final bool isQueuedOffline;
 
   const CreateJagaTanahState({
     this.categories = const [],
@@ -17,6 +18,7 @@ class CreateJagaTanahState extends Equatable {
     this.submitStatus = CreateJagaTanahSubmitStatus.initial,
     this.submittedReport,
     this.errorMessage,
+    this.isQueuedOffline = false,
   });
 
   bool get isSubmitting =>
@@ -31,6 +33,7 @@ class CreateJagaTanahState extends Equatable {
     ComplaintReportEntity? submittedReport,
     String? errorMessage,
     bool clearSubmitError = false,
+    bool? isQueuedOffline,
   }) {
     return CreateJagaTanahState(
       categories: categories ?? this.categories,
@@ -43,6 +46,7 @@ class CreateJagaTanahState extends Equatable {
       errorMessage: clearSubmitError
           ? null
           : (errorMessage ?? this.errorMessage),
+      isQueuedOffline: isQueuedOffline ?? this.isQueuedOffline,
     );
   }
 
@@ -54,5 +58,6 @@ class CreateJagaTanahState extends Equatable {
     submitStatus,
     submittedReport,
     errorMessage,
+    isQueuedOffline,
   ];
 }

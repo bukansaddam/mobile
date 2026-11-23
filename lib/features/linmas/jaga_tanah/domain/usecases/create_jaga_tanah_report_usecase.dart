@@ -30,6 +30,7 @@ class CreateJagaTanahReportUsecase {
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) {
     return _repository.createReport(
       title: title,
@@ -52,6 +53,7 @@ class CreateJagaTanahReportUsecase {
       possessionMarkers: possessionMarkers,
       conflictInfo: conflictInfo,
       idempotencyKey: idempotencyKey,
+      skipMediaPreparation: skipMediaPreparation,
     );
   }
 }

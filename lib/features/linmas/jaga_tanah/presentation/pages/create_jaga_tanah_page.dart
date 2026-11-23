@@ -167,13 +167,19 @@ class CreateJagaTanahPage extends HookWidget {
         : await JagaTanahReverseGeocoder.resolve(position);
     if (!context.mounted) return;
 
-    final landmark = resolved.landmarkAddress ?? fallbackLandmark?.trim();
+    final landmark =
+        (resolved.landmarkAddress != null &&
+            resolved.landmarkAddress!.isNotEmpty)
+        ? resolved.landmarkAddress!
+        : (fallbackLandmark?.trim().isNotEmpty == true
+              ? fallbackLandmark!.trim()
+              : 'Lat: ${position.latitude.toStringAsFixed(6)}, Long: ${position.longitude.toStringAsFixed(6)}');
     final hasAnyResolved =
         resolved.province != null ||
         resolved.regency != null ||
         resolved.district != null ||
         resolved.village != null ||
-        (landmark != null && landmark.isNotEmpty);
+        landmark.isNotEmpty;
 
     void assignField(TextEditingController controller, String? value) {
       if (overwriteExisting && hasAnyResolved) {
@@ -443,16 +449,26 @@ class CreateJagaTanahPage extends HookWidget {
     }
 
     if (step == 1) {
-      final validText = step1FormKey.currentState != null
-          ? step1FormKey.currentState!.validate()
-          : (provinceController.text.trim().isNotEmpty &&
-                regencyController.text.trim().isNotEmpty &&
-                districtController.text.trim().isNotEmpty &&
-                villageController.text.trim().isNotEmpty &&
-                landmarkController.text.trim().isNotEmpty);
-
       final hasGps = latitude.value != null && longitude.value != null;
       gpsError.value = hasGps ? null : 'Titik lokasi di peta wajib dipilih';
+
+      final isOfflineFallback =
+          hasGps &&
+          provinceController.text.trim().isEmpty &&
+          regencyController.text.trim().isEmpty &&
+          landmarkController.text.trim().startsWith('Lat:');
+
+      final validText = step1FormKey.currentState != null
+          ? (isOfflineFallback
+                ? landmarkController.text.trim().isNotEmpty
+                : step1FormKey.currentState!.validate())
+          : (isOfflineFallback
+                ? landmarkController.text.trim().isNotEmpty
+                : (provinceController.text.trim().isNotEmpty &&
+                      regencyController.text.trim().isNotEmpty &&
+                      districtController.text.trim().isNotEmpty &&
+                      villageController.text.trim().isNotEmpty &&
+                      landmarkController.text.trim().isNotEmpty));
 
       final hasPhotos = photos.value.isNotEmpty;
       photoError.value = hasPhotos
@@ -1058,25 +1074,38 @@ class CreateJagaTanahPage extends HookWidget {
                     final useTwoColumns =
                         constraints.maxWidth >= 320 && textScale <= 1.35;
 
+                    final hasCoordinates =
+                        latitude.value != null && longitude.value != null;
+                    final isOfflineLocationFallback =
+                        hasCoordinates &&
+                        provinceController.text.trim().isEmpty &&
+                        regencyController.text.trim().isEmpty &&
+                        landmarkController.text.trim().startsWith('Lat:');
+                    final isWilayahRequired = !isOfflineLocationFallback;
+
                     final provinceField = JagaTanahTextField(
                       controller: provinceController,
                       label: 'Provinsi',
                       hintText: 'Contoh: Jawa Timur',
+                      isRequired: isWilayahRequired,
                     );
                     final regencyField = JagaTanahTextField(
                       controller: regencyController,
                       label: 'Kabupaten/Kota',
                       hintText: 'Contoh: Kab. Mojokerto',
+                      isRequired: isWilayahRequired,
                     );
                     final districtField = JagaTanahTextField(
                       controller: districtController,
                       label: 'Kecamatan',
                       hintText: 'Contoh: Ngoro',
+                      isRequired: isWilayahRequired,
                     );
                     final villageField = JagaTanahTextField(
                       controller: villageController,
                       label: 'Desa/Kelurahan',
                       hintText: 'Contoh: Sukomulyo',
+                      isRequired: isWilayahRequired,
                     );
 
                     if (!useTwoColumns) {

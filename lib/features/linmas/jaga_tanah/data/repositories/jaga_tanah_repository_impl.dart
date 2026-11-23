@@ -82,6 +82,7 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
       final model = await remoteDatasource.createReport(
@@ -105,6 +106,7 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
         possessionMarkers: possessionMarkers,
         conflictInfo: conflictInfo,
         idempotencyKey: idempotencyKey,
+        skipMediaPreparation: skipMediaPreparation,
       );
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {

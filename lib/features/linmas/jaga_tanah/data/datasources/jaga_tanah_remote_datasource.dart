@@ -45,6 +45,7 @@ abstract class JagaTanahRemoteDatasource {
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 }
 
@@ -159,15 +160,18 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
-      final prepared = await ImageCompressHelper.prepareMediaFiles(
-        attachments,
-        latitude: latitude,
-        longitude: longitude,
-        address: address,
-        resolveDeviceLocationIfMissing: address.trim().isEmpty,
-      );
+      final prepared = skipMediaPreparation
+          ? attachments
+          : await ImageCompressHelper.prepareMediaFiles(
+              attachments,
+              latitude: latitude,
+              longitude: longitude,
+              address: address,
+              resolveDeviceLocationIfMissing: address.trim().isEmpty,
+            );
       final trimmedKey = idempotencyKey?.trim();
       final requestOptions = (trimmedKey != null && trimmedKey.isNotEmpty)
           ? _uploadOptions.copyWith(

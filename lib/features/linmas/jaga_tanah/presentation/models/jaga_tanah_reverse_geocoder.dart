@@ -162,9 +162,8 @@ class JagaTanahReverseGeocoder {
           placemarkResolver ??
           ((LatLng p) =>
               Geocoding().placemarkFromCoordinates(p.latitude, p.longitude));
-      final placemarks = await resolver(
-        position,
-      ).timeout(const Duration(seconds: 4));
+      final placemarks = await resolver(position)
+          .timeout(const Duration(seconds: 4));
       if (placemarks.isEmpty) {
         return _emptyAddress();
       }

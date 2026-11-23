@@ -38,5 +38,6 @@ abstract class JagaTanahRepository {
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 }

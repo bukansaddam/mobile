@@ -163,6 +163,7 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     String? possessionMarkers,
     String? conflictInfo,
     String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     createCalls++;
     lastSubmittedTitle = title;
@@ -921,9 +922,8 @@ void main() {
         equals(repository.recordedIdempotencyKeys[1]),
       );
       expect(
-        RegExp(
-          r'^[A-Za-z0-9._:\-/+=]{1,128}$',
-        ).hasMatch(repository.recordedIdempotencyKeys.first),
+        RegExp(r'^[A-Za-z0-9._:\-/+=]{1,128}$')
+            .hasMatch(repository.recordedIdempotencyKeys.first),
         isTrue,
       );
       expect(repository.lastSubmittedCategoryId, 21);
