@@ -28,6 +28,8 @@ abstract class BankSampahRemoteDataSource {
     required String reportDate,
     String? notes,
     File? photo,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 }
 
@@ -118,6 +120,8 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     required String reportDate,
     String? notes,
     File? photo,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     final map = <String, dynamic>{
       'bank_id': bankId,
@@ -130,23 +134,30 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     }
     if (photo != null) {
       FileSecurityUtils.validateImageFile(photo);
-      final compressedPhoto = await ImageCompressHelper.compressToWebp(
-        photo,
-        resolveDeviceLocationIfMissing: true,
-      );
-      final fileName = compressedPhoto.path.split('/').last;
+      final preparedPhoto = skipMediaPreparation
+          ? photo
+          : await ImageCompressHelper.compressToWebp(
+              photo,
+              resolveDeviceLocationIfMissing: true,
+            );
+      final fileName = preparedPhoto.path.split('/').last;
       map['photo'] = await MultipartFile.fromFile(
-        compressedPhoto.path,
+        preparedPhoto.path,
         filename: fileName,
       );
     }
+
+    final trimmedKey = idempotencyKey?.trim();
+    final headers = (trimmedKey != null && trimmedKey.isNotEmpty)
+        ? <String, dynamic>{'X-Idempotency-Key': trimmedKey}
+        : null;
 
     final formData = FormData.fromMap(map);
     final response = await handleRequest<BankSampahReportModel>(
       () => dio.post(
         ApiConstants.bankSampahDeposits,
         data: formData,
-        options: Options(contentType: 'multipart/form-data'),
+        options: Options(contentType: 'multipart/form-data', headers: headers),
       ),
       fromJson: (json) => BankSampahReportModel.fromJson(
         json is Map ? Map<String, dynamic>.from(json) : const {},

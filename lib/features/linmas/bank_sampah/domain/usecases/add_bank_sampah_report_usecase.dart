@@ -9,8 +9,14 @@ class AddBankSampahReportUsecase {
   AddBankSampahReportUsecase(this.repository);
 
   Future<Either<Failure, BankSampahReportEntity>> call(
-    BankSampahReportEntity report,
-  ) {
-    return repository.addReport(report);
+    BankSampahReportEntity report, {
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
+  }) {
+    return repository.addReport(
+      report,
+      idempotencyKey: idempotencyKey,
+      skipMediaPreparation: skipMediaPreparation,
+    );
   }
 }

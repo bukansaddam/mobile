@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:akar/features/linmas/bank_sampah/core/constants/bank_sampah_constants.dart';
@@ -55,6 +56,8 @@ class FakeBankSampahRemoteDataSource implements BankSampahRemoteDataSource {
     required String reportDate,
     String? notes,
     File? photo,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     if (shouldThrow) {
       throw Exception('Server error');
@@ -116,9 +119,7 @@ void main() {
     );
     remoteDataSource.mapLocations = [initialLocation];
 
-    repository = BankSampahRepositoryImpl(
-      remoteDataSource: remoteDataSource,
-    );
+    repository = BankSampahRepositoryImpl(remoteDataSource: remoteDataSource);
 
     getReportsUsecase = GetBankSampahReportsUsecase(repository);
     addReportUsecase = AddBankSampahReportUsecase(repository);
@@ -163,18 +164,15 @@ void main() {
               "id": 171948,
               "name": "Siti Rahmawati",
               "villageId": 25695,
-              "village": "Tebet Timur"
+              "village": "Tebet Timur",
             },
             "bank": {
               "id": 8692,
               "name": "Bank Sampah Jaya Sungai Gampa",
-              "region": "Sungai Gampa"
+              "region": "Sungai Gampa",
             },
-            "wasteType": {
-              "id": 11,
-              "name": "Organik"
-            }
-          }
+            "wasteType": {"id": 11, "name": "Organik"},
+          },
         ],
         "summary": {
           "total_kg": 38.9,
@@ -184,15 +182,10 @@ void main() {
           "verified_pendapatan": 194500,
           "pending_kg": 0,
           "pending_pendapatan": 0,
-          "conversion_price_per_kg": 5000
+          "conversion_price_per_kg": 5000,
         },
-        "meta": {
-          "total": 1,
-          "current_page": 1,
-          "per_page": 20,
-          "last_page": 1
-        },
-        "message": "OK"
+        "meta": {"total": 1, "current_page": 1, "per_page": 20, "last_page": 1},
+        "message": "OK",
       };
 
       final responseModel = BankSampahMyDepositsResponseModel.fromJson(json);
@@ -224,7 +217,10 @@ void main() {
 
       final domain = responseModel.toDomain();
       expect(domain.reports.length, 1);
-      expect(domain.reports.first.bankSampahNama, 'Bank Sampah Jaya Sungai Gampa');
+      expect(
+        domain.reports.first.bankSampahNama,
+        'Bank Sampah Jaya Sungai Gampa',
+      );
       expect(domain.summary?.totalKg, 38.9);
     });
 
@@ -235,13 +231,16 @@ void main() {
         "weight": 5.0,
         "photo": "deposits/sample_image.jpg",
         "bank": {"id": 1, "name": "Bank 1"},
-        "wasteType": {"name": "Organik"}
+        "wasteType": {"name": "Organik"},
       };
       final model = BankSampahReportModel.fromJson(jsonWithRelativePhoto);
       expect(model.fotoUrl, contains('/storage/deposits/sample_image.jpg'));
 
       final entity = model.toDomain();
-      expect(entity.displayPhotoUrl, contains('/storage/deposits/sample_image.jpg'));
+      expect(
+        entity.displayPhotoUrl,
+        contains('/storage/deposits/sample_image.jpg'),
+      );
     });
 
     test('preserves full http/https photo url as is', () {
@@ -251,39 +250,48 @@ void main() {
         "weight": 2.0,
         "photo": "https://cdn.example.com/storage/deposits/pic.jpg",
         "bank": {"id": 1, "name": "Bank 1"},
-        "wasteType": {"name": "Anorganik"}
+        "wasteType": {"name": "Anorganik"},
       };
       final model = BankSampahReportModel.fromJson(jsonWithFullUrl);
       expect(model.fotoUrl, 'https://cdn.example.com/storage/deposits/pic.jpg');
 
       final entity = model.toDomain();
-      expect(entity.displayPhotoUrl, 'https://cdn.example.com/storage/deposits/pic.jpg');
+      expect(
+        entity.displayPhotoUrl,
+        'https://cdn.example.com/storage/deposits/pic.jpg',
+      );
     });
 
-    test('parses live map JSON response into BankSampahLocationModel correctly', () {
-      final json = {
-        "id": 7690,
-        "name": "BS JALAK GREEN COLLECTION",
-        "latitude": -6.2297588,
-        "longitude": 106.8831983,
-        "villageId": 25779,
-        "villageName": "Cipinang Besar Selatan",
-        "districtName": "Jatinegara",
-        "regencyName": "Kota Administrasi Jakarta Timur",
-        "provinceName": "Daerah Khusus Ibukota Jakarta",
-        "openTime": "08:00:00",
-        "closeTime": "16:00:00",
-        "isActive": true
-      };
+    test(
+      'parses live map JSON response into BankSampahLocationModel correctly',
+      () {
+        final json = {
+          "id": 7690,
+          "name": "BS JALAK GREEN COLLECTION",
+          "latitude": -6.2297588,
+          "longitude": 106.8831983,
+          "villageId": 25779,
+          "villageName": "Cipinang Besar Selatan",
+          "districtName": "Jatinegara",
+          "regencyName": "Kota Administrasi Jakarta Timur",
+          "provinceName": "Daerah Khusus Ibukota Jakarta",
+          "openTime": "08:00:00",
+          "closeTime": "16:00:00",
+          "isActive": true,
+        };
 
-      final location = BankSampahLocationModel.fromJson(json);
-      expect(location.id, '7690');
-      expect(location.nama, 'BS JALAK GREEN COLLECTION');
-      expect(location.kelurahan, 'Cipinang Besar Selatan');
-      expect(location.alamat, 'Cipinang Besar Selatan, Jatinegara, Kota Administrasi Jakarta Timur');
-      expect(location.latitude, -6.2297588);
-      expect(location.longitude, 106.8831983);
-    });
+        final location = BankSampahLocationModel.fromJson(json);
+        expect(location.id, '7690');
+        expect(location.nama, 'BS JALAK GREEN COLLECTION');
+        expect(location.kelurahan, 'Cipinang Besar Selatan');
+        expect(
+          location.alamat,
+          'Cipinang Besar Selatan, Jatinegara, Kota Administrasi Jakarta Timur',
+        );
+        expect(location.latitude, -6.2297588);
+        expect(location.longitude, 106.8831983);
+      },
+    );
 
     test('Repository addReport routes to remoteDataSource.addDeposit when bankId is numeric', () async {
       final report = BankSampahReportModel(
@@ -304,21 +312,27 @@ void main() {
       });
     });
 
-    test('Repository getLocations routes to remoteDataSource.getBankSampahMap', () async {
-      final result = await repository.getLocations();
-      expect(result.isRight, true);
-      result.fold((l) => fail('should succeed'), (data) {
-        expect(data.length, 1);
-        expect(data.first.id, '7690');
-        expect(data.first.nama, 'BS JALAK GREEN COLLECTION');
-      });
-    });
+    test(
+      'Repository getLocations routes to remoteDataSource.getBankSampahMap',
+      () async {
+        final result = await repository.getLocations();
+        expect(result.isRight, true);
+        result.fold((l) => fail('should succeed'), (data) {
+          expect(data.length, 1);
+          expect(data.first.id, '7690');
+          expect(data.first.nama, 'BS JALAK GREEN COLLECTION');
+        });
+      },
+    );
 
-    test('Repository returns ServerFailure when remote server throws', () async {
-      remoteDataSource.shouldThrow = true;
-      final result = await repository.getReports();
-      expect(result.isLeft, true);
-    });
+    test(
+      'Repository returns ServerFailure when remote server throws',
+      () async {
+        remoteDataSource.shouldThrow = true;
+        final result = await repository.getReports();
+        expect(result.isLeft, true);
+      },
+    );
 
     test('Repository deleteReport returns unsupported failure', () async {
       final result = await repository.deleteReport('123');
@@ -331,13 +345,15 @@ void main() {
       await expectLater(
         bloc.stream,
         emitsThrough(
-          predicate<BankSampahState>((state) =>
-              state is BankSampahLoaded &&
-              bloc.listLocations.isNotEmpty &&
-              bloc.listReports.isNotEmpty &&
-              bloc.totalLaporanCount > 0 &&
-              bloc.totalBeratKg > 0 &&
-              bloc.totalNilaiRupiah > 0),
+          predicate<BankSampahState>(
+            (state) =>
+                state is BankSampahLoaded &&
+                bloc.listLocations.isNotEmpty &&
+                bloc.listReports.isNotEmpty &&
+                bloc.totalLaporanCount > 0 &&
+                bloc.totalBeratKg > 0 &&
+                bloc.totalNilaiRupiah > 0,
+          ),
         ),
       );
     });
@@ -354,36 +370,41 @@ void main() {
       );
     });
 
-    test('Add new report calculates value as berat * 5000 automatically', () async {
-      await bloc.stream.firstWhere(
-        (s) => s is BankSampahLoaded && bloc.listReports.isNotEmpty,
-      );
+    test(
+      'Add new report calculates value as berat * 5000 automatically',
+      () async {
+        await bloc.stream.firstWhere(
+          (s) => s is BankSampahLoaded && bloc.listReports.isNotEmpty,
+        );
 
-      const berat = 4.5;
-      const expectedNilai = berat * BankSampahConstants.hargaPerKg;
+        const berat = 4.5;
+        const expectedNilai = berat * BankSampahConstants.hargaPerKg;
 
-      final reportToAdd = BankSampahReportEntity(
-        id: '',
-        bankSampahId: '7690',
-        bankSampahNama: 'BS JALAK GREEN COLLECTION',
-        jenisSampah: 'Organik',
-        beratKg: berat,
-        nilaiRupiah: expectedNilai,
-        catatan: 'Testing report',
-        createdAt: DateTime.now(),
-      );
+        final reportToAdd = BankSampahReportEntity(
+          id: '',
+          bankSampahId: '7690',
+          bankSampahNama: 'BS JALAK GREEN COLLECTION',
+          jenisSampah: 'Organik',
+          beratKg: berat,
+          nilaiRupiah: expectedNilai,
+          catatan: 'Testing report',
+          createdAt: DateTime.now(),
+        );
 
-      bloc.add(CreateBankSampahReportEvent(reportToAdd));
+        bloc.add(CreateBankSampahReportEvent(reportToAdd));
 
-      await expectLater(
-        bloc.stream,
-        emitsThrough(
-          predicate<BankSampahState>((state) =>
-              state is BankSampahActionSuccess &&
-              state.report?.beratKg == berat &&
-              state.report?.nilaiRupiah == expectedNilai),
-        ),
-      );
-    });
+        await expectLater(
+          bloc.stream,
+          emitsThrough(
+            predicate<BankSampahState>(
+              (state) =>
+                  state is BankSampahActionSuccess &&
+                  state.report?.beratKg == berat &&
+                  state.report?.nilaiRupiah == expectedNilai,
+            ),
+          ),
+        );
+      },
+    );
   });
 }

@@ -1,9 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:akar/core/offline/offline_queue_item.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
+import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
+import 'package:akar/utils/app_logger.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/usecases/add_bank_sampah_location_usecase.dart';
@@ -21,6 +27,8 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
   final DeleteBankSampahReportUsecase deleteReportUsecase;
   final GetBankSampahLocationsUsecase getLocationsUsecase;
   final AddBankSampahLocationUsecase addLocationUsecase;
+  final OfflineQueueLocalDatasource? _offlineQueue;
+  final AuthLocalDatasource? _authLocalDatasource;
 
   List<BankSampahReportEntity> listReports = [];
   List<BankSampahLocationEntity> listLocations = [];
@@ -147,7 +155,11 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     required this.deleteReportUsecase,
     required this.getLocationsUsecase,
     required this.addLocationUsecase,
-  }) : super(BankSampahInitial()) {
+    OfflineQueueLocalDatasource? offlineQueue,
+    AuthLocalDatasource? authLocalDatasource,
+  }) : _offlineQueue = offlineQueue,
+       _authLocalDatasource = authLocalDatasource,
+       super(BankSampahInitial()) {
     on<GetBankSampahReportsEvent>(_onGetReports);
     on<RefreshBankSampahReportsEvent>(_onRefreshReports);
     on<SetBankSampahFilterEvent>(_onSetFilter);
@@ -314,11 +326,57 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     emit(BankSampahActionLoading());
     final result = await addReportUsecase.call(event.report);
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
+        final bankIdInt = int.tryParse(event.report.bankSampahId);
+        if (failure.isRetryable &&
+            _offlineQueue != null &&
+            bankIdInt != null &&
+            bankIdInt > 0) {
+          try {
+            final userId =
+                _authLocalDatasource?.getCachedUserId() ?? 'anonymous';
+            final reportDateStr = DateFormat('yyyy-MM-dd')
+                .format(event.report.createdAt);
+            final attachments =
+                (event.report.fotoPath != null &&
+                    event.report.fotoPath!.isNotEmpty)
+                ? [File(event.report.fotoPath!)]
+                : <File>[];
+            final payload = <String, dynamic>{
+              'bank_id': bankIdInt,
+              'waste_type': event.report.jenisSampah,
+              'weight_kg': event.report.beratKg,
+              'report_date': reportDateStr,
+              if (event.report.catatan.isNotEmpty)
+                'notes': event.report.catatan,
+            };
+
+            await _offlineQueue.enqueue(
+              userId: userId,
+              featureType: OfflineFeatureType.bankSampah,
+              payload: payload,
+              attachments: attachments,
+              attachmentFieldKey: 'photo',
+            );
+
+            AppLogger.i(
+              '[BANK_SAMPAH_BLOC] Setoran bank sampah disimpan ke antrean offline',
+            );
+            emit(
+              BankSampahActionSuccess(
+                report: event.report,
+                message: 'Laporan bank sampah disimpan di antrean offline dan akan dikirim saat online',
+              ),
+            );
+            return;
+          } catch (e) {
+            AppLogger.e('[BANK_SAMPAH_BLOC] Gagal antrekan offline: $e');
+          }
+        }
         emit(BankSampahActionFailure(failure.message));
       },
-      (created) {
+      (created) async {
         emit(
           BankSampahActionSuccess(
             report: created,

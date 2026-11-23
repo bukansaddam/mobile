@@ -13,8 +13,10 @@ abstract class BankSampahRepository {
     String? wasteType,
   });
   Future<Either<Failure, BankSampahReportEntity>> addReport(
-    BankSampahReportEntity report,
-  );
+    BankSampahReportEntity report, {
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
+  });
   Future<Either<Failure, bool>> deleteReport(String id);
   Future<Either<Failure, List<BankSampahLocationEntity>>> getLocations();
   Future<Either<Failure, BankSampahLocationEntity>> addLocation(

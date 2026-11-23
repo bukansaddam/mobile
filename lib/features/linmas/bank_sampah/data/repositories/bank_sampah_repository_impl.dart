@@ -41,8 +41,10 @@ class BankSampahRepositoryImpl implements BankSampahRepository {
 
   @override
   Future<Either<Failure, BankSampahReportEntity>> addReport(
-    BankSampahReportEntity report,
-  ) async {
+    BankSampahReportEntity report, {
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
+  }) async {
     final bankIdInt = int.tryParse(report.bankSampahId);
     if (bankIdInt != null && bankIdInt > 0) {
       try {
@@ -57,6 +59,8 @@ class BankSampahRepositoryImpl implements BankSampahRepository {
           reportDate: reportDateStr,
           notes: report.catatan.isNotEmpty ? report.catatan : null,
           photo: file,
+          idempotencyKey: idempotencyKey,
+          skipMediaPreparation: skipMediaPreparation,
         );
         return Right(remoteModel.toDomain());
       } catch (e) {
