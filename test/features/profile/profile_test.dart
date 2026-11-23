@@ -296,31 +296,37 @@ void main() {
       },
     );
 
-    testWidgets('LinmasProfileScreen menampilkan NIK lengkap tanpa masking', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(600, 900));
-      final user = testUser.copyWith(role: 'officer', profilePic: '');
+    testWidgets(
+      'LinmasProfileScreen menyembunyikan card Informasi Personal dan menampilkan menu pengaturan',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(600, 900));
+        final user = testUser.copyWith(role: 'officer', profilePic: '');
 
-      await tester.pumpWidget(
-        MultiBlocProvider(
-          providers: [
-            BlocProvider<AuthBloc>.value(
-              value: _FakeAuthBloc(AuthAuthenticated(user: user, token: 'tok')),
-            ),
-            BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
-          ],
-          child: const MaterialApp(home: LinmasProfileScreen()),
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AuthBloc>.value(
+                value: _FakeAuthBloc(
+                  AuthAuthenticated(user: user, token: 'tok'),
+                ),
+              ),
+              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+            ],
+            child: const MaterialApp(home: LinmasProfileScreen()),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('3201234567890001'), findsOneWidget);
-      expect(find.textContaining('****'), findsNothing);
+        expect(tester.takeException(), isNull);
+        expect(find.text('Informasi Personal'), findsNothing);
+        expect(find.text('3201234567890001'), findsNothing);
+        expect(find.text('Edit Profil Saya'), findsOneWidget);
+        expect(find.text('Tema Tampilan'), findsOneWidget);
+        expect(find.text('Keluar dari Akun'), findsOneWidget);
 
-      await tester.binding.setSurfaceSize(null);
-    });
+        await tester.binding.setSurfaceSize(null);
+      },
+    );
   });
 
   group('Profile Screen Points Badge Tests', () {
