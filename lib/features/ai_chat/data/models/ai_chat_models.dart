@@ -134,7 +134,7 @@ class AiChatSessionModel {
     );
   }
 
-  static List<AiChatSessionEntity> parseList(dynamic raw) {
+  static List<AiChatSessionModel> parseModelList(dynamic raw) {
     final root = _asMap(raw);
     final listCandidate = root['data'] is List
         ? root['data'] as List
@@ -144,10 +144,13 @@ class AiChatSessionModel {
 
     return listCandidate
         .whereType<Map>()
-        .map((item) => AiChatSessionModel.fromJson(item).toDomain())
+        .map(AiChatSessionModel.fromJson)
         .where((session) => session.id > 0)
         .toList();
   }
+
+  static List<AiChatSessionEntity> parseList(dynamic raw) =>
+      parseModelList(raw).map((m) => m.toDomain()).toList();
 
   AiChatSessionEntity toDomain() => AiChatSessionEntity(
     id: id,
