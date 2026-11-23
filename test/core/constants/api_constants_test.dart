@@ -93,5 +93,10 @@ void main() {
         '/api/notifications/abc-123/read',
       );
     });
+
+    test('voucher endpoints decode accurately', () {
+      expect(ApiConstants.vouchersMe, '/api/vouchers/me');
+      expect(ApiConstants.vouchersRedeem, '/api/vouchers/redeem');
+    });
   });
 }

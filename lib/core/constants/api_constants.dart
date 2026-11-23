@@ -968,4 +968,48 @@ class ApiConstants {
       ]);
 
   static String notificationRead(String id) => '$notifications/$id/read';
+
+  // /api/vouchers/me
+  static final String vouchersMe = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    55,
+    98,
+    144,
+    172,
+    64,
+    167,
+    230,
+    44,
+    54,
+    150,
+    228,
+  ]);
+
+  // /api/vouchers/redeem
+  static final String vouchersRedeem = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    55,
+    98,
+    144,
+    172,
+    64,
+    167,
+    230,
+    44,
+    54,
+    137,
+    228,
+    46,
+    123,
+    41,
+    2,
+  ]);
 }
