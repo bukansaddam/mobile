@@ -36,6 +36,10 @@ class OfflineSyncCoordinator {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   bool get isSyncing => _isSyncing;
+  List<OfflineSyncHandler> get handlers => List.unmodifiable(_handlers);
+
+  bool hasHandlerFor(OfflineFeatureType type) =>
+      _handlers.any((h) => h.canHandle(type));
 
   OfflineSyncCoordinator({
     required OfflineQueueLocalDatasource queueDatasource,
@@ -43,13 +47,15 @@ class OfflineSyncCoordinator {
     Future<List<ConnectivityResult>> Function()? connectivityChecker,
     Stream<List<ConnectivityResult>>? connectivityStream,
     FirebaseNotificationService? notificationService,
-  })  : _queueDatasource = queueDatasource,
-        _currentUserIdResolver = currentUserIdResolver,
-        _connectivityChecker =
-            connectivityChecker ?? (() => Connectivity().checkConnectivity()),
-        _notificationService = notificationService {
+  }) : _queueDatasource = queueDatasource,
+       _currentUserIdResolver = currentUserIdResolver,
+       _connectivityChecker =
+           connectivityChecker ?? (() => Connectivity().checkConnectivity()),
+       _notificationService = notificationService {
     if (connectivityStream != null) {
-      _connectivitySubscription = connectivityStream.listen(_onConnectivityChanged);
+      _connectivitySubscription = connectivityStream.listen(
+        _onConnectivityChanged,
+      );
     }
   }
 
@@ -63,8 +69,9 @@ class OfflineSyncCoordinator {
   }
 
   void _onConnectivityChanged(List<ConnectivityResult> results) {
-    final hasInternet =
-        results.any((r) => r != ConnectivityResult.none && r != ConnectivityResult.bluetooth);
+    final hasInternet = results.any(
+      (r) => r != ConnectivityResult.none && r != ConnectivityResult.bluetooth,
+    );
     if (hasInternet && !_isSyncing) {
       syncNow();
     }
@@ -77,7 +84,8 @@ class OfflineSyncCoordinator {
     try {
       final connectivity = await _connectivityChecker();
       final isOffline =
-          connectivity.isEmpty || connectivity.every((r) => r == ConnectivityResult.none);
+          connectivity.isEmpty ||
+          connectivity.every((r) => r == ConnectivityResult.none);
       if (isOffline) {
         return;
       }
@@ -128,11 +136,13 @@ class OfflineSyncCoordinator {
         }
 
         final handler = _handlers.cast<OfflineSyncHandler?>().firstWhere(
-              (h) => h?.canHandle(item.featureType) ?? false,
-              orElse: () => null,
-            );
+          (h) => h?.canHandle(item.featureType) ?? false,
+          orElse: () => null,
+        );
         if (handler == null) {
-          AppLogger.w('[SYNC_COORD] No handler for feature ${item.featureType}');
+          AppLogger.w(
+            '[SYNC_COORD] No handler for feature ${item.featureType}',
+          );
           continue;
         }
 
@@ -145,7 +155,10 @@ class OfflineSyncCoordinator {
     }
   }
 
-  Future<void> _syncItem(OfflineSyncHandler handler, OfflineQueueItem item) async {
+  Future<void> _syncItem(
+    OfflineSyncHandler handler,
+    OfflineQueueItem item,
+  ) async {
     try {
       await _queueDatasource.updateItem(
         item.copyWith(status: OfflineItemStatus.syncing),
@@ -158,7 +171,9 @@ class OfflineSyncCoordinator {
 
       // Successfully synced: cleanup from local queue
       await _queueDatasource.remove(item.id);
-      AppLogger.i('[SYNC_COORD] Item ${item.id} successfully synced and removed.');
+      AppLogger.i(
+        '[SYNC_COORD] Item ${item.id} successfully synced and removed.',
+      );
     } catch (e, s) {
       AppLogger.w('[SYNC_COORD] Failed syncing item ${item.id}: $e', e, s);
       final failure = e is Failure ? e : ErrorUtils.toFailure(e);
@@ -180,9 +195,12 @@ class OfflineSyncCoordinator {
               .timeout(const Duration(seconds: 4));
           if (placemarks.isNotEmpty) {
             final p = placemarks.first;
-            final address = [p.street, p.subLocality, p.locality, p.subAdministrativeArea]
-                .where((s) => s != null && s.trim().isNotEmpty)
-                .join(', ');
+            final address = [
+              p.street,
+              p.subLocality,
+              p.locality,
+              p.subAdministrativeArea,
+            ].where((s) => s != null && s.trim().isNotEmpty).join(', ');
             if (address.isNotEmpty) {
               updatedPayload['address'] = address;
               updatedPayload['needsReverseGeocode'] = false;
@@ -209,7 +227,9 @@ class OfflineSyncCoordinator {
       }
 
       try {
-        final capturedAt = DateTime.tryParse(updatedPayload['capturedAt'] ?? '') ?? item.createdAt;
+        final capturedAt =
+            DateTime.tryParse(updatedPayload['capturedAt'] ?? '') ??
+            item.createdAt;
         final lat = (updatedPayload['capturedLat'] as num?)?.toDouble();
         final lng = (updatedPayload['capturedLng'] as num?)?.toDouble();
         final addr = updatedPayload['address'] as String?;
@@ -229,7 +249,9 @@ class OfflineSyncCoordinator {
           att.copyWith(
             localPath: stamped.path,
             alreadyStamped: true,
-            sizeBytes: stamped.existsSync() ? stamped.lengthSync() : att.sizeBytes,
+            sizeBytes: stamped.existsSync()
+                ? stamped.lengthSync()
+                : att.sizeBytes,
           ),
         );
       } catch (_) {
@@ -245,8 +267,12 @@ class OfflineSyncCoordinator {
     return prepared;
   }
 
-  Future<void> _handleSyncFailure(OfflineQueueItem item, Failure failure) async {
-    final isPermanent = !failure.isRetryable ||
+  Future<void> _handleSyncFailure(
+    OfflineQueueItem item,
+    Failure failure,
+  ) async {
+    final isPermanent =
+        !failure.isRetryable ||
         failure is ValidationFailure ||
         failure.statusCode == 400 ||
         failure.statusCode == 422;
@@ -271,7 +297,8 @@ class OfflineSyncCoordinator {
         item.copyWith(
           status: OfflineItemStatus.failedPermanent,
           retryCount: nextRetryCount,
-          lastError: 'Gagal setelah $maxRetries kali percobaan: ${failure.message}',
+          lastError:
+              'Gagal setelah $maxRetries kali percobaan: ${failure.message}',
           lastStatusCode: failure.statusCode,
           nextRetryAt: null,
         ),
@@ -280,7 +307,8 @@ class OfflineSyncCoordinator {
       return;
     }
 
-    final delay = backoffDelays[(nextRetryCount - 1).clamp(0, backoffDelays.length - 1)];
+    final delay =
+        backoffDelays[(nextRetryCount - 1).clamp(0, backoffDelays.length - 1)];
     final nextRetryAt = DateTime.now().add(delay);
 
     await _queueDatasource.updateItem(

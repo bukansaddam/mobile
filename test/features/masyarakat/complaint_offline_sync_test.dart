@@ -174,6 +174,10 @@ void main() {
         authLocalDatasource: mockAuthDatasource,
       );
 
+      final queuedFuture = bloc.stream
+          .firstWhere((state) => state is CreateComplaintQueuedOffline)
+          .timeout(const Duration(seconds: 5));
+
       bloc.add(
         SubmitComplaintEvent(
           title: 'Sampah Menumpuk di Pasar',
@@ -186,15 +190,8 @@ void main() {
         ),
       );
 
-      await pumpEventQueue();
-      await pumpEventQueue();
-      await pumpEventQueue();
-
-      expect(bloc.state, isA<CreateComplaintQueuedOffline>());
-      expect(
-        (bloc.state as CreateComplaintQueuedOffline).title,
-        equals('Sampah Menumpuk di Pasar'),
-      );
+      final queuedState = await queuedFuture as CreateComplaintQueuedOffline;
+      expect(queuedState.title, equals('Sampah Menumpuk di Pasar'));
 
       final pending = await queueDatasource.getPending('masyarakat-user-55');
       expect(pending.length, equals(1));

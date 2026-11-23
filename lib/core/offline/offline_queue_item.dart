@@ -1,10 +1,4 @@
-enum OfflineFeatureType {
-  jagaTanah,
-  complaint,
-  ronda,
-  bankSampah,
-  activation,
-}
+enum OfflineFeatureType { jagaTanah, complaint, ronda, bankSampah, activation }
 
 enum OfflineItemStatus {
   pending,
@@ -187,7 +181,8 @@ class OfflineQueueItem {
       payload: json['payload'] is Map
           ? Map<String, dynamic>.from(json['payload'] as Map)
           : <String, dynamic>{},
-      attachments: (json['attachments'] as List?)
+      attachments:
+          (json['attachments'] as List?)
               ?.whereType<Map>()
               .map(
                 (a) => OfflineAttachment.fromJson(Map<String, dynamic>.from(a)),

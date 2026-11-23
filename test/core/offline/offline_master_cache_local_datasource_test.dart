@@ -1,5 +1,6 @@
 // test/core/offline/offline_master_cache_local_datasource_test.dart
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 
@@ -9,7 +10,9 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('master_cache_test_');
-    cacheDatasource = OfflineMasterCacheLocalDatasource(rootDirectory: () async => tempDir);
+    cacheDatasource = OfflineMasterCacheLocalDatasource(
+      rootDirectory: () async => tempDir,
+    );
   });
 
   tearDown(() async {

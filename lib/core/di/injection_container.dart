@@ -6,6 +6,11 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/offline/offline_sync_coordinator.dart';
+import 'package:akar/features/linmas/activation/data/sync/activation_sync_handler.dart';
+import 'package:akar/features/linmas/bank_sampah/data/sync/bank_sampah_sync_handler.dart';
+import 'package:akar/features/linmas/jaga_tanah/data/sync/jaga_tanah_sync_handler.dart';
+import 'package:akar/features/linmas/ronda_malam/data/sync/ronda_sync_handler.dart';
+import 'package:akar/features/masyarakat/complaint/data/sync/complaint_sync_handler.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
@@ -212,8 +217,14 @@ Future<void> init() async {
   sl.registerLazySingleton<OfflineMasterCacheLocalDatasource>(
     () => OfflineMasterCacheLocalDatasource(dio: sl()),
   );
-  sl.registerLazySingleton<OfflineSyncCoordinator>(
-    () => OfflineSyncCoordinator(
+  sl.registerLazySingleton<OfflineSyncCoordinator>(() {
+    FirebaseNotificationService? notificationService;
+    try {
+      notificationService = sl<FirebaseNotificationService>();
+    } catch (_) {
+      notificationService = null;
+    }
+    final coordinator = OfflineSyncCoordinator(
       queueDatasource: sl(),
       currentUserIdResolver: () {
         if (sl.isRegistered<AuthLocalDatasource>()) {
@@ -221,9 +232,16 @@ Future<void> init() async {
         }
         return '';
       },
-      notificationService: sl<FirebaseNotificationService>(),
-    ),
-  );
+      notificationService: notificationService,
+    );
+    coordinator
+      ..registerHandler(RondaSyncHandler(remoteDatasource: sl()))
+      ..registerHandler(JagaTanahSyncHandler(remoteDatasource: sl()))
+      ..registerHandler(ComplaintSyncHandler(remoteDatasource: sl()))
+      ..registerHandler(BankSampahSyncHandler(remoteDataSource: sl()))
+      ..registerHandler(ActivationSyncHandler(remoteDatasource: sl()));
+    return coordinator;
+  });
 
   // Data Sources
   sl.registerLazySingleton<AuthLocalDatasource>(
@@ -523,6 +541,7 @@ Future<void> init() async {
       getActivationSubmissionsUsecase: sl(),
       submitActivationReportUsecase: sl(),
       pendingReportStore: sl(),
+      offlineQueue: sl(),
       authLocalDatasource: sl(),
     ),
   );
@@ -534,7 +553,11 @@ Future<void> init() async {
     () => PresensiBloc(submitPresensiUsecase: sl()),
   );
   sl.registerFactory<RondaBloc>(
-    () => RondaBloc(submitRondaLaporanUsecase: sl()),
+    () => RondaBloc(
+      submitRondaLaporanUsecase: sl(),
+      offlineQueue: sl(),
+      authLocalDatasource: sl(),
+    ),
   );
   sl.registerFactory<TokohBloc>(
     () => TokohBloc(
@@ -565,6 +588,8 @@ Future<void> init() async {
       deleteReportUsecase: sl(),
       getLocationsUsecase: sl(),
       addLocationUsecase: sl(),
+      offlineQueue: sl(),
+      authLocalDatasource: sl(),
     ),
   );
   sl.registerFactory<MemberDashboardBloc>(
@@ -583,7 +608,11 @@ Future<void> init() async {
   // Dumas Cubits (Factory)
   sl.registerFactory<MainCubit>(() => MainCubit());
   sl.registerFactory<CreateComplaintBloc>(
-    () => CreateComplaintBloc(createComplaint: sl()),
+    () => CreateComplaintBloc(
+      createComplaint: sl(),
+      offlineQueue: sl(),
+      authLocalDatasource: sl(),
+    ),
   );
   sl.registerFactory<MyComplaintListBloc>(
     () =>
@@ -599,7 +628,12 @@ Future<void> init() async {
     () => JagaTanahListBloc(getMyReports: sl(), getCategories: sl()),
   );
   sl.registerFactory<CreateJagaTanahBloc>(
-    () => CreateJagaTanahBloc(createReport: sl(), getCategories: sl()),
+    () => CreateJagaTanahBloc(
+      createReport: sl(),
+      getCategories: sl(),
+      offlineQueue: sl(),
+      authLocalDatasource: sl(),
+    ),
   );
   sl.registerFactory<JagaTanahDetailBloc>(
     () => JagaTanahDetailBloc(getReportDetail: sl()),

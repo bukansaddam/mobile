@@ -22,9 +22,8 @@ class OfflineQueueLocalDatasource {
 
   final Future<Directory> Function() _rootDirectory;
 
-  OfflineQueueLocalDatasource({
-    Future<Directory> Function()? rootDirectory,
-  }) : _rootDirectory = rootDirectory ?? getApplicationSupportDirectory;
+  OfflineQueueLocalDatasource({Future<Directory> Function()? rootDirectory})
+    : _rootDirectory = rootDirectory ?? getApplicationSupportDirectory;
 
   Future<Directory> _dir() async {
     final base = await _rootDirectory();

@@ -20,8 +20,8 @@ class OfflineMasterCacheLocalDatasource {
   OfflineMasterCacheLocalDatasource({
     Future<Directory> Function()? rootDirectory,
     Dio? dio,
-  })  : _rootDirectory = rootDirectory ?? getApplicationSupportDirectory,
-        _dio = dio ?? DioClient.instance;
+  }) : _rootDirectory = rootDirectory ?? getApplicationSupportDirectory,
+       _dio = dio ?? DioClient.instance;
 
   Future<Directory> _dir() async {
     final base = await _rootDirectory();
@@ -77,7 +77,9 @@ class OfflineMasterCacheLocalDatasource {
         _warmUpCategoriesReport(),
         _warmUpBankSampahMap(),
       ]);
-      AppLogger.i('[MASTER_CACHE] Essential master data warmed up successfully');
+      AppLogger.i(
+        '[MASTER_CACHE] Essential master data warmed up successfully',
+      );
     } catch (e) {
       AppLogger.w('[MASTER_CACHE] Warmup encountered error (ignored): $e');
     }

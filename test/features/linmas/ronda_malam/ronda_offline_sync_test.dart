@@ -136,19 +136,18 @@ void main() {
         authLocalDatasource: mockAuthDatasource,
       );
 
+      final successFuture = bloc.stream
+          .firstWhere((state) => state is RondaActionSuccess)
+          .timeout(const Duration(seconds: 5));
+
       bloc.add(
         const SubmitRondaLaporanEvent(
           RondaLaporanEntity(keterangan: 'Laporan ronda saat offline'),
         ),
       );
 
-      await pumpEventQueue();
-      await pumpEventQueue();
-      await pumpEventQueue();
-
-      // State is success (queued)
-      expect(bloc.state, isA<RondaActionSuccess>());
-      expect((bloc.state as RondaActionSuccess).message, contains('offline'));
+      final successState = await successFuture as RondaActionSuccess;
+      expect(successState.message, contains('offline'));
 
       // Verify item stored in offline queue
       final pending = await queueDatasource.getPending('officer-42');

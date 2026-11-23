@@ -232,14 +232,13 @@ void main() {
         createdAt: DateTime(2026, 11, 23),
       );
 
+      final successFuture = bloc.stream
+          .firstWhere((state) => state is BankSampahActionSuccess)
+          .timeout(const Duration(seconds: 5));
+
       bloc.add(CreateBankSampahReportEvent(report));
 
-      await pumpEventQueue();
-      await pumpEventQueue();
-      await pumpEventQueue();
-
-      expect(bloc.state, isA<BankSampahActionSuccess>());
-      final successState = bloc.state as BankSampahActionSuccess;
+      final successState = await successFuture as BankSampahActionSuccess;
       expect(successState.message.toLowerCase(), contains('antrean offline'));
 
       final pending = await queueDatasource.getPending('linmas-user-77');

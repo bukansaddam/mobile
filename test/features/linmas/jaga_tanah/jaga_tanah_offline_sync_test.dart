@@ -201,6 +201,13 @@ void main() {
         authLocalDatasource: mockAuthDatasource,
       );
 
+      final doneFuture = bloc.stream
+          .firstWhere(
+            (state) =>
+                state.submitStatus == CreateJagaTanahSubmitStatus.success,
+          )
+          .timeout(const Duration(seconds: 5));
+
       bloc.add(
         SubmitJagaTanahReportEvent(
           title: 'Patroli Tanah Sengketa',
@@ -213,15 +220,13 @@ void main() {
         ),
       );
 
-      await pumpEventQueue();
-      await pumpEventQueue();
-      await pumpEventQueue();
+      final doneState = await doneFuture;
 
       expect(
-        bloc.state.submitStatus,
+        doneState.submitStatus,
         equals(CreateJagaTanahSubmitStatus.success),
       );
-      expect(bloc.state.isQueuedOffline, isTrue);
+      expect(doneState.isQueuedOffline, isTrue);
 
       final pending = await queueDatasource.getPending('linmas-user-88');
       expect(pending.length, equals(1));
