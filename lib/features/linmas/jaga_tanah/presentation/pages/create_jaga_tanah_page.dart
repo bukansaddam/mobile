@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
@@ -675,108 +676,46 @@ class CreateJagaTanahPage extends HookWidget {
     final ticketNumber = report?.ticketNumber.trim();
     final hasTicket = ticketNumber != null && ticketNumber.isNotEmpty;
 
-    return showDialog<void>(
-      context: context,
+    return AppDialogs.showSuccess<void>(
+      context,
+      title: 'Laporan Terkirim',
+      message: 'Laporan Jaga Tanah berhasil dikirim dan sedang diproses untuk verifikasi (< 24 jam).',
+      buttonText: 'Selesai',
       barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        scrollable: true,
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
+      customContent: hasTicket
+          ? Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.check_circle_rounded,
-                color: AppColors.primaryDark,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Laporan Terkirim',
-                style: AppTextStyles.titleLarge.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (hasTicket) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Nomor Tiket',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      ticketNumber,
-                      style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.primaryDark,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            Text(
-              'Laporan Jaga Tanah berhasil dikirim dan sedang diproses untuk verifikasi (< 24 jam).',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              if (context.mounted) {
-                Navigator.of(context).maybePop(true);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              backgroundColor: AppColors.primaryDark,
-              foregroundColor: AppColors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              textStyle: AppTextStyles.button,
-            ),
-            child: const Text('Selesai'),
-          ),
-        ],
-      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Nomor Tiket',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.primaryDark,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    ticketNumber,
+                    style: AppTextStyles.titleMedium.copyWith(
+                      color: AppColors.primaryDark,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : null,
+      onPressed: () {
+        if (context.mounted) {
+          Navigator.of(context).maybePop(true);
+        }
+      },
     );
   }
 

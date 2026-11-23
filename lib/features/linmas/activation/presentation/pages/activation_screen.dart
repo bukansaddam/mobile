@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
@@ -566,31 +567,19 @@ class _ActivationScreenState extends State<ActivationScreen> {
     BuildContext context,
     PendingActivationReportModel report,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Hapus laporan?'),
-        content: Text(
+    final confirmed = await AppDialogs.showConfirmation(
+      context,
+      title: 'Hapus laporan?',
+      message:
           'Laporan "${report.activityTitle}" akan dihapus dari perangkat '
           'dan tidak akan pernah terkirim.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Batal'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text(
-              'Hapus',
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
+      confirmText: 'Hapus',
+      cancelText: 'Batal',
+      isDestructive: true,
+      icon: Icons.delete_outline_rounded,
     );
 
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       context.read<ActivationBloc>().add(DeletePendingReportEvent(report.id));
     }
   }

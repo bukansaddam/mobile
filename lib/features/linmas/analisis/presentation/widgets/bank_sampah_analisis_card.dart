@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -56,118 +57,134 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
       'Desember',
     ];
 
-    final result = await showDialog<DateTime>(
-      context: context,
-      builder: (BuildContext context) {
+    final result = await AppDialogs.showCustom<DateTime>(
+      context,
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          builder: (dialogContext, setDialogState) {
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left_rounded),
-                    onPressed: tempYear > 2020
-                        ? () {
-                            setDialogState(() {
-                              tempYear--;
-                            });
-                          }
-                        : null,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.chevron_left_rounded),
+                        onPressed: tempYear > 2020
+                            ? () {
+                                setDialogState(() {
+                                  tempYear--;
+                                });
+                              }
+                            : null,
+                      ),
+                      Text(
+                        '$tempYear',
+                        style: AppTextStyles.titleMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right_rounded),
+                        onPressed: tempYear < now.year
+                            ? () {
+                                setDialogState(() {
+                                  tempYear++;
+                                });
+                              }
+                            : null,
+                      ),
+                    ],
                   ),
-                  Text(
-                    '$tempYear',
-                    style: AppTextStyles.titleMedium.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                  const SizedBox(height: 12),
+                  GridView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 2.2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
+                    itemCount: 12,
+                    itemBuilder: (context, index) {
+                      final monthNumber = index + 1;
+                      final isSelected =
+                          (monthNumber == tempMonth &&
+                          tempYear == (_selectedMonth ?? now).year);
+                      final isFuture =
+                          (tempYear > now.year ||
+                          (tempYear == now.year && monthNumber > now.month));
+
+                      return InkWell(
+                        onTap: isFuture
+                            ? null
+                            : () {
+                                Navigator.pop(
+                                  dialogContext,
+                                  DateTime(tempYear, monthNumber),
+                                );
+                              },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primary
+                                : (isFuture
+                                      ? AppColors.grey100
+                                      : AppColors.grey50),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.grey200,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            months[index],
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? AppColors.white
+                                  : (isFuture
+                                        ? AppColors.grey400
+                                        : AppColors.textPrimary),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.secondary,
+                        side: const BorderSide(
+                          color: AppColors.grey300,
+                          width: 1.4,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text('Batal'),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right_rounded),
-                    onPressed: tempYear < now.year
-                        ? () {
-                            setDialogState(() {
-                              tempYear++;
-                            });
-                          }
-                        : null,
                   ),
                 ],
               ),
-              content: SizedBox(
-                width: 280,
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 2.2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: 12,
-                  itemBuilder: (context, index) {
-                    final monthNumber = index + 1;
-                    final isSelected =
-                        (monthNumber == tempMonth &&
-                        tempYear == (_selectedMonth ?? now).year);
-                    final isFuture =
-                        (tempYear > now.year ||
-                        (tempYear == now.year && monthNumber > now.month));
-
-                    return InkWell(
-                      onTap: isFuture
-                          ? null
-                          : () {
-                              Navigator.pop(
-                                context,
-                                DateTime(tempYear, monthNumber),
-                              );
-                            },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primary
-                              : (isFuture
-                                    ? AppColors.grey100
-                                    : AppColors.grey50),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primary
-                                : AppColors.grey200,
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          months[index],
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.w500,
-                            color: isSelected
-                                ? Colors.white
-                                : (isFuture
-                                      ? AppColors.grey400
-                                      : AppColors.textPrimary),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('BATAL'),
-                ),
-              ],
             );
           },
         );

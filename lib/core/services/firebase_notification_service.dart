@@ -12,7 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
+import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/app_logger.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 import 'package:akar/firebase_options.dart';
 
@@ -778,88 +780,42 @@ class FirebaseNotificationService {
 
     if (!context.mounted) return false;
 
-    final proceed = await showDialog<bool>(
-      context: context,
+    final proceed = await AppDialogs.showConfirmation(
+      context,
+      title: 'Izin Panggilan Darurat Fullscreen',
+      message: 'Agar peringatan darurat & panggilan SOS dapat otomatis muncul Fullscreen saat Anda sedang membuka aplikasi lain (seperti WhatsApp atau YouTube), mohon aktifkan izin "Tampilkan di atas aplikasi lain".',
+      confirmText: 'Aktifkan Sekarang',
+      cancelText: 'Nanti Saja',
+      isDestructive: true,
+      icon: Icons.warning_amber_rounded,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+      customContent: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.primaryLight,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Row(
           children: [
             Icon(
-              Icons.warning_amber_rounded,
-              color: Color(0xFFEF4444),
-              size: 28,
+              Icons.check_circle_outline,
+              color: AppColors.primary,
+              size: 18,
             ),
-            SizedBox(width: 10),
+            SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Izin Panggilan Darurat Fullscreen',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                'Layar otomatis menyala & Fullscreen 24/7',
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
               ),
             ),
           ],
         ),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Agar peringatan darurat & panggilan SOS dapat otomatis muncul Fullscreen saat Anda sedang membuka aplikasi lain (seperti WhatsApp atau YouTube), mohon aktifkan izin "Tampilkan di atas aplikasi lain".',
-              style: TextStyle(
-                fontSize: 13,
-                height: 1.4,
-                color: Color(0xFF334155),
-              ),
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(
-                  Icons.check_circle_outline,
-                  color: Color(0xFF10B981),
-                  size: 18,
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Layar otomatis menyala & Fullscreen 24/7',
-                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _prefs.setBool(prefsKey, true);
-              Navigator.pop(ctx, false);
-            },
-            child: const Text(
-              'NANTI SAJA',
-              style: TextStyle(color: Color(0xFF94A3B8)),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: () {
-              _prefs.setBool(prefsKey, true);
-              Navigator.pop(ctx, true);
-            },
-            child: const Text('AKTIFKAN SEKARANG'),
-          ),
-        ],
       ),
     );
+    await _prefs.setBool(prefsKey, true);
 
-    if (proceed == true) {
+    if (proceed) {
       return await requestOverlayPermission();
     }
     return false;

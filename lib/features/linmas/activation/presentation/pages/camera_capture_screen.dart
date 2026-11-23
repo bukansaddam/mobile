@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -134,21 +135,10 @@ class CameraCaptureScreen {
   }
 
   static void _showCompressingDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const PopScope(
-        canPop: false,
-        child: AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Expanded(child: Text('Mengompres video...')),
-            ],
-          ),
-        ),
-      ),
+    AppDialogs.showLoading(
+      context,
+      message: 'Mengompres video...',
+      useRootNavigator: true,
     );
   }
 

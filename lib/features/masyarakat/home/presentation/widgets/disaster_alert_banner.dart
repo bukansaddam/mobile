@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
+import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -62,8 +64,7 @@ class DisasterAlertBanner extends StatelessWidget {
               _buildSimulateOption(
                 context,
                 title: '📋 Salin Token FCM Perangkat',
-                subtitle:
-                    'Salin token unik HP ini untuk test notifikasi dari Firebase Console',
+                subtitle: 'Salin token unik HP ini untuk test notifikasi dari Firebase Console',
                 onTap: () async {
                   Navigator.pop(context);
                   final token = await sl<FirebaseNotificationService>()
@@ -71,62 +72,39 @@ class DisasterAlertBanner extends StatelessWidget {
                   if (token != null && token.isNotEmpty) {
                     await Clipboard.setData(ClipboardData(text: token));
                     if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          title: const Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                color: Color(0xFF10B981),
+                      AppDialogs.showSuccess<void>(
+                        context,
+                        title: 'Token FCM Berhasil Disalin',
+                        message: 'Token FCM unik perangkat ini telah disalin ke clipboard.',
+                        buttonText: 'OK',
+                        barrierDismissible: true,
+                        customContent: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.grey100,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              SizedBox(width: 8),
-                              Text(
-                                'Token FCM Berhasil Disalin',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Token FCM unik perangkat ini telah disalin ke clipboard:\n',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF1F5F9),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: SelectableText(
-                                  token,
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    fontFamily: 'monospace',
-                                    color: Color(0xFF0F172A),
-                                  ),
+                              child: SelectableText(
+                                token,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontFamily: 'monospace',
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                              const Text(
-                                'Gunakan token ini di Firebase Console -> Messaging -> Send test message.',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF64748B),
-                                ),
+                            ),
+                            const SizedBox(height: 10),
+                            const Text(
+                              'Gunakan token ini di Firebase Console -> Messaging -> Send test message.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
                               ),
-                            ],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: const Text('OK'),
                             ),
                           ],
                         ),
@@ -150,8 +128,7 @@ class DisasterAlertBanner extends StatelessWidget {
               _buildSimulateOption(
                 context,
                 title: '📱 Tes Push Notifikasi Sistem (Luar Aplikasi)',
-                subtitle:
-                    'Picu peringatan dalam 8 detik (minimize app sekarang untuk menguji)',
+                subtitle: 'Picu peringatan dalam 8 detik (minimize app sekarang untuk menguji)',
                 onTap: () {
                   Navigator.pop(context);
                   DisasterSimulateCountdownDialog.show(context);
@@ -325,9 +302,10 @@ class CountdownTestDialog extends StatefulWidget {
   const CountdownTestDialog({super.key});
 
   static Future<void> show(BuildContext context) {
-    return showDialog<void>(
-      context: context,
+    return AppDialogs.showCustom<void>(
+      context,
       barrierDismissible: false,
+      canPop: false,
       builder: (context) => const CountdownTestDialog(),
     );
   }
@@ -383,119 +361,109 @@ class _CountdownTestDialogState extends State<CountdownTestDialog> {
   Widget build(BuildContext context) {
     final progress = _remainingSeconds / _totalSeconds;
 
-    return PopScope(
-      canPop: false,
-      child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFEF2F2),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.phonelink_ring_rounded,
-                  color: Color(0xFFDC2626),
-                  size: 36,
-                ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'MINIMIZE APLIKASI SEKARANG',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF0F172A),
-                  letterSpacing: 0.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Peringatan sistem darurat akan terpicu secara otomatis di luar aplikasi saat timer 8 detik habis:',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: Color(0xFF64748B),
-                  height: 1.35,
-                ),
-              ),
-              const SizedBox(height: 20),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFEF2F2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.phonelink_ring_rounded,
+              color: Color(0xFFDC2626),
+              size: 36,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'MINIMIZE APLIKASI SEKARANG',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF0F172A),
+              letterSpacing: 0.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Peringatan sistem darurat akan terpicu secara otomatis di luar aplikasi saat timer 8 detik habis:',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12.5,
+              color: Color(0xFF64748B),
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 20),
 
-              // Animated Circular Countdown Gauge
-              Stack(
-                alignment: Alignment.center,
+          // Animated Circular Countdown Gauge
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 96,
+                height: 96,
+                child: CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 8,
+                  backgroundColor: const Color(0xFFFEF2F2),
+                  color: const Color(0xFFDC2626),
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: 96,
-                    height: 96,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 8,
-                      backgroundColor: const Color(0xFFFEF2F2),
-                      color: const Color(0xFFDC2626),
+                  Text(
+                    '$_remainingSeconds',
+                    style: const TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      color: Color(0xFFDC2626),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '$_remainingSeconds',
-                        style: const TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFDC2626),
-                        ),
-                      ),
-                      const Text(
-                        'detik',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF94A3B8),
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'detik',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF94A3B8),
+                    ),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 24),
-
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    _timer?.cancel();
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.arrow_back_rounded, size: 18),
-                  label: const Text(
-                    'SIAP, SAYA MINIMIZE SEKARANG',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12.5,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFDC2626),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
-        ),
+
+          const SizedBox(height: 24),
+
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                _timer?.cancel();
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.arrow_back_rounded, size: 18),
+              label: const Text(
+                'SIAP, SAYA MINIMIZE SEKARANG',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFDC2626),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
