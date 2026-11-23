@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
@@ -1286,39 +1287,10 @@ class CreateJagaTanahPage extends HookWidget {
         canPop: !isSubmitting,
         child: Scaffold(
           backgroundColor: AppColors.background,
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: Container(
-              decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                scrolledUnderElevation: 0,
-                surfaceTintColor: Colors.transparent,
-                leading: IconButton(
-                  tooltip: 'Kembali',
-                  constraints: const BoxConstraints(
-                    minWidth: 48,
-                    minHeight: 48,
-                  ),
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: AppColors.textPrimary,
-                  ),
-                  onPressed: isSubmitting
-                      ? null
-                      : () => Navigator.of(context).pop(),
-                ),
-                title: Text(
-                  'Buat Laporan Jaga Tanah',
-                  style: AppTextStyles.headlineMedium.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
+          appBar: AppPageBar(
+            title: 'Buat Laporan Jaga Tanah',
+            isBackEnabled: !isSubmitting,
+            onBackPressed: () => Navigator.of(context).pop(),
           ),
           body: LayoutBuilder(
             builder: (context, constraints) {

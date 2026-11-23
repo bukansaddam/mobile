@@ -1,6 +1,6 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
@@ -79,37 +79,7 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              onPressed: () => Navigator.of(context).maybePop(),
-              tooltip: 'Kembali',
-              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            title: Text(
-              'Notifikasi',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextStyles.headlineMedium.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ),
-      ),
+      appBar: const AppPageBar(title: 'Notifikasi'),
       body: BlocConsumer<NotificationBloc, NotificationState>(
         listenWhen: (prev, curr) =>
             prev.actionErrorMessage != curr.actionErrorMessage &&

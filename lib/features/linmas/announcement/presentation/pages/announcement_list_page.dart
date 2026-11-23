@@ -1,7 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_state.dart';
@@ -103,34 +103,8 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Color(0xFF0F172A),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'Pengumuman',
-              style: AppTextStyles.headlineMedium.copyWith(
-                color: const Color(0xFF0F172A),
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.background,
+      appBar: const AppPageBar(title: 'Pengumuman'),
       body: BlocBuilder<AnnouncementBloc, AnnouncementState>(
         builder: (context, state) {
           if (state.status == AnnouncementStatus.loading &&

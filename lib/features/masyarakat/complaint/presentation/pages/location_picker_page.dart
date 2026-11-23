@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -128,32 +129,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         final cubit = context.read<LocationPickerCubit>();
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8FAFC),
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: Container(
-              decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xFF0F172A),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                title: const Text(
-                  'Pilih Lokasi Kejadian',
-                  style: TextStyle(
-                    color: Color(0xFF0F172A),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          backgroundColor: AppColors.background,
+          appBar: const AppPageBar(title: 'Pilih Lokasi Kejadian'),
           body: Stack(
             children: [
               GoogleMap(

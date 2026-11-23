@@ -6,6 +6,7 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
@@ -760,33 +761,9 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8FAFC),
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Container(
-            decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              surfaceTintColor: Colors.transparent,
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Color(0xFF0F172A),
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-              title: Text(
-                widget.isInsidentil ? 'Laporan Insidentil' : 'Buat Pengaduan',
-                style: const TextStyle(
-                  color: Color(0xFF0F172A),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
+        backgroundColor: AppColors.background,
+        appBar: AppPageBar(
+          title: widget.isInsidentil ? 'Laporan Insidentil' : 'Buat Pengaduan',
         ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),

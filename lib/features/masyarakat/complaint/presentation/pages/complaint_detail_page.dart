@@ -6,6 +6,7 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
@@ -125,34 +126,8 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
 
   Widget _buildBody(BuildContext context, ComplaintItem item) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: Color(0xFF0F172A),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'Detail Pengaduan',
-              style: AppTextStyles.headlineMedium.copyWith(
-                color: const Color(0xFF0F172A),
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: AppColors.background,
+      appBar: const AppPageBar(title: 'Detail Pengaduan'),
       body: RefreshIndicator(
         color: AppColors.primary,
         onRefresh: _refresh,
