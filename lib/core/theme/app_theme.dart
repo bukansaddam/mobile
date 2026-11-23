@@ -24,8 +24,10 @@ class AppTheme {
       fontFamily: 'Roboto',
       appBarTheme: const AppBarTheme(
         elevation: 0,
-        centerTitle: false,
-        backgroundColor: AppColors.white,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
         foregroundColor: AppColors.textPrimary,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -33,7 +35,7 @@ class AppTheme {
         ),
         titleTextStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),

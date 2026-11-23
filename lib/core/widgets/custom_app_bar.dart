@@ -7,12 +7,17 @@ import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_aler
 import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:flutter/material.dart';
 
+enum AppBarBrand { dumas, linmas }
+
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onNotificationPressed;
   final int? unreadCount;
   final String? title;
   final String? subtitle;
   final bool showNotificationButton;
+  final AppBarBrand brand;
+  final VoidCallback? onLogoTap;
+  final bool enableDefaultLogoEasterEgg;
 
   const CustomAppBar({
     super.key,
@@ -21,7 +26,21 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.title,
     this.subtitle,
     this.showNotificationButton = true,
+    this.brand = AppBarBrand.dumas,
+    this.onLogoTap,
+    this.enableDefaultLogoEasterEgg = true,
   });
+
+  const CustomAppBar.linmas({
+    super.key,
+    this.onNotificationPressed,
+    this.unreadCount,
+    this.title,
+    this.subtitle = 'Laporan Linmas',
+    this.showNotificationButton = true,
+    this.onLogoTap,
+    this.enableDefaultLogoEasterEgg = false,
+  }) : brand = AppBarBrand.linmas;
 
   @override
   Size get preferredSize => const Size.fromHeight(60.0);
@@ -34,7 +53,13 @@ class _CustomAppBarState extends State<CustomAppBar> {
   int _tapCount = 0;
   DateTime? _lastTapTime;
 
-  void _onLogoTap() {
+  void _handleLogoTap() {
+    if (widget.onLogoTap != null) {
+      widget.onLogoTap!();
+      return;
+    }
+    if (!widget.enableDefaultLogoEasterEgg) return;
+
     final now = DateTime.now();
     if (_lastTapTime == null ||
         now.difference(_lastTapTime!) > const Duration(seconds: 3)) {
@@ -53,7 +78,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             '🎯 Klik ${_tapCount}x (Tinggal $remaining langkah lagi untuk Simulasi)',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
           ),
-          backgroundColor: const Color(0xFF0F172A),
+          backgroundColor: AppColors.secondary,
           duration: const Duration(milliseconds: 1200),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -70,73 +95,89 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
-      child: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        centerTitle: false,
-        titleSpacing: 16,
-        title: GestureDetector(
-          onTap: _onLogoTap,
-          behavior: HitTestBehavior.opaque,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const AppLogoBadge.dumas(
-                size: 38,
-                borderRadius: 10,
-                fallbackIconSize: 22,
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.title ?? AppConstants.appBarTitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.headlineMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        letterSpacing: 0.5,
-                        height: 1.1,
+    final logoBadge = widget.brand == AppBarBrand.linmas
+        ? const AppLogoBadge.linmas(
+            size: 38,
+            borderRadius: 10,
+            fallbackIconSize: 22,
+          )
+        : const AppLogoBadge.dumas(
+            size: 38,
+            borderRadius: 10,
+            fallbackIconSize: 22,
+          );
+
+    return ColoredBox(
+      color: AppColors.background,
+      child: DecoratedBox(
+        decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: false,
+          titleSpacing: 16,
+          title: GestureDetector(
+            onTap: (widget.onLogoTap != null || widget.enableDefaultLogoEasterEgg)
+                ? _handleLogoTap
+                : null,
+            behavior: HitTestBehavior.opaque,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                logoBadge,
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.title ?? AppConstants.appBarTitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.headlineMedium.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          letterSpacing: 0.5,
+                          height: 1.1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.subtitle ?? 'Dumas',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.2,
-                        height: 1.15,
+                      Text(
+                        widget.subtitle ??
+                            (widget.brand == AppBarBrand.linmas
+                                ? 'Laporan Linmas'
+                                : 'Dumas'),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: AppColors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                          height: 1.15,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          if (widget.showNotificationButton)
-            AppBarNotificationButton(
-              unreadCount: widget.unreadCount,
-              onPressed:
-                  widget.onNotificationPressed ??
-                  () => NotificationNavigationHelper.openNotificationCenter(
-                    context,
+                    ],
                   ),
+                ),
+              ],
             ),
-        ],
+          ),
+          actions: [
+            if (widget.showNotificationButton)
+              AppBarNotificationButton(
+                unreadCount: widget.unreadCount,
+                onPressed:
+                    widget.onNotificationPressed ??
+                    () => NotificationNavigationHelper.openNotificationCenter(
+                      context,
+                    ),
+              ),
+          ],
+        ),
       ),
     );
   }
