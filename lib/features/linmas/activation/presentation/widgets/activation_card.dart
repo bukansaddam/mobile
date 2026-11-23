@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_donut_chart.dart';
@@ -13,6 +13,10 @@ class ActivationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final categoryColor = activity.category.resolveColor(colors);
+    final statusColor = activity.status.resolveColor(colors);
+    final statusBgColor = activity.status.resolveBackgroundColor(colors);
     final dateFormat = DateFormat('dd MMM yyyy');
     final startDateStr = dateFormat.format(activity.startDate);
     final endDateStr = dateFormat.format(activity.endDate);
@@ -21,16 +25,16 @@ class ActivationCard extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 14.0),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.06),
+            color: colors.shadow.withValues(alpha: 0.06),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: AppColors.grey200, width: 1),
+        border: Border.all(color: colors.border, width: 1),
       ),
       child: Material(
         color: Colors.transparent,
@@ -48,7 +52,7 @@ class ActivationCard extends StatelessWidget {
                   child: Container(
                     width: 5,
                     decoration: BoxDecoration(
-                      color: activity.category.stripColor,
+                      color: activity.category.resolveStripColor(colors),
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(4),
                         bottomRight: Radius.circular(4),
@@ -73,7 +77,7 @@ class ActivationCard extends StatelessWidget {
                                   style: AppTextStyles.titleLarge.copyWith(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
+                                    color: colors.textPrimary,
                                     height: 1.25,
                                   ),
                                   maxLines: 2,
@@ -86,7 +90,7 @@ class ActivationCard extends StatelessWidget {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: activity.category.color.withValues(
+                                    color: categoryColor.withValues(
                                       alpha: 0.12,
                                     ),
                                     borderRadius: BorderRadius.circular(8),
@@ -97,14 +101,14 @@ class ActivationCard extends StatelessWidget {
                                       Icon(
                                         activity.category.icon,
                                         size: 13,
-                                        color: activity.category.color,
+                                        color: categoryColor,
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
                                         activity.category.label,
                                         style: AppTextStyles.labelSmall
                                             .copyWith(
-                                              color: activity.category.color,
+                                              color: categoryColor,
                                               fontWeight: FontWeight.w700,
                                               fontSize: 11,
                                             ),
@@ -119,7 +123,7 @@ class ActivationCard extends StatelessWidget {
                           ActivationDonutChart(
                             completedSteps: activity.completedSteps,
                             totalSteps: activity.totalSteps,
-                            progressColor: activity.status.color,
+                            progressColor: statusColor,
                             size: 54,
                             strokeWidth: 5.5,
                           ),
@@ -128,17 +132,17 @@ class ActivationCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on_rounded,
                             size: 15,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               activity.location,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -153,19 +157,17 @@ class ActivationCard extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: activity.status.backgroundColor,
+                              color: statusBgColor,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: activity.status.color.withValues(
-                                  alpha: 0.3,
-                                ),
+                                color: statusColor.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
                             child: Text(
                               activity.status.label,
                               style: AppTextStyles.labelSmall.copyWith(
-                                color: activity.status.color,
+                                color: statusColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -173,22 +175,22 @@ class ActivationCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const Divider(height: 20),
+                      Divider(height: 20, color: colors.divider),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.play_circle_outline_rounded,
                                 size: 14,
-                                color: AppColors.grey600,
+                                color: colors.textMuted,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 startDateStr,
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -197,16 +199,16 @@ class ActivationCard extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.flag_outlined,
                                 size: 14,
-                                color: AppColors.grey600,
+                                color: colors.textMuted,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 endDateStr,
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -221,11 +223,11 @@ class ActivationCard extends StatelessWidget {
                         child: LinearProgressIndicator(
                           value: activity.deadlineProgressPercentage,
                           minHeight: 6,
-                          backgroundColor: AppColors.grey200,
+                          backgroundColor: colors.border,
                           valueColor: AlwaysStoppedAnimation<Color>(
                             activity.deadlineProgressPercentage >= 0.9
-                                ? AppColors.warning
-                                : activity.status.color,
+                                ? colors.warning
+                                : statusColor,
                           ),
                         ),
                       ),

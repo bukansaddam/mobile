@@ -1,3 +1,4 @@
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 enum ActivationCategory {
@@ -25,6 +26,23 @@ extension ActivationCategoryExtension on ActivationCategory {
         return 'Bencana Alam';
     }
   }
+
+  Color resolveColor(AppColorScheme colors) {
+    switch (this) {
+      case ActivationCategory.pemasanganApk:
+        return colors.emerald;
+      case ActivationCategory.doorToDoor:
+        return colors.indigo;
+      case ActivationCategory.lingkungan:
+        return colors.success;
+      case ActivationCategory.keamananDanSosial:
+        return colors.info;
+      case ActivationCategory.bencanaAlam:
+        return colors.error;
+    }
+  }
+
+  Color resolveStripColor(AppColorScheme colors) => resolveColor(colors);
 
   Color get color {
     switch (this) {
@@ -72,6 +90,32 @@ extension ActivationStatusExtension on ActivationStatus {
         return 'Selesai';
       case ActivationStatus.dibatalkan:
         return 'Dibatalkan';
+    }
+  }
+
+  Color resolveColor(AppColorScheme colors) {
+    switch (this) {
+      case ActivationStatus.terjadwal:
+        return colors.warningDark;
+      case ActivationStatus.sedangBerjalan:
+        return colors.info;
+      case ActivationStatus.selesai:
+        return colors.primaryDark;
+      case ActivationStatus.dibatalkan:
+        return colors.errorDark;
+    }
+  }
+
+  Color resolveBackgroundColor(AppColorScheme colors) {
+    switch (this) {
+      case ActivationStatus.terjadwal:
+        return colors.warningLight;
+      case ActivationStatus.sedangBerjalan:
+        return colors.infoLight;
+      case ActivationStatus.selesai:
+        return colors.primaryLight;
+      case ActivationStatus.dibatalkan:
+        return colors.errorLight;
     }
   }
 

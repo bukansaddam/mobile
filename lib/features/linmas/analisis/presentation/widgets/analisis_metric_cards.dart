@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +20,7 @@ class AnalisisSummaryChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final maxVal = math
         .max(totalTasks, math.max(totalAgendas, totalReports))
         .toDouble();
@@ -29,12 +30,12 @@ class AnalisisSummaryChartCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
+            color: colors.shadow.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -48,17 +49,17 @@ class AnalisisSummaryChartCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00875A).withValues(alpha: 0.12),
+                  color: colors.emerald.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.bar_chart_rounded,
-                  color: Color(0xFF00875A),
+                  color: colors.emerald,
                   size: 22,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,15 +68,15 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       'Statistik perbandingan tugas, agenda, dan laporan',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -91,22 +92,24 @@ class AnalisisSummaryChartCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _buildMiniCard(
+                    colors: colors,
                     count: totalTasks,
                     title: 'Daftar Tugas',
                     subtitle: 'Kegiatan aktif',
                     icon: Icons.assignment_outlined,
-                    color: const Color(0xFF0F9F66),
+                    color: colors.primary,
                     onTap: () => onStatusCardTap?.call(null),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _buildMiniCard(
+                    colors: colors,
                     count: totalAgendas,
                     title: 'Agenda',
                     subtitle: 'Sedang jalan',
                     icon: Icons.event_note_rounded,
-                    color: const Color(0xFFD99B00),
+                    color: colors.warning,
                     onTap: () =>
                         onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
                   ),
@@ -114,11 +117,12 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _buildMiniCard(
+                    colors: colors,
                     count: totalReports,
                     title: 'Laporan',
                     subtitle: 'Selesai',
                     icon: Icons.insert_drive_file_outlined,
-                    color: const Color(0xFF5CB836),
+                    color: colors.success,
                     onTap: () =>
                         onStatusCardTap?.call(ActivationStatus.selesai),
                   ),
@@ -131,36 +135,39 @@ class AnalisisSummaryChartCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: AppColors.grey50,
+              color: colors.surfaceVariant,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.grey200),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               children: [
                 _buildBarItem(
+                  colors: colors,
                   label: 'Total Daftar Tugas',
                   value: totalTasks,
                   percentage: totalTasks / safeMax,
-                  color: const Color(0xFF0F9F66),
+                  color: colors.primary,
                   icon: Icons.assignment_outlined,
                   onTap: () => onStatusCardTap?.call(null),
                 ),
                 const SizedBox(height: 14),
                 _buildBarItem(
+                  colors: colors,
                   label: 'Kegiatan Sedang Berjalan',
                   value: totalAgendas,
                   percentage: totalAgendas / safeMax,
-                  color: const Color(0xFFD99B00),
+                  color: colors.warning,
                   icon: Icons.event_note_rounded,
                   onTap: () =>
                       onStatusCardTap?.call(ActivationStatus.sedangBerjalan),
                 ),
                 const SizedBox(height: 14),
                 _buildBarItem(
+                  colors: colors,
                   label: 'Kegiatan Selesai',
                   value: totalReports,
                   percentage: totalReports / safeMax,
-                  color: const Color(0xFF5CB836),
+                  color: colors.success,
                   icon: Icons.insert_drive_file_outlined,
                   onTap: () => onStatusCardTap?.call(ActivationStatus.selesai),
                 ),
@@ -173,6 +180,7 @@ class AnalisisSummaryChartCard extends StatelessWidget {
   }
 
   Widget _buildMiniCard({
+    required AppColorScheme colors,
     required int count,
     required String title,
     required String subtitle,
@@ -188,9 +196,9 @@ class AnalisisSummaryChartCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.grey50,
+            color: colors.surfaceVariant,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.grey200),
+            border: Border.all(color: colors.border),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,10 +231,10 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -234,9 +242,9 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                     maxLines: 1,
@@ -252,6 +260,7 @@ class AnalisisSummaryChartCard extends StatelessWidget {
   }
 
   Widget _buildBarItem({
+    required AppColorScheme colors,
     required String label,
     required int value,
     required double percentage,
@@ -276,10 +285,10 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       label,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ],
@@ -311,7 +320,7 @@ class AnalisisSummaryChartCard extends StatelessWidget {
                   height: 10,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.grey200,
+                    color: colors.border,
                     borderRadius: BorderRadius.circular(5),
                   ),
                 ),

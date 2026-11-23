@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -194,8 +194,9 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
         }
       },
       builder: (context, state) {
+        final colors = context.appColors;
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: AppPageBar(
             title: _isEdit ? 'Ubah Data Institusi' : 'Tambah Institusi Baru',
           ),
@@ -213,17 +214,17 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: colors.primaryLight,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: colors.primary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.info_outline_rounded,
-                              color: AppColors.primary,
+                              color: colors.primary,
                               size: 22,
                             ),
                             const SizedBox(width: 12),
@@ -233,7 +234,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                                     ? 'Perbarui formulir pendataan institusi dengan data yang jujur & jelas agar proses demografi akurat.'
                                     : 'Isi formulir pendataan institusi dengan data yang jujur & jelas agar proses demografi akurat.',
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.primaryDark,
+                                  color: colors.primaryDark,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
                                 ),
@@ -248,6 +249,9 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                       TextFormField(
                         controller: _namaController,
                         textCapitalization: TextCapitalization.words,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         decoration: _buildInputDecoration(
@@ -266,6 +270,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedKategori,
+                        dropdownColor: colors.surface,
                         decoration: _buildInputDecoration(
                           hintText: 'Pilih Kategori Institusi',
                         ),
@@ -275,7 +280,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                             child: Text(
                               k,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           );
@@ -304,6 +309,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedScope,
+                        dropdownColor: colors.surface,
                         decoration: _buildInputDecoration(
                           hintText: 'Pilih Scope (Kelurahan - Nasional)',
                         ),
@@ -313,7 +319,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                             child: Text(
                               s,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           );
@@ -333,6 +339,9 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                       TextFormField(
                         controller: _alamatController,
                         maxLines: 3,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         decoration: _buildInputDecoration(
@@ -349,10 +358,10 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.05),
+                  color: colors.shadow.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
                 ),
@@ -366,8 +375,8 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                       ? null
                       : _submitForm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -375,12 +384,12 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
                     elevation: 0,
                   ),
                   child: state is InstitusiActionLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: Colors.white,
+                            color: colors.onPrimary,
                           ),
                         )
                       : const Text(
@@ -401,19 +410,20 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
   }
 
   Widget _buildLabel(String label, {bool isRequired = false}) {
+    final colors = context.appColors;
     return RichText(
       text: TextSpan(
         text: label,
         style: AppTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF1E293B),
+          color: colors.textPrimary,
         ),
         children: [
           if (isRequired)
-            const TextSpan(
+            TextSpan(
               text: ' *',
               style: TextStyle(
-                color: AppColors.error,
+                color: colors.error,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -423,33 +433,32 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
   }
 
   InputDecoration _buildInputDecoration({required String hintText}) {
+    final colors = context.appColors;
     return InputDecoration(
       hintText: hintText,
-      hintStyle: AppTextStyles.bodyMedium.copyWith(
-        color: const Color(0xFF94A3B8),
-      ),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(color: colors.textHint),
       filled: true,
-      fillColor: AppColors.white,
+      fillColor: colors.surface,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: colors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: colors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide: BorderSide(color: colors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1),
+        borderSide: BorderSide(color: colors.error, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: BorderSide(color: colors.error, width: 1.5),
       ),
     );
   }

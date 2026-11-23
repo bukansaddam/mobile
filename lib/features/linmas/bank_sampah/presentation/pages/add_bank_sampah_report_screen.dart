@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -108,15 +108,17 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
   }
 
   void _showImageSourceDialog() {
+    final outerColors = context.appColors;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: outerColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) {
+        final colors = ctx.appColors;
         return Material(
-          color: AppColors.white,
+          color: colors.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           child: SafeArea(
             child: Padding(
@@ -128,7 +130,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey300,
+                      color: colors.borderStrong,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -137,6 +139,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     'Pilih Sumber Foto',
                     style: AppTextStyles.titleMedium.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -144,19 +147,25 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        color: colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                     ),
-                    title: const Text(
+                    title: Text(
                       'Kamera',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary,
+                      ),
                     ),
-                    subtitle: const Text('Ambil foto sampah langsung'),
+                    subtitle: Text(
+                      'Ambil foto sampah langsung',
+                      style: TextStyle(color: colors.textSecondary),
+                    ),
                     onTap: () {
                       Navigator.pop(ctx);
                       _pickImage(ImageSource.camera);
@@ -166,19 +175,25 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.info.withValues(alpha: 0.1),
+                        color: colors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.photo_library_rounded,
-                        color: AppColors.info,
+                        color: colors.info,
                       ),
                     ),
-                    title: const Text(
+                    title: Text(
                       'Galeri',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: colors.textPrimary,
+                      ),
                     ),
-                    subtitle: const Text('Pilih dari file foto tersimpan'),
+                    subtitle: Text(
+                      'Pilih dari file foto tersimpan',
+                      style: TextStyle(color: colors.textSecondary),
+                    ),
                     onTap: () {
                       Navigator.pop(ctx);
                       _pickImage(ImageSource.gallery);
@@ -285,17 +300,22 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
         }
       },
       builder: (context, state) {
+        final colors = context.appColors;
+        final heroText = colors.isDark ? colors.textPrimary : colors.onPrimary;
+        const photoActionBg = Color(0x8A000000); // media-overlay
+        const photoActionFg = Color(0xFFFFFFFF); // media-overlay
+        const photoDeleteFg = Color(0xFFEF4444); // media-overlay
         final isSubmitting = state is BankSampahActionLoading;
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: const AppPageBar(title: 'Tambah Laporan Sampah'),
           bottomNavigationBar: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: colors.shadow.withValues(alpha: 0.08),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
                 ),
@@ -305,8 +325,8 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
               child: ElevatedButton(
                 onPressed: isSubmitting ? null : _submitReport,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -314,12 +334,12 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                   elevation: 0,
                 ),
                 child: isSubmitting
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: colors.onPrimary,
                         ),
                       )
                     : const Text(
@@ -345,17 +365,17 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: colors.primaryLight,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.3),
+                          color: colors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.info_outline_rounded,
-                            color: AppColors.primary,
+                            color: colors.primary,
                             size: 22,
                           ),
                           const SizedBox(width: 12),
@@ -363,7 +383,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                             child: Text(
                               'Catat hasil penimbangan sampah. Nilai konversi dihitung otomatis Rp 5.000 / kg.',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.primaryDark,
+                                color: colors.primaryDark,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -395,9 +415,9 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                           vertical: 14,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.grey300),
+                          border: Border.all(color: colors.borderStrong),
                         ),
                         child: Row(
                           children: [
@@ -405,15 +425,15 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: _selectedLocation != null
-                                    ? AppColors.primaryLight
-                                    : AppColors.grey100,
+                                    ? colors.primaryLight
+                                    : colors.surfaceVariant,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
                                 Icons.recycling_rounded,
                                 color: _selectedLocation != null
-                                    ? AppColors.primary
-                                    : AppColors.grey500,
+                                    ? colors.primary
+                                    : colors.textHint,
                                 size: 20,
                               ),
                             ),
@@ -433,8 +453,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                     .copyWith(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color:
-                                                          AppColors.textPrimary,
+                                                      color: colors.textPrimary,
                                                     ),
                                               ),
                                             ),
@@ -449,12 +468,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                       vertical: 2,
                                                     ),
                                                 decoration: BoxDecoration(
-                                                  color: AppColors.info
-                                                      .withValues(alpha: 0.1),
+                                                  color: colors.info.withValues(
+                                                    alpha: 0.1,
+                                                  ),
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                    color: AppColors.info
+                                                    color: colors.info
                                                         .withValues(alpha: 0.3),
                                                   ),
                                                 ),
@@ -462,17 +482,17 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    const Icon(
+                                                    Icon(
                                                       Icons.near_me_rounded,
                                                       size: 11,
-                                                      color: AppColors.info,
+                                                      color: colors.info,
                                                     ),
                                                     const SizedBox(width: 3),
                                                     Text(
                                                       _selectedLocation!
                                                           .formattedDistance,
-                                                      style: const TextStyle(
-                                                        color: AppColors.info,
+                                                      style: TextStyle(
+                                                        color: colors.info,
                                                         fontSize: 10,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -488,7 +508,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                         Text(
                                           _selectedLocation!.alamat,
                                           style: AppTextStyles.caption.copyWith(
-                                            color: AppColors.textSecondary,
+                                            color: colors.textSecondary,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -498,13 +518,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                   : Text(
                                       'Cari atau pilih Bank Sampah...',
                                       style: AppTextStyles.bodyMedium.copyWith(
-                                        color: AppColors.textHint,
+                                        color: colors.textHint,
                                       ),
                                     ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.search_rounded,
-                              color: AppColors.grey600,
+                              color: colors.textSecondary,
                               size: 20,
                             ),
                           ],
@@ -522,17 +542,18 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.white,
+                        color: colors.surface,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColors.grey300),
+                        border: Border.all(color: colors.borderStrong),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           value: _selectedJenisSampah,
                           isExpanded: true,
-                          icon: const Icon(
+                          dropdownColor: colors.surface,
+                          icon: Icon(
                             Icons.keyboard_arrow_down_rounded,
-                            color: AppColors.grey600,
+                            color: colors.textSecondary,
                           ),
                           items: BankSampahConstants.jenisSampahList.map((
                             jenis,
@@ -547,7 +568,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                     jenis,
                                     style: AppTextStyles.bodyMedium.copyWith(
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -593,21 +614,21 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                           vertical: 14,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.grey300),
+                          border: Border.all(color: colors.borderStrong),
                         ),
                         child: Row(
                           children: [
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryLight,
+                                color: colors.primaryLight,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.event_rounded,
-                                color: AppColors.primary,
+                                color: colors.primary,
                                 size: 20,
                               ),
                             ),
@@ -620,13 +641,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                 ).format(_selectedDate),
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.edit_calendar_rounded,
-                              color: AppColors.grey600,
+                              color: colors.textSecondary,
                               size: 20,
                             ),
                           ],
@@ -652,37 +673,33 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                       ],
                       style: AppTextStyles.headlineSmall.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                       onChanged: _onBeratChanged,
                       decoration: InputDecoration(
                         hintText: '0.0',
                         hintStyle: AppTextStyles.headlineSmall.copyWith(
-                          color: AppColors.textHint,
+                          color: colors.textHint,
                         ),
                         filled: true,
-                        fillColor: AppColors.white,
+                        fillColor: colors.surface,
                         suffixText: 'kg',
                         suffixStyle: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey300,
-                          ),
+                          borderSide: BorderSide(color: colors.borderStrong),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey300,
-                          ),
+                          borderSide: BorderSide(color: colors.borderStrong),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
+                          borderSide: BorderSide(
+                            color: colors.primary,
                             width: 2,
                           ),
                         ),
@@ -723,16 +740,11 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0F9F66), Color(0xFF0A754B)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        gradient: colors.primaryGradient,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF0F9F66)
-                                .withValues(alpha: 0.25),
+                            color: colors.primary.withValues(alpha: 0.25),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -748,7 +760,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                 Text(
                                   'Estimasi Total Nilai:',
                                   style: AppTextStyles.bodySmall.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.85),
+                                    color: heroText.withValues(alpha: 0.85),
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -759,7 +771,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                     currencyFormatter.format(_calculatedNilai),
                                     style: AppTextStyles.headlineMedium
                                         .copyWith(
-                                          color: Colors.white,
+                                          color: heroText,
                                           fontWeight: FontWeight.bold,
                                         ),
                                   ),
@@ -774,13 +786,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: heroText.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
                               'Rp 5.000 / kg',
                               style: AppTextStyles.caption.copyWith(
-                                color: Colors.white,
+                                color: heroText,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -801,7 +813,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColors.grey300),
+                              border: Border.all(color: colors.borderStrong),
                             ),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(16),
@@ -818,13 +830,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                               children: [
                                 Container(
                                   decoration: const BoxDecoration(
-                                    color: Colors.black54,
+                                    color: photoActionBg,
                                     shape: BoxShape.circle,
                                   ),
                                   child: IconButton(
                                     icon: const Icon(
                                       Icons.refresh_rounded,
-                                      color: Colors.white,
+                                      color: photoActionFg,
                                       size: 20,
                                     ),
                                     tooltip: 'Ganti Foto',
@@ -834,13 +846,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                 const SizedBox(width: 6),
                                 Container(
                                   decoration: const BoxDecoration(
-                                    color: Colors.black54,
+                                    color: photoActionBg,
                                     shape: BoxShape.circle,
                                   ),
                                   child: IconButton(
                                     icon: const Icon(
                                       Icons.delete_outline_rounded,
-                                      color: AppColors.error,
+                                      color: photoDeleteFg,
                                       size: 20,
                                     ),
                                     tooltip: 'Hapus Foto',
@@ -864,10 +876,10 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                           width: double.infinity,
                           height: 130,
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.grey300,
+                              color: colors.borderStrong,
                               style: BorderStyle.solid,
                             ),
                           ),
@@ -876,13 +888,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(12),
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primaryLight,
+                                decoration: BoxDecoration(
+                                  color: colors.primaryLight,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.add_a_photo_rounded,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                   size: 26,
                                 ),
                               ),
@@ -891,14 +903,14 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                 'Ambil Foto / Pilih dari Galeri',
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                 ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Kamera atau Galeri (Opsional)',
                                 style: AppTextStyles.caption.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -915,29 +927,28 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                       onTapOutside: (event) =>
                           FocusManager.instance.primaryFocus?.unfocus(),
                       maxLines: 3,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Contoh: Sampah botol air mineral bersih hasil pilah warga RT 03...',
                         hintStyle: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textHint,
+                          color: colors.textHint,
                         ),
                         filled: true,
-                        fillColor: AppColors.white,
+                        fillColor: colors.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey300,
-                          ),
+                          borderSide: BorderSide(color: colors.borderStrong),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.grey300,
-                          ),
+                          borderSide: BorderSide(color: colors.borderStrong),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
+                          borderSide: BorderSide(
+                            color: colors.primary,
                             width: 2,
                           ),
                         ),
@@ -957,22 +968,23 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
   }
 
   Widget _buildPresetChip(String label, VoidCallback onTap) {
+    final colors = context.appColors;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.primaryLight,
+          color: colors.primaryLight,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+          border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: AppColors.primary,
+            color: colors.primaryDark,
           ),
         ),
       ),
@@ -984,6 +996,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     String? helperText,
     bool isRequired = false,
   }) {
+    final colors = context.appColors;
     final hasAsterisk = isRequired || title.contains('*');
     final cleanTitle = title.replaceAll('*', '').trimRight();
 
@@ -995,14 +1008,14 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
             text: cleanTitle,
             style: AppTextStyles.bodyMedium.copyWith(
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
             children: [
               if (hasAsterisk)
-                const TextSpan(
+                TextSpan(
                   text: ' *',
                   style: TextStyle(
-                    color: AppColors.error,
+                    color: colors.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -1014,7 +1027,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
           Text(
             helperText,
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               fontSize: 11,
             ),
           ),
@@ -1024,37 +1037,38 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
   }
 
   Widget _getJenisIconWidget(String jenis) {
+    final colors = context.appColors;
     IconData icon;
     Color color;
     switch (jenis.toLowerCase()) {
       case 'organik':
         icon = Icons.eco_rounded;
-        color = AppColors.primary;
+        color = colors.primary;
         break;
       case 'anorganik':
         icon = Icons.recycling_rounded;
-        color = AppColors.info;
+        color = colors.info;
         break;
       case 'botol plastik':
         icon = Icons.local_drink_rounded;
-        color = AppColors.info;
+        color = colors.info;
         break;
       case 'kardus':
         icon = Icons.inventory_2_rounded;
-        color = AppColors.warning;
+        color = colors.warning;
         break;
       case 'kertas':
         icon = Icons.newspaper_rounded;
-        color = const Color(0xFF4F46E5);
+        color = colors.indigo;
         break;
       case 'plastik kemasan':
         icon = Icons.shopping_bag_rounded;
-        color = AppColors.error;
+        color = colors.error;
         break;
       case 'campuran kering':
       default:
         icon = Icons.delete_sweep_rounded;
-        color = AppColors.success;
+        color = colors.success;
         break;
     }
 

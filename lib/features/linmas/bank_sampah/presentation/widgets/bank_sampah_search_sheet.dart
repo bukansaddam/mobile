@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
@@ -21,10 +21,11 @@ class BankSampahSearchSheet extends StatefulWidget {
     BankSampahLocationEntity? initialSelected,
     bool allowAll = false,
   }) {
+    final colors = context.appColors;
     return showModalBottomSheet<BankSampahLocationEntity>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -63,6 +64,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
   Widget build(BuildContext context) {
     return BlocBuilder<BankSampahBloc, BankSampahState>(
       builder: (context, state) {
+        final colors = context.appColors;
         final allLocations = context.read<BankSampahBloc>().listLocations;
 
         final filtered = allLocations.where((loc) {
@@ -89,7 +91,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppColors.grey300,
+                      color: colors.borderStrong,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -103,12 +105,12 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.12),
+                          color: colors.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.recycling_rounded,
-                          color: AppColors.primary,
+                          color: colors.primary,
                           size: 22,
                         ),
                       ),
@@ -118,12 +120,12 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                           'Pilih Bank Sampah',
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: AppColors.grey600),
+                        icon: Icon(Icons.close, color: colors.textSecondary),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -135,14 +137,17 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.grey100,
+                      color: colors.surfaceElevated,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.grey300),
+                      border: Border.all(color: colors.borderStrong),
                     ),
                     child: TextField(
                       controller: _searchController,
                       onTapOutside: (event) =>
                           FocusManager.instance.primaryFocus?.unfocus(),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: colors.textPrimary,
+                      ),
                       onChanged: (val) {
                         setState(() {
                           _searchQuery = val.trim();
@@ -151,15 +156,19 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                       decoration: InputDecoration(
                         hintText: 'Cari nama bank sampah / lokasi...',
                         hintStyle: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textHint,
+                          color: colors.textHint,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search_rounded,
-                          color: AppColors.grey500,
+                          color: colors.textMuted,
                         ),
                         suffixIcon: _searchQuery.isNotEmpty
                             ? IconButton(
-                                icon: const Icon(Icons.clear, size: 18),
+                                icon: Icon(
+                                  Icons.clear,
+                                  size: 18,
+                                  color: colors.textMuted,
+                                ),
                                 onPressed: () {
                                   _searchController.clear();
                                   setState(() {
@@ -178,7 +187,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                 ),
 
                 const SizedBox(height: 12),
-                const Divider(height: 1),
+                Divider(height: 1, color: colors.divider),
 
                 Flexible(
                   child:
@@ -189,16 +198,17 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.location_off_rounded,
                                 size: 48,
-                                color: AppColors.grey400,
+                                color: colors.textHint,
                               ),
                               const SizedBox(height: 12),
                               Text(
                                 'Bank Sampah Tidak Ditemukan',
                                 style: AppTextStyles.titleMedium.copyWith(
                                   fontWeight: FontWeight.bold,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -207,7 +217,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                     ? 'Belum ada bank sampah terdaftar.'
                                     : 'Tidak ada bank sampah dengan kata kunci "$_searchQuery"',
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -236,8 +246,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                       widget.initialSelected?.id == 'ALL';
                                   return Material(
                                     color: isAllSelected
-                                        ? AppColors.primaryLight
-                                        : AppColors.white,
+                                        ? colors.primaryLight
+                                        : colors.surface,
                                     borderRadius: BorderRadius.circular(12),
                                     child: InkWell(
                                       onTap: () => Navigator.pop(
@@ -257,8 +267,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                           ),
                                           border: Border.all(
                                             color: isAllSelected
-                                                ? AppColors.primary
-                                                : AppColors.grey200,
+                                                ? colors.primary
+                                                : colors.border,
                                             width: isAllSelected ? 1.5 : 1.0,
                                           ),
                                         ),
@@ -268,19 +278,18 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                               padding: const EdgeInsets.all(8),
                                               decoration: BoxDecoration(
                                                 color: isAllSelected
-                                                    ? AppColors.primary
-                                                          .withValues(
-                                                            alpha: 0.15,
-                                                          )
-                                                    : AppColors.grey100,
+                                                    ? colors.primary.withValues(
+                                                        alpha: 0.15,
+                                                      )
+                                                    : colors.surfaceElevated,
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                               ),
                                               child: Icon(
                                                 Icons.account_balance_rounded,
                                                 color: isAllSelected
-                                                    ? AppColors.primary
-                                                    : AppColors.grey600,
+                                                    ? colors.primary
+                                                    : colors.textSecondary,
                                                 size: 18,
                                               ),
                                             ),
@@ -297,7 +306,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                         .copyWith(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: AppColors
+                                                          color: colors
                                                               .textPrimary,
                                                         ),
                                                   ),
@@ -306,7 +315,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                     'Tampilkan laporan dari semua bank sampah terdaftar',
                                                     style: AppTextStyles.caption
                                                         .copyWith(
-                                                          color: AppColors
+                                                          color: colors
                                                               .textSecondary,
                                                         ),
                                                   ),
@@ -314,9 +323,9 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                               ),
                                             ),
                                             if (isAllSelected)
-                                              const Icon(
+                                              Icon(
                                                 Icons.check_circle_rounded,
-                                                color: AppColors.primary,
+                                                color: colors.primary,
                                                 size: 20,
                                               ),
                                           ],
@@ -338,8 +347,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
 
                                 return Material(
                                   color: isSelected
-                                      ? AppColors.primaryLight
-                                      : AppColors.white,
+                                      ? colors.primaryLight
+                                      : colors.surface,
                                   borderRadius: BorderRadius.circular(12),
                                   child: InkWell(
                                     onTap: () => Navigator.pop(context, item),
@@ -350,8 +359,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: isSelected
-                                              ? AppColors.primary
-                                              : AppColors.grey200,
+                                              ? colors.primary
+                                              : colors.border,
                                           width: isSelected ? 1.5 : 1.0,
                                         ),
                                       ),
@@ -373,7 +382,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              color: AppColors
+                                                              color: colors
                                                                   .textPrimary,
                                                             ),
                                                       ),
@@ -389,7 +398,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                               vertical: 2,
                                                             ),
                                                         decoration: BoxDecoration(
-                                                          color: AppColors.info
+                                                          color: colors.info
                                                               .withValues(
                                                                 alpha: 0.1,
                                                               ),
@@ -398,8 +407,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                                 12,
                                                               ),
                                                           border: Border.all(
-                                                            color: AppColors
-                                                                .info
+                                                            color: colors.info
                                                                 .withValues(
                                                                   alpha: 0.3,
                                                                 ),
@@ -409,21 +417,21 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                           mainAxisSize:
                                                               MainAxisSize.min,
                                                           children: [
-                                                            const Icon(
+                                                            Icon(
                                                               Icons
                                                                   .near_me_rounded,
                                                               size: 11,
-                                                              color: AppColors
-                                                                  .info,
+                                                              color:
+                                                                  colors.info,
                                                             ),
                                                             const SizedBox(
                                                               width: 3,
                                                             ),
                                                             Text(
                                                               item.formattedDistance,
-                                                              style: const TextStyle(
-                                                                color: AppColors
-                                                                    .info,
+                                                              style: TextStyle(
+                                                                color:
+                                                                    colors.info,
                                                                 fontSize: 11,
                                                                 fontWeight:
                                                                     FontWeight
@@ -441,7 +449,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                   item.alamat,
                                                   style: AppTextStyles.bodySmall
                                                       .copyWith(
-                                                        color: AppColors
+                                                        color: colors
                                                             .textSecondary,
                                                       ),
                                                   maxLines: 2,

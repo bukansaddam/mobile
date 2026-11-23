@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class ActivationDonutChart extends StatelessWidget {
   final int completedSteps;
   final int totalSteps;
-  final Color progressColor;
+  final Color? progressColor;
   final double size;
   final double strokeWidth;
 
@@ -15,13 +15,15 @@ class ActivationDonutChart extends StatelessWidget {
     super.key,
     required this.completedSteps,
     required this.totalSteps,
-    this.progressColor = AppColors.primary,
+    this.progressColor,
     this.size = 56.0,
     this.strokeWidth = 5.5,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final effectiveProgressColor = progressColor ?? colors.primary;
     final double percentage = totalSteps > 0
         ? (completedSteps / totalSteps).clamp(0.0, 1.0)
         : 0.0;
@@ -36,8 +38,8 @@ class ActivationDonutChart extends StatelessWidget {
             size: Size(size, size),
             painter: _DonutChartPainter(
               percentage: percentage,
-              progressColor: progressColor,
-              backgroundColor: AppColors.grey200,
+              progressColor: effectiveProgressColor,
+              backgroundColor: colors.border,
               strokeWidth: strokeWidth,
             ),
           ),
@@ -46,7 +48,7 @@ class ActivationDonutChart extends StatelessWidget {
             style: AppTextStyles.labelSmall.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: size * 0.22,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
         ],

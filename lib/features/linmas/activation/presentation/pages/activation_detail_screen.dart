@@ -10,7 +10,7 @@ import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
@@ -65,9 +65,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     BuildContext context,
     ActivationActivity activity,
   ) async {
+    final colors = context.appColors;
     final isVideo = await showModalBottomSheet<bool>(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -80,39 +81,39 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: colors.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Pilih Jenis Bukti',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
+            Text(
               'Maksimal 5 lampiran: 1 video dan sisanya foto',
-              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+              style: TextStyle(fontSize: 12, color: colors.textSecondary),
             ),
             const SizedBox(height: 8),
             ListTile(
-              leading: const Icon(
-                Icons.add_a_photo_rounded,
-                color: AppColors.primary,
+              leading: Icon(Icons.add_a_photo_rounded, color: colors.primary),
+              title: Text(
+                'Ambil Foto',
+                style: TextStyle(color: colors.textPrimary),
               ),
-              title: const Text('Ambil Foto'),
               onTap: () => Navigator.pop(sheetContext, false),
             ),
             ListTile(
-              leading: const Icon(
-                Icons.videocam_rounded,
-                color: AppColors.primary,
+              leading: Icon(Icons.videocam_rounded, color: colors.primary),
+              title: Text(
+                'Ambil Video (Maksimal 1 Menit)',
+                style: TextStyle(color: colors.textPrimary),
               ),
-              title: const Text('Ambil Video (Maksimal 1 Menit)'),
               onTap: () => Navigator.pop(sheetContext, true),
             ),
             const SizedBox(height: 8),
@@ -136,28 +137,34 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocBuilder<ActivationBloc, ActivationState>(
       builder: (context, state) {
         final activity = state.getActivityById(widget.activityId);
 
         if (activity == null) {
-          return const Scaffold(
-            backgroundColor: AppColors.background,
-            appBar: AppPageBar(title: 'Detail Kegiatan'),
-            body: Center(child: Text('Kegiatan tidak ditemukan')),
+          return Scaffold(
+            backgroundColor: colors.background,
+            appBar: const AppPageBar(title: 'Detail Kegiatan'),
+            body: Center(
+              child: Text(
+                'Kegiatan tidak ditemukan',
+                style: TextStyle(color: colors.textPrimary),
+              ),
+            ),
           );
         }
 
         final isOngoing = activity.status == ActivationStatus.sedangBerjalan;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: AppPageBar(
             title: 'Detail Kegiatan',
             actions: [
               AppBarCircleButton(
                 icon: Icons.info_outline_rounded,
-                iconColor: AppColors.primaryDark,
+                iconColor: colors.primaryDark,
                 tooltip: 'Informasi Ringkasan Kegiatan',
                 onPressed: () => ActivationDetailModal.show(context, activity),
               ),
@@ -170,10 +177,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: colors.surface,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.08),
+                        color: colors.shadow.withValues(alpha: 0.08),
                         blurRadius: 10,
                         offset: const Offset(0, -4),
                       ),
@@ -186,7 +193,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                       child: ElevatedButton(
                         onPressed: () => _startSubmission(context, activity),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -195,7 +203,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         child: Text(
                           'Buat Laporan',
                           style: AppTextStyles.titleMedium.copyWith(
-                            color: AppColors.white,
+                            color: colors.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -236,13 +244,18 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   }
 
   Widget _buildHeaderSection(ActivationActivity activity) {
+    final colors = context.appColors;
+    final categoryColor = activity.category.resolveColor(colors);
+    final statusColor = activity.status.resolveColor(colors);
+    final statusBgColor = activity.status.resolveBackgroundColor(colors);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Judul Kegiatan',
           style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
+            color: colors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -252,7 +265,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           style: AppTextStyles.headlineMedium.copyWith(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
+            color: colors.textPrimary,
             height: 1.25,
           ),
         ),
@@ -264,22 +277,18 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: activity.category.color.withValues(alpha: 0.12),
+                color: categoryColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    activity.category.icon,
-                    size: 14,
-                    color: activity.category.color,
-                  ),
+                  Icon(activity.category.icon, size: 14, color: categoryColor),
                   const SizedBox(width: 6),
                   Text(
                     activity.category.label,
                     style: AppTextStyles.labelMedium.copyWith(
-                      color: activity.category.color,
+                      color: categoryColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -289,16 +298,14 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: activity.status.backgroundColor,
+                color: statusBgColor,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: activity.status.color.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: statusColor.withValues(alpha: 0.3)),
               ),
               child: Text(
                 activity.status.label,
                 style: AppTextStyles.labelMedium.copyWith(
-                  color: activity.status.color,
+                  color: statusColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -310,9 +317,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   }
 
   Widget _buildDeadlineSection(ActivationActivity activity) {
+    final colors = context.appColors;
     final dateFormat = DateFormat('dd MMM yyyy');
     final startDateStr = dateFormat.format(activity.startDate);
     final endDateStr = dateFormat.format(activity.endDate);
+    final statusColor = activity.status.resolveColor(colors);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,7 +329,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         Text(
           'Tenggat Waktu',
           style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
+            color: colors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -330,16 +339,16 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.play_circle_outline_rounded,
                   size: 15,
-                  color: AppColors.grey600,
+                  color: colors.textMuted,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   startDateStr,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -347,16 +356,12 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             ),
             Row(
               children: [
-                const Icon(
-                  Icons.flag_outlined,
-                  size: 15,
-                  color: AppColors.grey600,
-                ),
+                Icon(Icons.flag_outlined, size: 15, color: colors.textMuted),
                 const SizedBox(width: 4),
                 Text(
                   endDateStr,
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -370,11 +375,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           child: LinearProgressIndicator(
             value: activity.deadlineProgressPercentage,
             minHeight: 10,
-            backgroundColor: AppColors.grey200,
+            backgroundColor: colors.border,
             valueColor: AlwaysStoppedAnimation<Color>(
               activity.deadlineProgressPercentage >= 0.9
-                  ? AppColors.warning
-                  : activity.status.color,
+                  ? colors.warning
+                  : statusColor,
             ),
           ),
         ),
@@ -428,10 +433,14 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     }
 
     if (!launched && context.mounted) {
+      final colors = context.appColors;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Gagal membuka WhatsApp untuk nomor $rawPhone'),
-          backgroundColor: AppColors.error,
+          content: Text(
+            'Gagal membuka WhatsApp untuk nomor $rawPhone',
+            style: TextStyle(color: colors.onErrorSolid),
+          ),
+          backgroundColor: colors.errorSolid,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -439,13 +448,14 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   }
 
   Widget _buildOwnerSection(ActivationActivity activity) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'PJ / Penanggung Jawab',
           style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
+            color: colors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -454,10 +464,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
-              child: const Icon(
+              backgroundColor: colors.primary.withValues(alpha: 0.15),
+              child: Icon(
                 Icons.person_rounded,
-                color: AppColors.primary,
+                color: colors.primary,
                 size: 22,
               ),
             ),
@@ -470,7 +480,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                     activity.ownerName,
                     style: AppTextStyles.titleMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       fontSize: 15,
                     ),
                   ),
@@ -490,7 +500,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           Text(
                             activity.ownerPhone,
                             style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.grey600,
+                              color: colors.textMuted,
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                             ),
@@ -502,23 +512,22 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF25D366)
-                                  .withValues(alpha: 0.15),
+                              color: colors.emerald.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.chat_bubble_rounded,
                                   size: 10,
-                                  color: Color(0xFF128C7E),
+                                  color: colors.emerald,
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
                                   'Chat WA',
                                   style: AppTextStyles.labelSmall.copyWith(
-                                    color: const Color(0xFF128C7E),
+                                    color: colors.emerald,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 10,
                                   ),
@@ -540,13 +549,14 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   }
 
   Widget _buildAddressSection(ActivationActivity activity) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Wilayah Penugasan',
           style: AppTextStyles.labelMedium.copyWith(
-            color: AppColors.grey600,
+            color: colors.textSecondary,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -554,17 +564,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.location_on_rounded,
-              color: AppColors.primary,
-              size: 20,
-            ),
+            Icon(Icons.location_on_rounded, color: colors.primary, size: 20),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
                 activity.address,
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.w500,
                   height: 1.35,
                 ),
@@ -580,6 +586,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     BuildContext context,
     ActivationActivity activity,
   ) {
+    final colors = context.appColors;
     final timeFormat = DateFormat('dd MMM yyyy, HH:mm');
     final pendingReports = context
         .read<ActivationBloc>()
@@ -602,20 +609,20 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
               'Bukti Laporan Foto',
               style: AppTextStyles.titleLarge.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
                 fontSize: 18,
               ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+                color: colors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 '${activity.completedSteps}/${activity.totalSteps} Laporan',
                 style: AppTextStyles.labelSmall.copyWith(
-                  color: AppColors.primary,
+                  color: colors.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -627,16 +634,12 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Row(
               children: [
-                const Icon(
-                  Icons.cloud_off_rounded,
-                  size: 14,
-                  color: AppColors.warning,
-                ),
+                Icon(Icons.cloud_off_rounded, size: 14, color: colors.warning),
                 const SizedBox(width: 4),
                 Text(
                   '${pendingReports.length} laporan belum terkirim',
                   style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.warning,
+                    color: colors.warning,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -651,9 +654,9 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.grey200),
+              border: Border.all(color: colors.border),
             ),
             child: const Center(child: CircularProgressIndicator()),
           )
@@ -662,30 +665,30 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.grey200),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               children: [
-                const Icon(
+                Icon(
                   Icons.photo_library_outlined,
                   size: 48,
-                  color: AppColors.grey400,
+                  color: colors.textHint,
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'Belum Ada Bukti Laporan',
                   style: AppTextStyles.headlineSmall.copyWith(
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Klik tombol di bawah untuk mengunggah foto bukti kegiatan.',
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -719,22 +722,25 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     PendingActivationReportModel pendingReport,
     DateFormat timeFormat,
   ) {
+    final colors = context.appColors;
+    const mediaBg = Color(0xFF1E293B); // media-overlay
+    const mediaFg = Color(0xFFFFFFFF); // media-overlay
     final firstAttachment = pendingReport.attachmentPaths.first;
     final isVideo = FileSecurityUtils.isVideoPath(firstAttachment);
     final isSyncing = context.read<ActivationBloc>().state.isSyncingPending;
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: colors.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.5)),
+        border: Border.all(color: colors.warning.withValues(alpha: 0.5)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -751,11 +757,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                       Positioned.fill(
                         child: isVideo
                             ? Container(
-                                color: AppColors.grey900,
+                                color: mediaBg,
                                 child: const Center(
                                   child: Icon(
                                     Icons.play_circle_fill_rounded,
-                                    color: AppColors.white,
+                                    color: mediaFg,
                                     size: 36,
                                   ),
                                 ),
@@ -766,10 +772,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 cacheWidth: 400,
                                 errorBuilder: (context, error, stackTrace) =>
                                     Container(
-                                      color: AppColors.grey200,
-                                      child: const Icon(
+                                      color: colors.border,
+                                      child: Icon(
                                         Icons.broken_image_rounded,
-                                        color: AppColors.grey500,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                               ),
@@ -783,13 +789,15 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.warning,
+                            color: colors.warning,
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Belum terkirim',
                             style: TextStyle(
-                              color: AppColors.white,
+                              color: colors.isDark
+                                  ? colors.onSecondary
+                                  : colors.textPrimary,
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                             ),
@@ -808,7 +816,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         timeFormat.format(pendingReport.createdAt),
                         style: AppTextStyles.labelSmall.copyWith(
                           fontSize: 10,
-                          color: AppColors.grey600,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -818,7 +826,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           'Penerima: ${pendingReport.receiverName}',
                           style: AppTextStyles.labelSmall.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -829,7 +837,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         Text(
                           pendingReport.notes!,
                           style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -840,10 +848,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           pendingReport.lastError!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 9,
-                            color: AppColors.error,
-                          ),
+                          style: TextStyle(fontSize: 9, color: colors.error),
                         ),
                       const SizedBox(height: 6),
                       Row(
@@ -860,7 +865,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                         ),
                                       ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
+                                  backgroundColor: colors.primary,
+                                  foregroundColor: colors.onPrimary,
                                   padding: EdgeInsets.zero,
                                   minimumSize: const Size(0, 30),
                                   tapTargetSize:
@@ -870,12 +876,12 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'Kirim ulang',
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.white,
+                                    color: colors.onPrimary,
                                   ),
                                 ),
                               ),
@@ -894,15 +900,15 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 minimumSize: const Size(0, 30),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 visualDensity: VisualDensity.compact,
-                                side: const BorderSide(color: AppColors.error),
+                                side: BorderSide(color: colors.error),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.delete_outline_rounded,
                                 size: 16,
-                                color: AppColors.error,
+                                color: colors.error,
                               ),
                             ),
                           ),
@@ -940,6 +946,9 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
   }
 
   void _showPendingPreview(PendingActivationReportModel report) {
+    final colors = context.appColors;
+    const mediaBg = Color(0xFF1E293B); // media-overlay
+    const mediaFg = Color(0xFFFFFFFF); // media-overlay
     final imagePaths = report.attachmentPaths
         .where((path) => !FileSecurityUtils.isVideoPath(path))
         .toList();
@@ -961,21 +970,18 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Laporan Belum Terkirim',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               DateFormat('dd MMMM yyyy, HH:mm').format(report.createdAt),
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 11, color: colors.textSecondary),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -993,7 +999,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppColors.grey900,
+                          color: mediaBg,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Center(
@@ -1002,16 +1008,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             children: [
                               Icon(
                                 Icons.play_circle_fill_rounded,
-                                color: AppColors.white,
+                                color: mediaFg,
                                 size: 48,
                               ),
                               SizedBox(height: 6),
                               Text(
                                 'Putar video',
-                                style: TextStyle(
-                                  color: AppColors.white,
-                                  fontSize: 12,
-                                ),
+                                style: TextStyle(color: mediaFg, fontSize: 12),
                               ),
                             ],
                           ),
@@ -1037,10 +1040,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         width: double.infinity,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) => Container(
-                          color: AppColors.grey200,
-                          child: const Icon(
+                          color: colors.border,
+                          child: Icon(
                             Icons.broken_image_rounded,
-                            color: AppColors.grey500,
+                            color: colors.textMuted,
                           ),
                         ),
                       ),
@@ -1052,10 +1055,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             const SizedBox(height: 8),
             Text(
               '${report.attachmentPaths.length} lampiran',
-              style: const TextStyle(
-                fontSize: 11,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 11, color: colors.textSecondary),
             ),
             Align(
               alignment: Alignment.centerRight,
@@ -1076,18 +1076,24 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     ActivationActivity activity,
     DateFormat timeFormat,
   ) {
+    final colors = context.appColors;
+    const mediaBg = Color(0xFF1E293B); // media-overlay
+    const mediaFg = Color(0xFFFFFFFF); // media-overlay
+    const mediaCountScrim = Color(0xBF000000); // media-overlay
+    const mediaBadgeScrim = Color(0xB3000000); // media-overlay
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: colors.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
         ],
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
@@ -1119,11 +1125,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 fit: BoxFit.cover,
                               )
                             : Container(
-                                color: AppColors.grey900,
+                                color: mediaBg,
                                 child: const Center(
                                   child: Icon(
                                     Icons.play_circle_fill_rounded,
-                                    color: AppColors.white,
+                                    color: mediaFg,
                                     size: 36,
                                   ),
                                 ),
@@ -1139,7 +1145,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.black.withValues(alpha: 0.75),
+                              color: mediaCountScrim,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
@@ -1147,7 +1153,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 const Icon(
                                   Icons.photo_library_rounded,
                                   size: 10,
-                                  color: AppColors.white,
+                                  color: mediaFg,
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
@@ -1155,7 +1161,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                       ? '${report.photoUrls.length} Foto'
                                       : '${report.photoUrls.length + report.videoUrls.length} Media',
                                   style: const TextStyle(
-                                    color: AppColors.white,
+                                    color: mediaFg,
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1174,7 +1180,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.black.withValues(alpha: 0.7),
+                              color: mediaBadgeScrim,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(
@@ -1182,13 +1188,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 const Icon(
                                   Icons.my_location_rounded,
                                   size: 10,
-                                  color: AppColors.white,
+                                  color: mediaFg,
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
                                   '${report.latitude.toStringAsFixed(3)}, ${report.longitude.toStringAsFixed(3)}',
                                   style: const TextStyle(
-                                    color: AppColors.white,
+                                    color: mediaFg,
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -1217,7 +1223,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.black.withValues(alpha: 0.7),
+                                color: mediaBadgeScrim,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: const Row(
@@ -1225,13 +1231,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                   Icon(
                                     Icons.play_arrow_rounded,
                                     size: 10,
-                                    color: AppColors.white,
+                                    color: mediaFg,
                                   ),
                                   SizedBox(width: 3),
                                   Text(
                                     'Video',
                                     style: TextStyle(
-                                      color: AppColors.white,
+                                      color: mediaFg,
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1253,7 +1259,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         timeFormat.format(report.submittedAt),
                         style: AppTextStyles.labelSmall.copyWith(
                           fontSize: 10,
-                          color: AppColors.grey600,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -1262,7 +1268,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                           'Penerima: ${report.recipientName}',
                           style: AppTextStyles.labelSmall.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -1272,7 +1278,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         Text(
                           report.notes!,
                           style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontSize: 11,
                           ),
                           maxLines: 1,
@@ -1296,6 +1302,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     double? height,
     BoxFit fit = BoxFit.cover,
   }) {
+    final colors = context.appColors;
     if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
       return AppNetworkImage(
         imageUrl: pathOrUrl,
@@ -1304,7 +1311,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         fit: fit,
         httpHeaders: _apiAuthHeaders(pathOrUrl),
         errorIcon: Icons.broken_image_rounded,
-        backgroundColor: AppColors.grey200,
+        backgroundColor: colors.border,
       );
     } else {
       return Image.file(
@@ -1319,11 +1326,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             : null,
         fit: fit,
         errorBuilder: (context, error, stackTrace) => Container(
-          color: AppColors.grey200,
-          child: const Icon(
-            Icons.broken_image_rounded,
-            color: AppColors.grey500,
-          ),
+          color: colors.border,
+          child: Icon(Icons.broken_image_rounded, color: colors.textMuted),
         ),
       );
     }
@@ -1342,6 +1346,11 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
     ActivationReport report,
     ActivationActivity activity,
   ) {
+    final colors = context.appColors;
+    const mediaBg = Color(0xFF1E293B); // media-overlay
+    const mediaFg = Color(0xFFFFFFFF); // media-overlay
+    const mediaCounterScrim = Color(0xA6000000); // media-overlay
+    const mediaActionScrim = Color(0xB3000000); // media-overlay
     final timeFormat = DateFormat('dd MMMM yyyy, HH:mm');
     final photoUrls = report.photoUrls;
     final mediaUrls = [...photoUrls, ...report.videoUrls];
@@ -1401,21 +1410,21 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               onTap: () => openMedia(context, idx),
                               child: isVideoIndex(idx)
                                   ? Container(
-                                      color: AppColors.grey900,
+                                      color: mediaBg,
                                       child: const Center(
                                         child: Column(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
                                               Icons.play_circle_fill_rounded,
-                                              color: AppColors.white,
+                                              color: mediaFg,
                                               size: 48,
                                             ),
                                             SizedBox(height: 6),
                                             Text(
                                               'Putar video',
                                               style: TextStyle(
-                                                color: AppColors.white,
+                                                color: mediaFg,
                                                 fontSize: 12,
                                               ),
                                             ),
@@ -1441,13 +1450,13 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.65),
+                              color: mediaCounterScrim,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${selectedMediaIdx + 1} / ${mediaUrls.length}',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: mediaFg,
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1465,7 +1474,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.7),
+                                color: mediaActionScrim,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -1475,7 +1484,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                     isVideoIndex(selectedMediaIdx)
                                         ? Icons.play_arrow_rounded
                                         : Icons.fullscreen_rounded,
-                                    color: Colors.white,
+                                    color: mediaFg,
                                     size: 16,
                                   ),
                                   const SizedBox(width: 4),
@@ -1484,7 +1493,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                         ? 'Putar'
                                         : 'Fullscreen',
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: mediaFg,
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -1505,7 +1514,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         horizontal: 12,
                         vertical: 8,
                       ),
-                      color: AppColors.grey100,
+                      color: colors.surfaceElevated,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: mediaUrls.length,
@@ -1528,7 +1537,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
                                   color: isSelected
-                                      ? AppColors.primary
+                                      ? colors.primary
                                       : Colors.transparent,
                                   width: 2.5,
                                 ),
@@ -1539,10 +1548,10 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                                     ? Container(
                                         width: 48,
                                         height: 48,
-                                        color: AppColors.grey900,
+                                        color: mediaBg,
                                         child: const Icon(
                                           Icons.play_circle_fill_rounded,
-                                          color: AppColors.white,
+                                          color: mediaFg,
                                           size: 20,
                                         ),
                                       )
@@ -1568,15 +1577,16 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                         Text(
                           timeFormat.format(report.submittedAt),
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         if (report.recipientName != null) ...[
-                          const Divider(height: 16),
+                          Divider(height: 16, color: colors.divider),
                           Text(
                             'Nama Penerima: ${report.recipientName}',
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: colors.textPrimary,
                             ),
                           ),
                           if (report.recipientKk != null &&
@@ -1584,7 +1594,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             Text(
                               'KK Penerima: ${DataMaskingUtils.maskNikOrKk(report.recipientKk)}',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           if (report.recipientNik != null &&
@@ -1592,7 +1602,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             Text(
                               'NIK Penerima: ${report.recipientNik!.trim()}',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           if ((report.rt != null && report.rt!.isNotEmpty) ||
@@ -1602,15 +1612,17 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                             Text(
                               'Alamat: RT ${report.rt ?? '-'} / RW ${report.rw ?? '-'} No. ${report.houseNumber ?? '-'}',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                         ],
                         if (report.notes != null) ...[
-                          const Divider(height: 16),
+                          Divider(height: 16, color: colors.divider),
                           Text(
                             'Catatan: ${report.notes}',
-                            style: AppTextStyles.bodyMedium,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: colors.textPrimary,
+                            ),
                           ),
                         ],
                         const SizedBox(height: 16),

@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:akar/core/routes/app_router.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
 import '../../domain/entities/tokoh_entity.dart';
@@ -22,7 +22,7 @@ class TokohDetailSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: context.appColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -30,28 +30,29 @@ class TokohDetailSheet extends StatelessWidget {
     );
   }
 
-  Color _getAfiliasiColor(String afiliasi) {
+  Color _getAfiliasiColor(String afiliasi, AppColorScheme colors) {
     switch (afiliasi.toLowerCase()) {
       case 'politik':
-        return const Color(0xFFE53935);
+        return colors.error;
       case 'ormas':
-        return const Color(0xFFFB8C00);
+        return colors.orange;
       case 'agama':
-        return const Color(0xFF1E88E5);
+        return colors.info;
       case 'budaya':
-        return const Color(0xFF8E24AA);
+        return colors.indigo;
       case 'pemuda':
-        return const Color(0xFF43A047);
+        return colors.success;
       case 'pengusaha':
-        return const Color(0xFF00ACC1);
+        return colors.emerald;
       default:
-        return AppColors.primary;
+        return colors.primary;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi);
+    final colors = context.appColors;
+    final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi, colors);
 
     return SafeArea(
       child: Container(
@@ -68,7 +69,7 @@ class TokohDetailSheet extends StatelessWidget {
                 width: 44,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colors.borderStrong,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -85,14 +86,14 @@ class TokohDetailSheet extends StatelessWidget {
                         'Detail Tokoh Demografi',
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Informasi profil lengkap tokoh',
                         style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -100,7 +101,7 @@ class TokohDetailSheet extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: AppColors.grey600),
+                  icon: Icon(Icons.close, color: colors.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -110,21 +111,21 @@ class TokohDetailSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.05),
+                color: colors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.15),
+                  color: colors.primary.withValues(alpha: 0.2),
                 ),
               ),
               child: Row(
                 children: [
                   CircleAvatar(
                     radius: 26,
-                    backgroundColor: AppColors.primary,
+                    backgroundColor: colors.primary,
                     child: Text(
                       tokoh.nama.isNotEmpty ? tokoh.nama[0].toUpperCase() : 'T',
                       style: AppTextStyles.titleLarge.copyWith(
-                        color: AppColors.white,
+                        color: colors.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -138,14 +139,14 @@ class TokohDetailSheet extends StatelessWidget {
                           tokoh.nama,
                           style: AppTextStyles.titleMedium.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           tokoh.profesi,
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.primary,
+                            color: colors.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -181,17 +182,17 @@ class TokohDetailSheet extends StatelessWidget {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.grey100,
+                                color: colors.surfaceVariant,
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: AppColors.grey300),
+                                border: Border.all(color: colors.border),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.public_rounded,
                                     size: 12,
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
@@ -199,7 +200,7 @@ class TokohDetailSheet extends StatelessWidget {
                                     style: AppTextStyles.bodySmall.copyWith(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                     ),
                                   ),
                                 ],
@@ -224,39 +225,43 @@ class TokohDetailSheet extends StatelessWidget {
                       'Identitas Personal',
                       style: AppTextStyles.titleMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.grey50,
+                        color: colors.surfaceVariant,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColors.grey200),
+                        border: Border.all(color: colors.border),
                       ),
                       child: Column(
                         children: [
                           _buildInfoTile(
+                            colors: colors,
                             icon: Icons.wc_rounded,
                             label: 'Jenis Kelamin',
                             value: tokoh.jenisKelamin,
                           ),
-                          const Divider(height: 1, color: AppColors.grey200),
+                          Divider(height: 1, color: colors.divider),
                           _buildInfoTile(
+                            colors: colors,
                             icon: Icons.work_outline_rounded,
                             label: 'Profesi',
                             value: tokoh.profesi,
                           ),
                           if (tokoh.suku.isNotEmpty) ...[
-                            const Divider(height: 1, color: AppColors.grey200),
+                            Divider(height: 1, color: colors.divider),
                             _buildInfoTile(
+                              colors: colors,
                               icon: Icons.diversity_3_rounded,
                               label: 'Suku',
                               value: tokoh.suku,
                             ),
                           ],
-                          const Divider(height: 1, color: AppColors.grey200),
+                          Divider(height: 1, color: colors.divider),
                           _buildInfoTile(
+                            colors: colors,
                             icon: Icons.phone_rounded,
                             label: 'No. Telepon',
                             value: tokoh.noTelp.isNotEmpty ? tokoh.noTelp : '-',
@@ -270,29 +275,28 @@ class TokohDetailSheet extends StatelessWidget {
                         'Institusi',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: AppColors.grey50,
+                          color: colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.grey200),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Column(
                           children: [
                             _buildInfoTile(
+                              colors: colors,
                               icon: Icons.account_balance_rounded,
                               label: 'Nama Institusi',
                               value: tokoh.namaInstitusi,
                             ),
                             if (tokoh.jabatanInstitusi.isNotEmpty) ...[
-                              const Divider(
-                                height: 1,
-                                color: AppColors.grey200,
-                              ),
+                              Divider(height: 1, color: colors.divider),
                               _buildInfoTile(
+                                colors: colors,
                                 icon: Icons.badge_outlined,
                                 label: 'Jabatan di Institusi',
                                 value: tokoh.jabatanInstitusi,
@@ -308,29 +312,28 @@ class TokohDetailSheet extends StatelessWidget {
                         'Organisasi',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: AppColors.grey50,
+                          color: colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.grey200),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Column(
                           children: [
                             _buildInfoTile(
+                              colors: colors,
                               icon: Icons.groups_rounded,
                               label: 'Nama Organisasi',
                               value: tokoh.namaOrganisasi,
                             ),
                             if (tokoh.jabatanOrganisasi.isNotEmpty) ...[
-                              const Divider(
-                                height: 1,
-                                color: AppColors.grey200,
-                              ),
+                              Divider(height: 1, color: colors.divider),
                               _buildInfoTile(
+                                colors: colors,
                                 icon: Icons.badge_outlined,
                                 label: 'Jabatan di Organisasi',
                                 value: tokoh.jabatanOrganisasi,
@@ -346,22 +349,22 @@ class TokohDetailSheet extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.grey50,
+                          color: colors.surfaceVariant,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.grey200),
+                          border: Border.all(color: colors.border),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time_rounded,
                               size: 18,
-                              color: AppColors.grey600,
+                              color: colors.textSecondary,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Tanggal Disubmit: ',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                             Expanded(
@@ -369,7 +372,7 @@ class TokohDetailSheet extends StatelessWidget {
                                 '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(tokoh.createdAt!)} WIB',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             ),
@@ -396,8 +399,8 @@ class TokohDetailSheet extends StatelessWidget {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.white,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -406,7 +409,7 @@ class TokohDetailSheet extends StatelessWidget {
                         child: Text(
                           'Ubah Data',
                           style: AppTextStyles.labelLarge.copyWith(
-                            color: AppColors.white,
+                            color: colors.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -424,6 +427,7 @@ class TokohDetailSheet extends StatelessWidget {
   }
 
   Widget _buildInfoTile({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String value,
@@ -432,7 +436,7 @@ class TokohDetailSheet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.primary),
+          Icon(icon, size: 18, color: colors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -441,7 +445,7 @@ class TokohDetailSheet extends StatelessWidget {
                 Text(
                   label,
                   style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontSize: 11,
                   ),
                 ),
@@ -450,7 +454,7 @@ class TokohDetailSheet extends StatelessWidget {
                   value,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],

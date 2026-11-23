@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -99,17 +99,19 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     final alamatController = TextEditingController();
     String selectedScope = DemografiConstants.defaultInstitusiScope;
     const scopeOptions = DemografiConstants.institusiScopeOptions;
+    final outerColors = parentContext.appColors;
 
     showModalBottomSheet(
       context: parentContext,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: outerColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (modalContext) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final colors = modalContext.appColors;
             return SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
@@ -130,7 +132,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             width: 38,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: AppColors.grey300,
+                              color: colors.borderStrong,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -139,18 +141,18 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Tambah Institusi Baru',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close_rounded,
-                                color: AppColors.grey600,
+                                color: colors.textSecondary,
                               ),
                               onPressed: () => Navigator.pop(modalContext),
                             ),
@@ -162,6 +164,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: namaController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           textCapitalization: TextCapitalization.words,
@@ -181,13 +186,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           initialValue: selectedScope,
+                          dropdownColor: colors.surface,
                           items: scopeOptions.map((item) {
                             return DropdownMenuItem<String>(
                               value: item,
                               child: Text(
                                 item,
                                 style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             );
@@ -209,6 +215,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: alamatController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           maxLines: 2,
@@ -239,8 +248,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                               Navigator.pop(modalContext);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.white,
+                              backgroundColor: colors.primary,
+                              foregroundColor: colors.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
@@ -279,17 +288,19 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
     final alamatController = TextEditingController();
     String selectedBidang = DemografiConstants.defaultOrganisasiBidang;
     const bidangOptions = DemografiConstants.organisasiBidangOptions;
+    final outerColors = parentContext.appColors;
 
     showModalBottomSheet(
       context: parentContext,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: outerColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (modalContext) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final colors = modalContext.appColors;
             return SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
@@ -310,7 +321,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             width: 38,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: AppColors.grey300,
+                              color: colors.borderStrong,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -319,18 +330,18 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Tambah Organisasi Baru',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.close_rounded,
-                                color: AppColors.grey600,
+                                color: colors.textSecondary,
                               ),
                               onPressed: () => Navigator.pop(modalContext),
                             ),
@@ -341,6 +352,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: namaController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           textCapitalization: TextCapitalization.words,
@@ -362,6 +376,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: jumlahAnggotaController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           keyboardType: TextInputType.number,
@@ -384,13 +401,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         DropdownButtonFormField<String>(
                           initialValue: selectedBidang,
+                          dropdownColor: colors.surface,
                           items: bidangOptions.map((item) {
                             return DropdownMenuItem<String>(
                               value: item,
                               child: Text(
                                 item,
                                 style: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                 ),
                               ),
                             );
@@ -411,6 +429,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         const SizedBox(height: 6),
                         TextFormField(
                           controller: alamatController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           maxLines: 2,
@@ -448,8 +469,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                               Navigator.pop(modalContext);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: AppColors.white,
+                              backgroundColor: colors.primary,
+                              foregroundColor: colors.onPrimary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
@@ -489,17 +510,19 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   }) {
     final TextEditingController searchController = TextEditingController();
     List<String> filteredList = List.from(options);
+    final outerColors = context.appColors;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: outerColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final colors = bottomSheetContext.appColors;
             final searchText = searchController.text.trim();
             final hasSearch = searchText.isNotEmpty;
             final exactMatch = options.any(
@@ -527,7 +550,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           width: 38,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppColors.grey300,
+                            color: colors.borderStrong,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -540,10 +563,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           children: [
                             Text(
                               title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             if (onAddNew != null)
@@ -553,8 +576,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   onAddNew(searchController.text.trim());
                                 },
                                 borderRadius: BorderRadius.circular(8),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
                                     horizontal: 8,
                                     vertical: 4,
                                   ),
@@ -564,15 +587,15 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                       Icon(
                                         Icons.add_circle_outline_rounded,
                                         size: 18,
-                                        color: AppColors.primary,
+                                        color: colors.primary,
                                       ),
-                                      SizedBox(width: 4),
+                                      const SizedBox(width: 4),
                                       Text(
                                         'Tambah Baru',
                                         style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
+                                          color: colors.primary,
                                         ),
                                       ),
                                     ],
@@ -587,6 +610,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: TextField(
                           controller: searchController,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           onChanged: (val) {
@@ -603,17 +629,17 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                           decoration: InputDecoration(
                             hintText: hintSearch,
                             hintStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.grey500,
+                              color: colors.textHint,
                             ),
-                            prefixIcon: const Icon(
+                            prefixIcon: Icon(
                               Icons.search_rounded,
-                              color: AppColors.primary,
+                              color: colors.primary,
                             ),
                             suffixIcon: searchController.text.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.clear_rounded,
-                                      color: AppColors.grey500,
+                                      color: colors.textHint,
                                     ),
                                     onPressed: () {
                                       searchController.clear();
@@ -624,7 +650,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor: AppColors.grey100,
+                            fillColor: colors.surfaceVariant,
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
@@ -637,7 +663,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Divider(height: 1, color: AppColors.grey200),
+                      Divider(height: 1, color: colors.divider),
                       Expanded(
                         child: filteredList.isEmpty
                             ? Center(
@@ -646,18 +672,18 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.search_off_rounded,
                                         size: 48,
-                                        color: AppColors.grey400,
+                                        color: colors.textHint,
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
                                         hasSearch
                                             ? '"$searchText" tidak ditemukan'
                                             : 'Data tidak ditemukan',
-                                        style: const TextStyle(
-                                          color: AppColors.textSecondary,
+                                        style: TextStyle(
+                                          color: colors.textSecondary,
                                           fontSize: 14,
                                         ),
                                         textAlign: TextAlign.center,
@@ -679,8 +705,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                                 : 'Tambah Baru',
                                           ),
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppColors.primary,
-                                            foregroundColor: Colors.white,
+                                            backgroundColor: colors.primary,
+                                            foregroundColor: colors.onPrimary,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(12),
@@ -704,15 +730,15 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                 itemBuilder: (context, index) {
                                   if (showAddOptionAtTop && index == 0) {
                                     return ListTile(
-                                      leading: const Icon(
+                                      leading: Icon(
                                         Icons.add_circle_outline_rounded,
-                                        color: AppColors.primary,
+                                        color: colors.primary,
                                       ),
                                       title: Text(
                                         'Tambah "$searchText" Baru',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
+                                          color: colors.primary,
                                         ),
                                       ),
                                       onTap: () {
@@ -742,14 +768,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                             ? FontWeight.bold
                                             : FontWeight.normal,
                                         color: isSelected
-                                            ? AppColors.primary
-                                            : AppColors.textPrimary,
+                                            ? colors.primary
+                                            : colors.textPrimary,
                                       ),
                                     ),
                                     trailing: isSelected
-                                        ? const Icon(
+                                        ? Icon(
                                             Icons.check_circle_rounded,
-                                            color: AppColors.primary,
+                                            color: colors.primary,
                                           )
                                         : null,
                                     onTap: () {
@@ -861,6 +887,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
       ],
       child: BlocBuilder<TokohBloc, TokohState>(
         builder: (context, state) {
+          final colors = context.appColors;
           final institusiBloc = context.watch<InstitusiBloc>();
           final List<String> institusiListOptions = [
             'Tidak Ada',
@@ -886,7 +913,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
           final bool showJabatanOrganisasi = _selectedOrganisasi != 'Tidak Ada';
 
           return Scaffold(
-            backgroundColor: AppColors.background,
+            backgroundColor: colors.background,
             appBar: AppPageBar(
               title: _isEdit ? 'Ubah Data Tokoh' : 'Tambah Tokoh Baru',
             ),
@@ -903,17 +930,17 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight,
+                          color: colors.primaryLight,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: colors.primary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.info_outline_rounded,
-                              color: AppColors.primary,
+                              color: colors.primary,
                               size: 22,
                             ),
                             const SizedBox(width: 12),
@@ -923,7 +950,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                     ? 'Perbarui formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.'
                                     : 'Isi formulir pendataan tokoh dengan data yang jujur & jelas agar proses demografi akurat.',
                                 style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.primaryDark,
+                                  color: colors.primaryDark,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13,
                                 ),
@@ -938,6 +965,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       TextFormField(
                         controller: _namaController,
                         textCapitalization: TextCapitalization.words,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         validator: (value) {
@@ -956,6 +986,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       TextFormField(
                         controller: _noTelpController,
                         keyboardType: TextInputType.phone,
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          color: colors.textPrimary,
+                        ),
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                         decoration: _buildInputDecoration(
@@ -967,13 +1000,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedJenisKelamin,
+                        dropdownColor: colors.surface,
                         items: _jenisKelaminOptions.map((item) {
                           return DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           );
@@ -994,13 +1028,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedProfesi,
+                        dropdownColor: colors.surface,
                         items: _profesiOptions.map((item) {
                           return DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           );
@@ -1054,9 +1089,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             vertical: 14,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: colors.border),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1065,7 +1100,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                 child: Text(
                                   _selectedInstitusi,
                                   style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.textPrimary,
+                                    color: colors.textPrimary,
                                     fontWeight:
                                         _selectedInstitusi != 'Tidak Ada'
                                         ? FontWeight.w600
@@ -1074,9 +1109,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_drop_down_rounded,
-                                color: AppColors.grey600,
+                                color: colors.textSecondary,
                               ),
                             ],
                           ),
@@ -1090,6 +1125,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         TextFormField(
                           controller: _jabatanInstitusiController,
                           textCapitalization: TextCapitalization.words,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           decoration: _buildInputDecoration(
@@ -1102,13 +1140,14 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       const SizedBox(height: 6),
                       DropdownButtonFormField<String>(
                         initialValue: _selectedAfiliasi,
+                        dropdownColor: colors.surface,
                         items: _afiliasiOptions.map((item) {
                           return DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item,
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                           );
@@ -1162,9 +1201,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             vertical: 14,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: colors.border),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1173,7 +1212,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                 child: Text(
                                   _selectedOrganisasi,
                                   style: AppTextStyles.bodyMedium.copyWith(
-                                    color: AppColors.textPrimary,
+                                    color: colors.textPrimary,
                                     fontWeight:
                                         _selectedOrganisasi != 'Tidak Ada'
                                         ? FontWeight.w600
@@ -1182,9 +1221,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_drop_down_rounded,
-                                color: AppColors.grey600,
+                                color: colors.textSecondary,
                               ),
                             ],
                           ),
@@ -1197,6 +1236,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                         TextFormField(
                           controller: _jabatanOrganisasiController,
                           textCapitalization: TextCapitalization.words,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: colors.textPrimary,
+                          ),
                           onTapOutside: (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                           decoration: _buildInputDecoration(
@@ -1227,9 +1269,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                             vertical: 14,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            border: Border.all(color: colors.border),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1239,8 +1281,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   _selectedSuku ?? 'Pilih Suku (Cari Suku)...',
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     color: _selectedSuku != null
-                                        ? AppColors.textPrimary
-                                        : const Color(0xFF94A3B8),
+                                        ? colors.textPrimary
+                                        : colors.textHint,
                                     fontWeight: _selectedSuku != null
                                         ? FontWeight.w600
                                         : FontWeight.normal,
@@ -1248,9 +1290,9 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_drop_down_rounded,
-                                color: AppColors.grey600,
+                                color: colors.textSecondary,
                               ),
                             ],
                           ),
@@ -1265,10 +1307,10 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
             bottomNavigationBar: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: colors.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.05),
+                    color: colors.shadow.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, -4),
                   ),
@@ -1280,8 +1322,8 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                   child: ElevatedButton(
                     onPressed: state is TokohActionLoading ? null : _submitForm,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: AppColors.white,
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -1289,12 +1331,12 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
                       elevation: 0,
                     ),
                     child: state is TokohActionLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.5,
-                              color: Colors.white,
+                              color: colors.onPrimary,
                             ),
                           )
                         : Text(
@@ -1316,18 +1358,19 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   }
 
   Widget _buildLabel(String text, {bool isRequired = false}) {
+    final colors = context.appColors;
     return RichText(
       text: TextSpan(
         text: text,
         style: AppTextStyles.bodyMedium.copyWith(
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF1E293B),
+          color: colors.textPrimary,
         ),
         children: [
           if (isRequired)
-            const TextSpan(
+            TextSpan(
               text: ' *',
-              style: TextStyle(color: AppColors.error),
+              style: TextStyle(color: colors.error),
             ),
         ],
       ),
@@ -1335,33 +1378,32 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
   }
 
   InputDecoration _buildInputDecoration({required String hintText}) {
+    final colors = context.appColors;
     return InputDecoration(
       hintText: hintText,
-      hintStyle: AppTextStyles.bodyMedium.copyWith(
-        color: const Color(0xFF94A3B8),
-      ),
+      hintStyle: AppTextStyles.bodyMedium.copyWith(color: colors.textHint),
       filled: true,
-      fillColor: AppColors.white,
+      fillColor: colors.surface,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: colors.border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+        borderSide: BorderSide(color: colors.border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide: BorderSide(color: colors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1),
+        borderSide: BorderSide(color: colors.error, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: BorderSide(color: colors.error, width: 1.5),
       ),
     );
   }

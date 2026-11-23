@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
@@ -141,12 +141,16 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         receiverName: isDoorToDoor ? _nameController.text.trim() : null,
         onSuccess: () {
           if (mounted) {
+            final colors = context.appColors;
             setState(() => _isSubmitting = false);
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Penyerahan laporan berhasil disimpan!'),
-                backgroundColor: AppColors.success,
+              SnackBar(
+                content: Text(
+                  'Penyerahan laporan berhasil disimpan!',
+                  style: TextStyle(color: colors.onPrimary),
+                ),
+                backgroundColor: colors.primary,
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -154,15 +158,21 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         },
         onQueued: () {
           if (mounted) {
+            final colors = context.appColors;
             setState(() => _isSubmitting = false);
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Tidak ada koneksi. Laporan disimpan dan akan dikirim '
                   'otomatis saat internet tersedia.',
+                  style: TextStyle(
+                    color: colors.isDark
+                        ? colors.onSecondary
+                        : colors.textPrimary,
+                  ),
                 ),
-                backgroundColor: AppColors.warning,
+                backgroundColor: colors.warning,
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -170,11 +180,15 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         },
         onError: (message) {
           if (mounted) {
+            final colors = context.appColors;
             setState(() => _isSubmitting = false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(message),
-                backgroundColor: AppColors.error,
+                content: Text(
+                  message,
+                  style: TextStyle(color: colors.onErrorSolid),
+                ),
+                backgroundColor: colors.errorSolid,
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -185,6 +199,9 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   }
 
   Widget _buildAttachmentTile(String pathOrUrl, int index) {
+    final colors = context.appColors;
+    const videoOverlayBg = Color(0xFF1E293B); // media-overlay
+    const videoOverlayFg = Color(0xFFFFFFFF); // media-overlay
     final isVideo = FileSecurityUtils.isVideoPath(pathOrUrl);
 
     Widget preview;
@@ -192,19 +209,19 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
       preview = Container(
         width: 100,
         height: 100,
-        color: AppColors.grey900,
+        color: videoOverlayBg,
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.play_circle_fill_rounded,
-              color: AppColors.white,
+              color: videoOverlayFg,
               size: 36,
             ),
             SizedBox(height: 4),
             Text(
               'Video',
-              style: TextStyle(color: AppColors.white, fontSize: 11),
+              style: TextStyle(color: videoOverlayFg, fontSize: 11),
             ),
           ],
         ),
@@ -217,7 +234,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         height: 100,
         fit: BoxFit.cover,
         errorIcon: Icons.broken_image_rounded,
-        backgroundColor: AppColors.grey200,
+        backgroundColor: colors.border,
       );
     } else {
       preview = Image.file(
@@ -230,11 +247,8 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         errorBuilder: (context, error, stackTrace) => Container(
           width: 100,
           height: 100,
-          color: AppColors.grey200,
-          child: const Icon(
-            Icons.broken_image_rounded,
-            color: AppColors.grey500,
-          ),
+          color: colors.border,
+          child: Icon(Icons.broken_image_rounded, color: colors.textMuted),
         ),
       );
     }
@@ -278,14 +292,14 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                 onTap: () => _removeAttachment(index),
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
+                  decoration: BoxDecoration(
+                    color: colors.errorSolid,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.close_rounded,
                     size: 14,
-                    color: Colors.white,
+                    color: colors.onErrorSolid,
                   ),
                 ),
               ),
@@ -300,6 +314,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
     required String label,
     required VoidCallback onTap,
   }) {
+    final colors = context.appColors;
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -307,22 +322,22 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         height: 100,
         margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.05),
+          color: colors.primary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: colors.primary.withValues(alpha: 0.3),
             style: BorderStyle.solid,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
+            Icon(icon, color: colors.primary, size: 28),
             const SizedBox(height: 4),
             Text(
               label,
               style: AppTextStyles.labelSmall.copyWith(
-                color: AppColors.primary,
+                color: colors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -334,6 +349,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final isDoorToDoor =
         widget.activity.category == ActivationCategory.doorToDoor;
 
@@ -342,9 +358,9 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: SingleChildScrollView(
@@ -359,7 +375,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppColors.grey300,
+                      color: colors.borderStrong,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -372,17 +388,20 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                       'Laporan Bukti Penyerahan',
                       style: AppTextStyles.titleLarge.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                         fontSize: 18,
                       ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: colors.textPrimary,
+                      ),
                     ),
                   ],
                 ),
-                const Divider(height: 16),
+                Divider(height: 16, color: colors.divider),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -390,7 +409,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                       'Foto / Video Bukti Kegiatan',
                       style: AppTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                     Container(
@@ -400,16 +419,16 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                       ),
                       decoration: BoxDecoration(
                         color: _attachments.length >= _maxAttachments
-                            ? AppColors.warning.withValues(alpha: 0.15)
-                            : AppColors.primary.withValues(alpha: 0.1),
+                            ? colors.warning.withValues(alpha: 0.15)
+                            : colors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${_attachments.length}/$_maxAttachments Lampiran',
                         style: AppTextStyles.labelSmall.copyWith(
                           color: _attachments.length >= _maxAttachments
-                              ? AppColors.warning
-                              : AppColors.primary,
+                              ? colors.warning
+                              : colors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -455,6 +474,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     controller: _nameController,
                     onTapOutside: (event) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
+                    style: TextStyle(color: colors.textPrimary),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
                         return 'Nama penerima wajib diisi';
@@ -463,9 +483,10 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     },
                     decoration: InputDecoration(
                       hintText: 'Masukkan nama penerima...',
-                      prefixIcon: const Icon(
+                      hintStyle: TextStyle(color: colors.textMuted),
+                      prefixIcon: Icon(
                         Icons.person_outline_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -480,6 +501,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     onTapOutside: (event) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.number,
+                    style: TextStyle(color: colors.textPrimary),
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
                         return 'NIK penerima wajib diisi';
@@ -491,9 +513,10 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     },
                     decoration: InputDecoration(
                       hintText: 'Masukkan 16 digit NIK...',
-                      prefixIcon: const Icon(
+                      hintStyle: TextStyle(color: colors.textMuted),
+                      prefixIcon: Icon(
                         Icons.badge_outlined,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -506,7 +529,7 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   'Catatan',
                   style: AppTextStyles.labelMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -515,11 +538,13 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   onTapOutside: (event) =>
                       FocusManager.instance.primaryFocus?.unfocus(),
                   maxLines: 2,
+                  style: TextStyle(color: colors.textPrimary),
                   decoration: InputDecoration(
                     hintText: 'Tambahkan catatan laporan (opsional)...',
-                    prefixIcon: const Icon(
+                    hintStyle: TextStyle(color: colors.textMuted),
+                    prefixIcon: Icon(
                       Icons.note_alt_outlined,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -533,11 +558,11 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                   child: ElevatedButton.icon(
                     onPressed: _isSubmitting ? null : _submitReport,
                     icon: _isSubmitting
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              color: AppColors.white,
+                              color: colors.onPrimary,
                               strokeWidth: 2,
                             ),
                           )
@@ -545,12 +570,13 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
                     label: Text(
                       _isSubmitting ? 'Mengirim...' : 'Kirim',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.white,
+                        color: colors.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -566,20 +592,18 @@ class _AddReportBottomSheetState extends State<AddReportBottomSheet> {
   }
 
   Widget _buildMandatoryLabel(String label) {
+    final colors = context.appColors;
     return RichText(
       text: TextSpan(
         text: label,
         style: AppTextStyles.labelMedium.copyWith(
           fontWeight: FontWeight.bold,
-          color: AppColors.textPrimary,
+          color: colors.textPrimary,
         ),
-        children: const [
+        children: [
           TextSpan(
             text: ' *',
-            style: TextStyle(
-              color: AppColors.error,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: colors.error, fontWeight: FontWeight.bold),
           ),
         ],
       ),

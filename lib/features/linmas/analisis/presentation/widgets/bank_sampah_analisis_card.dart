@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
@@ -63,6 +63,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (dialogContext, setDialogState) {
+            final colors = dialogContext.appColors;
             return SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -71,7 +72,10 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.chevron_left_rounded),
+                        icon: Icon(
+                          Icons.chevron_left_rounded,
+                          color: colors.textPrimary,
+                        ),
                         onPressed: tempYear > 2020
                             ? () {
                                 setDialogState(() {
@@ -84,11 +88,14 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                         '$tempYear',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.chevron_right_rounded),
+                        icon: Icon(
+                          Icons.chevron_right_rounded,
+                          color: colors.textPrimary,
+                        ),
                         onPressed: tempYear < now.year
                             ? () {
                                 setDialogState(() {
@@ -134,15 +141,15 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.primary
+                                ? colors.primary
                                 : (isFuture
-                                      ? AppColors.grey100
-                                      : AppColors.grey50),
+                                      ? colors.surfaceElevated
+                                      : colors.surfaceVariant),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.primary
-                                  : AppColors.grey200,
+                                  ? colors.primary
+                                  : colors.border,
                             ),
                           ),
                           alignment: Alignment.center,
@@ -154,10 +161,10 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                                   ? FontWeight.bold
                                   : FontWeight.w500,
                               color: isSelected
-                                  ? AppColors.white
+                                  ? colors.onPrimary
                                   : (isFuture
-                                        ? AppColors.grey400
-                                        : AppColors.textPrimary),
+                                        ? colors.textHint
+                                        : colors.textPrimary),
                             ),
                           ),
                         ),
@@ -171,9 +178,9 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(dialogContext),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.secondary,
-                        side: const BorderSide(
-                          color: AppColors.grey300,
+                        foregroundColor: colors.secondary,
+                        side: BorderSide(
+                          color: colors.borderStrong,
                           width: 1.4,
                         ),
                         shape: RoundedRectangleBorder(
@@ -215,13 +222,15 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
       confirmText: 'TERAPKAN',
       saveText: 'SIMPAN',
       builder: (context, child) {
+        final colors = context.appColors;
+        final theme = Theme.of(context);
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              surface: AppColors.white,
-              onSurface: AppColors.textPrimary,
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: colors.primary,
+              onPrimary: colors.onPrimary,
+              surface: colors.surface,
+              onSurface: colors.textPrimary,
             ),
           ),
           child: child!,
@@ -331,15 +340,16 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
       (sum, item) => sum + item.nilaiRupiah,
     );
 
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.grey200.withValues(alpha: 0.8)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.8)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
+            color: colors.shadow.withValues(alpha: 0.04),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -354,12 +364,12 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.12),
+                  color: colors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.recycling_rounded,
-                  color: AppColors.primary,
+                  color: colors.primary,
                   size: 20,
                 ),
               ),
@@ -370,7 +380,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   style: AppTextStyles.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -381,7 +391,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: AppColors.grey100,
+              color: colors.surfaceElevated,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -398,10 +408,10 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.calendar_today_rounded,
                     size: 13,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                   const SizedBox(width: 6),
                   Text(
@@ -409,7 +419,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                     style: AppTextStyles.bodySmall.copyWith(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
                   ),
                 ],
@@ -431,7 +441,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
@@ -442,14 +452,14 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                           style: AppTextStyles.caption.copyWith(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                         ),
                         const SizedBox(width: 3),
-                        const Icon(
+                        Icon(
                           Icons.edit_calendar_rounded,
                           size: 12,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ],
                     ),
@@ -465,8 +475,8 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   title: 'Jumlah Laporan',
                   value: '$count Laporan',
                   icon: Icons.assignment_outlined,
-                  iconColor: AppColors.info,
-                  bgColor: AppColors.infoLight,
+                  iconColor: colors.info,
+                  bgColor: colors.infoLight,
                 ),
               ),
               const SizedBox(width: 8),
@@ -475,8 +485,8 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   title: 'Total Bobot',
                   value: _formatBerat(totalBerat),
                   icon: Icons.scale_rounded,
-                  iconColor: AppColors.primary,
-                  bgColor: AppColors.successLight,
+                  iconColor: colors.primary,
+                  bgColor: colors.successLight,
                 ),
               ),
               const SizedBox(width: 8),
@@ -485,8 +495,8 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
                   title: 'Total Nilai',
                   value: _formatRupiah(totalNilai),
                   icon: Icons.account_balance_wallet_rounded,
-                  iconColor: AppColors.earth,
-                  bgColor: AppColors.warningLight,
+                  iconColor: colors.earth,
+                  bgColor: colors.warningLight,
                 ),
               ),
             ],
@@ -497,6 +507,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
   }
 
   Widget _buildTimeframeTab(String label, BankSampahTimeframe timeframe) {
+    final colors = context.appColors;
     final isSelected = _selectedTimeframe == timeframe;
     return Expanded(
       child: GestureDetector(
@@ -508,12 +519,12 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.white : Colors.transparent,
+            color: isSelected ? colors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(9),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.black.withValues(alpha: 0.05),
+                      color: colors.shadow.withValues(alpha: 0.05),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -525,7 +536,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               label,
               style: AppTextStyles.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+                color: isSelected ? colors.primary : colors.textSecondary,
                 fontSize: 12,
               ),
             ),
@@ -542,12 +553,13 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
     required Color iconColor,
     required Color bgColor,
   }) {
+    final colors = context.appColors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.grey50,
+        color: colors.surfaceVariant,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -565,7 +577,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
             title,
             style: AppTextStyles.bodySmall.copyWith(
               fontSize: 10,
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               fontWeight: FontWeight.w500,
             ),
             maxLines: 1,
@@ -580,7 +592,7 @@ class _BankSampahAnalisisCardState extends State<BankSampahAnalisisCard> {
               style: AppTextStyles.bodyMedium.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
           ),

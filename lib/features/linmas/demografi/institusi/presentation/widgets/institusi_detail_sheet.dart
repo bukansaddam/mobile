@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:akar/core/routes/app_router.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
 import '../../domain/entities/institusi_entity.dart';
@@ -22,7 +22,7 @@ class InstitusiDetailSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: context.appColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -31,11 +31,12 @@ class InstitusiDetailSheet extends StatelessWidget {
     );
   }
 
-  Color _getScopeColor(String scope) => AppColors.primary;
+  Color _getScopeColor(String scope, AppColorScheme colors) => colors.primary;
 
   @override
   Widget build(BuildContext context) {
-    final scopeColor = _getScopeColor(institusi.scope);
+    final colors = context.appColors;
+    final scopeColor = _getScopeColor(institusi.scope, colors);
     final String initialChar = institusi.nama.trim().isNotEmpty
         ? institusi.nama.trim()[0].toUpperCase()
         : 'I';
@@ -56,7 +57,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: colors.borderStrong,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -73,14 +74,14 @@ class InstitusiDetailSheet extends StatelessWidget {
                           'Detail Institusi Demografi',
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Informasi lengkap profil institusi',
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -88,7 +89,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.grey600),
+                    icon: Icon(Icons.close, color: colors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -98,21 +99,21 @@ class InstitusiDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: colors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.15),
+                    color: colors.primary.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 26,
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colors.primary,
                       child: Text(
                         initialChar,
                         style: AppTextStyles.titleLarge.copyWith(
-                          color: AppColors.white,
+                          color: colors.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -126,7 +127,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                             institusi.nama,
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -173,31 +174,34 @@ class InstitusiDetailSheet extends StatelessWidget {
                 'Informasi Institusi',
                 style: AppTextStyles.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.grey50,
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.local_offer_outlined,
                       label: 'Kategori',
                       value: institusi.displayKategori,
                     ),
-                    const Divider(height: 1, color: AppColors.grey200),
+                    Divider(height: 1, color: colors.divider),
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.verified_rounded,
                       label: 'Scope Wilayah',
                       value: institusi.displayScope,
                     ),
-                    const Divider(height: 1, color: AppColors.grey200),
+                    Divider(height: 1, color: colors.divider),
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.location_on_rounded,
                       label: 'Alamat',
                       value:
@@ -207,8 +211,9 @@ class InstitusiDetailSheet extends StatelessWidget {
                           : 'Alamat belum diisi',
                     ),
                     if (institusi.formattedWilayah.isNotEmpty) ...[
-                      const Divider(height: 1, color: AppColors.grey200),
+                      Divider(height: 1, color: colors.divider),
                       _buildInfoTile(
+                        colors: colors,
                         icon: Icons.map_rounded,
                         label: 'Wilayah Terkait',
                         value: institusi.formattedWilayah,
@@ -223,22 +228,22 @@ class InstitusiDetailSheet extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.grey50,
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.grey200),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time_rounded,
                         size: 18,
-                        color: AppColors.grey600,
+                        color: colors.textSecondary,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Tanggal Disubmit: ',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       Expanded(
@@ -246,7 +251,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                           '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(institusi.createdAt!)} WIB',
                           style: AppTextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -272,8 +277,8 @@ class InstitusiDetailSheet extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -282,7 +287,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                   child: Text(
                     'Ubah Data',
                     style: AppTextStyles.labelLarge.copyWith(
-                      color: AppColors.white,
+                      color: colors.onPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -297,6 +302,7 @@ class InstitusiDetailSheet extends StatelessWidget {
   }
 
   Widget _buildInfoTile({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String value,
@@ -305,7 +311,7 @@ class InstitusiDetailSheet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.primary),
+          Icon(icon, size: 18, color: colors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -314,7 +320,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                 Text(
                   label,
                   style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontSize: 11,
                   ),
                 ),
@@ -323,7 +329,7 @@ class InstitusiDetailSheet extends StatelessWidget {
                   value,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],

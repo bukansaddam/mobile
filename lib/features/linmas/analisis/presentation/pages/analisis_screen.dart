@@ -3,7 +3,7 @@ import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_b
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:akar/features/linmas/analisis/presentation/widgets/analisis_metric_cards.dart';
@@ -25,8 +25,9 @@ class AnalisisScreen extends StatelessWidget {
       builder: (context, activationState) {
         return BlocBuilder<AnalisisBloc, AnalisisState>(
           builder: (context, analisisState) {
+            final colors = context.appColors;
             return Scaffold(
-              backgroundColor: AppColors.background,
+              backgroundColor: colors.background,
               body: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(18, 14, 18, 30),

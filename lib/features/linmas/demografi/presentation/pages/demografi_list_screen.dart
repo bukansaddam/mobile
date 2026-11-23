@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
@@ -189,38 +189,40 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     super.dispose();
   }
 
-  Color _getAfiliasiColor(String afiliasi) {
+  Color _getAfiliasiColor(String afiliasi, AppColorScheme colors) {
     switch (afiliasi.toLowerCase()) {
       case 'politik':
-        return const Color(0xFFE53935);
+        return colors.error;
       case 'ormas':
-        return const Color(0xFFFB8C00);
+        return colors.orange;
       case 'agama':
-        return const Color(0xFF1E88E5);
+        return colors.info;
       case 'budaya':
-        return const Color(0xFF8E24AA);
+        return colors.indigo;
       case 'pemuda':
-        return const Color(0xFF43A047);
+        return colors.success;
       case 'pengusaha':
-        return const Color(0xFF00ACC1);
+        return colors.emerald;
       default:
-        return AppColors.primary;
+        return colors.primary;
     }
   }
 
-  Color _getBidangColor(String bidang) => AppColors.primary;
+  Color _getBidangColor(String bidang, AppColorScheme colors) => colors.primary;
 
-  Color _getScopeColor(String scope) => AppColors.primary;
+  Color _getScopeColor(String scope, AppColorScheme colors) => colors.primary;
 
   void _showFilterBottomSheet(BuildContext context) {
+    final outerColors = context.appColors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: outerColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
+        final colors = bottomSheetContext.appColors;
         return BlocBuilder<TokohBloc, TokohState>(
           builder: (context, tokohState) {
             return BlocBuilder<OrganisasiBloc, OrganisasiState>(
@@ -261,7 +263,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   width: 38,
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: AppColors.grey300,
+                                    color: colors.borderStrong,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -276,12 +278,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Filter & Urutkan Demografi',
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textPrimary,
+                                        color: colors.textPrimary,
                                       ),
                                     ),
                                     if (hasActiveFilter)
@@ -302,7 +304,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                           }
                                         },
                                         style: TextButton.styleFrom(
-                                          foregroundColor: AppColors.error,
+                                          foregroundColor: colors.error,
                                           padding: EdgeInsets.zero,
                                           minimumSize: Size.zero,
                                           tapTargetSize:
@@ -332,18 +334,15 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                         : activeTab == 1
                                         ? 'Kustomisasi daftar institusi sesuai kebutuhan Anda'
                                         : 'Kustomisasi daftar organisasi sesuai kebutuhan Anda',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                     ),
                                   ),
                                 ),
                               ),
                               const SizedBox(height: 14),
-                              const Divider(
-                                height: 1,
-                                color: AppColors.grey200,
-                              ),
+                              Divider(height: 1, color: colors.divider),
 
                               Expanded(
                                 child: SingleChildScrollView(
@@ -352,12 +351,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
+                                      Text(
                                         'Urutkan Berdasarkan',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.textPrimary,
+                                          color: colors.textPrimary,
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -439,12 +438,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                       const SizedBox(height: 22),
 
                                       if (activeTab == 0) ...[
-                                        const Text(
+                                        Text(
                                           'Profesi Tokoh',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -489,12 +488,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                         ),
                                         const SizedBox(height: 22),
 
-                                        const Text(
+                                        Text(
                                           'Afiliasi Tokoh',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -540,12 +539,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                       ],
 
                                       if (activeTab == 1) ...[
-                                        const Text(
+                                        Text(
                                           'Kategori Institusi',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -589,12 +588,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                           ],
                                         ),
                                         const SizedBox(height: 16),
-                                        const Text(
+                                        Text(
                                           'Scope Institusi',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -642,12 +641,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                       ],
 
                                       if (activeTab == 2) ...[
-                                        const Text(
+                                        Text(
                                           'Bidang Organisasi',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.textPrimary,
+                                            color: colors.textPrimary,
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -709,18 +708,19 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     onPressed: () =>
                                         Navigator.pop(bottomSheetContext),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.primary,
+                                      backgroundColor: colors.primary,
+                                      foregroundColor: colors.onPrimary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       elevation: 0,
                                     ),
-                                    child: const Text(
+                                    child: Text(
                                       'Terapkan Filter',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: colors.onPrimary,
                                       ),
                                     ),
                                   ),
@@ -747,7 +747,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    const activeColor = AppColors.primary;
+    final colors = context.appColors;
+    final activeColor = colors.primary;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -756,10 +757,10 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         decoration: BoxDecoration(
           color: isSelected
               ? activeColor.withValues(alpha: 0.12)
-              : AppColors.white,
+              : colors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? activeColor : AppColors.grey300,
+            color: isSelected ? activeColor : colors.borderStrong,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -771,7 +772,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? activeColor : AppColors.textPrimary,
+                color: isSelected ? activeColor : colors.textPrimary,
               ),
             ),
           ],
@@ -787,7 +788,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     VoidCallback? onRemove,
     VoidCallback? onTap,
   }) {
-    final tagColor = color ?? AppColors.primary;
+    final colors = context.appColors;
+    final tagColor = color ?? colors.primary;
+    final fgColor = color ?? colors.primaryDark;
     return GestureDetector(
       onTap: onTap ?? onRemove,
       child: Container(
@@ -801,7 +804,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 14, color: tagColor),
+              Icon(icon, size: 14, color: fgColor),
               const SizedBox(width: 4),
             ],
             Text(
@@ -809,12 +812,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: tagColor,
+                color: fgColor,
               ),
             ),
             if (onRemove != null) ...[
               const SizedBox(width: 4),
-              Icon(Icons.close_rounded, size: 14, color: tagColor),
+              Icon(Icons.close_rounded, size: 14, color: fgColor),
             ],
           ],
         ),
@@ -824,8 +827,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: AppPageBar(
         title: 'Demografi',
         bottom: PreferredSize(
@@ -834,10 +838,10 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             controller: _tabController,
             dividerColor: Colors.transparent,
             dividerHeight: 0,
-            indicatorColor: AppColors.primaryDark,
+            indicatorColor: colors.primaryDark,
             indicatorWeight: 3,
-            labelColor: AppColors.primaryDark,
-            unselectedLabelColor: AppColors.textSecondary,
+            labelColor: colors.primaryDark,
+            unselectedLabelColor: colors.textSecondary,
             labelStyle: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -917,8 +921,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                 context.pushNamed('tambahOrganisasi');
               }
             },
-            backgroundColor: AppColors.primary,
-            foregroundColor: AppColors.white,
+            backgroundColor: colors.primary,
+            foregroundColor: colors.onPrimary,
             elevation: 4,
             icon: Icon(fabIcon),
             label: Text(
@@ -1030,13 +1034,14 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildSearchTextField(String searchHint) {
+    final colors = context.appColors;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: colors.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1045,6 +1050,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
       child: TextField(
         controller: _searchController,
         textInputAction: TextInputAction.search,
+        style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
         onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
         onChanged: (val) {
           _debounceTimer?.cancel();
@@ -1079,13 +1085,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
         },
         decoration: InputDecoration(
           hintText: searchHint,
-          hintStyle: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.grey500,
-          ),
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            color: AppColors.primary,
-          ),
+          hintStyle: AppTextStyles.bodyMedium.copyWith(color: colors.textHint),
+          prefixIcon: Icon(Icons.search_rounded, color: colors.primary),
           suffixIcon: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _searchController,
             builder: (context, value, _) {
@@ -1093,7 +1094,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                 return const SizedBox.shrink();
               }
               return IconButton(
-                icon: const Icon(Icons.clear_rounded, color: AppColors.grey500),
+                icon: Icon(Icons.clear_rounded, color: colors.textHint),
                 onPressed: () {
                   _debounceTimer?.cancel();
                   _searchController.clear();
@@ -1113,22 +1114,22 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             },
           ),
           filled: true,
-          fillColor: AppColors.white,
+          fillColor: colors.surface,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 14,
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.grey300),
+            borderSide: BorderSide(color: colors.borderStrong),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.grey200),
+            borderSide: BorderSide(color: colors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+            borderSide: BorderSide(color: colors.primary, width: 2),
           ),
         ),
       ),
@@ -1136,18 +1137,19 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildFilterButton(bool hasActiveFilter) {
+    final colors = context.appColors;
     return Container(
       height: 52,
       width: 52,
       decoration: BoxDecoration(
-        color: hasActiveFilter ? AppColors.primary : AppColors.white,
+        color: hasActiveFilter ? colors.primary : colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: hasActiveFilter ? AppColors.primary : AppColors.grey300,
+          color: hasActiveFilter ? colors.primary : colors.borderStrong,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: colors.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1156,7 +1158,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
       child: IconButton(
         icon: Icon(
           Icons.tune_rounded,
-          color: hasActiveFilter ? Colors.white : AppColors.textPrimary,
+          color: hasActiveFilter ? colors.onPrimary : colors.textPrimary,
           size: 22,
         ),
         tooltip: 'Filter & Urutkan',
@@ -1305,26 +1307,27 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildResetFilterChip({required VoidCallback onTap}) {
+    final colors = context.appColors;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: AppColors.error.withValues(alpha: 0.1),
+          color: colors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+          border: Border.all(color: colors.error.withValues(alpha: 0.3)),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.refresh_rounded, size: 14, color: AppColors.error),
-            SizedBox(width: 4),
+            Icon(Icons.refresh_rounded, size: 14, color: colors.error),
+            const SizedBox(width: 4),
             Text(
               'Reset',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: AppColors.error,
+                color: colors.error,
               ),
             ),
           ],
@@ -1336,10 +1339,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   Widget _buildTokohTab() {
     return BlocBuilder<TokohBloc, TokohState>(
       builder: (context, state) {
+        final colors = context.appColors;
         final tokohBloc = context.read<TokohBloc>();
         final list = tokohBloc.displayList;
 
         return RefreshIndicator(
+          color: colors.primary,
           onRefresh: () async {
             tokohBloc.add(
               RefreshTokohEvent(
@@ -1367,7 +1372,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1379,13 +1384,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: colors.primaryLight,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${tokohBloc.total > 0 ? tokohBloc.total : list.length} Tokoh',
                         style: AppTextStyles.labelMedium.copyWith(
-                          color: AppColors.primary,
+                          color: colors.primaryDark,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),
@@ -1430,8 +1435,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                             list.length + (tokohBloc.page != null ? 1 : 0),
                         itemBuilder: (context, index) {
                           if (index == list.length && tokohBloc.page != null) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               child: Center(
                                 child: SizedBox(
                                   width: 24,
@@ -1439,7 +1444,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.primary,
+                                      colors.primary,
                                     ),
                                   ),
                                 ),
@@ -1460,10 +1465,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   Widget _buildInstitusiTab() {
     return BlocBuilder<InstitusiBloc, InstitusiState>(
       builder: (context, state) {
+        final colors = context.appColors;
         final institusiBloc = context.read<InstitusiBloc>();
         final list = institusiBloc.displayList;
 
         return RefreshIndicator(
+          color: colors.primary,
           onRefresh: () async {
             institusiBloc.add(
               RefreshInstitusiEvent(
@@ -1489,7 +1496,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1501,13 +1508,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: colors.primaryLight,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${institusiBloc.total > 0 ? institusiBloc.total : list.length} Institusi',
                         style: AppTextStyles.labelMedium.copyWith(
-                          color: AppColors.primary,
+                          color: colors.primaryDark,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),
@@ -1551,8 +1558,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         itemBuilder: (context, index) {
                           if (index == list.length &&
                               institusiBloc.page != null) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               child: Center(
                                 child: SizedBox(
                                   width: 24,
@@ -1560,7 +1567,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.primary,
+                                      colors.primary,
                                     ),
                                   ),
                                 ),
@@ -1581,10 +1588,12 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   Widget _buildOrganisasiTab() {
     return BlocBuilder<OrganisasiBloc, OrganisasiState>(
       builder: (context, state) {
+        final colors = context.appColors;
         final organisasiBloc = context.read<OrganisasiBloc>();
         final list = organisasiBloc.displayList;
 
         return RefreshIndicator(
+          color: colors.primary,
           onRefresh: () async {
             organisasiBloc.add(
               RefreshOrganisasiEvent(
@@ -1609,7 +1618,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1621,13 +1630,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryLight,
+                        color: colors.primaryLight,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         '${organisasiBloc.total > 0 ? organisasiBloc.total : list.length} Organisasi',
                         style: AppTextStyles.labelMedium.copyWith(
-                          color: AppColors.primary,
+                          color: colors.primaryDark,
                           fontWeight: FontWeight.bold,
                           fontSize: 11,
                         ),
@@ -1671,8 +1680,8 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         itemBuilder: (context, index) {
                           if (index == list.length &&
                               organisasiBloc.page != null) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               child: Center(
                                 child: SizedBox(
                                   width: 24,
@@ -1680,7 +1689,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      AppColors.primary,
+                                      colors.primary,
                                     ),
                                   ),
                                 ),
@@ -1703,6 +1712,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     required String message,
     required IconData icon,
   }) {
+    final colors = context.appColors;
     return Center(
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -1713,17 +1723,17 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.grey200.withValues(alpha: 0.5),
+                color: colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 64, color: AppColors.textSecondary),
+              child: Icon(icon, size: 64, color: colors.textSecondary),
             ),
             const SizedBox(height: 16),
             Text(
               title,
               style: AppTextStyles.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
@@ -1731,7 +1741,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               message,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -1745,6 +1755,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
     String message, {
     VoidCallback? onRetry,
   }) {
+    final colors = context.appColors;
     return Center(
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -1755,13 +1766,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.errorLight.withValues(alpha: 0.5),
+                color: colors.errorLight,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.error_outline_rounded,
                 size: 64,
-                color: AppColors.error,
+                color: colors.error,
               ),
             ),
             const SizedBox(height: 16),
@@ -1769,7 +1780,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               'Gagal Memuat Data',
               style: AppTextStyles.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
@@ -1777,7 +1788,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               message,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -1799,13 +1810,14 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   }
                 }
               },
-              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-              label: const Text(
+              icon: Icon(Icons.refresh_rounded, color: colors.onPrimary),
+              label: Text(
                 'Coba Lagi',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: colors.onPrimary),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -1818,17 +1830,18 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildTokohCard(TokohEntity tokoh) {
-    final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi);
+    final colors = context.appColors;
+    final afiliasiColor = _getAfiliasiColor(tokoh.afiliasi, colors);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1846,11 +1859,11 @@ class _DemografiListScreenState extends State<DemografiListScreen>
               children: [
                 CircleAvatar(
                   radius: 22,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                  backgroundColor: colors.primary.withValues(alpha: 0.12),
                   child: Text(
                     tokoh.nama.isNotEmpty ? tokoh.nama[0].toUpperCase() : 'T',
                     style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.primary,
+                      color: colors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -1864,7 +1877,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         tokoh.nama,
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -1873,7 +1886,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       Text(
                         tokoh.profesi,
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 1,
@@ -1905,9 +1918,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                   ),
                 ),
                 const SizedBox(width: 6),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: AppColors.grey400,
+                  color: colors.textHint,
                   size: 20,
                 ),
               ],
@@ -1919,17 +1932,18 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildInstitusiCard(InstitusiEntity institusi) {
-    final scopeColor = _getScopeColor(institusi.scope);
+    final colors = context.appColors;
+    final scopeColor = _getScopeColor(institusi.scope, colors);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1959,21 +1973,19 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
+                              color: colors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.25,
-                                ),
+                                color: colors.primary.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.local_offer_outlined,
                                   size: 11,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
@@ -1984,7 +1996,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                     style: AppTextStyles.bodySmall.copyWith(
                                       fontSize: 10.5,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
+                                      color: colors.primary,
                                     ),
                                   ),
                                 ),
@@ -1996,16 +2008,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                             institusi.nama,
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.location_on_rounded,
                                 size: 14,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
@@ -2017,7 +2029,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                             ? institusi.formattedWilayah
                                             : 'Alamat belum diisi'),
                                   style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 2,
@@ -2030,16 +2042,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
-                      color: AppColors.grey400,
+                      color: colors.textHint,
                       size: 20,
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(height: 1, color: AppColors.grey200),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Divider(height: 1, color: colors.divider),
                 ),
                 Row(
                   children: [
@@ -2081,7 +2093,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         'Disubmit: ${DateFormat('dd MMM yyyy').format(institusi.createdAt!)}',
                         style: AppTextStyles.bodySmall.copyWith(
                           fontSize: 10,
-                          color: AppColors.textHint,
+                          color: colors.textHint,
                         ),
                       ),
                   ],
@@ -2095,17 +2107,18 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   }
 
   Widget _buildOrganisasiCard(OrganisasiEntity organisasi) {
-    final bidangColor = _getBidangColor(organisasi.bidang);
+    final colors = context.appColors;
+    final bidangColor = _getBidangColor(organisasi.bidang, colors);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -2134,16 +2147,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                             organisasi.nama,
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.people_alt_outlined,
                                 size: 14,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
@@ -2152,7 +2165,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                       ? 'Belum ada anggota'
                                       : '${organisasi.jumlahAnggota} Anggota',
                                   style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -2162,10 +2175,10 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.place_rounded,
                                 size: 14,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
@@ -2177,7 +2190,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                                       ? organisasi.alamatSekretariat!
                                       : 'Alamat belum diisi',
                                   style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 2,
@@ -2190,16 +2203,16 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
-                      color: AppColors.grey400,
+                      color: colors.textHint,
                       size: 20,
                     ),
                   ],
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(height: 1, color: AppColors.grey200),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Divider(height: 1, color: colors.divider),
                 ),
                 Row(
                   children: [
@@ -2230,7 +2243,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                         'Disubmit: ${DateFormat('dd MMM yyyy').format(organisasi.createdAt!)}',
                         style: AppTextStyles.bodySmall.copyWith(
                           fontSize: 10,
-                          color: AppColors.textHint,
+                          color: colors.textHint,
                         ),
                       ),
                   ],

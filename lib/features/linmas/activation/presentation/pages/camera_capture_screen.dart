@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -143,10 +143,14 @@ class CameraCaptureScreen {
   }
 
   static void _showError(BuildContext context, Object error) {
+    final colors = context.appColors;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Gagal membuka kamera perangkat: $error'),
-        backgroundColor: AppColors.error,
+        content: Text(
+          'Gagal membuka kamera perangkat: $error',
+          style: TextStyle(color: colors.onErrorSolid),
+        ),
+        backgroundColor: colors.errorSolid,
       ),
     );
   }

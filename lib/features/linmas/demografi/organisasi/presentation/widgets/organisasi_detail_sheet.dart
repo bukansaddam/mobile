@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:akar/core/routes/app_router.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
 import '../../domain/entities/organisasi_entity.dart';
@@ -26,7 +26,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: context.appColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -37,6 +37,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final String initialChar = organisasi.nama.trim().isNotEmpty
         ? organisasi.nama.trim()[0].toUpperCase()
         : 'O';
@@ -57,7 +58,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: colors.borderStrong,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -74,14 +75,14 @@ class OrganisasiDetailSheet extends StatelessWidget {
                           'Detail Organisasi Demografi',
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Informasi lengkap organisasi kemasyarakatan',
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -89,7 +90,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.grey600),
+                    icon: Icon(Icons.close, color: colors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -99,21 +100,21 @@ class OrganisasiDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.05),
+                  color: colors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.15),
+                    color: colors.primary.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
                       radius: 26,
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colors.primary,
                       child: Text(
                         initialChar,
                         style: AppTextStyles.titleLarge.copyWith(
-                          color: AppColors.white,
+                          color: colors.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -127,7 +128,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                             organisasi.nama,
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -141,12 +142,10 @@ class OrganisasiDetailSheet extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.1,
-                                  ),
+                                  color: colors.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: AppColors.primary.withValues(
+                                    color: colors.primary.withValues(
                                       alpha: 0.3,
                                     ),
                                   ),
@@ -156,7 +155,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                                   style: AppTextStyles.bodySmall.copyWith(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
+                                    color: colors.primary,
                                   ),
                                 ),
                               ),
@@ -166,17 +165,17 @@ class OrganisasiDetailSheet extends StatelessWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.grey100,
+                                  color: colors.surfaceVariant,
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: AppColors.grey300),
+                                  border: Border.all(color: colors.border),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.people_alt_outlined,
                                       size: 12,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
@@ -186,7 +185,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                                       style: AppTextStyles.bodySmall.copyWith(
                                         fontSize: 11,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -205,33 +204,36 @@ class OrganisasiDetailSheet extends StatelessWidget {
                 'Informasi Organisasi',
                 style: AppTextStyles.titleMedium.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.grey50,
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.category_outlined,
                       label: 'Bidang Organisasi',
                       value: organisasi.bidang,
                     ),
-                    const Divider(height: 1, color: AppColors.grey200),
+                    Divider(height: 1, color: colors.divider),
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.groups_outlined,
                       label: 'Jumlah Anggota',
                       value: organisasi.jumlahAnggota == 0
                           ? 'Belum ada anggota terdaftar'
                           : '${organisasi.jumlahAnggota} Orang',
                     ),
-                    const Divider(height: 1, color: AppColors.grey200),
+                    Divider(height: 1, color: colors.divider),
                     _buildInfoTile(
+                      colors: colors,
                       icon: Icons.place_rounded,
                       label: 'Alamat Sekretariat',
                       value:
@@ -241,8 +243,9 @@ class OrganisasiDetailSheet extends StatelessWidget {
                           : 'Alamat belum diisi',
                     ),
                     if (organisasi.formattedWilayah.isNotEmpty) ...[
-                      const Divider(height: 1, color: AppColors.grey200),
+                      Divider(height: 1, color: colors.divider),
                       _buildInfoTile(
+                        colors: colors,
                         icon: Icons.public_rounded,
                         label: 'Wilayah / Cakupan',
                         value: organisasi.formattedWilayah,
@@ -257,22 +260,22 @@ class OrganisasiDetailSheet extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.grey50,
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.grey200),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time_rounded,
                         size: 18,
-                        color: AppColors.grey600,
+                        color: colors.textSecondary,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         'Tanggal Disubmit: ',
                         style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                       Expanded(
@@ -280,7 +283,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                           '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(organisasi.createdAt!)} WIB',
                           style: AppTextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -306,8 +309,8 @@ class OrganisasiDetailSheet extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -316,7 +319,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                   child: Text(
                     'Ubah Data',
                     style: AppTextStyles.labelLarge.copyWith(
-                      color: AppColors.white,
+                      color: colors.onPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -331,6 +334,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
   }
 
   Widget _buildInfoTile({
+    required AppColorScheme colors,
     required IconData icon,
     required String label,
     required String value,
@@ -339,7 +343,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.primary),
+          Icon(icon, size: 18, color: colors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -348,7 +352,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                 Text(
                   label,
                   style: AppTextStyles.caption.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontSize: 11,
                   ),
                 ),
@@ -357,7 +361,7 @@ class OrganisasiDetailSheet extends StatelessWidget {
                   value,
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ],

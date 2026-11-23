@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
@@ -58,16 +58,18 @@ class _ActivationScreenState extends State<ActivationScreen> {
   }
 
   void _showFilterBottomSheet(BuildContext context) {
+    final colors = context.appColors;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (bottomSheetContext) {
         return BlocBuilder<ActivationBloc, ActivationState>(
           builder: (context, state) {
+            final sheetColors = context.appColors;
             final hasActiveFilters = state.hasActiveFilter;
 
             return SafeArea(
@@ -89,7 +91,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           width: 38,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppColors.grey300,
+                            color: sheetColors.borderStrong,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -100,12 +102,12 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            Text(
                               'Filter & Urutkan Kegiatan',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: sheetColors.textPrimary,
                               ),
                             ),
                             if (hasActiveFilters)
@@ -116,7 +118,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   );
                                 },
                                 style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.error,
+                                  foregroundColor: sheetColors.error,
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size.zero,
                                   tapTargetSize:
@@ -134,33 +136,33 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             'Kustomisasi daftar kegiatan sesuai kebutuhan Anda',
                             style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: sheetColors.textSecondary,
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 14),
-                      const Divider(height: 1, color: AppColors.grey200),
+                      Divider(height: 1, color: sheetColors.divider),
                       Expanded(
                         child: SingleChildScrollView(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Urutkan Berdasarkan',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: sheetColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -185,12 +187,12 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                 }).toList(),
                               ),
                               const SizedBox(height: 22),
-                              const Text(
+                              Text(
                                 'Kategori Kegiatan',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: sheetColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -216,7 +218,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                     return _buildFilterChip(
                                       label: cat.label,
                                       icon: cat.icon,
-                                      color: cat.color,
+                                      color: cat.resolveColor(sheetColors),
                                       isSelected: isSelected,
                                       onTap: () {
                                         context.read<ActivationBloc>().add(
@@ -228,12 +230,12 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                 ],
                               ),
                               const SizedBox(height: 22),
-                              const Text(
+                              Text(
                                 'Status Kegiatan',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: sheetColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -258,7 +260,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                         state.selectedStatusFilter == status;
                                     return _buildFilterChip(
                                       label: status.label,
-                                      color: status.color,
+                                      color: status.resolveColor(sheetColors),
                                       isSelected: isSelected,
                                       onTap: () {
                                         context.read<ActivationBloc>().add(
@@ -283,18 +285,19 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           child: ElevatedButton(
                             onPressed: () => Navigator.pop(bottomSheetContext),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
+                              backgroundColor: sheetColors.primary,
+                              foregroundColor: sheetColors.onPrimary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               elevation: 0,
                             ),
-                            child: const Text(
+                            child: Text(
                               'Terapkan Filter',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: sheetColors.onPrimary,
                               ),
                             ),
                           ),
@@ -318,7 +321,8 @@ class _ActivationScreenState extends State<ActivationScreen> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final activeColor = color ?? AppColors.primary;
+    final colors = context.appColors;
+    final activeColor = color ?? colors.primary;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -327,10 +331,10 @@ class _ActivationScreenState extends State<ActivationScreen> {
         decoration: BoxDecoration(
           color: isSelected
               ? activeColor.withValues(alpha: 0.12)
-              : AppColors.white,
+              : colors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? activeColor : AppColors.grey300,
+            color: isSelected ? activeColor : colors.borderStrong,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -341,7 +345,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
               Icon(
                 icon,
                 size: 16,
-                color: isSelected ? activeColor : AppColors.grey600,
+                color: isSelected ? activeColor : colors.textSecondary,
               ),
               const SizedBox(width: 6),
             ],
@@ -350,7 +354,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? activeColor : AppColors.textPrimary,
+                color: isSelected ? activeColor : colors.textPrimary,
               ),
             ),
           ],
@@ -366,7 +370,8 @@ class _ActivationScreenState extends State<ActivationScreen> {
     VoidCallback? onRemove,
     VoidCallback? onTap,
   }) {
-    final tagColor = color ?? AppColors.primary;
+    final colors = context.appColors;
+    final tagColor = color ?? colors.primary;
     return GestureDetector(
       onTap: onTap ?? onRemove,
       child: Container(
@@ -402,6 +407,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
   }
 
   Widget _buildPendingBanner(ActivationState state) {
+    final colors = context.appColors;
     final isSyncing = state.isSyncingPending;
     final count = state.pendingReports.length;
 
@@ -409,15 +415,15 @@ class _ActivationScreenState extends State<ActivationScreen> {
       margin: const EdgeInsets.fromLTRB(18, 0, 18, 12),
       padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
       decoration: BoxDecoration(
-        color: AppColors.warningLight,
+        color: colors.warningLight,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.4)),
+        border: Border.all(color: colors.warning.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
           Icon(
             isSyncing ? Icons.cloud_upload_rounded : Icons.cloud_off_rounded,
-            color: AppColors.warning,
+            color: colors.warning,
             size: 22,
           ),
           const SizedBox(width: 10),
@@ -431,10 +437,10 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     isSyncing
                         ? 'Mengirim laporan...'
                         : '$count laporan belum terkirim',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -442,10 +448,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     isSyncing
                         ? 'Jangan tutup aplikasi sampai selesai.'
                         : 'Tersimpan di perangkat. Ketuk untuk melihat.',
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 11, color: colors.textSecondary),
                   ),
                 ],
               ),
@@ -468,16 +471,18 @@ class _ActivationScreenState extends State<ActivationScreen> {
   }
 
   void _showPendingReports() {
+    final colors = context.appColors;
     final screenContext = context;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (sheetContext) {
         return BlocBuilder<ActivationBloc, ActivationState>(
           builder: (context, state) {
+            final sheetColors = context.appColors;
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
@@ -485,21 +490,21 @@ class _ActivationScreenState extends State<ActivationScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Laporan Menunggu Dikirim',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: sheetColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
+                    Text(
                       'Laporan tersimpan di perangkat dan dikirim otomatis '
                       'saat ada koneksi.',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: sheetColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -510,28 +515,32 @@ class _ActivationScreenState extends State<ActivationScreen> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: state.pendingReports.length,
-                        separatorBuilder: (_, _) => const Divider(height: 1),
+                        separatorBuilder: (_, _) =>
+                            Divider(height: 1, color: sheetColors.divider),
                         itemBuilder: (context, index) {
                           final report = state.pendingReports[index];
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(
+                            leading: Icon(
                               Icons.assignment_late_rounded,
-                              color: AppColors.warning,
+                              color: sheetColors.warning,
                             ),
                             title: Text(
                               report.activityTitle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: sheetColors.textPrimary,
                               ),
                             ),
                             subtitle: Text(
                               '${DateFormat('HH:mm').format(report.createdAt)}'
                               ' • '
                               '${report.lastError == null ? 'Menunggu koneksi' : 'Gagal: ${report.lastError}'}',
-                              style: const TextStyle(fontSize: 11),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: sheetColors.textSecondary,
+                              ),
                             ),
                             onTap: () {
                               Navigator.pop(sheetContext);
@@ -542,9 +551,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             },
                             trailing: IconButton(
                               tooltip: 'Hapus',
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.delete_outline_rounded,
-                                color: AppColors.error,
+                                color: sheetColors.error,
                               ),
                               onPressed: () =>
                                   _confirmDeletePending(context, report),
@@ -588,11 +597,12 @@ class _ActivationScreenState extends State<ActivationScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ActivationBloc, ActivationState>(
       builder: (context, state) {
+        final colors = context.appColors;
         final filteredList = state.filteredActivities;
         final hasActiveFilter = state.hasActiveFilter;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           body: Column(
             children: [
               Container(
@@ -605,13 +615,11 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         Expanded(
                           child: Container(
                             decoration: BoxDecoration(
-                              color: AppColors.white,
+                              color: colors.surface,
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.black.withValues(
-                                    alpha: 0.05,
-                                  ),
+                                  color: colors.shadow.withValues(alpha: 0.05),
                                   blurRadius: 10,
                                   offset: const Offset(0, 4),
                                 ),
@@ -621,6 +629,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                               controller: _searchController,
                               onTapOutside: (event) =>
                                   FocusManager.instance.primaryFocus?.unfocus(),
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                              ),
                               onChanged: (val) {
                                 context.read<ActivationBloc>().add(
                                   SetActivationSearchQueryEvent(val),
@@ -630,17 +641,17 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                 hintText:
                                     'Cari kegiatan, lokasi, atau kategori...',
                                 hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.grey500,
+                                  color: colors.textMuted,
                                 ),
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.search_rounded,
-                                  color: AppColors.primary,
+                                  color: colors.primary,
                                 ),
                                 suffixIcon: _searchController.text.isNotEmpty
                                     ? IconButton(
-                                        icon: const Icon(
+                                        icon: Icon(
                                           Icons.clear_rounded,
-                                          color: AppColors.grey500,
+                                          color: colors.textMuted,
                                         ),
                                         onPressed: () {
                                           _searchController.clear();
@@ -651,27 +662,25 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                       )
                                     : null,
                                 filled: true,
-                                fillColor: AppColors.white,
+                                fillColor: colors.surface,
                                 contentPadding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 14,
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.grey300,
+                                  borderSide: BorderSide(
+                                    color: colors.borderStrong,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.grey200,
-                                  ),
+                                  borderSide: BorderSide(color: colors.border),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.primary,
+                                  borderSide: BorderSide(
+                                    color: colors.primary,
                                     width: 2,
                                   ),
                                 ),
@@ -685,17 +694,17 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           width: 52,
                           decoration: BoxDecoration(
                             color: hasActiveFilter
-                                ? AppColors.primary
-                                : AppColors.white,
+                                ? colors.primary
+                                : colors.surface,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: hasActiveFilter
-                                  ? AppColors.primary
-                                  : AppColors.grey300,
+                                  ? colors.primary
+                                  : colors.borderStrong,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.black.withValues(alpha: 0.05),
+                                color: colors.shadow.withValues(alpha: 0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -705,8 +714,8 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             icon: Icon(
                               Icons.tune_rounded,
                               color: hasActiveFilter
-                                  ? Colors.white
-                                  : AppColors.textPrimary,
+                                  ? colors.onPrimary
+                                  : colors.textPrimary,
                               size: 22,
                             ),
                             tooltip: 'Filter & Urutkan',
@@ -724,7 +733,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           _buildAppliedTag(
                             label: state.selectedSortOption.label,
                             icon: state.selectedSortOption.icon,
-                            color: const Color(0xFFC62828),
+                            color: colors.errorDark,
                             onTap: () => _showFilterBottomSheet(context),
                           ),
                           if (state.selectedCategoryFilter != null) ...[
@@ -732,7 +741,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             _buildAppliedTag(
                               label: state.selectedCategoryFilter!.label,
                               icon: state.selectedCategoryFilter!.icon,
-                              color: state.selectedCategoryFilter!.color,
+                              color: state.selectedCategoryFilter!.resolveColor(
+                                colors,
+                              ),
                               onRemove: () {
                                 context.read<ActivationBloc>().add(
                                   const SetActivationCategoryFilterEvent(null),
@@ -744,7 +755,9 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             const SizedBox(width: 8),
                             _buildAppliedTag(
                               label: state.selectedStatusFilter!.label,
-                              color: state.selectedStatusFilter!.color,
+                              color: state.selectedStatusFilter!.resolveColor(
+                                colors,
+                              ),
                               onRemove: () {
                                 context.read<ActivationBloc>().add(
                                   const SetActivationStatusFilterEvent(null),
@@ -766,23 +779,23 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   vertical: 5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.grey200,
+                                  color: colors.border,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   children: [
                                     Icon(
                                       Icons.refresh_rounded,
                                       size: 13,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       'Reset',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                                   ],
@@ -802,7 +815,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         Container(
@@ -811,13 +824,13 @@ class _ActivationScreenState extends State<ActivationScreen> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
+                            color: colors.primaryLight,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             '${filteredList.length} Kegiatan',
                             style: AppTextStyles.labelMedium.copyWith(
-                              color: AppColors.primary,
+                              color: colors.primaryDark,
                               fontWeight: FontWeight.bold,
                               fontSize: 11,
                             ),
@@ -848,10 +861,10 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.search_off_rounded,
                                         size: 64,
-                                        color: AppColors.grey400,
+                                        color: colors.textHint,
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
@@ -859,7 +872,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                         style: AppTextStyles.headlineSmall
                                             .copyWith(
                                               fontSize: 16,
-                                              color: AppColors.textPrimary,
+                                              color: colors.textPrimary,
                                             ),
                                       ),
                                       const SizedBox(height: 4),
@@ -867,7 +880,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                                         'Coba kata kunci lain atau ubah filter pada tombol filter.',
                                         style: AppTextStyles.bodyMedium
                                             .copyWith(
-                                              color: AppColors.textSecondary,
+                                              color: colors.textSecondary,
                                               fontSize: 13,
                                             ),
                                         textAlign: TextAlign.center,

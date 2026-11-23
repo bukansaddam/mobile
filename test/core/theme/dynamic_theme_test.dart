@@ -5,6 +5,8 @@ import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/theme/bloc/theme_bloc.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/widgets/bank_sampah_card.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/notification/presentation/widgets/emergency_disaster_dialog.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
@@ -13,6 +15,7 @@ import 'package:akar/features/profile/presentation/widgets/profile_points_card.d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _TestAudioAlarmService extends Fake implements AudioAlarmService {
@@ -21,6 +24,10 @@ class _TestAudioAlarmService extends Fake implements AudioAlarmService {
 }
 
 void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('id_ID');
+  });
+
   double contrastRatio(Color a, Color b) {
     final l1 = a.computeLuminance();
     final l2 = b.computeLuminance();
@@ -457,6 +464,81 @@ void main() {
 
         final safeLabel = tester.widget<Text>(find.text('Saya Aman'));
         expect(safeLabel.style?.color, AppColorScheme.dark.secondary);
+      },
+    );
+
+    testWidgets(
+      'BankSampahCard uses AppColorScheme.dark surface, category, and status colors',
+      (tester) async {
+        final verifiedReport = BankSampahReportEntity(
+          id: 'bs-dark-1',
+          bankSampahNama: 'Bank Sampah Melati',
+          jenisSampah: 'Kertas',
+          beratKg: 4.5,
+          nilaiRupiah: 22500,
+          status: 'verified',
+          statusLabel: 'Terverifikasi',
+          createdAt: DateTime(2026, 11, 23, 9, 0),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Scaffold(body: BankSampahCard(report: verifiedReport)),
+          ),
+        );
+
+        final cardContainer = tester.widget<Container>(
+          find
+              .ancestor(
+                of: find.text('Bank Sampah Melati'),
+                matching: find.byWidgetPredicate((w) {
+                  if (w is! Container) return false;
+                  final dec = w.decoration;
+                  return dec is BoxDecoration &&
+                      dec.borderRadius == BorderRadius.circular(12);
+                }),
+              )
+              .first,
+        );
+        expect(
+          (cardContainer.decoration! as BoxDecoration).color,
+          AppColorScheme.dark.surface,
+        );
+
+        final kertasIcon = tester.widget<Icon>(
+          find.byIcon(Icons.newspaper_rounded),
+        );
+        expect(kertasIcon.color, AppColorScheme.dark.indigo);
+        expect(
+          tester.widget<Text>(find.text('Terverifikasi')).style?.color,
+          AppColorScheme.dark.success,
+        );
+
+        final rejectedReport = BankSampahReportEntity(
+          id: 'bs-dark-2',
+          bankSampahNama: 'Bank Sampah Mawar',
+          jenisSampah: 'Organik',
+          beratKg: 2.0,
+          nilaiRupiah: 10000,
+          status: 'rejected',
+          statusLabel: 'Ditolak',
+          createdAt: DateTime(2026, 11, 23, 10, 0),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Scaffold(body: BankSampahCard(report: rejectedReport)),
+          ),
+        );
+
+        final organikIcon = tester.widget<Icon>(find.byIcon(Icons.eco_rounded));
+        expect(organikIcon.color, AppColorScheme.dark.primary);
+        expect(
+          tester.widget<Text>(find.text('Ditolak')).style?.color,
+          AppColorScheme.dark.errorDark,
+        );
       },
     );
   });

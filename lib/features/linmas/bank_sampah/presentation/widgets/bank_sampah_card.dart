@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -14,39 +14,39 @@ class BankSampahCard extends StatelessWidget {
 
   const BankSampahCard({super.key, required this.report});
 
-  Color _getJenisColor(String jenis) {
+  Color _getJenisColor(String jenis, AppColorScheme colors) {
     switch (jenis.toLowerCase()) {
       case 'organik':
-        return AppColors.primary;
+        return colors.primary;
       case 'anorganik':
-        return AppColors.info;
+        return colors.info;
       case 'botol plastik':
-        return AppColors.info;
+        return colors.info;
       case 'kardus':
-        return AppColors.warning;
+        return colors.warning;
       case 'kertas':
-        return const Color(0xFF4F46E5);
+        return colors.indigo;
       case 'plastik kemasan':
-        return AppColors.error;
+        return colors.error;
       case 'campuran kering':
       default:
-        return AppColors.success;
+        return colors.success;
     }
   }
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(String status, AppColorScheme colors) {
     switch (status.toLowerCase()) {
       case 'verified':
       case 'terverifikasi':
-        return AppColors.success;
+        return colors.success;
       case 'pending':
       case 'menunggu':
-        return AppColors.earth;
+        return colors.earth;
       case 'rejected':
       case 'ditolak':
-        return AppColors.errorDark;
+        return colors.errorDark;
       default:
-        return AppColors.success;
+        return colors.success;
     }
   }
 
@@ -72,7 +72,9 @@ class BankSampahCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final jenisColor = _getJenisColor(report.jenisSampah);
+    final colors = context.appColors;
+    final jenisColor = _getJenisColor(report.jenisSampah, colors);
+    final statusColor = _getStatusColor(report.status, colors);
     final currencyFormatter = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -94,12 +96,12 @@ class BankSampahCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.grey200),
+            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.03),
+                color: colors.shadow.withValues(alpha: 0.03),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -172,7 +174,7 @@ class BankSampahCard extends StatelessWidget {
                                 report.bankSampahNama,
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
+                                  color: colors.textPrimary,
                                   height: 1.25,
                                 ),
                                 maxLines: 2,
@@ -187,18 +189,16 @@ class BankSampahCard extends StatelessWidget {
                                   vertical: 3.5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: _getStatusColor(report.status)
-                                      .withValues(alpha: 0.1),
+                                  color: statusColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: _getStatusColor(report.status)
-                                        .withValues(alpha: 0.3),
+                                    color: statusColor.withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Text(
                                   report.statusLabel,
                                   style: TextStyle(
-                                    color: _getStatusColor(report.status),
+                                    color: statusColor,
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -214,7 +214,7 @@ class BankSampahCard extends StatelessWidget {
                             'id_ID',
                           ).format(report.createdAt),
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontSize: 11,
                           ),
                         ),
@@ -224,7 +224,7 @@ class BankSampahCard extends StatelessWidget {
                             Text(
                               'Berat: ',
                               style: AppTextStyles.caption.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 fontSize: 12,
                               ),
                             ),
@@ -232,14 +232,14 @@ class BankSampahCard extends StatelessWidget {
                               '${report.beratKg.toStringAsFixed(report.beratKg.truncateToDouble() == report.beratKg ? 0 : 1)} kg',
                               style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                                color: colors.textPrimary,
                               ),
                             ),
                             const SizedBox(width: 8),
-                            const Text(
+                            Text(
                               '•',
                               style: TextStyle(
-                                color: AppColors.grey400,
+                                color: colors.textHint,
                                 fontSize: 10,
                               ),
                             ),
@@ -247,7 +247,7 @@ class BankSampahCard extends StatelessWidget {
                             Text(
                               'Nilai: ',
                               style: AppTextStyles.caption.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 fontSize: 12,
                               ),
                             ),
@@ -259,7 +259,7 @@ class BankSampahCard extends StatelessWidget {
                                   currencyFormatter.format(report.nilaiRupiah),
                                   style: AppTextStyles.bodySmall.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
+                                    color: colors.primary,
                                   ),
                                 ),
                               ),
@@ -280,13 +280,13 @@ class BankSampahCard extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.grey50,
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     report.catatan,
                     style: AppTextStyles.caption.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       fontSize: 11,
                     ),
                     maxLines: 1,

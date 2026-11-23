@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +17,7 @@ class CategoryDistributionChartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final totalItems = categoryData.fold<int>(
       0,
       (sum, item) => sum + item.count,
@@ -26,12 +27,12 @@ class CategoryDistributionChartCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
+            color: colors.shadow.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -40,18 +41,18 @@ class CategoryDistributionChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Distribusi Kategori',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Proporsi kegiatan berdasarkan kategori',
-            style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            style: TextStyle(fontSize: 12, color: colors.textSecondary),
           ),
           const SizedBox(height: 24),
 
@@ -64,6 +65,7 @@ class CategoryDistributionChartCard extends StatelessWidget {
                 painter: _DonutChartPainter(
                   categoryData: categoryData,
                   totalItems: totalItems,
+                  colors: colors,
                 ),
               ),
             ),
@@ -77,6 +79,7 @@ class CategoryDistributionChartCard extends StatelessWidget {
             runSpacing: 10,
             children: categoryData.map((item) {
               final isZero = item.count == 0;
+              final catColor = item.category.resolveColor(colors);
               return InkWell(
                 onTap: () => onCategoryTap?.call(item.category),
                 borderRadius: BorderRadius.circular(8),
@@ -92,7 +95,7 @@ class CategoryDistributionChartCard extends StatelessWidget {
                         width: 10,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: isZero ? AppColors.grey400 : item.color,
+                          color: isZero ? colors.textHint : catColor,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -105,8 +108,8 @@ class CategoryDistributionChartCard extends StatelessWidget {
                               ? FontWeight.normal
                               : FontWeight.w600,
                           color: isZero
-                              ? AppColors.textSecondary
-                              : AppColors.textPrimary,
+                              ? colors.textSecondary
+                              : colors.textPrimary,
                         ),
                       ),
                     ],
@@ -124,8 +127,13 @@ class CategoryDistributionChartCard extends StatelessWidget {
 class _DonutChartPainter extends CustomPainter {
   final List<CategoryData> categoryData;
   final int totalItems;
+  final AppColorScheme colors;
 
-  _DonutChartPainter({required this.categoryData, required this.totalItems});
+  _DonutChartPainter({
+    required this.categoryData,
+    required this.totalItems,
+    required this.colors,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -142,8 +150,8 @@ class _DonutChartPainter extends CustomPainter {
     // Draw Center Donut Hole Content (Total Count & Label)
     final countSpan = TextSpan(
       text: '$totalItems',
-      style: const TextStyle(
-        color: AppColors.textPrimary,
+      style: TextStyle(
+        color: colors.textPrimary,
         fontSize: 26,
         fontWeight: FontWeight.bold,
       ),
@@ -153,10 +161,10 @@ class _DonutChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
 
-    const labelSpan = TextSpan(
+    final labelSpan = TextSpan(
       text: 'Kegiatan',
       style: TextStyle(
-        color: AppColors.textSecondary,
+        color: colors.textSecondary,
         fontSize: 11,
         fontWeight: FontWeight.w500,
       ),
@@ -183,7 +191,7 @@ class _DonutChartPainter extends CustomPainter {
 
     if (totalValue <= 0) {
       final emptyPaint = Paint()
-        ..color = AppColors.grey200
+        ..color = colors.border
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth;
       canvas.drawCircle(center, chartRadius, emptyPaint);
@@ -197,7 +205,7 @@ class _DonutChartPainter extends CustomPainter {
       final sweepAngle = (item.percentage / totalValue) * 2 * math.pi;
 
       final paint = Paint()
-        ..color = item.color
+        ..color = item.category.resolveColor(colors)
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
         ..strokeCap = StrokeCap.butt;
@@ -219,8 +227,8 @@ class _DonutChartPainter extends CustomPainter {
 
       final textSpan = TextSpan(
         text: '${item.percentage.toInt()}%',
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: colors.isDark ? colors.onSecondary : colors.onErrorSolid,
           fontSize: 11,
           fontWeight: FontWeight.bold,
         ),
@@ -247,6 +255,7 @@ class _DonutChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DonutChartPainter oldDelegate) {
     return oldDelegate.categoryData != categoryData ||
-        oldDelegate.totalItems != totalItems;
+        oldDelegate.totalItems != totalItems ||
+        oldDelegate.colors != colors;
   }
 }

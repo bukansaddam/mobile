@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
@@ -18,10 +18,11 @@ class BankSampahDetailSheet extends StatelessWidget {
     BuildContext context, {
     required BankSampahReportEntity report,
   }) {
+    final colors = context.appColors;
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -29,23 +30,23 @@ class BankSampahDetailSheet extends StatelessWidget {
     );
   }
 
-  Color _getJenisColor(String jenis) {
+  Color _getJenisColor(String jenis, AppColorScheme colors) {
     switch (jenis.toLowerCase()) {
       case 'organik':
-        return AppColors.primary;
+        return colors.primary;
       case 'anorganik':
-        return AppColors.info;
+        return colors.info;
       case 'botol plastik':
-        return AppColors.info;
+        return colors.info;
       case 'kardus':
-        return AppColors.warning;
+        return colors.warning;
       case 'kertas':
-        return const Color(0xFF4F46E5);
+        return colors.indigo;
       case 'plastik kemasan':
-        return AppColors.error;
+        return colors.error;
       case 'campuran kering':
       default:
-        return AppColors.success;
+        return colors.success;
     }
   }
 
@@ -71,7 +72,11 @@ class BankSampahDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final jenisColor = _getJenisColor(report.jenisSampah);
+    final colors = context.appColors;
+    const photoOverlayBg = Color(0xA6000000); // media-overlay
+    const photoOverlayFg = Color(0xFFFFFFFF); // media-overlay
+    final heroText = colors.isDark ? colors.textPrimary : colors.onPrimary;
+    final jenisColor = _getJenisColor(report.jenisSampah, colors);
     final currencyFormatter = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -105,7 +110,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: colors.borderStrong,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -123,14 +128,14 @@ class BankSampahDetailSheet extends StatelessWidget {
                           'Detail Laporan Sampah',
                           style: AppTextStyles.titleLarge.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'ID: ${report.id}',
                           style: AppTextStyles.caption.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -138,7 +143,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.grey600),
+                    icon: Icon(Icons.close, color: colors.textSecondary),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -161,7 +166,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: AppColors.grey200,
+                          color: colors.border,
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
@@ -196,7 +201,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.65),
+                            color: photoOverlayBg,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Row(
@@ -204,14 +209,14 @@ class BankSampahDetailSheet extends StatelessWidget {
                             children: [
                               Icon(
                                 Icons.fullscreen_rounded,
-                                color: Colors.white,
+                                color: photoOverlayFg,
                                 size: 16,
                               ),
                               SizedBox(width: 4),
                               Text(
                                 'Lihat Foto Penuh',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: photoOverlayFg,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -230,21 +235,21 @@ class BankSampahDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.grey100,
+                  color: colors.surfaceElevated,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
+                        color: colors.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.account_balance_rounded,
-                        color: AppColors.primary,
+                        color: colors.primary,
                         size: 24,
                       ),
                     ),
@@ -256,7 +261,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                           Text(
                             'Lokasi Bank Sampah',
                             style: AppTextStyles.caption.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -264,7 +269,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                             report.bankSampahNama,
                             style: AppTextStyles.bodyLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -312,7 +317,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                             report.jenisSampah,
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -327,11 +332,10 @@ class BankSampahDetailSheet extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0F9F66).withValues(alpha: 0.08),
+                        color: colors.primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: const Color(0xFF0F9F66)
-                              .withValues(alpha: 0.25),
+                          color: colors.primary.withValues(alpha: 0.25),
                         ),
                       ),
                       child: Column(
@@ -339,16 +343,16 @@ class BankSampahDetailSheet extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.scale_rounded,
-                                color: Color(0xFF0F9F66),
+                                color: colors.primary,
                                 size: 18,
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 'Total Berat',
                                 style: AppTextStyles.caption.copyWith(
-                                  color: const Color(0xFF0F9F66),
+                                  color: colors.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -359,7 +363,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                             '${report.beratKg.toStringAsFixed(report.beratKg.truncateToDouble() == report.beratKg ? 0 : 1)} kg',
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -374,15 +378,11 @@ class BankSampahDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0D8E34), Color(0xFF0A754B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  gradient: colors.primaryGradient,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.25),
+                      color: colors.primary.withValues(alpha: 0.25),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -397,7 +397,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                         Text(
                           'Total Nilai Dihasilkan',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: Colors.white.withValues(alpha: 0.85),
+                            color: heroText.withValues(alpha: 0.85),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -405,7 +405,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                         Text(
                           currencyFormatter.format(report.nilaiRupiah),
                           style: AppTextStyles.headlineMedium.copyWith(
-                            color: Colors.white,
+                            color: heroText,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -417,13 +417,13 @@ class BankSampahDetailSheet extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: heroText.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         'Rp 5.000 / kg',
                         style: AppTextStyles.caption.copyWith(
-                          color: Colors.white,
+                          color: heroText,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -438,7 +438,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                   'Catatan Laporan',
                   style: AppTextStyles.titleMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -446,14 +446,14 @@ class BankSampahDetailSheet extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.grey50,
+                    color: colors.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.grey200),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Text(
                     report.catatan,
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       height: 1.4,
                     ),
                   ),
@@ -464,23 +464,23 @@ class BankSampahDetailSheet extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppColors.grey50,
+                  color: colors.surfaceVariant,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.verified_outlined,
                           size: 18,
-                          color: AppColors.grey600,
+                          color: colors.textSecondary,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Status: ',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         Container(
@@ -491,15 +491,15 @@ class BankSampahDetailSheet extends StatelessWidget {
                           decoration: BoxDecoration(
                             color:
                                 (report.status.toLowerCase() == 'verified'
-                                        ? AppColors.success
-                                        : AppColors.earth)
+                                        ? colors.success
+                                        : colors.earth)
                                     .withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color:
                                   (report.status.toLowerCase() == 'verified'
-                                          ? AppColors.success
-                                          : AppColors.earth)
+                                          ? colors.success
+                                          : colors.earth)
                                       .withValues(alpha: 0.3),
                             ),
                           ),
@@ -508,8 +508,8 @@ class BankSampahDetailSheet extends StatelessWidget {
                             style: AppTextStyles.caption.copyWith(
                               fontWeight: FontWeight.bold,
                               color: report.status.toLowerCase() == 'verified'
-                                  ? AppColors.success
-                                  : AppColors.earth,
+                                  ? colors.success
+                                  : colors.earth,
                             ),
                           ),
                         ),
@@ -518,16 +518,16 @@ class BankSampahDetailSheet extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time_rounded,
                           size: 18,
-                          color: AppColors.grey600,
+                          color: colors.textSecondary,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           'Waktu Laporan: ',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         Expanded(
@@ -535,7 +535,7 @@ class BankSampahDetailSheet extends StatelessWidget {
                             '${DateFormat('dd MMMM yyyy, HH:mm', 'id_ID').format(report.createdAt)} WIB',
                             style: AppTextStyles.bodySmall.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
@@ -550,8 +550,8 @@ class BankSampahDetailSheet extends StatelessWidget {
                 child: OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textPrimary,
-                    side: const BorderSide(color: AppColors.grey300),
+                    foregroundColor: colors.textPrimary,
+                    side: BorderSide(color: colors.borderStrong),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

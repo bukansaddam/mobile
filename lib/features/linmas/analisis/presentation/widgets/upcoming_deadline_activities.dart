@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -9,16 +9,17 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
+            color: colors.shadow.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -32,17 +33,17 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.errorLight,
+                  color: colors.errorLight,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.alarm_on_rounded,
-                  color: AppColors.error,
+                  color: colors.error,
                   size: 22,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -51,15 +52,15 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       'Kegiatan mendesak yang membutuhkan perhatian',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                   ],
@@ -68,7 +69,7 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 12),
 
           ListView.separated(
@@ -76,10 +77,10 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
             separatorBuilder: (context, index) =>
-                const Divider(height: 20, color: AppColors.grey200),
+                Divider(height: 20, color: colors.divider),
             itemBuilder: (context, index) {
               final item = items[index];
-              return _buildDeadlineTile(item);
+              return _buildDeadlineTile(colors, item);
             },
           ),
         ],
@@ -87,7 +88,7 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDeadlineTile(ActivityDeadlineItem item) {
+  Widget _buildDeadlineTile(AppColorScheme colors, ActivityDeadlineItem item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -102,7 +103,10 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                     children: [
                       Builder(
                         builder: (context) {
-                          final catColor = _getCategoryColor(item.category);
+                          final catColor = _getCategoryColor(
+                            item.category,
+                            colors,
+                          );
                           return Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -126,9 +130,9 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         item.location,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ],
@@ -136,10 +140,10 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     item.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -168,10 +172,7 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     item.deadlineText,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 9, color: colors.textSecondary),
                   ),
                 ],
               ),
@@ -187,7 +188,7 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: item.progress,
                   minHeight: 6,
-                  backgroundColor: AppColors.grey200,
+                  backgroundColor: colors.border,
                   valueColor: AlwaysStoppedAnimation<Color>(item.statusColor),
                 ),
               ),
@@ -195,10 +196,10 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
             const SizedBox(width: 10),
             Text(
               '${(item.progress * 100).toInt()}% Selesai',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
               ),
             ),
           ],
@@ -207,22 +208,22 @@ class UpcomingDeadlineActivitiesCard extends StatelessWidget {
     );
   }
 
-  Color _getCategoryColor(String category) {
+  Color _getCategoryColor(String category, AppColorScheme colors) {
     switch (category) {
       case 'Pemasangan APK':
-        return const Color(0xFF00897B);
+        return colors.emerald;
       case 'Door to Door':
-        return const Color(0xFF8E24AA);
+        return colors.indigo;
       case 'Keamanan & Sosial':
       case 'Keamanan':
       case 'Sosial':
-        return const Color(0xFF1E6FFF);
+        return colors.info;
       case 'Lingkungan':
-        return const Color(0xFF20D489);
+        return colors.success;
       case 'Bencana Alam':
-        return const Color(0xFFFF5252);
+        return colors.error;
       default:
-        return AppColors.primary;
+        return colors.primary;
     }
   }
 }
