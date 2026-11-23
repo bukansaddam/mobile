@@ -212,13 +212,13 @@ void main() {
     });
 
     test(
-      'defaults to ThemeMode.system and persists changes synchronously',
+      'defaults to ThemeMode.light and persists changes synchronously',
       () async {
         SharedPreferences.setMockInitialValues({});
         var prefs = await SharedPreferences.getInstance();
         final bloc = ThemeBloc(sharedPreferences: prefs);
 
-        expect(bloc.state.themeMode, ThemeMode.system);
+        expect(bloc.state.themeMode, ThemeMode.light);
 
         bloc.add(const ChangeThemeModeEvent(ThemeMode.dark));
         await Future<void>.delayed(Duration.zero);
@@ -277,14 +277,14 @@ void main() {
         );
 
         expect(find.text('Tema Tampilan'), findsOneWidget);
-        expect(find.text('Ikuti Sistem'), findsOneWidget);
+        expect(find.text('Terang'), findsOneWidget);
 
         await tester.tap(find.byType(ThemeModeSelectorTile));
         await tester.pumpAndSettle();
 
         expect(find.text('Pilih Tema Tampilan'), findsOneWidget);
         expect(find.text('Gelap'), findsOneWidget);
-        expect(find.text('Terang'), findsOneWidget);
+        expect(find.text('Terang'), findsWidgets);
 
         await tester.tap(find.text('Gelap'));
         await tester.pumpAndSettle();

@@ -141,7 +141,7 @@ class ThemeModeSelectorTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final bloc = _maybeWatchBloc(context);
-    final activeMode = bloc?.state.themeMode ?? ThemeMode.system;
+    final activeMode = bloc?.state.themeMode ?? ThemeMode.light;
 
     return Material(
       color: colors.surface,

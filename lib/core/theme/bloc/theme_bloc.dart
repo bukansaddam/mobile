@@ -20,13 +20,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
 
   static ThemeMode _readThemeMode(SharedPreferences prefs) {
     switch (prefs.getString(themeModeKey)) {
-      case 'light':
-        return ThemeMode.light;
       case 'dark':
         return ThemeMode.dark;
       case 'system':
-      default:
         return ThemeMode.system;
+      case 'light':
+      default:
+        return ThemeMode.light;
     }
   }
 
