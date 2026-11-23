@@ -69,6 +69,7 @@ class ProfileMenuItem extends StatelessWidget {
   final String? trailingLabel;
   final Color? textColor;
   final Color? iconColor;
+  final Color? iconBackgroundColor;
   final bool showChevron;
 
   const ProfileMenuItem({
@@ -80,20 +81,33 @@ class ProfileMenuItem extends StatelessWidget {
     this.trailingLabel,
     this.textColor,
     this.iconColor,
+    this.iconBackgroundColor,
     this.showChevron = true,
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
+    final resolvedIconColor = iconColor ?? colors.primary;
+    final resolvedIconBg =
+        iconBackgroundColor ??
+        (iconColor == colors.error ? colors.errorLight : colors.primaryLight);
+
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: iconColor ?? colors.textPrimary),
-            const SizedBox(width: 14),
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: resolvedIconBg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 20, color: resolvedIconColor),
+            ),
+            const SizedBox(width: 12),
             Expanded(
               child: Row(
                 children: [
