@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:akar/features/auth/presentation/pages/register_screen.dart';
 
 void main() {
   test('Register screen title string contains Scan KTP Berhasil', () {
