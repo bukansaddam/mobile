@@ -122,13 +122,23 @@ void main() {
       await tester.pumpWidget(_wrapPage(bloc: officerBloc, isOfficer: true));
       await tester.pumpAndSettle();
 
-      expect(find.text('Panduan SOP patroli & poskamling'), findsOneWidget);
-      expect(find.text('Cara membuat aduan warga yang valid'), findsNothing);
+      expect(
+        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?'),
+        findsNothing,
+      );
 
-      await tester.tap(find.text('Panduan SOP patroli & poskamling'));
+      await tester.tap(
+        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+      );
       await tester.pumpAndSettle();
 
-      expect(repo.sentMessages, ['Panduan SOP patroli & poskamling']);
+      expect(repo.sentMessages, [
+        'Apa itu AKAR Aslinmas dan apa saja fitur utamanya?',
+      ]);
       expect(find.textContaining('Berikut langkahnya.'), findsOneWidget);
       expect(find.text('SOP Patroli.pdf'), findsOneWidget);
 
@@ -139,8 +149,14 @@ void main() {
       await tester.pumpWidget(_wrapPage(bloc: memberBloc, isOfficer: false));
       await tester.pumpAndSettle();
 
-      expect(find.text('Cara membuat aduan warga yang valid'), findsOneWidget);
-      expect(find.text('Panduan SOP patroli & poskamling'), findsNothing);
+      expect(
+        find.text('Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+        findsNothing,
+      );
     },
   );
 

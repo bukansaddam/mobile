@@ -16,15 +16,15 @@ class AiChatEmptyView extends StatelessWidget {
   });
 
   static const List<String> _officerPrompts = [
-    'Panduan SOP patroli & poskamling',
-    'Cara lapor situasi wilayah ke pusat',
-    'Prosedur penanganan darurat & Panic SOS',
+    'Apa itu AKAR Aslinmas dan apa saja fitur utamanya?',
+    'Bagaimana tugas dan peran Linmas di sistem Aslinmas?',
+    'Bagaimana cara menggunakan fitur laporan dan presensi di Aslinmas?',
   ];
 
   static const List<String> _memberPrompts = [
-    'Cara membuat aduan warga yang valid',
-    'Cek status dan tindak lanjut pengaduan',
-    'Panduan penggunaan fitur darurat SOS',
+    'Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?',
+    'Jenis pengaduan apa saja yang bisa dilaporkan lewat Dumas?',
+    'Bagaimana alur tindak lanjut aduan warga hingga selesai?',
   ];
 
   @override
@@ -32,8 +32,8 @@ class AiChatEmptyView extends StatelessWidget {
     final colors = context.appColors;
     final prompts = isOfficer ? _officerPrompts : _memberPrompts;
     final roleSubtitle = isOfficer
-        ? 'Tanyakan SOP patroli Linmas, pelaporan wilayah, atau prosedur kedaruratan.'
-        : 'Tanyakan cara melapor aduan warga, pantau status laporan, atau panduan aplikasi.';
+        ? 'Tanyakan informasi umum seputar Aslinmas, fitur aplikasi, dan panduan penggunaan.'
+        : 'Tanyakan informasi umum seputar layanan Dumas, alur pengaduan, dan panduan aplikasi.';
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
