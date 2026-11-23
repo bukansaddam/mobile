@@ -245,8 +245,7 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                         const BankSampahLocationEntity(
                                           id: 'ALL',
                                           nama: 'Semua Lokasi',
-                                          alamat:
-                                              'Tampilkan laporan dari seluruh lokasi bank sampah',
+                                          alamat: 'Tampilkan laporan dari seluruh lokasi bank sampah',
                                         ),
                                       ),
                                       borderRadius: BorderRadius.circular(12),
@@ -390,10 +389,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                               vertical: 2,
                                                             ),
                                                         decoration: BoxDecoration(
-                                                          color:
-                                                              const Color(
-                                                                0xFF0284C7,
-                                                              ).withValues(
+                                                          color: AppColors.info
+                                                              .withValues(
                                                                 alpha: 0.1,
                                                               ),
                                                           borderRadius:
@@ -401,10 +398,9 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                                 12,
                                                               ),
                                                           border: Border.all(
-                                                            color:
-                                                                const Color(
-                                                                  0xFF0284C7,
-                                                                ).withValues(
+                                                            color: AppColors
+                                                                .info
+                                                                .withValues(
                                                                   alpha: 0.3,
                                                                 ),
                                                           ),
@@ -417,9 +413,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                               Icons
                                                                   .near_me_rounded,
                                                               size: 11,
-                                                              color: Color(
-                                                                0xFF0284C7,
-                                                              ),
+                                                              color: AppColors
+                                                                  .info,
                                                             ),
                                                             const SizedBox(
                                                               width: 3,
@@ -427,9 +422,8 @@ class _BankSampahSearchSheetState extends State<BankSampahSearchSheet> {
                                                             Text(
                                                               item.formattedDistance,
                                                               style: const TextStyle(
-                                                                color: Color(
-                                                                  0xFF0284C7,
-                                                                ),
+                                                                color: AppColors
+                                                                    .info,
                                                                 fontSize: 11,
                                                                 fontWeight:
                                                                     FontWeight
