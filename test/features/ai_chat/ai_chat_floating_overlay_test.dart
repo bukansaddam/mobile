@@ -45,6 +45,12 @@ void main() {
       final fabFinder = find.byKey(const Key('ai_chat_floating_fab'));
       expect(fabFinder, findsOneWidget);
 
+      final opacityFinder = find.byKey(
+        const Key('ai_chat_floating_fab_opacity'),
+      );
+      expect(opacityFinder, findsOneWidget);
+      expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 0.5);
+
       final initialRect = tester.getRect(fabFinder);
       // Starts docked on right edge
       expect(initialRect.left, greaterThan(160));
@@ -56,9 +62,21 @@ void main() {
       await tester.pumpAndSettle();
       expect(tapped, 1);
 
-      // Drag left across screen midpoint (160) -> should snap left
-      await tester.drag(fabFinder, const Offset(-220, 40));
+      // While dragging, FAB becomes 100% opaque
+      final gesture = await tester.startGesture(tester.getCenter(fabFinder));
+      await gesture.moveBy(const Offset(-30, 0));
+      await tester.pump();
+      await gesture.moveBy(const Offset(-190, 40));
+      await tester.pump();
+      expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 1.0);
+
+      // Release drag -> snaps left, then returns to 50% opacity when idle
+      await gesture.up();
       await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+
+      expect(tester.widget<AnimatedOpacity>(opacityFinder).opacity, 0.5);
 
       final snappedRect = tester.getRect(fabFinder);
       expect(snappedRect.left, lessThan(40));
