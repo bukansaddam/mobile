@@ -36,3 +36,10 @@
 - **Sub-Pages (`AppPageBar`):** Tinggi `kToolbarHeight` (`56dp`) + tinggi opsional `bottom` (misal `TabBar` `48dp`), alas `AppColors.background` di bawah `AppColors.topHeaderGradient` (kecuali layar gradient penuh Auth memakai `transparentBackground: true`).
 - **Header Action & Back Buttons (`AppBarCircleButton`):** Visual lingkaran `36x36dp` tanpa border (`side: BorderSide.none`), latar `AppColors.white` (`0.9` alpha, atau `AppColors.primaryDark` saat `isActive`), dan area sentuh minimum aksesibel `48x48dp`, simetris `8dp` dari tepi kiri dan kanan.
 - **Fullscreen / Camera / Media Exclusions:** `SplashScreen`, `WelcomeScreen`, `DisasterEmergencyWarningPage`, `KtpCameraPage`, `FullscreenImageViewer`, dan `FullscreenVideoViewer` dikecualikan dari `AppPageBar` standar.
+
+## Dialog & Modal Standards (`lib/core/widgets/app_dialogs.dart`)
+
+- **Floating Dialog (`AppDialogs`):** Seluruh dialog aplikasi wajib memakai `AppDialogs` (`showSuccess`, `showFailed`, `showConfirmation`, `showAlert`, `showLoading`, `showCustom`).
+- **Geometri & Gerakan:** Posisi mengambang di `Alignment.bottomCenter`, margin luar `16dp`, lebar maksimum `440dp`, tinggi maksimum `85%` viewport, sudut kartu `BorderRadius.circular(32)`, blur latar `BackdropFilter(sigma: 5)` dengan scrim gelap `45%`, serta animasi slide-up + fade (`260ms`).
+- **Larangan `showDialog` Mentah:** Fitur tidak boleh memanggil `showDialog` / `AlertDialog` / `Dialog` mentah secara langsung.
+- **Pemisahan Peran Modal:** `showModalBottomSheet` tetap digunakan khusus untuk detail sheet, filter, form bersarang, dan pemilih opsi (`ImageSource`, dsb.), sedangkan picker tanggal/waktu native memakai `showDatePicker`, `showTimePicker`, dan `showDateRangePicker`.
