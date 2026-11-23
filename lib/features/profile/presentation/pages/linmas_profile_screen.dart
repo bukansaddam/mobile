@@ -16,6 +16,7 @@ import 'package:akar/features/linmas/activation/data/datasources/activation_pend
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
+import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -146,6 +147,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
           );
         }
 
+        final activeThemeMode =
+            ThemeModeSelectorTile.maybeWatchBloc(context)?.state.themeMode ??
+            ThemeMode.light;
         final initialLetter =
             (user.name != null && user.name!.trim().isNotEmpty)
             ? user.name!.trim()[0].toUpperCase()
@@ -455,59 +459,38 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                   ),
                   const SizedBox(height: 18),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: () => AppRouter.toEditProfile(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.primary,
-                        foregroundColor: colors.onPrimary,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
+                  const ProfileSettingsSectionLabel(title: 'Pengaturan Akun'),
+                  ProfileMenuGroupCard(
+                    children: [
+                      ProfileMenuItem(
+                        icon: Icons.person_outline_rounded,
+                        title: 'Edit Profil Saya',
+                        onTap: () => AppRouter.toEditProfile(context),
                       ),
-                      icon: const Icon(Icons.edit_outlined, size: 20),
-                      label: const Text(
-                        'EDIT PROFIL SAYA',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 18),
 
-                  const ThemeModeSelectorTile(),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _showLogoutDialog(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: colors.errorLight,
-                        foregroundColor: colors.error,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          side: BorderSide(color: colors.error, width: 1.2),
+                  const ProfileSettingsSectionLabel(title: 'Pengaturan'),
+                  ProfileMenuGroupCard(
+                    children: [
+                      ProfileMenuItem(
+                        icon: ThemeModeSelectorTile.iconFor(activeThemeMode),
+                        title: 'Tema Tampilan',
+                        trailingLabel: ThemeModeSelectorTile.labelFor(
+                          activeThemeMode,
                         ),
+                        onTap: () =>
+                            ThemeModeSelectorTile.showSelectorSheet(context),
                       ),
-                      icon: const Icon(Icons.logout_rounded, size: 20),
-                      label: const Text(
-                        'KELUAR DARI AKUN',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.8,
-                        ),
+                      ProfileMenuItem(
+                        icon: Icons.logout_rounded,
+                        title: 'Keluar dari Akun',
+                        textColor: colors.error,
+                        iconColor: colors.error,
+                        onTap: () => _showLogoutDialog(context),
                       ),
-                    ),
+                    ],
                   ),
                   const SizedBox(height: 16),
 

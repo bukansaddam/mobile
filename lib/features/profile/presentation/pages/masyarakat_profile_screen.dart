@@ -15,6 +15,7 @@ import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_blo
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
+import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -423,27 +424,25 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
 
                         const SizedBox(height: 20),
 
-                        _buildSectionLabel(colors, 'Pengaturan Akun'),
-                        _buildMenuGroupCard(
-                          colors: colors,
+                        const ProfileSettingsSectionLabel(
+                          title: 'Pengaturan Akun',
+                        ),
+                        ProfileMenuGroupCard(
                           children: [
-                            _buildMenuItem(
-                              colors: colors,
+                            ProfileMenuItem(
                               icon: Icons.person_outline_rounded,
                               title: 'Edit Profil Saya',
                               onTap: () => AppRouter.toEditProfile(context),
                             ),
                             if (widget.showNotificationSettings)
-                              _buildMenuItem(
-                                colors: colors,
+                              ProfileMenuItem(
                                 icon: Icons.notifications_none_rounded,
                                 title: 'Pengaturan Notifikasi & Alarm Bencana',
                                 onTap: () =>
                                     _showNotificationSettingsSheet(context),
                               ),
                             if (widget.showChangePasswordMenu)
-                              _buildMenuItem(
-                                colors: colors,
+                              ProfileMenuItem(
                                 icon: Icons.lock_outline_rounded,
                                 title: 'Ubah Kata Sandi',
                                 onTap: () => AppRouter.toEditProfile(context),
@@ -453,12 +452,10 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
 
                         const SizedBox(height: 18),
 
-                        _buildSectionLabel(colors, 'Pengaturan'),
-                        _buildMenuGroupCard(
-                          colors: colors,
+                        const ProfileSettingsSectionLabel(title: 'Pengaturan'),
+                        ProfileMenuGroupCard(
                           children: [
-                            _buildMenuItem(
-                              colors: colors,
+                            ProfileMenuItem(
                               icon: ThemeModeSelectorTile.iconFor(
                                 activeThemeMode,
                               ),
@@ -471,8 +468,7 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                     context,
                                   ),
                             ),
-                            _buildMenuItem(
-                              colors: colors,
+                            ProfileMenuItem(
                               icon: Icons.logout_rounded,
                               title: 'Keluar dari Akun',
                               textColor: colors.error,
@@ -612,132 +608,6 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     if (confirmed && context.mounted) {
       context.read<AuthBloc>().add(const LogoutEvent(clearOfflineQueue: true));
     }
-  }
-
-  Widget _buildSectionLabel(AppColorScheme colors, String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 4, bottom: 10),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w500,
-            color: colors.textSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuGroupCard({
-    required AppColorScheme colors,
-    required List<Widget> children,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: colors.isDark ? Border.all(color: colors.border) : null,
-        boxShadow: [
-          BoxShadow(
-            color: colors.shadow,
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Material(
-          color: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(children: children),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMenuItem({
-    required AppColorScheme colors,
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    String? badge,
-    String? trailingLabel,
-    Color? textColor,
-    Color? iconColor,
-    bool showChevron = true,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, size: 22, color: iconColor ?? colors.textPrimary),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w500,
-                        color: textColor ?? colors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  if (badge != null) ...[
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors.surfaceElevated,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        badge,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (trailingLabel != null) ...[
-              Text(
-                trailingLabel,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w500,
-                  color: colors.textMuted,
-                ),
-              ),
-              const SizedBox(width: 6),
-            ],
-            if (showChevron)
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colors.textSecondary,
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
