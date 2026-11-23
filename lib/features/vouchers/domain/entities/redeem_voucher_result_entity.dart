@@ -17,10 +17,5 @@ class RedeemVoucherResultEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-    voucher,
-    pointsSpent,
-    remainingPoints,
-    message,
-  ];
+  List<Object?> get props => [voucher, pointsSpent, remainingPoints, message];
 }

@@ -56,11 +56,7 @@ class VoucherSummaryCard extends StatelessWidget {
                   color: colors.warningLight,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.stars_rounded,
-                  color: colors.earth,
-                  size: 26,
-                ),
+                child: Icon(Icons.stars_rounded, color: colors.earth, size: 26),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -120,9 +116,7 @@ class VoucherSummaryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: summary.canRedeem
-                  ? colors.success
-                  : colors.textSecondary,
+              color: summary.canRedeem ? colors.success : colors.textSecondary,
             ),
           ),
           const SizedBox(height: 14),
@@ -130,8 +124,9 @@ class VoucherSummaryCard extends StatelessWidget {
             width: double.infinity,
             height: 46,
             child: ElevatedButton(
-              onPressed:
-                  (summary.canRedeem && !isSubmitting) ? onRedeemTap : null,
+              onPressed: (summary.canRedeem && !isSubmitting)
+                  ? onRedeemTap
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: colors.onPrimary,

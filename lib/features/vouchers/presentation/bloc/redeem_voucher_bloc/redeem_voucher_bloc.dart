@@ -13,7 +13,7 @@ class RedeemVoucherBloc extends Bloc<RedeemVoucherEvent, RedeemVoucherState> {
   final RedeemVoucherUsecase redeemVoucher;
 
   RedeemVoucherBloc({required this.redeemVoucher})
-      : super(const RedeemVoucherInitial()) {
+    : super(const RedeemVoucherInitial()) {
     on<SubmitRedeemVoucherEvent>(_onSubmitRedeemVoucher);
     on<ResetRedeemVoucherEvent>(_onResetRedeemVoucher);
   }
@@ -42,15 +42,13 @@ class RedeemVoucherBloc extends Bloc<RedeemVoucherEvent, RedeemVoucherState> {
 
     emit(const RedeemVoucherSubmitting());
 
-    final key = (event.idempotencyKey != null &&
+    final key =
+        (event.idempotencyKey != null &&
             event.idempotencyKey!.trim().isNotEmpty)
         ? event.idempotencyKey!.trim()
         : generateIdempotencyKey();
 
-    final result = await redeemVoucher(
-      notes: event.notes,
-      idempotencyKey: key,
-    );
+    final result = await redeemVoucher(notes: event.notes, idempotencyKey: key);
 
     result.fold(
       (failure) {

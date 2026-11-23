@@ -10,9 +10,7 @@ import 'package:akar/features/vouchers/domain/repositories/voucher_repository.da
 class VoucherRepositoryImpl implements VoucherRepository {
   final VoucherRemoteDatasource remoteDatasource;
 
-  const VoucherRepositoryImpl({
-    required this.remoteDatasource,
-  });
+  const VoucherRepositoryImpl({required this.remoteDatasource});
 
   @override
   Future<Either<Failure, VoucherPageEntity>> getMyVouchers({
@@ -29,10 +27,7 @@ class VoucherRepositoryImpl implements VoucherRepository {
       return Right(result);
     } catch (e) {
       return Left(
-        ErrorUtils.toFailure(
-          e,
-          fallbackMessage: 'Gagal memuat daftar voucher',
-        ),
+        ErrorUtils.toFailure(e, fallbackMessage: 'Gagal memuat daftar voucher'),
       );
     }
   }
@@ -50,10 +45,7 @@ class VoucherRepositoryImpl implements VoucherRepository {
       return Right(result);
     } catch (e) {
       return Left(
-        ErrorUtils.toFailure(
-          e,
-          fallbackMessage: 'Gagal menukarkan voucher',
-        ),
+        ErrorUtils.toFailure(e, fallbackMessage: 'Gagal menukarkan voucher'),
       );
     }
   }

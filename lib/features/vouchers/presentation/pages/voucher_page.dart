@@ -122,15 +122,10 @@ class _VoucherPageState extends State<VoucherPage>
   }
 
   Future<void> _handleRedeemTap(VoucherSummaryEntity summary) async {
-    final result = await VoucherRedeemDialog.show(
-      context,
-      summary: summary,
-    );
+    final result = await VoucherRedeemDialog.show(context, summary: summary);
 
     if (result != null && result.confirmed) {
-      _redeemVoucherBloc.add(
-        SubmitRedeemVoucherEvent(notes: result.notes),
-      );
+      _redeemVoucherBloc.add(SubmitRedeemVoucherEvent(notes: result.notes));
     }
   }
 
@@ -148,9 +143,7 @@ class _VoucherPageState extends State<VoucherPage>
           BlocListener<RedeemVoucherBloc, RedeemVoucherState>(
             listener: (context, state) {
               if (state is RedeemVoucherSuccess) {
-                _voucherListBloc.add(
-                  SyncVoucherAfterRedeemEvent(state.result),
-                );
+                _voucherListBloc.add(SyncVoucherAfterRedeemEvent(state.result));
 
                 try {
                   context.read<ProfileBloc>().add(GetProfileEvent());
@@ -203,7 +196,8 @@ class _VoucherPageState extends State<VoucherPage>
           ),
           body: BlocBuilder<VoucherListBloc, VoucherListState>(
             builder: (context, listState) {
-              final summary = listState.summary ??
+              final summary =
+                  listState.summary ??
                   VoucherSummaryEntity(
                     currentPoints: listState.displayedPoints,
                     voucherPointCost: 100,
@@ -213,8 +207,7 @@ class _VoucherPageState extends State<VoucherPage>
 
               return BlocBuilder<RedeemVoucherBloc, RedeemVoucherState>(
                 builder: (context, redeemState) {
-                  final isSubmitting =
-                      redeemState is RedeemVoucherSubmitting;
+                  final isSubmitting = redeemState is RedeemVoucherSubmitting;
 
                   return NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
@@ -323,8 +316,7 @@ class _VoucherPageState extends State<VoucherPage>
           : ListView.builder(
               controller: _activeScrollController,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              itemCount:
-                  bucket.items.length + (bucket.isLoadingMore ? 1 : 0),
+              itemCount: bucket.items.length + (bucket.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index >= bucket.items.length) {
                   return Padding(
@@ -412,10 +404,7 @@ class _VoucherPageState extends State<VoucherPage>
       return VoucherErrorView(
         message: bucket.errorMessage!,
         onRetry: () => _voucherListBloc.add(
-          FetchVouchersEvent(
-            status: currentFilter,
-            isRefresh: true,
-          ),
+          FetchVouchersEvent(status: currentFilter, isRefresh: true),
         ),
       );
     }
@@ -424,10 +413,7 @@ class _VoucherPageState extends State<VoucherPage>
       color: colors.primary,
       onRefresh: () async {
         _voucherListBloc.add(
-          FetchVouchersEvent(
-            status: currentFilter,
-            isRefresh: true,
-          ),
+          FetchVouchersEvent(status: currentFilter, isRefresh: true),
         );
       },
       child: bucket.items.isEmpty
@@ -435,8 +421,7 @@ class _VoucherPageState extends State<VoucherPage>
           : ListView.builder(
               controller: _historyScrollController,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              itemCount:
-                  bucket.items.length + (bucket.isLoadingMore ? 1 : 0),
+              itemCount: bucket.items.length + (bucket.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index >= bucket.items.length) {
                   return Padding(

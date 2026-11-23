@@ -97,10 +97,7 @@ class VoucherDetailDialog extends StatelessWidget {
             Text(
               'Voucher siap digunakan. Sisa poin: $remainingPoints Poin.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.5,
-                color: colors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 12.5, color: colors.textSecondary),
             ),
           ],
           const SizedBox(height: 16),
@@ -272,10 +269,7 @@ class VoucherDetailDialog extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12.5,
-            color: colors.textSecondary,
-          ),
+          style: TextStyle(fontSize: 12.5, color: colors.textSecondary),
         ),
         const SizedBox(width: 12),
         Expanded(

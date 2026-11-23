@@ -68,58 +68,67 @@ void main() {
       expect(bloc.state.displayedPoints, 0);
     });
 
-    test('SetInitialPointsEvent updates displayedPoints before summary arrives', () {
-      bloc.add(const SetInitialPointsEvent(250));
-      expectLater(
-        bloc.stream,
-        emits(predicate<VoucherListState>((state) {
-          return state.initialPointsFallback == 250 && state.displayedPoints == 250;
-        })),
-      );
-    });
-
-    test('FetchVouchersEvent succeeds and populates bucket and summary', () async {
-      fakeRepo.getMyVouchersResponse = Right(
-        VoucherPageEntity(
-          items: [
-            VoucherEntity(
-              id: 1,
-              code: 'VCR-001',
-              pointsSpent: 100,
-              status: VoucherStatus.active,
-              redeemedAt: DateTime.now(),
-            ),
-          ],
-          currentPage: 1,
-          lastPage: 2,
-          perPage: 20,
-          total: 1,
-          summary: const VoucherSummaryEntity(
-            currentPoints: 300,
-            voucherPointCost: 100,
-            canRedeem: true,
-            redeemableCount: 3,
+    test(
+      'SetInitialPointsEvent updates displayedPoints before summary arrives',
+      () {
+        bloc.add(const SetInitialPointsEvent(250));
+        expectLater(
+          bloc.stream,
+          emits(
+            predicate<VoucherListState>((state) {
+              return state.initialPointsFallback == 250 &&
+                  state.displayedPoints == 250;
+            }),
           ),
-        ),
-      );
+        );
+      },
+    );
 
-      bloc.add(const FetchVouchersEvent(status: VoucherStatus.active));
+    test(
+      'FetchVouchersEvent succeeds and populates bucket and summary',
+      () async {
+        fakeRepo.getMyVouchersResponse = Right(
+          VoucherPageEntity(
+            items: [
+              VoucherEntity(
+                id: 1,
+                code: 'VCR-001',
+                pointsSpent: 100,
+                status: VoucherStatus.active,
+                redeemedAt: DateTime.now(),
+              ),
+            ],
+            currentPage: 1,
+            lastPage: 2,
+            perPage: 20,
+            total: 1,
+            summary: const VoucherSummaryEntity(
+              currentPoints: 300,
+              voucherPointCost: 100,
+              canRedeem: true,
+              redeemableCount: 3,
+            ),
+          ),
+        );
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          predicate<VoucherListState>((s) => s.activeBucket.isInitialLoading),
-          predicate<VoucherListState>((s) {
-            return s.activeBucket.items.length == 1 &&
-                s.activeBucket.items.first.code == 'VCR-001' &&
-                s.activeBucket.hasLoaded &&
-                !s.activeBucket.isInitialLoading &&
-                s.summary?.currentPoints == 300 &&
-                s.displayedPoints == 300;
-          }),
-        ]),
-      );
-    });
+        bloc.add(const FetchVouchersEvent(status: VoucherStatus.active));
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            predicate<VoucherListState>((s) => s.activeBucket.isInitialLoading),
+            predicate<VoucherListState>((s) {
+              return s.activeBucket.items.length == 1 &&
+                  s.activeBucket.items.first.code == 'VCR-001' &&
+                  s.activeBucket.hasLoaded &&
+                  !s.activeBucket.isInitialLoading &&
+                  s.summary?.currentPoints == 300 &&
+                  s.displayedPoints == 300;
+            }),
+          ]),
+        );
+      },
+    );
 
     test('FetchVouchersEvent emits errorMessage on failure', () async {
       fakeRepo.getMyVouchersResponse = const Left(
@@ -140,36 +149,41 @@ void main() {
       );
     });
 
-    test('SyncVoucherAfterRedeemEvent prepends new voucher and reduces points', () {
-      final newVoucher = VoucherEntity(
-        id: 99,
-        code: 'VCR-NEW',
-        pointsSpent: 100,
-        status: VoucherStatus.active,
-        redeemedAt: DateTime.now(),
-      );
+    test(
+      'SyncVoucherAfterRedeemEvent prepends new voucher and reduces points',
+      () {
+        final newVoucher = VoucherEntity(
+          id: 99,
+          code: 'VCR-NEW',
+          pointsSpent: 100,
+          status: VoucherStatus.active,
+          redeemedAt: DateTime.now(),
+        );
 
-      bloc.add(
-        SyncVoucherAfterRedeemEvent(
-          RedeemVoucherResultEntity(
-            voucher: newVoucher,
-            pointsSpent: 100,
-            remainingPoints: 50,
-            message: 'Sukses',
+        bloc.add(
+          SyncVoucherAfterRedeemEvent(
+            RedeemVoucherResultEntity(
+              voucher: newVoucher,
+              pointsSpent: 100,
+              remainingPoints: 50,
+              message: 'Sukses',
+            ),
           ),
-        ),
-      );
+        );
 
-      expectLater(
-        bloc.stream,
-        emits(predicate<VoucherListState>((s) {
-          return s.activeBucket.items.first.id == 99 &&
-              s.summary?.currentPoints == 50 &&
-              s.summary?.canRedeem == false &&
-              s.summary?.pointsNeeded == 50;
-        })),
-      );
-    });
+        expectLater(
+          bloc.stream,
+          emits(
+            predicate<VoucherListState>((s) {
+              return s.activeBucket.items.first.id == 99 &&
+                  s.summary?.currentPoints == 50 &&
+                  s.summary?.canRedeem == false &&
+                  s.summary?.pointsNeeded == 50;
+            }),
+          ),
+        );
+      },
+    );
 
     test('ChangeHistoryFilterEvent switches filter and triggers fetch when not loaded', () async {
       bloc.add(const ChangeHistoryFilterEvent(VoucherStatus.expired));
@@ -177,7 +191,9 @@ void main() {
       await expectLater(
         bloc.stream,
         emitsInOrder([
-          predicate<VoucherListState>((s) => s.historyFilter == VoucherStatus.expired),
+          predicate<VoucherListState>(
+            (s) => s.historyFilter == VoucherStatus.expired,
+          ),
           predicate<VoucherListState>((s) => s.expiredBucket.isInitialLoading),
           predicate<VoucherListState>((s) => s.expiredBucket.hasLoaded),
         ]),

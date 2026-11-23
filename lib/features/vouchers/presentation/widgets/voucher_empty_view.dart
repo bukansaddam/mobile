@@ -7,10 +7,7 @@ import 'package:akar/features/vouchers/domain/entities/voucher_status.dart';
 class VoucherEmptyView extends StatelessWidget {
   final VoucherStatus status;
 
-  const VoucherEmptyView({
-    super.key,
-    required this.status,
-  });
+  const VoucherEmptyView({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +27,14 @@ class VoucherEmptyView extends StatelessWidget {
       case VoucherStatus.used:
         icon = Icons.history_rounded;
         title = 'Belum Ada Voucher Terpakai';
-        subtitle = 'Voucher yang telah ditukarkan dan dipakai akan muncul di sini.';
+        subtitle =
+            'Voucher yang telah ditukarkan dan dipakai akan muncul di sini.';
         break;
       case VoucherStatus.expired:
         icon = Icons.timer_off_outlined;
         title = 'Tidak Ada Voucher Kedaluwarsa';
-        subtitle = 'Semua voucher Anda masih dalam masa berlaku atau telah dipakai.';
+        subtitle =
+            'Semua voucher Anda masih dalam masa berlaku atau telah dipakai.';
         break;
     }
 
@@ -54,11 +53,7 @@ class VoucherEmptyView extends StatelessWidget {
                 color: colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                color: colors.textMuted,
-                size: 36,
-              ),
+              child: Icon(icon, color: colors.textMuted, size: 36),
             ),
             const SizedBox(height: 16),
             Text(

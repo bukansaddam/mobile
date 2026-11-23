@@ -14,7 +14,7 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
   final GetMyVouchersUsecase getMyVouchers;
 
   VoucherListBloc({required this.getMyVouchers})
-      : super(const VoucherListState()) {
+    : super(const VoucherListState()) {
     on<SetInitialPointsEvent>(_onSetInitialPoints);
     on<FetchVouchersEvent>(_onFetchVouchers);
     on<LoadMoreVouchersEvent>(_onLoadMoreVouchers);
@@ -49,11 +49,7 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
     );
     emit(state.copyWith(buckets: updatedBuckets));
 
-    final result = await getMyVouchers(
-      status: status,
-      page: 1,
-      perPage: 20,
-    );
+    final result = await getMyVouchers(status: status, page: 1, perPage: 20);
 
     result.fold(
       (failure) {
@@ -81,12 +77,7 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
           errorMessage: null,
         );
 
-        emit(
-          state.copyWith(
-            summary: page.summary,
-            buckets: successBuckets,
-          ),
-        );
+        emit(state.copyWith(summary: page.summary, buckets: successBuckets));
       },
     );
   }
@@ -149,12 +140,7 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
           clearError: true,
         );
 
-        emit(
-          state.copyWith(
-            summary: page.summary,
-            buckets: successBuckets,
-          ),
-        );
+        emit(state.copyWith(summary: page.summary, buckets: successBuckets));
       },
     );
   }
@@ -176,7 +162,8 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
     SyncVoucherAfterRedeemEvent event,
     Emitter<VoucherListState> emit,
   ) {
-    final currentSummary = state.summary ??
+    final currentSummary =
+        state.summary ??
         VoucherSummaryEntity(
           currentPoints: event.result.remainingPoints,
           voucherPointCost: 100,
@@ -202,11 +189,6 @@ class VoucherListBloc extends Bloc<VoucherListEvent, VoucherListState> {
       hasLoaded: true,
     );
 
-    emit(
-      state.copyWith(
-        summary: updatedSummary,
-        buckets: updatedBuckets,
-      ),
-    );
+    emit(state.copyWith(summary: updatedSummary, buckets: updatedBuckets));
   }
 }

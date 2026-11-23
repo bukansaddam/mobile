@@ -213,61 +213,60 @@ void main() {
       expect(find.byType(VoucherDetailDialog), findsNothing);
     });
 
-    testWidgets('redeem flow: opens dialog, submits, shows success dialog and updates points', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(390, 844));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'redeem flow: opens dialog, submits, shows success dialog and updates points',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(390, 844));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(createTestWidget());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(createTestWidget());
+        await tester.pumpAndSettle();
 
-      // Tap Tukar 100 Poin button
-      await tester.tap(find.text('Tukar 100 Poin'));
-      await tester.pumpAndSettle();
+        // Tap Tukar 100 Poin button
+        await tester.tap(find.text('Tukar 100 Poin'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(VoucherRedeemDialog), findsOneWidget);
-      expect(find.text('Tukar Poin ke Voucher'), findsOneWidget);
+        expect(find.byType(VoucherRedeemDialog), findsOneWidget);
+        expect(find.text('Tukar Poin ke Voucher'), findsOneWidget);
 
-      // Enter notes
-      await tester.enterText(find.byType(TextField), 'Untuk beli sembako');
-      await tester.pump();
+        // Enter notes
+        await tester.enterText(find.byType(TextField), 'Untuk beli sembako');
+        await tester.pump();
 
-      // Tap Tukar Sekarang
-      await tester.ensureVisible(find.text('Tukar Sekarang'));
-      await tester.tap(find.text('Tukar Sekarang'));
-      await tester.pumpAndSettle();
+        // Tap Tukar Sekarang
+        await tester.ensureVisible(find.text('Tukar Sekarang'));
+        await tester.tap(find.text('Tukar Sekarang'));
+        await tester.pumpAndSettle();
 
-      // Success dialog appears
-      expect(find.byType(VoucherDetailDialog), findsOneWidget);
-      expect(find.text('Voucher Berhasil Ditukar'), findsOneWidget);
-      expect(find.text('VCR-NEW-999'), findsWidgets);
+        // Success dialog appears
+        expect(find.byType(VoucherDetailDialog), findsOneWidget);
+        expect(find.text('Voucher Berhasil Ditukar'), findsOneWidget);
+        expect(find.text('VCR-NEW-999'), findsWidgets);
 
-      // Close dialog
-      await tester.ensureVisible(find.text('Tutup'));
-      await tester.tap(find.text('Tutup'));
-      await tester.pumpAndSettle();
+        // Close dialog
+        await tester.ensureVisible(find.text('Tutup'));
+        await tester.tap(find.text('Tutup'));
+        await tester.pumpAndSettle();
 
-      // New voucher is on list and points reduced
-      expect(find.text('VCR-NEW-999'), findsOneWidget);
-      expect(find.text('150 Poin'), findsWidgets);
-    });
+        // New voucher is on list and points reduced
+        expect(find.text('VCR-NEW-999'), findsOneWidget);
+        expect(find.text('150 Poin'), findsWidgets);
+      },
+    );
 
-    testWidgets('responsive check on narrow screen 320x640 with 200% text scale has zero overflow', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(320, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
+    testWidgets(
+      'responsive check on narrow screen 320x640 with 200% text scale has zero overflow',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(320, 640));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(
-        createTestWidget(
-          size: const Size(320, 640),
-          textScale: 2.0,
-        ),
-      );
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          createTestWidget(size: const Size(320, 640), textScale: 2.0),
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-    });
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 }

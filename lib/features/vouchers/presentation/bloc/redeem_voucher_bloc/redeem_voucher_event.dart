@@ -11,10 +11,7 @@ class SubmitRedeemVoucherEvent extends RedeemVoucherEvent {
   final String? notes;
   final String? idempotencyKey;
 
-  const SubmitRedeemVoucherEvent({
-    this.notes,
-    this.idempotencyKey,
-  });
+  const SubmitRedeemVoucherEvent({this.notes, this.idempotencyKey});
 
   @override
   List<Object?> get props => [notes, idempotencyKey];

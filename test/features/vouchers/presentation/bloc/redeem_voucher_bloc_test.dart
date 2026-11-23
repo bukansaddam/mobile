@@ -113,16 +113,10 @@ void main() {
       );
 
       bloc.add(const SubmitRedeemVoucherEvent());
-      await expectLater(
-        bloc.stream,
-        emitsThrough(isA<RedeemVoucherFailure>()),
-      );
+      await expectLater(bloc.stream, emitsThrough(isA<RedeemVoucherFailure>()));
 
       bloc.add(const ResetRedeemVoucherEvent());
-      await expectLater(
-        bloc.stream,
-        emits(const RedeemVoucherInitial()),
-      );
+      await expectLater(bloc.stream, emits(const RedeemVoucherInitial()));
     });
   });
 }

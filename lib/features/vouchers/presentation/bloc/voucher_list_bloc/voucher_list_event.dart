@@ -20,10 +20,7 @@ class FetchVouchersEvent extends VoucherListEvent {
   final VoucherStatus status;
   final bool isRefresh;
 
-  const FetchVouchersEvent({
-    required this.status,
-    this.isRefresh = false,
-  });
+  const FetchVouchersEvent({required this.status, this.isRefresh = false});
 
   @override
   List<Object?> get props => [status, isRefresh];

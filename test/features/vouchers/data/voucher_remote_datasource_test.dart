@@ -134,31 +134,37 @@ void main() {
       expect(capturedOptions?.queryParameters['per_page'], 20);
     });
 
-    test('VoucherRemoteDatasourceImpl.redeemVoucher sends idempotency and payload', () async {
-      RequestOptions? capturedOptions;
-      final dio = Dio(BaseOptions(baseUrl: 'https://example.com'));
-      dio.httpClientAdapter = _MockDioAdapter((options) async {
-        capturedOptions = options;
-        return ResponseBody.fromString(
-          '{"success":true,"message":"Voucher dibuat","data":{"voucher":{"id":7,"code":"VCR-1111","points_spent":100,"status":"active","notes":"Catatan uji","redeemed_at":"2026-11-23T11:10:00+07:00","used_at":null},"points_spent":100,"remaining_points":20}}',
-          201,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-          },
+    test(
+      'VoucherRemoteDatasourceImpl.redeemVoucher sends idempotency and payload',
+      () async {
+        RequestOptions? capturedOptions;
+        final dio = Dio(BaseOptions(baseUrl: 'https://example.com'));
+        dio.httpClientAdapter = _MockDioAdapter((options) async {
+          capturedOptions = options;
+          return ResponseBody.fromString(
+            '{"success":true,"message":"Voucher dibuat","data":{"voucher":{"id":7,"code":"VCR-1111","points_spent":100,"status":"active","notes":"Catatan uji","redeemed_at":"2026-11-23T11:10:00+07:00","used_at":null},"points_spent":100,"remaining_points":20}}',
+            201,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
+        });
+
+        final ds = VoucherRemoteDatasourceImpl(dio: dio);
+        final result = await ds.redeemVoucher(
+          notes: 'Catatan uji',
+          idempotencyKey: 'idemp-uuid-1234',
         );
-      });
 
-      final ds = VoucherRemoteDatasourceImpl(dio: dio);
-      final result = await ds.redeemVoucher(
-        notes: 'Catatan uji',
-        idempotencyKey: 'idemp-uuid-1234',
-      );
-
-      expect(result.voucher.id, 7);
-      expect(result.remainingPoints, 20);
-      expect(capturedOptions?.headers['X-Idempotency-Key'], 'idemp-uuid-1234');
-      expect((capturedOptions?.data as Map)['notes'], 'Catatan uji');
-    });
+        expect(result.voucher.id, 7);
+        expect(result.remainingPoints, 20);
+        expect(
+          capturedOptions?.headers['X-Idempotency-Key'],
+          'idemp-uuid-1234',
+        );
+        expect((capturedOptions?.data as Map)['notes'], 'Catatan uji');
+      },
+    );
 
     test('VoucherRemoteDatasourceImpl throws ValidationException on 422', () async {
       final dio = Dio(BaseOptions(baseUrl: 'https://example.com'));
@@ -185,25 +191,28 @@ void main() {
       expect(result.left, isA<ValidationFailure>());
     });
 
-    test('VoucherRepositoryImpl returns Right on success and Left on failure', () async {
-      final dio = Dio(BaseOptions(baseUrl: 'https://example.com'));
-      dio.httpClientAdapter = _MockDioAdapter((options) async {
-        return ResponseBody.fromString(
-          '{"success":true,"message":"OK","data":[],"meta":{"current_page":1,"last_page":1,"per_page":20,"total":0},"summary":{"current_points":200,"voucher_point_cost":100,"can_redeem":true,"redeemable_count":2}}',
-          200,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-          },
-        );
-      });
+    test(
+      'VoucherRepositoryImpl returns Right on success and Left on failure',
+      () async {
+        final dio = Dio(BaseOptions(baseUrl: 'https://example.com'));
+        dio.httpClientAdapter = _MockDioAdapter((options) async {
+          return ResponseBody.fromString(
+            '{"success":true,"message":"OK","data":[],"meta":{"current_page":1,"last_page":1,"per_page":20,"total":0},"summary":{"current_points":200,"voucher_point_cost":100,"can_redeem":true,"redeemable_count":2}}',
+            200,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
+        });
 
-      final ds = VoucherRemoteDatasourceImpl(dio: dio);
-      final repo = VoucherRepositoryImpl(remoteDatasource: ds);
+        final ds = VoucherRemoteDatasourceImpl(dio: dio);
+        final repo = VoucherRepositoryImpl(remoteDatasource: ds);
 
-      final result = await repo.getMyVouchers();
-      expect(result.isRight, isTrue);
-      expect(result.right.summary.canRedeem, isTrue);
-      expect(result.right.summary.redeemableCount, 2);
-    });
+        final result = await repo.getMyVouchers();
+        expect(result.isRight, isTrue);
+        expect(result.right.summary.canRedeem, isTrue);
+        expect(result.right.summary.redeemableCount, 2);
+      },
+    );
   });
 }

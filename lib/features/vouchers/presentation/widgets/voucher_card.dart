@@ -12,11 +12,7 @@ class VoucherCard extends StatelessWidget {
   final VoucherEntity voucher;
   final VoidCallback onTap;
 
-  const VoucherCard({
-    super.key,
-    required this.voucher,
-    required this.onTap,
-  });
+  const VoucherCard({super.key, required this.voucher, required this.onTap});
 
   String _formatDate(DateTime? dt) {
     if (dt == null) return '-';
@@ -130,7 +126,8 @@ class VoucherCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (voucher.notes != null && voucher.notes!.trim().isNotEmpty) ...[
+                if (voucher.notes != null &&
+                    voucher.notes!.trim().isNotEmpty) ...[
                   const SizedBox(height: 10),
                   Text(
                     voucher.notes!.trim(),

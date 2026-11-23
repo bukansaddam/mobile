@@ -8,10 +8,7 @@ import 'package:akar/features/vouchers/domain/entities/voucher_summary_entity.da
 class VoucherRedeemDialog extends StatefulWidget {
   final VoucherSummaryEntity summary;
 
-  const VoucherRedeemDialog({
-    super.key,
-    required this.summary,
-  });
+  const VoucherRedeemDialog({super.key, required this.summary});
 
   static Future<({bool confirmed, String notes})?> show(
     BuildContext context, {
@@ -73,10 +70,7 @@ class _VoucherRedeemDialogState extends State<VoucherRedeemDialog> {
           Text(
             'Tukarkan 100 poin menjadi 1 kode voucher unik.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: colors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 13, color: colors.textSecondary),
           ),
           const SizedBox(height: 16),
           Container(
@@ -115,21 +109,12 @@ class _VoucherRedeemDialogState extends State<VoucherRedeemDialog> {
             controller: _notesController,
             maxLength: 255,
             maxLines: 2,
-            style: TextStyle(
-              fontSize: 13,
-              color: colors.textPrimary,
-            ),
+            style: TextStyle(fontSize: 13, color: colors.textPrimary),
             decoration: InputDecoration(
               labelText: 'Catatan (opsional)',
-              labelStyle: TextStyle(
-                fontSize: 13,
-                color: colors.textMuted,
-              ),
+              labelStyle: TextStyle(fontSize: 13, color: colors.textMuted),
               hintText: 'Contoh: Tukar voucher sembako',
-              hintStyle: TextStyle(
-                fontSize: 12,
-                color: colors.textHint,
-              ),
+              hintStyle: TextStyle(fontSize: 12, color: colors.textHint),
               filled: true,
               fillColor: colors.surface,
               contentPadding: const EdgeInsets.symmetric(
@@ -176,10 +161,7 @@ class _VoucherRedeemDialogState extends State<VoucherRedeemDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       final notes = _notesController.text.trim();
-                      Navigator.pop(
-                        context,
-                        (confirmed: true, notes: notes),
-                      );
+                      Navigator.pop(context, (confirmed: true, notes: notes));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.primary,
@@ -230,7 +212,9 @@ class _VoucherRedeemDialogState extends State<VoucherRedeemDialog> {
           textAlign: TextAlign.end,
           style: TextStyle(
             fontSize: 12.5,
-            color: valueColor ?? (isBold ? colors.textPrimary : colors.textSecondary),
+            color:
+                valueColor ??
+                (isBold ? colors.textPrimary : colors.textSecondary),
             fontWeight: isBold ? FontWeight.w800 : FontWeight.w600,
           ),
         ),

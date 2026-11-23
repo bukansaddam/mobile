@@ -28,10 +28,7 @@ class RedeemVoucherFailure extends RedeemVoucherState {
   final String message;
   final int? statusCode;
 
-  const RedeemVoucherFailure({
-    required this.message,
-    this.statusCode,
-  });
+  const RedeemVoucherFailure({required this.message, this.statusCode});
 
   @override
   List<Object?> get props => [message, statusCode];
