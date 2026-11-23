@@ -120,8 +120,10 @@ class OfflineQueueItem {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? nextRetryAt,
+    bool clearNextRetryAt = false,
     int? retryCount,
     String? lastError,
+    bool clearLastError = false,
     int? lastStatusCode,
   }) {
     return OfflineQueueItem(
@@ -138,9 +140,9 @@ class OfflineQueueItem {
           isUserApprovedOnCellular ?? this.isUserApprovedOnCellular,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      nextRetryAt: clearNextRetryAt ? null : (nextRetryAt ?? this.nextRetryAt),
       retryCount: retryCount ?? this.retryCount,
-      lastError: lastError ?? this.lastError,
+      lastError: clearLastError ? null : (lastError ?? this.lastError),
       lastStatusCode: lastStatusCode ?? this.lastStatusCode,
     );
   }

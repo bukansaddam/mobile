@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
+import 'package:akar/core/offline/offline_sync_lifecycle_listener.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
@@ -89,24 +90,26 @@ class MyApp extends StatelessWidget {
           create: (_) => di.sl<NotificationBloc>(),
         ),
       ],
-      child: NotificationLifecycleListener(
-        child: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, themeState) {
-            return MaterialApp.router(
-              title: AppConstants.appName,
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: themeState.themeMode,
-              routerConfig: AppRouter.router,
-              builder: (context, child) {
-                return GestureDetector(
-                  onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                  child: child,
-                );
-              },
-            );
-          },
+      child: OfflineSyncLifecycleListener(
+        child: NotificationLifecycleListener(
+          child: BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              return MaterialApp.router(
+                title: AppConstants.appName,
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeState.themeMode,
+                routerConfig: AppRouter.router,
+                builder: (context, child) {
+                  return GestureDetector(
+                    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                    child: child,
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );

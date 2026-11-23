@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:akar/core/offline/idempotency_key_generator.dart';
 import 'package:akar/core/offline/offline_queue_item.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 class OfflineQueueQuotaException implements Exception {
@@ -21,6 +22,7 @@ class OfflineQueueLocalDatasource {
   static const int maxTotalMediaBytes = 250 * 1024 * 1024; // 250 MB
 
   final Future<Directory> Function() _rootDirectory;
+  final ValueNotifier<int> revision = ValueNotifier<int>(0);
 
   OfflineQueueLocalDatasource({Future<Directory> Function()? rootDirectory})
     : _rootDirectory = rootDirectory ?? getApplicationSupportDirectory;
@@ -68,6 +70,7 @@ class OfflineQueueLocalDatasource {
       await targetFile.delete();
     }
     await tmpFile.rename(targetFile.path);
+    revision.value++;
   }
 
   Future<List<OfflineQueueItem>> getPending(String userId) async {
@@ -224,6 +227,7 @@ class OfflineQueueLocalDatasource {
     if (baseDir.existsSync()) {
       await baseDir.delete(recursive: true);
     }
+    revision.value++;
   }
 
   Future<void> _deleteItemFolder(String id) async {

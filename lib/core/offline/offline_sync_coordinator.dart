@@ -9,6 +9,7 @@ import 'package:akar/core/utils/app_logger.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 
 abstract class OfflineSyncHandler {
@@ -33,6 +34,7 @@ class OfflineSyncCoordinator {
 
   final List<OfflineSyncHandler> _handlers = [];
   bool _isSyncing = false;
+  final ValueNotifier<bool> isSyncingNotifier = ValueNotifier<bool>(false);
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   bool get isSyncing => _isSyncing;
@@ -80,6 +82,7 @@ class OfflineSyncCoordinator {
   Future<void> syncNow({bool includeCellularLargeVideos = false}) async {
     if (_isSyncing) return;
     _isSyncing = true;
+    isSyncingNotifier.value = true;
 
     try {
       final connectivity = await _connectivityChecker();
@@ -152,7 +155,26 @@ class OfflineSyncCoordinator {
       AppLogger.e('[SYNC_COORD] Unexpected error during syncNow: $e', e, s);
     } finally {
       _isSyncing = false;
+      isSyncingNotifier.value = false;
     }
+  }
+
+  Future<void> retryItem(
+    OfflineQueueItem item, {
+    bool approveCellular = false,
+  }) async {
+    await _queueDatasource.updateItem(
+      item.copyWith(
+        status: OfflineItemStatus.pending,
+        clearNextRetryAt: true,
+        clearLastError: true,
+        retryCount: 0,
+        isUserApprovedOnCellular: approveCellular
+            ? true
+            : item.isUserApprovedOnCellular,
+      ),
+    );
+    await syncNow(includeCellularLargeVideos: approveCellular);
   }
 
   Future<void> _syncItem(
