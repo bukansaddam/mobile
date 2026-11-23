@@ -1479,7 +1479,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget _buildIdentitySummary() {
     return _buildSummaryCard(
       headerIcon: Icons.badge_outlined,
-      headerColor: const Color(0xFF15803D),
+      headerColor: AppColors.success,
       header: 'DATA IDENTITAS e-KTP',
       editLabel: 'Ubah Data',
       onEdit: () => _goToStep(1),
