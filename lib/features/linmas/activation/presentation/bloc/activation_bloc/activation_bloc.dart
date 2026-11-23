@@ -4,6 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/core/offline/offline_queue_item.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_pending_report_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
@@ -23,13 +25,16 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
   final GetActivationSubmissionsUsecase getActivationSubmissionsUsecase;
   final SubmitActivationReportUsecase submitActivationReportUsecase;
   final ActivationPendingReportLocalDatasource pendingReportStore;
+  final OfflineQueueLocalDatasource? offlineQueue;
   final AuthLocalDatasource authLocalDatasource;
+  bool _legacyMigrated = false;
 
   ActivationBloc({
     required this.getActivationRunsUsecase,
     required this.getActivationSubmissionsUsecase,
     required this.submitActivationReportUsecase,
     required this.pendingReportStore,
+    this.offlineQueue,
     required this.authLocalDatasource,
   }) : super(const ActivationState()) {
     on<LoadActivationActivitiesEvent>(_onLoadActivities);
@@ -253,6 +258,31 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
     );
   }
 
+  Future<void> _ensureMigrated() async {
+    if (_legacyMigrated || offlineQueue == null) return;
+    _legacyMigrated = true;
+    try {
+      await pendingReportStore.migrateToSharedQueue(offlineQueue!);
+    } catch (e) {
+      AppLogger.w('[ACTIVATION_BLOC] Legacy migration warning: $e');
+    }
+  }
+
+  PendingActivationReportModel _toPendingModel(OfflineQueueItem item) {
+    return PendingActivationReportModel(
+      id: item.id,
+      userId: item.userId,
+      participantId: item.payload['participant_id'] as String? ?? '',
+      activityTitle: item.payload['activity_title'] as String? ?? 'Penugasan',
+      attachmentPaths: item.attachments.map((a) => a.localPath).toList(),
+      createdAt: item.createdAt,
+      notes: item.payload['notes'] as String?,
+      receiverNik: item.payload['receiver_nik'] as String?,
+      receiverName: item.payload['receiver_name'] as String?,
+      lastError: item.lastError ?? item.payload['last_error'] as String?,
+    );
+  }
+
   Future<bool> _enqueueReport(
     SubmitActivationReportApiEvent event,
     Emitter<ActivationState> emit,
@@ -260,6 +290,32 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
     try {
       final userId = await _currentUserId();
       if (userId == null) return false;
+
+      if (offlineQueue != null) {
+        await _ensureMigrated();
+        final queuedItem = await offlineQueue!.enqueue(
+          userId: userId,
+          featureType: OfflineFeatureType.activation,
+          payload: <String, dynamic>{
+            'participant_id': event.participantId,
+            'activity_title': event.activityTitle,
+            if (event.notes != null) 'notes': event.notes,
+            if (event.receiverNik != null) 'receiver_nik': event.receiverNik,
+            if (event.receiverName != null) 'receiver_name': event.receiverName,
+          },
+          attachments: event.attachments,
+          attachmentFieldKey: 'files[]',
+        );
+        emit(
+          state.copyWith(
+            pendingReports: [
+              ...state.pendingReports,
+              _toPendingModel(queuedItem),
+            ],
+          ),
+        );
+        return true;
+      }
 
       final queued = await pendingReportStore.enqueue(
         userId: userId,
@@ -287,6 +343,16 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
 
   Future<List<PendingActivationReportModel>> _visiblePendingReports() async {
     final userId = await _currentUserId();
+    if (offlineQueue != null) {
+      await _ensureMigrated();
+      if (userId == null) return [];
+      final items = await offlineQueue!.getPending(userId);
+      return items
+          .where((item) => item.featureType == OfflineFeatureType.activation)
+          .map(_toPendingModel)
+          .toList();
+    }
+
     final reports = await pendingReportStore.getPending();
     return reports.where((report) => report.belongsTo(userId)).toList();
   }
@@ -308,23 +374,46 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
 
     emit(state.copyWith(pendingReports: visible, isSyncingPending: true));
 
+    final sharedItemsById = <String, OfflineQueueItem>{};
+    if (offlineQueue != null) {
+      final userId = await _currentUserId();
+      if (userId != null) {
+        final items = await offlineQueue!.getPending(userId);
+        for (final item in items) {
+          sharedItemsById[item.id] = item;
+        }
+      }
+    }
+
     var uploaded = 0;
     final uploadedParticipants = <String>{};
     for (final report in pending) {
+      final sharedItem = sharedItemsById[report.id];
       final result = await submitActivationReportUsecase(
         participantId: report.participantId,
         attachments: report.attachmentPaths.map(File.new).toList(),
         notes: report.notes,
         receiverNik: report.receiverNik,
         receiverName: report.receiverName,
+        idempotencyKey: sharedItem?.clientRequestId,
       );
 
       if (result.isRight) {
-        await pendingReportStore.remove(report.id);
+        if (offlineQueue != null) {
+          await offlineQueue!.remove(report.id);
+        } else {
+          await pendingReportStore.remove(report.id);
+        }
         uploaded++;
         uploadedParticipants.add(report.participantId);
       } else {
-        await pendingReportStore.markError(report.id, result.left.message);
+        if (offlineQueue != null && sharedItem != null) {
+          await offlineQueue!.updateItem(
+            sharedItem.copyWith(lastError: result.left.message),
+          );
+        } else {
+          await pendingReportStore.markError(report.id, result.left.message);
+        }
       }
     }
 
@@ -347,7 +436,11 @@ class ActivationBloc extends Bloc<ActivationEvent, ActivationState> {
     DeletePendingReportEvent event,
     Emitter<ActivationState> emit,
   ) async {
-    await pendingReportStore.remove(event.id);
+    if (offlineQueue != null) {
+      await offlineQueue!.remove(event.id);
+    } else {
+      await pendingReportStore.remove(event.id);
+    }
     emit(
       state.copyWith(
         pendingReports: state.pendingReports

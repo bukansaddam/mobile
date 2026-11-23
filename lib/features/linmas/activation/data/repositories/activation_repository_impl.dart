@@ -52,6 +52,8 @@ class ActivationRepositoryImpl implements ActivationRepository {
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
       final responseModel = await remoteDatasource.submitActivationReport(
@@ -60,6 +62,8 @@ class ActivationRepositoryImpl implements ActivationRepository {
         notes: notes,
         receiverNik: receiverNik,
         receiverName: receiverName,
+        idempotencyKey: idempotencyKey,
+        skipMediaPreparation: skipMediaPreparation,
       );
       return Right(responseModel.toDomain());
     } on FileSecurityException catch (e) {

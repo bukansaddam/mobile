@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:akar/core/offline/offline_queue_item.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -122,6 +124,37 @@ class ActivationPendingReportLocalDatasource {
     await indexFile.writeAsString(
       jsonEncode(reports.map((report) => report.toJson()).toList()),
     );
+  }
+
+  Future<int> migrateToSharedQueue(
+    OfflineQueueLocalDatasource sharedQueue,
+  ) async {
+    final legacyItems = await getPending();
+    if (legacyItems.isEmpty) return 0;
+
+    var migrated = 0;
+    for (final report in legacyItems) {
+      final userId = report.userId.isNotEmpty ? report.userId : 'anonymous';
+      final files = report.attachmentPaths.map(File.new).toList();
+
+      await sharedQueue.enqueue(
+        userId: userId,
+        featureType: OfflineFeatureType.activation,
+        payload: <String, dynamic>{
+          'participant_id': report.participantId,
+          'activity_title': report.activityTitle,
+          if (report.notes != null) 'notes': report.notes,
+          if (report.receiverNik != null) 'receiver_nik': report.receiverNik,
+          if (report.receiverName != null) 'receiver_name': report.receiverName,
+          if (report.lastError != null) 'last_error': report.lastError,
+        },
+        attachments: files,
+        attachmentFieldKey: 'files[]',
+      );
+      await remove(report.id);
+      migrated++;
+    }
+    return migrated;
   }
 
   Future<Directory> _dir() async {

@@ -40,6 +40,8 @@ class _FakeRepository implements ActivationRepository {
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     submitCalls++;
     return submitResult;

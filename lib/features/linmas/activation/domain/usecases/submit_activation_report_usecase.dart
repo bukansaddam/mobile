@@ -15,11 +15,15 @@ class SubmitActivationReportUsecase {
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) => repository.submitActivationReport(
     participantId: participantId,
     attachments: attachments,
     notes: notes,
     receiverNik: receiverNik,
     receiverName: receiverName,
+    idempotencyKey: idempotencyKey,
+    skipMediaPreparation: skipMediaPreparation,
   );
 }

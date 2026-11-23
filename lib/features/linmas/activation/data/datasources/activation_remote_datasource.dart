@@ -27,6 +27,8 @@ abstract class ActivationRemoteDatasource {
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 }
 
@@ -216,12 +218,25 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
-      final prepared = await ImageCompressHelper.prepareMediaFiles(
-        attachments,
-        resolveDeviceLocationIfMissing: true,
-      );
+      final prepared = skipMediaPreparation
+          ? attachments
+          : await ImageCompressHelper.prepareMediaFiles(
+              attachments,
+              resolveDeviceLocationIfMissing: true,
+            );
+      final trimmedKey = idempotencyKey?.trim();
+      final requestOptions = (trimmedKey != null && trimmedKey.isNotEmpty)
+          ? _uploadOptions.copyWith(
+              headers: {
+                ...?_uploadOptions.headers,
+                'X-Idempotency-Key': trimmedKey,
+              },
+            )
+          : _uploadOptions;
 
       final response = await handleRequest<ActivationSubmissionResponseModel>(
         () async => dio.post(
@@ -232,7 +247,7 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
             receiverNik: receiverNik,
             receiverName: receiverName,
           ),
-          options: _uploadOptions,
+          options: requestOptions,
         ),
         fromJson: (json) {
           if (json is Map<String, dynamic>) {

@@ -20,5 +20,7 @@ abstract class ActivationRepository {
     String? notes,
     String? receiverNik,
     String? receiverName,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 }
