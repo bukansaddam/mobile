@@ -57,7 +57,7 @@ class NotificationErrorView extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onRetry,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primaryDark,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

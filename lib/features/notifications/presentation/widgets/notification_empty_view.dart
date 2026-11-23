@@ -74,7 +74,7 @@ class NotificationEmptyView extends StatelessWidget {
                       child: FilledButton(
                         onPressed: onShowAll,
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primaryDark,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),

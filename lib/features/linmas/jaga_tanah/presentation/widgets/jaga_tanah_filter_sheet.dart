@@ -346,7 +346,7 @@ class JagaTanahFilterSheet extends HookWidget {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryDark,
+                  backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.white,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(

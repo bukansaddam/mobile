@@ -202,7 +202,7 @@ class NotificationDetailSheet extends StatelessWidget {
                     onOpenLaporanInsidentil!();
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primaryDark,
+                    backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

@@ -134,7 +134,7 @@ class LaporanInsidentilListScreen extends HookWidget {
               }
               return FloatingActionButton.extended(
                 onPressed: () => _openCreateReport(context),
-                backgroundColor: AppColors.primaryDark,
+                backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.white,
                 elevation: 3,
                 icon: const Icon(Icons.add_rounded),

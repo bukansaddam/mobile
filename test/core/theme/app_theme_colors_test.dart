@@ -1,5 +1,9 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_status_view.dart';
+import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -67,5 +71,75 @@ void main() {
       );
       expect(theme.floatingActionButtonTheme.foregroundColor, AppColors.white);
     });
+  });
+
+  group('Task 2 Primary CTA & Status Views Alignment', () {
+    testWidgets(
+      'NotificationEmptyView, NotificationErrorView, JagaTanahStatusView, and LaporanInsidentilStatusView use AppColors.primary',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: NotificationEmptyView(
+                unreadOnlyFilter: true,
+                onShowAll: () {},
+              ),
+            ),
+          ),
+        );
+        final emptyBtn = tester.widget<FilledButton>(find.byType(FilledButton));
+        expect(emptyBtn.style?.backgroundColor?.resolve({}), AppColors.primary);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: NotificationErrorView(message: 'Gagal', onRetry: () {}),
+            ),
+          ),
+        );
+        final errorBtn = tester.widget<FilledButton>(find.byType(FilledButton));
+        expect(errorBtn.style?.backgroundColor?.resolve({}), AppColors.primary);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: JagaTanahStatusView(
+                icon: Icons.landscape_rounded,
+                iconColor: AppColors.primary,
+                iconBackgroundColor: AppColors.primaryLight,
+                title: 'Kosong',
+                message: 'Belum ada data',
+                actionLabel: 'Buat Laporan',
+                onAction: () {},
+              ),
+            ),
+          ),
+        );
+        final jgBtn = tester.widget<ElevatedButton>(
+          find.byType(ElevatedButton),
+        );
+        expect(jgBtn.style?.backgroundColor?.resolve({}), AppColors.primary);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: LaporanInsidentilStatusView(
+                icon: Icons.report_problem_rounded,
+                iconColor: AppColors.primary,
+                iconBackgroundColor: AppColors.primaryLight,
+                title: 'Kosong',
+                message: 'Belum ada data',
+                actionLabel: 'Coba Lagi',
+                onAction: () {},
+              ),
+            ),
+          ),
+        );
+        final liBtn = tester.widget<ElevatedButton>(
+          find.byType(ElevatedButton),
+        );
+        expect(liBtn.style?.backgroundColor?.resolve({}), AppColors.primary);
+      },
+    );
   });
 }

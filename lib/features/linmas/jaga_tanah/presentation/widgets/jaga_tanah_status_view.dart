@@ -70,7 +70,7 @@ class JagaTanahStatusView extends StatelessWidget {
                         icon: Icon(actionIcon ?? Icons.refresh_rounded),
                         label: Text(actionLabel!),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryDark,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: AppColors.white,
                           minimumSize: const Size(48, 48),
                           padding: const EdgeInsets.symmetric(
