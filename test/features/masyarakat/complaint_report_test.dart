@@ -116,15 +116,16 @@ class _FakeRepository implements ComplaintRepository {
   bool? lastIsInsidentil;
   String? lastStatusFilter;
   String? lastCategoryFilter;
-  Either<Failure, List<ComplaintCategoryOption>> categoriesResult =
-      const Right([
-        ComplaintCategoryOption(
-          id: 1,
-          code: 'bencana-alam',
-          label: 'Bencana Alam',
-        ),
-        ComplaintCategoryOption(id: 2, code: 'lingkungan', label: 'Lingkungan'),
-      ]);
+  Either<Failure, List<ComplaintCategoryOption>> categoriesResult = const Right(
+    [
+      ComplaintCategoryOption(
+        id: 1,
+        code: 'bencana-alam',
+        label: 'Bencana Alam',
+      ),
+      ComplaintCategoryOption(id: 2, code: 'lingkungan', label: 'Lingkungan'),
+    ],
+  );
   int categoryCalls = 0;
 
   @override
@@ -202,6 +203,8 @@ class _FakeRepository implements ComplaintRepository {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) {
     throw UnimplementedError();
   }
@@ -210,9 +213,8 @@ class _FakeRepository implements ComplaintRepository {
 void main() {
   group('Parsing response aduan', () {
     test('list memetakan meta, lampiran absolut, dan status', () {
-      final paginated = ComplaintPaginatedModel.fromJson(
-        _listResponse,
-      ).toDomain();
+      final paginated = ComplaintPaginatedModel.fromJson(_listResponse)
+          .toDomain();
 
       expect(paginated.currentPage, 1);
       expect(paginated.lastPage, 3);
@@ -258,13 +260,11 @@ void main() {
     });
 
     test('detail lengkap dari server terbaca tanpa error', () {
-      final body =
-          jsonDecode(
-                File(
-                  'test/features/masyarakat/fixtures/complaint_detail_completed.json',
-                ).readAsStringSync(),
-              )
-              as Map<String, dynamic>;
+      final body = jsonDecode(
+        File(
+          'test/features/masyarakat/fixtures/complaint_detail_completed.json',
+        ).readAsStringSync(),
+      ) as Map<String, dynamic>;
 
       final report = ComplaintReportDetailModel.fromJson(
         body['data']! as Map<String, dynamic>,
@@ -312,13 +312,10 @@ void main() {
 
   group('Daftar pengaduan publik', () {
     test('response /api/reports terpetakan', () {
-      final body =
-          jsonDecode(
-                File(
-                  'test/features/masyarakat/fixtures/public_complaints.json',
-                ).readAsStringSync(),
-              )
-              as Map<String, dynamic>;
+      final body = jsonDecode(
+        File('test/features/masyarakat/fixtures/public_complaints.json')
+            .readAsStringSync(),
+      ) as Map<String, dynamic>;
 
       final paginated = ComplaintPaginatedModel.fromJson(body).toDomain();
 
@@ -386,9 +383,8 @@ void main() {
         'meta': {'current_page': 1, 'last_page': 1, 'per_page': 20, 'total': 1},
       };
 
-      final paginated = ComplaintPaginatedModel.fromJson(
-        incidentResponse,
-      ).toDomain();
+      final paginated = ComplaintPaginatedModel.fromJson(incidentResponse)
+          .toDomain();
 
       expect(paginated.total, 1);
       expect(paginated.data, hasLength(1));
@@ -578,71 +574,68 @@ void main() {
       },
     );
 
-    test(
-      'ApplyMyComplaintFilterEvent meneruskan status & kategori ke repository dan bertahan saat pagination/refresh',
-      () async {
-        final repository = _FakeRepository();
-        final bloc = MyComplaintListBloc(
-          getMyComplaints: GetMyComplaintsUsecase(repository),
-          getIncidentCategories: GetIncidentCategoriesUsecase(repository),
-        );
-        addTearDown(bloc.close);
+    test('ApplyMyComplaintFilterEvent meneruskan status & kategori ke repository dan bertahan saat pagination/refresh', () async {
+      final repository = _FakeRepository();
+      final bloc = MyComplaintListBloc(
+        getMyComplaints: GetMyComplaintsUsecase(repository),
+        getIncidentCategories: GetIncidentCategoriesUsecase(repository),
+      );
+      addTearDown(bloc.close);
 
-        bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
-        await bloc.stream.firstWhere(
-          (state) => state.status == MyComplaintListStatus.loaded,
-        );
+      bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
+      await bloc.stream.firstWhere(
+        (state) => state.status == MyComplaintListStatus.loaded,
+      );
 
-        bloc.add(
-          const ApplyMyComplaintFilterEvent(
-            status: 'in_progress',
-            category: 'lingkungan',
-          ),
-        );
-        var state = await bloc.stream.firstWhere(
-          (state) =>
-              state.status == MyComplaintListStatus.loaded &&
-              state.statusFilter == 'in_progress' &&
-              state.categoryFilter == 'lingkungan',
-        );
-        expect(repository.lastStatusFilter, 'in_progress');
-        expect(repository.lastCategoryFilter, 'lingkungan');
-        expect(state.activeFilterCount, 2);
-        expect(state.hasActiveFilter, isTrue);
+      bloc.add(
+        const ApplyMyComplaintFilterEvent(
+          status: 'in_progress',
+          category: 'lingkungan',
+        ),
+      );
+      var state = await bloc.stream.firstWhere(
+        (state) =>
+            state.status == MyComplaintListStatus.loaded &&
+            state.statusFilter == 'in_progress' &&
+            state.categoryFilter == 'lingkungan',
+      );
+      expect(repository.lastStatusFilter, 'in_progress');
+      expect(repository.lastCategoryFilter, 'lingkungan');
+      expect(state.activeFilterCount, 2);
+      expect(state.hasActiveFilter, isTrue);
 
-        repository.lastStatusFilter = null;
-        repository.lastCategoryFilter = null;
-        bloc.add(const LoadMoreMyComplaintsEvent());
-        state = await bloc.stream.firstWhere(
-          (state) => state.items.length == 2 && !state.isLoadingMore,
-        );
-        expect(repository.lastStatusFilter, 'in_progress');
-        expect(repository.lastCategoryFilter, 'lingkungan');
+      repository.lastStatusFilter = null;
+      repository.lastCategoryFilter = null;
+      bloc.add(const LoadMoreMyComplaintsEvent());
+      state = await bloc.stream.firstWhere(
+        (state) => state.items.length == 2 && !state.isLoadingMore,
+      );
+      expect(repository.lastStatusFilter, 'in_progress');
+      expect(repository.lastCategoryFilter, 'lingkungan');
 
-        repository.lastStatusFilter = null;
-        repository.lastCategoryFilter = null;
-        bloc.add(
-          const FetchMyComplaintsEvent(isInsidentil: true, isRefresh: true),
-        );
-        await bloc.stream.firstWhere(
-          (state) =>
-              state.status == MyComplaintListStatus.loaded &&
-              state.items.length == 1,
-        );
-        expect(repository.lastStatusFilter, 'in_progress');
-        expect(repository.lastCategoryFilter, 'lingkungan');
+      repository.lastStatusFilter = null;
+      repository.lastCategoryFilter = null;
+      bloc.add(
+        const FetchMyComplaintsEvent(isInsidentil: true, isRefresh: true),
+      );
+      await bloc.stream.firstWhere(
+        (state) =>
+            state.status == MyComplaintListStatus.loaded &&
+            state.items.length == 1,
+      );
+      expect(repository.lastStatusFilter, 'in_progress');
+      expect(repository.lastCategoryFilter, 'lingkungan');
 
-        bloc.add(const ApplyMyComplaintFilterEvent());
-        state = await bloc.stream.firstWhere(
-          (state) =>
-              state.status == MyComplaintListStatus.loaded &&
-              !state.hasActiveFilter,
-        );
-        expect(repository.lastStatusFilter, isNull);
-        expect(repository.lastCategoryFilter, isNull);
-        expect(state.activeFilterCount, 0);
-      },
-    );
+      bloc.add(const ApplyMyComplaintFilterEvent());
+      state = await bloc.stream.firstWhere(
+        (state) =>
+            state.status == MyComplaintListStatus.loaded &&
+            !state.hasActiveFilter,
+      );
+      expect(repository.lastStatusFilter, isNull);
+      expect(repository.lastCategoryFilter, isNull);
+      expect(state.activeFilterCount, 0);
+    });
   });
 
   group('ComplaintDetailBloc', () {

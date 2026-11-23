@@ -24,6 +24,8 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
       final model = await remoteDatasource.createComplaint(
@@ -36,6 +38,8 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
         category: category,
         categoryId: categoryId,
         isInsidentil: isInsidentil,
+        idempotencyKey: idempotencyKey,
+        skipMediaPreparation: skipMediaPreparation,
       );
       return Right(model.toDomain());
     } on FileSecurityException catch (e) {

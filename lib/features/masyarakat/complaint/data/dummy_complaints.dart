@@ -7,8 +7,7 @@ final List<ComplaintItem> dummyMyComplaints = [
     title: 'Lampu Penerangan Jalan Umum (PJU) Mati',
     category: ComplaintCategory.sosial.label,
     dateTime: DateTime.now().subtract(const Duration(hours: 4)),
-    description:
-        'Lampu jalan mati di sepanjang area gang perumahan RT 04. Kondisi jalan menjadi sangat gelap pada malam hari dan rawan kejahatan.',
+    description: 'Lampu jalan mati di sepanjang area gang perumahan RT 04. Kondisi jalan menjadi sangat gelap pada malam hari dan rawan kejahatan.',
     location: 'Jl. Merdeka Gang 3, RT 04 / RW 02, Kelurahan Melati',
     attachments: const ['assets/pju_mati.jpg'],
     status: ComplaintStatus.completed,
@@ -42,8 +41,7 @@ final List<ComplaintItem> dummyMyComplaints = [
     title: 'Permohonan Pembongkaran Saluran Air Mampet',
     category: ComplaintCategory.lingkungan.label,
     dateTime: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-    description:
-        'Saluran air tersumbat oleh endapan lumpur dan sampah sehingga air meluap ke halaman warga saat hujan.',
+    description: 'Saluran air tersumbat oleh endapan lumpur dan sampah sehingga air meluap ke halaman warga saat hujan.',
     location: 'Jl. Anggrek No. 12, RT 02 / RW 05',
     attachments: const ['assets/saluran_air.jpg'],
     status: ComplaintStatus.inProgress,
@@ -71,8 +69,7 @@ final List<ComplaintItem> dummyMyComplaints = [
     title: 'Pohon Rindang Berisiko Tumbang di Depan Rumah',
     category: ComplaintCategory.lingkungan.label,
     dateTime: DateTime.now().subtract(const Duration(days: 3)),
-    description:
-        'Dahan pohon pelindung jalan sudah lapuk dan terlalu lebat, dikhawatirkan rubuh mengenai kabel listrik dan rumah warga.',
+    description: 'Dahan pohon pelindung jalan sudah lapuk dan terlalu lebat, dikhawatirkan rubuh mengenai kabel listrik dan rumah warga.',
     location: 'Jl. Mawar No. 88, Kelurahan Sukajadi',
     attachments: const ['assets/pohon_tumbang.jpg'],
     status: ComplaintStatus.pending,
@@ -95,8 +92,7 @@ final List<ComplaintItem> dummyMyComplaints = [
     title: 'Kebisingan Usaha Bengkel Saat Malam Hari',
     category: ComplaintCategory.sosial.label,
     dateTime: DateTime.now().subtract(const Duration(days: 5)),
-    description:
-        'Aktivitas perbaikan kendaraan bermotor hingga pukul 02.00 dini hari mengganggu jam tidur warga sekitar.',
+    description: 'Aktivitas perbaikan kendaraan bermotor hingga pukul 02.00 dini hari mengganggu jam tidur warga sekitar.',
     location: 'Jl. Veteran No. 14, Bandung',
     attachments: const ['assets/kebisingan.jpg'],
     status: ComplaintStatus.cancelled,
@@ -110,8 +106,7 @@ final List<ComplaintItem> dummyMyComplaints = [
       ComplaintStatusHistory(
         status: ComplaintStatus.cancelled,
         dateTime: DateTime.now().subtract(const Duration(days: 5)),
-        note:
-            'Pengaduan dibatalkan oleh pelapor setelah ada kesepakatan dengan pemilik bengkel.',
+        note: 'Pengaduan dibatalkan oleh pelapor setelah ada kesepakatan dengan pemilik bengkel.',
       ),
     ],
   ),

@@ -15,6 +15,8 @@ abstract class ComplaintRepository {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 
   Future<Either<Failure, ComplaintPaginatedEntity>> getMyComplaints({

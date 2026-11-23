@@ -66,6 +66,8 @@ class _FakeRepository implements ComplaintRepository {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     calls++;
     createComplaintCallback?.call(
@@ -89,6 +91,8 @@ class _ThrowingDatasource implements ComplaintRemoteDatasource {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     throw const FileSecurityException('Berkas tidak valid');
   }
@@ -158,39 +162,36 @@ void main() {
     expect(repository.calls, 1);
   });
 
-  test(
-    'pengaduan insidentil meneruskan category dan flag isInsidentil ke repository',
-    () async {
-      String? passedCategory;
-      int? passedCategoryId;
-      bool? passedIsInsidentil;
-      repository.createComplaintCallback =
-          ({category, categoryId, isInsidentil}) {
-            passedCategory = category;
-            passedCategoryId = categoryId;
-            passedIsInsidentil = isInsidentil;
-          };
+  test('pengaduan insidentil meneruskan category dan flag isInsidentil ke repository', () async {
+    String? passedCategory;
+    int? passedCategoryId;
+    bool? passedIsInsidentil;
+    repository.createComplaintCallback =
+        ({category, categoryId, isInsidentil}) {
+          passedCategory = category;
+          passedCategoryId = categoryId;
+          passedIsInsidentil = isInsidentil;
+        };
 
-      bloc.add(
-        const SubmitComplaintEvent(
-          title: 'Pohon tumbang',
-          description: 'Menutup jalan utama setelah badai',
-          address: 'Jl. Sudirman No. 10',
-          latitude: -6.21,
-          longitude: 106.82,
-          attachments: [],
-          category: 'Bencana Alam',
-          categoryId: 6,
-          isInsidentil: true,
-        ),
-      );
+    bloc.add(
+      const SubmitComplaintEvent(
+        title: 'Pohon tumbang',
+        description: 'Menutup jalan utama setelah badai',
+        address: 'Jl. Sudirman No. 10',
+        latitude: -6.21,
+        longitude: 106.82,
+        attachments: [],
+        category: 'Bencana Alam',
+        categoryId: 6,
+        isInsidentil: true,
+      ),
+    );
 
-      await bloc.stream.firstWhere((state) => state is CreateComplaintSuccess);
-      expect(passedCategory, 'Bencana Alam');
-      expect(passedCategoryId, 6);
-      expect(passedIsInsidentil, isTrue);
-    },
-  );
+    await bloc.stream.firstWhere((state) => state is CreateComplaintSuccess);
+    expect(passedCategory, 'Bencana Alam');
+    expect(passedCategoryId, 6);
+    expect(passedIsInsidentil, isTrue);
+  });
 
   test('kegagalan server memancarkan failure dan pesannya', () async {
     repository.result = const Left(ServerFailure('Server sedang sibuk'));

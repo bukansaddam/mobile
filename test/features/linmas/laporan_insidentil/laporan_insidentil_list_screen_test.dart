@@ -73,6 +73,8 @@ class _FakeComplaintRepository implements ComplaintRepository {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) {
     throw UnimplementedError();
   }

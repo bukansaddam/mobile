@@ -24,6 +24,20 @@ class CreateComplaintSuccess extends CreateComplaintState {
   List<Object?> get props => [report];
 }
 
+class CreateComplaintQueuedOffline extends CreateComplaintState {
+  final String message;
+  final String title;
+
+  const CreateComplaintQueuedOffline({
+    this.message =
+        'Laporan disimpan di antrean offline dan akan dikirim saat online',
+    required this.title,
+  });
+
+  @override
+  List<Object?> get props => [message, title];
+}
+
 class CreateComplaintFailure extends CreateComplaintState {
   final String message;
 

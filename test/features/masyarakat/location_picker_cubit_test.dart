@@ -40,23 +40,20 @@ class _FakeLocationRepository implements LocationRepository {
 }
 
 void main() {
-  test(
-    'LocationPickerCubit does not throw StateError if closed while locating user',
-    () async {
-      final repo = _FakeLocationRepository();
-      final cubit = LocationPickerCubit(
-        getLocationSuggestionsUseCase: GetLocationSuggestionsUseCase(repo),
-        getAddressFromLatLngUseCase: GetAddressFromLatLngUseCase(repo),
-        searchCoordinatesUseCase: SearchCoordinatesUseCase(repo),
-        getCurrentLocationUseCase: GetCurrentLocationUseCase(repo),
-      );
+  test('LocationPickerCubit does not throw StateError if closed while locating user', () async {
+    final repo = _FakeLocationRepository();
+    final cubit = LocationPickerCubit(
+      getLocationSuggestionsUseCase: GetLocationSuggestionsUseCase(repo),
+      getAddressFromLatLngUseCase: GetAddressFromLatLngUseCase(repo),
+      searchCoordinatesUseCase: SearchCoordinatesUseCase(repo),
+      getCurrentLocationUseCase: GetCurrentLocationUseCase(repo),
+    );
 
-      cubit.determineUserPosition();
-      await cubit.close();
+    cubit.determineUserPosition();
+    await cubit.close();
 
-      await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
 
-      expect(cubit.isClosed, isTrue);
-    },
-  );
+    expect(cubit.isClosed, isTrue);
+  });
 }

@@ -19,6 +19,8 @@ class CreateComplaintUsecase {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) {
     return repository.createComplaint(
       title: title,
@@ -30,6 +32,8 @@ class CreateComplaintUsecase {
       category: category,
       categoryId: categoryId,
       isInsidentil: isInsidentil,
+      idempotencyKey: idempotencyKey,
+      skipMediaPreparation: skipMediaPreparation,
     );
   }
 }

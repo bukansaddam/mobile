@@ -21,6 +21,8 @@ abstract class ComplaintRemoteDatasource {
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   });
 
   Future<ComplaintPaginatedModel> getMyComplaints({
@@ -64,15 +66,29 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     String? category,
     int? categoryId,
     bool isInsidentil = false,
+    String? idempotencyKey,
+    bool skipMediaPreparation = false,
   }) async {
     try {
-      final prepared = await ImageCompressHelper.prepareMediaFiles(
-        attachments,
-        latitude: latitude,
-        longitude: longitude,
-        address: address,
-        resolveDeviceLocationIfMissing: address.trim().isEmpty,
-      );
+      final prepared = skipMediaPreparation
+          ? attachments
+          : await ImageCompressHelper.prepareMediaFiles(
+              attachments,
+              latitude: latitude,
+              longitude: longitude,
+              address: address,
+              resolveDeviceLocationIfMissing: address.trim().isEmpty,
+            );
+      final trimmedKey = idempotencyKey?.trim();
+      final requestOptions = (trimmedKey != null && trimmedKey.isNotEmpty)
+          ? _uploadOptions.copyWith(
+              headers: {
+                ...?_uploadOptions.headers,
+                'X-Idempotency-Key': trimmedKey,
+              },
+            )
+          : _uploadOptions;
+
       final endpoint = isInsidentil
           ? ApiConstants.incidentReports
           : ApiConstants.reports;
@@ -90,7 +106,7 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
             categoryId: categoryId,
             isInsidentil: isInsidentil,
           ),
-          options: _uploadOptions,
+          options: requestOptions,
         ),
         fromJson: (json) => ComplaintReportModel.fromJson(
           json is Map ? Map<String, dynamic>.from(json) : const {},
@@ -98,7 +114,10 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       );
 
       if (!response.success) {
-        throwResponseError(response, fallbackMessage: 'Gagal mengirim pengaduan');
+        throwResponseError(
+          response,
+          fallbackMessage: 'Gagal mengirim pengaduan',
+        );
       }
       return response.data ?? const ComplaintReportModel();
     } catch (e, s) {
