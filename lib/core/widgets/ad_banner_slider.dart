@@ -116,6 +116,9 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
               });
             },
             itemBuilder: (context, index) {
+              const scrimMid = Color(0x28000000); // media-overlay
+              const scrimDeep = Color(0xD2000000); // media-overlay
+              const subtitleOverlay = Color(0xF0FFFFFF); // media-overlay
               final item = _bannerItems[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -156,7 +159,7 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                             },
                           ),
 
-                          Positioned.fill(
+                          const Positioned.fill(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
@@ -164,12 +167,10 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withAlpha(40), // media-overlay
-                                    Colors.black.withAlpha(
-                                      210,
-                                    ), // media-overlay
+                                    scrimMid,
+                                    scrimDeep,
                                   ],
-                                  stops: const [0.0, 0.35, 1.0],
+                                  stops: [0.0, 0.35, 1.0],
                                 ),
                               ),
                             ),
@@ -241,12 +242,10 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                     item.subtitle!,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white.withAlpha(
-                                        240,
-                                      ), // media-overlay
+                                    style: const TextStyle(
+                                      color: subtitleOverlay,
                                       fontSize: 12,
-                                      shadows: const [
+                                      shadows: [
                                         Shadow(
                                           color:
                                               Colors.black87, // media-overlay

@@ -142,6 +142,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
             (user.name != null && user.name!.trim().isNotEmpty)
             ? user.name!.trim()[0].toUpperCase()
             : 'U';
+        const ktaSubtitleFg = Color(0xD9FFFFFF); // media-overlay
+        const ktaBadgeBg = Color(0x2EFFFFFF); // media-overlay
+        const ktaBadgeBorder = Color(0x4DFFFFFF); // media-overlay
 
         return Scaffold(
           backgroundColor: colors.background,
@@ -230,11 +233,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                         if (user.username != null && user.username!.isNotEmpty)
                           Text(
                             user.username!,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 13,
-                              color: Colors.white.withValues(
-                                alpha: 0.85,
-                              ), // media-overlay
+                              color: ktaSubtitleFg,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -245,15 +246,9 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(
-                              alpha: 0.18,
-                            ), // media-overlay
+                            color: ktaBadgeBg,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.white.withValues(
-                                alpha: 0.3,
-                              ), // media-overlay
-                            ),
+                            border: Border.all(color: ktaBadgeBorder),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,

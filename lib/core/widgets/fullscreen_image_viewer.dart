@@ -3,6 +3,10 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+const _mediaWhite = Colors.white; // media-overlay
+const _mediaPillBg = Color(0x99000000); // media-overlay
+const _mediaHintBg = Color(0x80000000); // media-overlay
+
 class FullscreenImageViewer extends StatefulWidget {
   final List<String> images;
   final int initialIndex;
@@ -82,11 +86,8 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         imageUrl: imagePathOrUrl,
         httpHeaders: widget.httpHeaders,
         fit: BoxFit.contain,
-        placeholder: (context, url) => const Center(
-          child: CircularProgressIndicator(
-            color: Colors.white,
-          ), // media-overlay
-        ),
+        placeholder: (context, url) =>
+            const Center(child: CircularProgressIndicator(color: _mediaWhite)),
         errorWidget: (context, url, error) => const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -144,9 +145,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
               httpHeaders: widget.httpHeaders,
               fit: BoxFit.contain,
               placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                ), // media-overlay
+                child: CircularProgressIndicator(color: _mediaWhite),
               ),
               errorWidget: (context, url, error) => const Center(
                 child: Icon(
@@ -202,10 +201,8 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(
-                        alpha: 0.6,
-                      ), // media-overlay
+                    decoration: const BoxDecoration(
+                      color: _mediaPillBg,
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
@@ -225,9 +222,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(
-                          alpha: 0.6,
-                        ), // media-overlay
+                        color: _mediaPillBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -248,9 +243,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(
-                          alpha: 0.6,
-                        ), // media-overlay
+                        color: _mediaPillBg,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -302,9 +295,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(
-                        alpha: 0.5,
-                      ), // media-overlay
+                      color: _mediaHintBg,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(

@@ -113,6 +113,10 @@ class _KtaCardModalState extends State<KtaCardModal> {
 
     final colors = context.appColors;
     final initialLetter = name.isNotEmpty ? name[0].toUpperCase() : 'U';
+    const ktaBadgeBg = Color(0x33FFFFFF); // media-overlay
+    const ktaBadgeBorder = Color(0x66FFFFFF); // media-overlay
+    const ktaVerifiedFg = Color(0xFF86EFAC); // media-overlay
+    const ktaFooterBg = Color(0x40000000); // media-overlay
 
     return Container(
       decoration: BoxDecoration(
@@ -187,10 +191,8 @@ class _KtaCardModalState extends State<KtaCardModal> {
                       children: [
                         Container(
                           padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(
-                              alpha: 0.2,
-                            ), // media-overlay
+                          decoration: const BoxDecoration(
+                            color: ktaBadgeBg,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -236,15 +238,9 @@ class _KtaCardModalState extends State<KtaCardModal> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(
-                              alpha: 0.2,
-                            ), // media-overlay
+                            color: ktaBadgeBg,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.white.withValues(
-                                alpha: 0.4,
-                              ), // media-overlay
-                            ),
+                            border: Border.all(color: ktaBadgeBorder),
                           ),
                           child: Text(
                             roleTitle,
@@ -347,9 +343,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               _buildKtaDetailRow(
                                 'Status',
                                 'TERVERIFIKASI ✓',
-                                textColor: const Color(
-                                  0xFF86EFAC,
-                                ), // media-overlay
+                                textColor: ktaVerifiedFg,
                               ),
                             ],
                           ),
@@ -364,9 +358,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(
-                          alpha: 0.25,
-                        ), // media-overlay
+                        color: ktaFooterBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
