@@ -25,18 +25,11 @@ class RondaRemoteDatasourceImpl extends BaseRemoteDataSource
       if (response.success && response.data != null) {
         return response.data!;
       } else {
-        throw Exception(response.message ?? 'Gagal mengirim laporan harian');
+        throwResponseError(response, fallbackMessage: 'Gagal mengirim laporan harian');
       }
-    } on DioException catch (e) {
-      AppLogger.e(
-        '[RONDA_DS] DioException in submitLaporan: ${e.message}',
-        e,
-        e.stackTrace,
-      );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
-      AppLogger.e('[RONDA_DS] Unexpected error: $e', e, s);
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      AppLogger.e('[RONDA_DS] Error in submitLaporan: $e', e, s);
+      rethrow;
     }
   }
 }

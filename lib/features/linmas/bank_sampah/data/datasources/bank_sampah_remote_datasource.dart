@@ -142,21 +142,23 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     }
 
     final formData = FormData.fromMap(map);
-    final response = await dio.post(
-      ApiConstants.bankSampahDeposits,
-      data: formData,
-      options: Options(contentType: 'multipart/form-data'),
+    final response = await handleRequest<BankSampahReportModel>(
+      () => dio.post(
+        ApiConstants.bankSampahDeposits,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      ),
+      fromJson: (json) => BankSampahReportModel.fromJson(
+        json is Map ? Map<String, dynamic>.from(json) : const {},
+      ),
     );
 
-    final rawData = response.data;
-    if (rawData is Map && rawData['data'] is Map) {
-      return BankSampahReportModel.fromJson(
-        Map<String, dynamic>.from(rawData['data'] as Map),
-      );
+    if (response.success && response.data != null) {
+      return response.data!;
     }
-    throw Exception(
-      (rawData is Map ? rawData['message'] : null) ??
-          'Gagal menambahkan setoran sampah',
+    throwResponseError(
+      response,
+      fallbackMessage: 'Gagal menambahkan setoran sampah',
     );
   }
 }

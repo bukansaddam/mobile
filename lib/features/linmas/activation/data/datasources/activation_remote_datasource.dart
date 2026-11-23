@@ -250,17 +250,11 @@ class ActivationRemoteDatasourceImpl extends BaseRemoteDataSource
       if (response.success && response.data != null) {
         return response.data!;
       } else {
-        throw Exception(
-          response.message ?? 'Gagal mengunggah laporan penugasan',
+        throwResponseError(
+          response,
+          fallbackMessage: 'Gagal mengunggah laporan penugasan',
         );
       }
-    } on DioException catch (e) {
-      AppLogger.e(
-        '[ACTIVATION_DS] DioException in submitActivationReport: ${e.message}',
-        e,
-        e.stackTrace,
-      );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[ACTIVATION_DS] Error in submitActivationReport: $e', e, s);
       rethrow;

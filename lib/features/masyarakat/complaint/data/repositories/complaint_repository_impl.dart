@@ -41,7 +41,7 @@ class ComplaintRepositoryImpl implements ComplaintRepository {
     } on FileSecurityException catch (e) {
       return Left(ValidationFailure(e.message));
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 

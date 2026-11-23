@@ -65,15 +65,8 @@ class ActivationRepositoryImpl implements ActivationRepository {
       return Right(responseModel.toDomain());
     } on FileSecurityException catch (e) {
       return Left(ValidationFailure(e.message));
-    } on DioException catch (e) {
-      return Left(
-        ServerFailure(
-          ErrorUtils.parseErrorMessage(e),
-          statusCode: e.response?.statusCode,
-        ),
-      );
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 }

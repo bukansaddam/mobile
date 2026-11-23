@@ -98,16 +98,9 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
       );
 
       if (!response.success) {
-        throw Exception(response.message ?? 'Gagal mengirim pengaduan');
+        throwResponseError(response, fallbackMessage: 'Gagal mengirim pengaduan');
       }
       return response.data ?? const ComplaintReportModel();
-    } on DioException catch (e) {
-      AppLogger.e(
-        '[COMPLAINT_DS] DioException in createComplaint: ${e.message}',
-        e,
-        e.stackTrace,
-      );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
     } catch (e, s) {
       AppLogger.e('[COMPLAINT_DS] Error in createComplaint: $e', e, s);
       rethrow;

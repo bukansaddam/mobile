@@ -34,7 +34,7 @@ class Failure {
     if (this is NetworkFailure) return true;
     if (this is ValidationFailure || this is CacheFailure) return false;
     final code = statusCode;
-    return code != null && (code == 408 || code == 429 || code >= 500);
+    return code != null && (code == 408 || code == 409 || code == 429 || code >= 500);
   }
 
   /// Kredensial atau sesi ditolak secara eksplisit oleh server.

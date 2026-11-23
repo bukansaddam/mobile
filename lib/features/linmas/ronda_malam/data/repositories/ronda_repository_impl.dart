@@ -18,7 +18,7 @@ class RondaRepositoryImpl implements RondaRepository {
       final resultModel = await remoteDatasource.submitLaporan(model);
       return Right(resultModel.toDomain());
     } catch (e) {
-      return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 }

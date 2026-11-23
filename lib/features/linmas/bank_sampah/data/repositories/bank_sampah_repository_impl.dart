@@ -60,7 +60,7 @@ class BankSampahRepositoryImpl implements BankSampahRepository {
         );
         return Right(remoteModel.toDomain());
       } catch (e) {
-        return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+        return Left(ErrorUtils.toFailure(e));
       }
     }
 
