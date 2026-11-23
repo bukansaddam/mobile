@@ -1,6 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_formatted_text.dart';
 import 'package:flutter/material.dart';
 
@@ -51,12 +52,8 @@ class AiChatMessageBubble extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.auto_awesome_rounded,
-                        size: 14,
-                        color: colors.primary,
-                      ),
-                      const SizedBox(width: 4),
+                      const AiChatAvatar(size: 18),
+                      const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           'Asisten AI Siska',

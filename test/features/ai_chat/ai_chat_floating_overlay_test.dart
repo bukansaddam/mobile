@@ -1,6 +1,7 @@
 import 'package:akar/core/di/injection_container.dart' as di;
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,6 +45,7 @@ void main() {
 
       final fabFinder = find.byKey(const Key('ai_chat_floating_fab'));
       expect(fabFinder, findsOneWidget);
+      expect(find.byType(AiChatAvatar), findsOneWidget);
 
       final opacityFinder = find.byKey(
         const Key('ai_chat_floating_fab_opacity'),

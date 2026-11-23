@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/theme/app_color_scheme.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:flutter/material.dart';
 
 /// Overlay FAB Asisten AI Siska yang dapat digeser (drag) dan menempel otomatis ke tepi layar.
@@ -141,38 +142,35 @@ class _AiChatFloatingOverlayState extends State<AiChatFloatingOverlay> {
                       message: 'Tanya Asisten AI Siska',
                       child: Material(
                         key: const Key('ai_chat_floating_fab'),
-                        color: colors.primary,
+                        color: Colors.transparent,
                         elevation: 6,
                         shadowColor: colors.shadow,
-                        shape: CircleBorder(
-                          side: BorderSide(
-                            color: colors.onPrimary.withValues(alpha: 0.25),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            _wakeUp();
-                            _scheduleIdle();
-                            widget.onTap();
-                          },
-                          onHighlightChanged: (active) {
-                            if (active) {
-                              _wakeUp();
-                            } else if (!_isDragging) {
-                              _scheduleIdle();
-                            }
-                          },
-                          customBorder: const CircleBorder(),
-                          child: SizedBox(
-                            width: _bubbleSize,
-                            height: _bubbleSize,
-                            child: Icon(
-                              Icons.auto_awesome_rounded,
-                              color: colors.onPrimary,
-                              size: 26,
+                        shape: const CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        child: Stack(
+                          children: [
+                            const AiChatAvatar(size: _bubbleSize),
+                            Positioned.fill(
+                              child: Material(
+                                type: MaterialType.transparency,
+                                child: InkWell(
+                                  onTap: () {
+                                    _wakeUp();
+                                    _scheduleIdle();
+                                    widget.onTap();
+                                  },
+                                  onHighlightChanged: (active) {
+                                    if (active) {
+                                      _wakeUp();
+                                    } else if (!_isDragging) {
+                                      _scheduleIdle();
+                                    }
+                                  },
+                                  customBorder: const CircleBorder(),
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),

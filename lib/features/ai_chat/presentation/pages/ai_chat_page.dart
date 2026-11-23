@@ -4,6 +4,7 @@ import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_state.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_empty_view.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_input_bar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_message_bubble.dart';
@@ -236,11 +237,7 @@ class _AiChatPageState extends State<AiChatPage> {
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Row(
                               children: [
-                                Icon(
-                                  Icons.auto_awesome_rounded,
-                                  size: 16,
-                                  color: colors.primary,
-                                ),
+                                const AiChatAvatar(size: 20),
                                 const SizedBox(width: 8),
                                 Flexible(
                                   child: Text(

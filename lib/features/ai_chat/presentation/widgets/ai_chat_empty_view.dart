@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:flutter/material.dart';
 
 /// Tampilan awal percakapan Siska dengan contoh pertanyaan cepat berbasis peran pengguna.
@@ -40,20 +41,7 @@ class AiChatEmptyView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: colors.primaryLight,
-              shape: BoxShape.circle,
-              border: Border.all(color: colors.primaryBorder),
-            ),
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: colors.primary,
-              size: 30,
-            ),
-          ),
+          const AiChatAvatar(size: 88),
           const SizedBox(height: 14),
           Text(
             'Halo, saya Siska',

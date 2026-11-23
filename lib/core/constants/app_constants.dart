@@ -12,6 +12,7 @@ class AppConstants {
   static const String logoGeneralAsset = 'assets/logo_general.webp';
   static const String logoLinmasAsset = 'assets/logo_linmas.png';
   static const String logoDumasAsset = 'assets/logo_dumas.webp';
+  static const String siskaAvatarAsset = 'assets/siska_avatar.webp';
 
   // Storage Keys
 
