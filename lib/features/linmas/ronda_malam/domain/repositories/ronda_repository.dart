@@ -3,6 +3,7 @@ import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_e
 
 abstract class RondaRepository {
   Future<Either<Failure, RondaLaporanEntity>> submitLaporan(
-    RondaLaporanEntity data,
-  );
+    RondaLaporanEntity data, {
+    String? idempotencyKey,
+  });
 }

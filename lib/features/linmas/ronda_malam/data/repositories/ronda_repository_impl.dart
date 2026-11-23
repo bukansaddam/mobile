@@ -11,11 +11,15 @@ class RondaRepositoryImpl implements RondaRepository {
 
   @override
   Future<Either<Failure, RondaLaporanEntity>> submitLaporan(
-    RondaLaporanEntity data,
-  ) async {
+    RondaLaporanEntity data, {
+    String? idempotencyKey,
+  }) async {
     try {
       final model = data.toModel();
-      final resultModel = await remoteDatasource.submitLaporan(model);
+      final resultModel = await remoteDatasource.submitLaporan(
+        model,
+        idempotencyKey: idempotencyKey,
+      );
       return Right(resultModel.toDomain());
     } catch (e) {
       return Left(ErrorUtils.toFailure(e));

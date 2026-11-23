@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_entity.dart';
+import 'package:akar/core/offline/offline_queue_item.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
+import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
+import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_mapper.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/usecases/submit_ronda_laporan_usecase.dart';
 import 'package:akar/utils/app_logger.dart';
 
@@ -9,9 +12,14 @@ part 'ronda_state.dart';
 
 class RondaBloc extends Bloc<RondaEvent, RondaState> {
   final SubmitRondaLaporanUsecase submitRondaLaporanUsecase;
+  final OfflineQueueLocalDatasource? offlineQueue;
+  final AuthLocalDatasource? authLocalDatasource;
 
-  RondaBloc({required this.submitRondaLaporanUsecase})
-    : super(const RondaInitial()) {
+  RondaBloc({
+    required this.submitRondaLaporanUsecase,
+    this.offlineQueue,
+    this.authLocalDatasource,
+  }) : super(const RondaInitial()) {
     on<SetRondaStepEvent>(_onSetStep);
     on<NextRondaStepEvent>(_onNextStep);
     on<PreviousRondaStepEvent>(_onPreviousStep);
@@ -131,12 +139,36 @@ class RondaBloc extends Bloc<RondaEvent, RondaState> {
 
     final result = await submitRondaLaporanUsecase(dataEntity);
 
-    result.fold(
-      (failure) {
+    await result.fold(
+      (failure) async {
+        if (failure.isRetryable && offlineQueue != null) {
+          try {
+            final userId = authLocalDatasource?.getCachedUserId() ?? '';
+            final model = dataEntity.toModel();
+            await offlineQueue!.enqueue(
+              userId: userId,
+              featureType: OfflineFeatureType.ronda,
+              payload: model.toJson(),
+            );
+            AppLogger.i(
+              '[RONDA_BLOC] Laporan ronda disimpan ke antrean offline',
+            );
+            emit(
+              state.toActionSuccess(
+                laporan: dataEntity,
+                message: 'Laporan ronda disimpan di antrean offline dan akan dikirim saat online',
+              ),
+            );
+            return;
+          } catch (e) {
+            AppLogger.e('[RONDA_BLOC] Gagal menyimpan ke antrean offline: $e');
+          }
+        }
+
         AppLogger.e('[RONDA_BLOC] Submit laporan failed: ${failure.message}');
         emit(state.toActionFailure(failure.message));
       },
-      (dataResult) {
+      (dataResult) async {
         AppLogger.i('[RONDA_BLOC] Submit laporan succeeded: ${dataResult.id}');
         emit(
           state.toActionSuccess(

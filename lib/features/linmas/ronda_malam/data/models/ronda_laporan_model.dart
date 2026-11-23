@@ -253,9 +253,8 @@ abstract class RondaLaporanModel with _$RondaLaporanModel {
     double? resolvedLngJalanRusak = longitudeJalanRusak;
     if ((resolvedLatJalanRusak == null || resolvedLngJalanRusak == null) &&
         lokasiJalanRusakGps != null) {
-      final match = RegExp(
-        r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)',
-      ).firstMatch(lokasiJalanRusakGps!);
+      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
+          .firstMatch(lokasiJalanRusakGps!);
       if (match != null) {
         resolvedLatJalanRusak ??= double.tryParse(match.group(1)!);
         resolvedLngJalanRusak ??= double.tryParse(match.group(2)!);
@@ -283,9 +282,8 @@ abstract class RondaLaporanModel with _$RondaLaporanModel {
     double? resolvedLngLampuMati = longitudeLampuMati;
     if ((resolvedLatLampuMati == null || resolvedLngLampuMati == null) &&
         lokasiLampuMatiGps != null) {
-      final match = RegExp(
-        r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)',
-      ).firstMatch(lokasiLampuMatiGps!);
+      final match = RegExp(r'(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)')
+          .firstMatch(lokasiLampuMatiGps!);
       if (match != null) {
         resolvedLatLampuMati ??= double.tryParse(match.group(1)!);
         resolvedLngLampuMati ??= double.tryParse(match.group(2)!);

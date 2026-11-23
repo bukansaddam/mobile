@@ -13,8 +13,7 @@ class RondaSuccessDialog {
     return AppDialogs.showSuccess(
       context,
       title: 'Laporan Harian Berhasil Terkirim!',
-      message:
-          'Laporan harian Anda telah tersimpan. Terima kasih atas partisipasi siaga lingkungan.',
+      message: 'Laporan harian Anda telah tersimpan. Terima kasih atas partisipasi siaga lingkungan.',
       buttonText: 'KEMBALI KE HALAMAN UTAMA',
       onPressed: onDismiss,
     );

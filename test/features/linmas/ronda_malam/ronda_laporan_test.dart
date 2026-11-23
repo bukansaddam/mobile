@@ -12,7 +12,10 @@ class FakeRondaRemoteDatasource implements RondaRemoteDatasource {
   String? returnId;
 
   @override
-  Future<RondaLaporanModel> submitLaporan(RondaLaporanModel model) async {
+  Future<RondaLaporanModel> submitLaporan(
+    RondaLaporanModel model, {
+    String? idempotencyKey,
+  }) async {
     if (shouldThrow) {
       throw Exception('Koneksi terputus');
     }
@@ -53,7 +56,10 @@ void main() {
 
       expect(payload['patrol_time'], '16:00');
       expect(payload['waktu_kejadian'], '15:30');
-      expect(payload['notes'], 'Patroli selesai dalam keadaan aman dan terkendali.');
+      expect(
+        payload['notes'],
+        'Patroli selesai dalam keadaan aman dan terkendali.',
+      );
 
       final checklist = payload['patrol_checklist'] as Map<String, dynamic>;
 
@@ -87,93 +93,88 @@ void main() {
       });
 
       // Perkelahian Kelompok
-      expect(checklist['perkelahian_kelompok'], {
-        'answer': 'tidak',
-      });
+      expect(checklist['perkelahian_kelompok'], {'answer': 'tidak'});
 
       // Penyalahgunaan Narkoba
-      expect(checklist['penyalahgunaan_narkoba'], {
-        'answer': 'tidak',
-      });
+      expect(checklist['penyalahgunaan_narkoba'], {'answer': 'tidak'});
 
       // Selokan Tersumbat
-      expect(checklist['selokan_tersumbat'], {
-        'answer': 'tidak',
-      });
+      expect(checklist['selokan_tersumbat'], {'answer': 'tidak'});
 
       // Jalan Rusak
-      expect(checklist['jalan_rusak'], {
-        'answer': 'tidak',
-        'resiko': 'str',
-      });
+      expect(checklist['jalan_rusak'], {'answer': 'tidak', 'resiko': 'str'});
 
       // Lampu Mati
-      expect(checklist['lampu_mati'], {
-        'answer': 'tidak',
-      });
+      expect(checklist['lampu_mati'], {'answer': 'tidak'});
     });
 
-    test('toDailyReportPayload handles affirmative security and environment flags', () {
-      const model = RondaLaporanModel(
-        patrolTime: '21:00',
-        waktuKejadian: '20:30',
-        adaPencurian: true,
-        waktuPencurian: '20:15',
-        lokasiPencurian: 'Jl Mawar',
-        pelakuPencurianDiketahui: 'Ya',
-        pencurianDilaporkanAparat: 'Ya',
-        adaTawuran: true,
-        waktuTawuran: '20:30',
-        lokasiTawuran: 'Perempatan',
-        pelakuTawuranDiketahui: 'Ya',
-        tawuranDilaporkanAparat: 'Ya',
-        adaNarkoba: true,
-        narkobaDilaporkanAparat: 'Ya',
-        adaSelokanTersumbat: true,
-        waktuSelokanTersumbat: '19:00',
-        lokasiSelokanTersumbat: 'RT 01',
-        resikoSelokanTersumbat: 'Banjir saat hujan',
-        adaJalanRusak: true,
-        lokasiJalanRusakGps: '-6.2, 106.8',
-        resikoJalanRusak: 'Kecelakaan motor',
-        adaLampuMati: true,
-        lokasiLampuMatiGps: '-6.21, 106.81',
-        resikoLampuMati: 'Rawan kejahatan malam',
-        pengangkutanSesuaiJadwal: true,
-      );
+    test(
+      'toDailyReportPayload handles affirmative security and environment flags',
+      () {
+        const model = RondaLaporanModel(
+          patrolTime: '21:00',
+          waktuKejadian: '20:30',
+          adaPencurian: true,
+          waktuPencurian: '20:15',
+          lokasiPencurian: 'Jl Mawar',
+          pelakuPencurianDiketahui: 'Ya',
+          pencurianDilaporkanAparat: 'Ya',
+          adaTawuran: true,
+          waktuTawuran: '20:30',
+          lokasiTawuran: 'Perempatan',
+          pelakuTawuranDiketahui: 'Ya',
+          tawuranDilaporkanAparat: 'Ya',
+          adaNarkoba: true,
+          narkobaDilaporkanAparat: 'Ya',
+          adaSelokanTersumbat: true,
+          waktuSelokanTersumbat: '19:00',
+          lokasiSelokanTersumbat: 'RT 01',
+          resikoSelokanTersumbat: 'Banjir saat hujan',
+          adaJalanRusak: true,
+          lokasiJalanRusakGps: '-6.2, 106.8',
+          resikoJalanRusak: 'Kecelakaan motor',
+          adaLampuMati: true,
+          lokasiLampuMatiGps: '-6.21, 106.81',
+          resikoLampuMati: 'Rawan kejahatan malam',
+          pengangkutanSesuaiJadwal: true,
+        );
 
-      final payload = model.toDailyReportPayload();
-      final checklist = payload['patrol_checklist'] as Map<String, dynamic>;
+        final payload = model.toDailyReportPayload();
+        final checklist = payload['patrol_checklist'] as Map<String, dynamic>;
 
-      expect(checklist['pencurian_perampasan']['answer'], 'ya');
-      expect(checklist['pencurian_perampasan']['pelaku_diketahui'], 'ya');
-      expect(checklist['pencurian_perampasan']['lapor_aparat'], 'ya');
-      expect(checklist['pencurian_perampasan']['lokasi_kejadian'], 'Jl Mawar');
+        expect(checklist['pencurian_perampasan']['answer'], 'ya');
+        expect(checklist['pencurian_perampasan']['pelaku_diketahui'], 'ya');
+        expect(checklist['pencurian_perampasan']['lapor_aparat'], 'ya');
+        expect(
+          checklist['pencurian_perampasan']['lokasi_kejadian'],
+          'Jl Mawar',
+        );
 
-      expect(checklist['perkelahian_kelompok']['answer'], 'ya');
-      expect(checklist['perkelahian_kelompok']['pelaku_diketahui'], 'ya');
+        expect(checklist['perkelahian_kelompok']['answer'], 'ya');
+        expect(checklist['perkelahian_kelompok']['pelaku_diketahui'], 'ya');
 
-      expect(checklist['penyalahgunaan_narkoba']['answer'], 'ya');
-      expect(checklist['penyalahgunaan_narkoba']['lapor_aparat'], 'ya');
+        expect(checklist['penyalahgunaan_narkoba']['answer'], 'ya');
+        expect(checklist['penyalahgunaan_narkoba']['lapor_aparat'], 'ya');
 
-      expect(checklist['selokan_tersumbat']['answer'], 'ya');
-      expect(checklist['selokan_tersumbat']['resiko'], 'Banjir saat hujan');
+        expect(checklist['selokan_tersumbat']['answer'], 'ya');
+        expect(checklist['selokan_tersumbat']['resiko'], 'Banjir saat hujan');
 
-      expect(checklist['jalan_rusak']['answer'], 'ya');
-      expect(checklist['jalan_rusak']['resiko'], 'Kecelakaan motor');
-      expect(checklist['jalan_rusak']['lokasi_kejadian'], '-6.2, 106.8');
-      expect(checklist['jalan_rusak']['latitude'], -6.2);
-      expect(checklist['jalan_rusak']['longitude'], 106.8);
+        expect(checklist['jalan_rusak']['answer'], 'ya');
+        expect(checklist['jalan_rusak']['resiko'], 'Kecelakaan motor');
+        expect(checklist['jalan_rusak']['lokasi_kejadian'], '-6.2, 106.8');
+        expect(checklist['jalan_rusak']['latitude'], -6.2);
+        expect(checklist['jalan_rusak']['longitude'], 106.8);
 
-      expect(checklist['lampu_mati']['answer'], 'ya');
-      expect(checklist['lampu_mati']['resiko'], 'Rawan kejahatan malam');
-      expect(checklist['lampu_mati']['lokasi_kejadian'], '-6.21, 106.81');
-      expect(checklist['lampu_mati']['latitude'], -6.21);
-      expect(checklist['lampu_mati']['longitude'], 106.81);
+        expect(checklist['lampu_mati']['answer'], 'ya');
+        expect(checklist['lampu_mati']['resiko'], 'Rawan kejahatan malam');
+        expect(checklist['lampu_mati']['lokasi_kejadian'], '-6.21, 106.81');
+        expect(checklist['lampu_mati']['latitude'], -6.21);
+        expect(checklist['lampu_mati']['longitude'], 106.81);
 
-      expect(checklist['jadwal_pengangkutan']['answer'], 'ya');
-      expect(checklist['jadwal_pengangkutan'].containsKey('alasan'), isFalse);
-    });
+        expect(checklist['jadwal_pengangkutan']['answer'], 'ya');
+        expect(checklist['jadwal_pengangkutan'].containsKey('alasan'), isFalse);
+      },
+    );
 
     test('toDailyReportPayload includes explicit coordinates for jalan_rusak and lampu_mati', () {
       const model = RondaLaporanModel(
@@ -199,7 +200,10 @@ void main() {
       expect(checklist['jalan_rusak']['resiko'], 'Rawan kecelakaan');
 
       expect(checklist['lampu_mati']['answer'], 'ya');
-      expect(checklist['lampu_mati']['lokasi_kejadian'], 'Tiang Listrik Musholla');
+      expect(
+        checklist['lampu_mati']['lokasi_kejadian'],
+        'Tiang Listrik Musholla',
+      );
       expect(checklist['lampu_mati']['latitude'], -6.237650);
       expect(checklist['lampu_mati']['longitude'], 106.853490);
       expect(checklist['lampu_mati']['resiko'], 'Area gelap');
@@ -211,20 +215,17 @@ void main() {
         keterangan: 'Test notes',
       );
 
-      final fromMap = RondaLaporanModel.fromApiResponse(
-        {'id': 'REP-999', 'status': 'success'},
-        fallback: fallback,
-      );
+      final fromMap = RondaLaporanModel.fromApiResponse({
+        'id': 'REP-999',
+        'status': 'success',
+      }, fallback: fallback);
       expect(fromMap.id, 'REP-999');
       expect(fromMap.patrolTime, '10:00');
       expect(fromMap.keterangan, 'Test notes');
 
-      final fromNested = RondaLaporanModel.fromApiResponse(
-        {
-          'data': {'report_id': 777}
-        },
-        fallback: fallback,
-      );
+      final fromNested = RondaLaporanModel.fromApiResponse({
+        'data': {'report_id': 777},
+      }, fallback: fallback);
       expect(fromNested.id, '777');
     });
   });
@@ -238,38 +239,41 @@ void main() {
       repository = RondaRepositoryImpl(remoteDatasource: fakeDatasource);
     });
 
-    test('submitLaporan calls datasource and returns Right(RondaLaporanEntity)', () async {
-      const entity = RondaLaporanEntity(
-        patrolTime: '16:00',
-        waktuKejadian: '15:30',
-        keterangan: 'Aman',
-      );
+    test(
+      'submitLaporan calls datasource and returns Right(RondaLaporanEntity)',
+      () async {
+        const entity = RondaLaporanEntity(
+          patrolTime: '16:00',
+          waktuKejadian: '15:30',
+          keterangan: 'Aman',
+        );
 
-      final result = await repository.submitLaporan(entity);
+        final result = await repository.submitLaporan(entity);
 
-      expect(result.isRight, isTrue);
-      result.fold(
-        (_) => fail('Should be right'),
-        (saved) {
+        expect(result.isRight, isTrue);
+        result.fold((_) => fail('Should be right'), (saved) {
           expect(saved.id, 'RND-12345');
           expect(saved.patrolTime, '16:00');
           expect(saved.keterangan, 'Aman');
-        },
-      );
-    });
+        });
+      },
+    );
 
-    test('submitLaporan returns Left(ServerFailure) on datasource exception', () async {
-      fakeDatasource.shouldThrow = true;
-      const entity = RondaLaporanEntity(keterangan: 'Aman');
+    test(
+      'submitLaporan returns Left(ServerFailure) on datasource exception',
+      () async {
+        fakeDatasource.shouldThrow = true;
+        const entity = RondaLaporanEntity(keterangan: 'Aman');
 
-      final result = await repository.submitLaporan(entity);
+        final result = await repository.submitLaporan(entity);
 
-      expect(result.isLeft, isTrue);
-      result.fold(
-        (failure) => expect(failure.message, contains('Koneksi terputus')),
-        (_) => fail('Should be left'),
-      );
-    });
+        expect(result.isLeft, isTrue);
+        result.fold(
+          (failure) => expect(failure.message, contains('Koneksi terputus')),
+          (_) => fail('Should be left'),
+        );
+      },
+    );
   });
 
   group('RondaBloc', () {
@@ -289,27 +293,32 @@ void main() {
       bloc.close();
     });
 
-    test('UpdateRondaFieldEvent updates patrolTime and waktuKejadian in state', () async {
-      bloc.add(const UpdateRondaFieldEvent(
-        patrolTime: '18:00',
-        waktuKejadian: '17:45',
-        keterangan: 'Catatan patroli malam',
-      ));
+    test(
+      'UpdateRondaFieldEvent updates patrolTime and waktuKejadian in state',
+      () async {
+        bloc.add(
+          const UpdateRondaFieldEvent(
+            patrolTime: '18:00',
+            waktuKejadian: '17:45',
+            keterangan: 'Catatan patroli malam',
+          ),
+        );
 
-      await expectLater(
-        bloc.stream,
-        emits(predicate<RondaState>((state) {
-          return state.patrolTime == '18:00' &&
-              state.waktuKejadian == '17:45' &&
-              state.keterangan == 'Catatan patroli malam';
-        })),
-      );
-    });
+        await expectLater(
+          bloc.stream,
+          emits(
+            predicate<RondaState>((state) {
+              return state.patrolTime == '18:00' &&
+                  state.waktuKejadian == '17:45' &&
+                  state.keterangan == 'Catatan patroli malam';
+            }),
+          ),
+        );
+      },
+    );
 
     test('SubmitRondaLaporanEvent emits submitting then success on successful API response with time now', () async {
-      bloc.add(const UpdateRondaFieldEvent(
-        keterangan: 'Semua aman',
-      ));
+      bloc.add(const UpdateRondaFieldEvent(keterangan: 'Semua aman'));
       await Future.delayed(const Duration(milliseconds: 10));
 
       bloc.add(const SubmitRondaLaporanEvent());
@@ -321,8 +330,9 @@ void main() {
       await subscription.cancel();
 
       expect(states.any((s) => s is RondaActionLoading), isTrue);
-      final successState =
-          states.firstWhere((s) => s is RondaActionSuccess) as RondaActionSuccess;
+      final successState = states.firstWhere(
+        (s) => s is RondaActionSuccess,
+      ) as RondaActionSuccess;
       expect(successState.laporan.id, 'RND-12345');
       final now = DateTime.now();
       final expectedTime =
@@ -343,8 +353,9 @@ void main() {
       await subscription.cancel();
 
       expect(states.any((s) => s is RondaActionLoading), isTrue);
-      final failureState =
-          states.firstWhere((s) => s is RondaActionFailure) as RondaActionFailure;
+      final failureState = states.firstWhere(
+        (s) => s is RondaActionFailure,
+      ) as RondaActionFailure;
       expect(failureState.message, isNotEmpty);
     });
   });
