@@ -414,44 +414,6 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                   ),
                                 ],
                               ),
-
-                              const SizedBox(height: 16),
-
-                              Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: colors.surfaceVariant,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: colors.border,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    _buildProfileDetailItem(
-                                      colors: colors,
-                                      icon: Icons.badge_outlined,
-                                      label: 'NIK',
-                                      value: currentUser?.nik,
-                                    ),
-                                    Divider(height: 16, color: colors.border),
-                                    _buildProfileDetailItem(
-                                      colors: colors,
-                                      icon: Icons.phone_outlined,
-                                      label: 'No. Telepon',
-                                      value: currentUser?.phoneNumber,
-                                    ),
-                                    Divider(height: 16, color: colors.border),
-                                    _buildProfileDetailItem(
-                                      colors: colors,
-                                      icon: Icons.email_outlined,
-                                      label: 'Email',
-                                      value: currentUser?.email,
-                                    ),
-                                  ],
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -661,47 +623,6 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildProfileDetailItem({
-    required AppColorScheme colors,
-    required IconData icon,
-    required String label,
-    required String? value,
-  }) {
-    final isFilled = value != null && value.trim().isNotEmpty;
-
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: colors.textSecondary),
-        const SizedBox(width: 10),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w500,
-            color: colors.textSecondary,
-          ),
-        ),
-        const Spacer(),
-        if (isFilled)
-          Icon(
-            Icons.check_circle_rounded,
-            size: 18,
-            color: colors.success,
-            semanticLabel: '$label tersedia',
-          )
-        else
-          Text(
-            '-',
-            style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: colors.textPrimary,
-            ),
-          ),
-      ],
     );
   }
 

@@ -214,7 +214,7 @@ void main() {
 
   group('Profile Screen NIK Display Tests', () {
     testWidgets(
-      'MasyarakatProfileScreen menampilkan centang hijau untuk NIK, telepon, dan email tanpa menampilkan teks sensitifnya',
+      'MasyarakatProfileScreen tidak menampilkan card NIK, telepon, dan email',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(600, 900));
         final user = testUser.copyWith(role: 'member', profilePic: '');
@@ -235,42 +235,18 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(tester.takeException(), isNull);
-        expect(find.text('NIK'), findsOneWidget);
-        expect(find.text('No. Telepon'), findsOneWidget);
-        expect(find.text('Email'), findsOneWidget);
+        expect(find.text('NIK'), findsNothing);
+        expect(find.text('No. Telepon'), findsNothing);
+        expect(find.text('Email'), findsNothing);
         expect(find.text('3201234567890001'), findsNothing);
         expect(find.text('081234567890'), findsNothing);
-        expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(3));
+        expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
+        expect(find.text('0'), findsNWidgets(3));
         expect(
           find.text('Pengaturan Notifikasi & Alarm Bencana'),
           findsNothing,
         );
         expect(find.text('Ubah Kata Sandi'), findsNothing);
-
-        final partialUser = testUser.copyWith(
-          role: 'member',
-          profilePic: '',
-          email: '',
-        );
-        await tester.pumpWidget(
-          MultiBlocProvider(
-            providers: [
-              BlocProvider<AuthBloc>.value(
-                value: _FakeAuthBloc(
-                  AuthAuthenticated(user: partialUser, token: 'tok'),
-                ),
-              ),
-              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
-            ],
-            child: const MaterialApp(home: MasyarakatProfileScreen()),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(tester.takeException(), isNull);
-        expect(find.byIcon(Icons.check_circle_rounded), findsNWidgets(2));
-        expect(find.text('-'), findsOneWidget);
-        expect(find.text('0'), findsNWidgets(3));
 
         await tester.binding.setSurfaceSize(null);
       },
