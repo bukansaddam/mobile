@@ -348,8 +348,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
           _buildYesNoQuestion(
             questionNumber: 1,
-            question:
-                'Apakah pada area tugas patroli anda hari ini ditemukan sampah menumpuk?',
+            question: 'Apakah pada area tugas patroli anda hari ini ditemukan sampah menumpuk?',
             value: state.adaSampahMenumpuk,
             isNegativeCondition: true,
             onChanged: (val) {
@@ -406,8 +405,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
           _buildYesNoQuestion(
             questionNumber: 2,
-            question:
-                'Apakah pengangkutan sampah dilingkungan anda sesuai jadwal yang ditentukan?',
+            question: 'Apakah pengangkutan sampah dilingkungan anda sesuai jadwal yang ditentukan?',
             value: state.pengangkutanSesuaiJadwal,
             isNegativeCondition: false,
             onChanged: (val) {
@@ -547,8 +545,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
           _buildYesNoQuestion(
             questionNumber: 1,
-            question:
-                'Apakah terjadi pencurian atau perampasan barang milik orang lain?',
+            question: 'Apakah terjadi pencurian atau perampasan barang milik orang lain?',
             value: state.adaPencurian,
             isNegativeCondition: true,
             onChanged: (val) {
@@ -617,8 +614,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
           _buildYesNoQuestion(
             questionNumber: 2,
-            question:
-                'Apakah terjadi perkelahian kelompok / tawuran di lingkungan anda?',
+            question: 'Apakah terjadi perkelahian kelompok / tawuran di lingkungan anda?',
             value: state.adaTawuran,
             isNegativeCondition: true,
             onChanged: (val) {
@@ -876,8 +872,7 @@ class _RondaScreenState extends State<RondaScreen> {
 
           _buildYesNoQuestion(
             questionNumber: 3,
-            question:
-                'Apakah terdapat lampu jalan yang tidak menyala di lingkungan anda?',
+            question: 'Apakah terdapat lampu jalan yang tidak menyala di lingkungan anda?',
             value: state.adaLampuMati,
             isNegativeCondition: true,
             onChanged: (val) {

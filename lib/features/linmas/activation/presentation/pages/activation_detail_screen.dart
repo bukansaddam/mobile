@@ -158,8 +158,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                 icon: Icons.info_outline_rounded,
                 iconColor: AppColors.primary,
                 tooltip: 'Informasi Ringkasan Kegiatan',
-                onPressed: () =>
-                    ActivationDetailModal.show(context, activity),
+                onPressed: () => ActivationDetailModal.show(context, activity),
               ),
             ],
           ),
@@ -502,9 +501,8 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF25D366,
-                              ).withValues(alpha: 0.15),
+                              color: const Color(0xFF25D366)
+                                  .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Row(

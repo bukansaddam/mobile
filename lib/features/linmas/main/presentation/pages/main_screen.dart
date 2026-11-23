@@ -132,9 +132,7 @@ class _MainScreenState extends State<MainScreen> {
             onLogoTap: _isExclusiveModeActive ? _onLogoTap : null,
             onNotificationPressed: () {
               _dismissSurveyIfSubmitted(context);
-              NotificationNavigationHelper.openNotificationCenter(
-                context,
-              );
+              NotificationNavigationHelper.openNotificationCenter(context);
             },
           ),
           bottomNavigationBar: BottomAppBar(

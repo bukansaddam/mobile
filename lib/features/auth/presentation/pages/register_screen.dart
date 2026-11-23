@@ -306,8 +306,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         if (mounted) {
           AppToast.showError(
             context,
-            message:
-                'Izin lokasi ditolak secara permanen. Mohon ubah di Pengaturan.',
+            message: 'Izin lokasi ditolak secara permanen. Mohon ubah di Pengaturan.',
           );
         }
         return;
@@ -458,9 +457,8 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
     if (ocr.birthDate != null) {
       _birthDate = ocr.birthDate;
-      _birthDateController.text = DateFormat(
-        'dd/MM/yyyy',
-      ).format(ocr.birthDate!);
+      _birthDateController.text = DateFormat('dd/MM/yyyy')
+          .format(ocr.birthDate!);
     }
     if (ocr.address.isNotEmpty) {
       _addressController.text = ocr.address.toUpperCase();
@@ -692,9 +690,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                 AppDialogs.showSuccess(
                   context,
                   title: 'Registrasi Berhasil',
-                  message: state.message.isNotEmpty
-                      ? state.message
-                      : 'Akun Anda telah berhasil dibuat. Silakan login untuk melanjutkan.',
+                  message: state.message.isNotEmpty ? state.message : 'Akun Anda telah berhasil dibuat. Silakan login untuk melanjutkan.',
                   buttonText: 'Masuk ke Akun',
                   onPressed: () {
                     context.goNamed(
@@ -1008,9 +1004,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.number,
                     maxLength: 16,
-                    decoration: _input(
-                      'Masukkan 16 digit NIK',
-                    ).copyWith(counterText: ''),
+                    decoration: _input('Masukkan 16 digit NIK')
+                        .copyWith(counterText: ''),
                     validator: (val) {
                       final nik = val?.trim() ?? '';
                       if (nik.isEmpty) return 'NIK wajib diisi';
@@ -1147,9 +1142,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                     validator: (val) {
                       final email = val?.trim() ?? '';
                       if (email.isEmpty) return 'Email wajib diisi';
-                      if (!RegExp(
-                        r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-                      ).hasMatch(email)) {
+                      if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                          .hasMatch(email)) {
                         return 'Format email tidak valid';
                       }
                       return null;
@@ -1357,9 +1351,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                       fontWeight: FontWeight.bold,
                       letterSpacing: 8,
                     ),
-                    decoration: _input(
-                      'Masukkan kode',
-                    ).copyWith(counterText: ''),
+                    decoration: _input('Masukkan kode')
+                        .copyWith(counterText: ''),
                     validator: (val) {
                       final code = val?.trim() ?? '';
                       if (code.isEmpty) return 'Kode OTP wajib diisi';

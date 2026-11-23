@@ -76,7 +76,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
         SnackBar(
           content: Text(
             '🎯 Klik ${_tapCount}x (Tinggal $remaining langkah lagi untuk Simulasi)',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12.5,
+            ),
           ),
           backgroundColor: AppColors.secondary,
           duration: const Duration(milliseconds: 1200),
@@ -112,14 +116,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
       child: DecoratedBox(
         decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
         child: AppBar(
+          toolbarHeight: 60.0,
           backgroundColor: Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,
           surfaceTintColor: Colors.transparent,
           centerTitle: false,
           titleSpacing: 16,
+          actionsPadding: EdgeInsets.zero,
           title: GestureDetector(
-            onTap: (widget.onLogoTap != null || widget.enableDefaultLogoEasterEgg)
+            onTap:
+                (widget.onLogoTap != null || widget.enableDefaultLogoEasterEgg)
                 ? _handleLogoTap
                 : null,
             behavior: HitTestBehavior.opaque,
@@ -137,10 +144,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         widget.title ?? AppConstants.appBarTitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.headlineMedium.copyWith(
+                        style: AppTextStyles.headlineSmall.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
                           letterSpacing: 0.5,
                           height: 1.1,
                         ),
@@ -153,7 +159,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.primary,
+                          color: AppColors.primaryDark,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.2,

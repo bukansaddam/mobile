@@ -50,10 +50,6 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
               )
             : null);
 
-    final resolvedActions = (actions != null && actions!.isNotEmpty)
-        ? <Widget>[...actions!, const SizedBox(width: 8)]
-        : null;
-
     final appBar = AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -74,7 +70,10 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       title: resolvedTitle,
-      actions: resolvedActions,
+      actions: actions,
+      actionsPadding: (actions != null && actions!.isNotEmpty)
+          ? const EdgeInsets.only(right: 8)
+          : EdgeInsets.zero,
       bottom: bottom,
     );
 

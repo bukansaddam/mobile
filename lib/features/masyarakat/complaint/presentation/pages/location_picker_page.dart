@@ -196,9 +196,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(
-                                0xFFE11D48,
-                              ).withValues(alpha: 0.4),
+                              color: const Color(0xFFE11D48)
+                                  .withValues(alpha: 0.4),
                               blurRadius: 12,
                               spreadRadius: 2,
                               offset: const Offset(0, 4),

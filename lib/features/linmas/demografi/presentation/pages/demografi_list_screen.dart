@@ -240,9 +240,9 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     return SafeArea(
                       child: Padding(
                         padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(
-                            bottomSheetContext,
-                          ).viewInsets.bottom,
+                          bottom: MediaQuery.of(bottomSheetContext)
+                              .viewInsets
+                              .bottom,
                         ),
                         child: Container(
                           width: double.infinity,
@@ -833,63 +833,63 @@ class _DemografiListScreenState extends State<DemografiListScreen>
           child: TabBar(
             controller: _tabController,
             dividerColor: Colors.transparent,
-              dividerHeight: 0,
-              indicatorColor: AppColors.primary,
-              indicatorWeight: 3,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textSecondary,
-              labelStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-              tabs: const [
-                Tab(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.people_alt_rounded, size: 18),
-                        SizedBox(width: 6),
-                        Text('Tokoh'),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.account_balance_rounded, size: 18),
-                        SizedBox(width: 6),
-                        Text('Institusi'),
-                      ],
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.groups_rounded, size: 18),
-                        SizedBox(width: 6),
-                        Text('Organisasi'),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            dividerHeight: 0,
+            indicatorColor: AppColors.primaryDark,
+            indicatorWeight: 3,
+            labelColor: AppColors.primaryDark,
+            unselectedLabelColor: AppColors.textSecondary,
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
+            unselectedLabelStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+            ),
+            tabs: const [
+              Tab(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.people_alt_rounded, size: 18),
+                      SizedBox(width: 6),
+                      Text('Tokoh'),
+                    ],
+                  ),
+                ),
+              ),
+              Tab(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.account_balance_rounded, size: 18),
+                      SizedBox(width: 6),
+                      Text('Institusi'),
+                    ],
+                  ),
+                ),
+              ),
+              Tab(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.groups_rounded, size: 18),
+                      SizedBox(width: 6),
+                      Text('Organisasi'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+      ),
       floatingActionButton: AnimatedBuilder(
         animation: _tabController,
         builder: (context, _) {
@@ -1419,8 +1419,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     : list.isEmpty
                     ? _buildEmptyState(
                         title: 'Belum Ada Data Tokoh',
-                        message:
-                            'Tekan tombol "Tambah Tokoh" di bawah untuk mendaftarkan tokoh di sekitar Anda.',
+                        message: 'Tekan tombol "Tambah Tokoh" di bawah untuk mendaftarkan tokoh di sekitar Anda.',
                         icon: Icons.person_search_rounded,
                       )
                     : ListView.builder(
@@ -1540,8 +1539,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     : list.isEmpty
                     ? _buildEmptyState(
                         title: 'Belum Ada Data Institusi',
-                        message:
-                            'Tekan tombol "Tambah Institusi" di bawah untuk mendaftarkan institusi baru.',
+                        message: 'Tekan tombol "Tambah Institusi" di bawah untuk mendaftarkan institusi baru.',
                         icon: Icons.domain_outlined,
                       )
                     : ListView.builder(
@@ -1661,8 +1659,7 @@ class _DemografiListScreenState extends State<DemografiListScreen>
                     : list.isEmpty
                     ? _buildEmptyState(
                         title: 'Belum Ada Data Organisasi',
-                        message:
-                            'Tekan tombol "Tambah Organisasi" di bawah untuk mendaftarkan organisasi baru.',
+                        message: 'Tekan tombol "Tambah Organisasi" di bawah untuk mendaftarkan organisasi baru.',
                         icon: Icons.groups_outlined,
                       )
                     : ListView.builder(

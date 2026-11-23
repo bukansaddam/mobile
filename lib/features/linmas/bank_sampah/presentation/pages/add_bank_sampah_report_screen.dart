@@ -208,8 +208,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     if (bankIdInt == null || bankIdInt <= 0) {
       AppToast.showError(
         context,
-        message:
-            'Lokasi Bank Sampah tidak valid. Silakan pilih unit Bank Sampah yang terdaftar.',
+        message: 'Lokasi Bank Sampah tidak valid. Silakan pilih unit Bank Sampah yang terdaftar.',
       );
       return;
     }
@@ -450,9 +449,8 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                       vertical: 2,
                                                     ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(
-                                                    0xFF0284C7,
-                                                  ).withValues(alpha: 0.1),
+                                                  color: const Color(0xFF0284C7)
+                                                      .withValues(alpha: 0.1),
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
@@ -736,9 +734,8 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(
-                              0xFF0F9F66,
-                            ).withValues(alpha: 0.25),
+                            color: const Color(0xFF0F9F66)
+                                .withValues(alpha: 0.25),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -922,8 +919,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                           FocusManager.instance.primaryFocus?.unfocus(),
                       maxLines: 3,
                       decoration: InputDecoration(
-                        hintText:
-                            'Contoh: Sampah botol air mineral bersih hasil pilah warga RT 03...',
+                        hintText: 'Contoh: Sampah botol air mineral bersih hasil pilah warga RT 03...',
                         hintStyle: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.textHint,
                         ),

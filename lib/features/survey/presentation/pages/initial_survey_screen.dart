@@ -151,8 +151,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
               AppDialogs.showSuccess(
                 context,
                 title: 'Profil Linmas Berhasil Disimpan',
-                message:
-                    'Terima kasih telah melengkapi data baseline profil lingkungan & keamanan RT Anda.',
+                message: 'Terima kasih telah melengkapi data baseline profil lingkungan & keamanan RT Anda.',
                 buttonText: 'Masuk ke Aplikasi',
                 onPressed: () {
                   context.go('/main');

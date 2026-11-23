@@ -489,9 +489,8 @@ class _PresensiScreenState extends State<PresensiScreen>
           const SizedBox(height: 6),
           _buildDialogRow(
             'Waktu',
-            DateFormat(
-              'dd MMM yyyy, HH:mm',
-            ).format(result?.timestamp ?? DateTime.now()),
+            DateFormat('dd MMM yyyy, HH:mm')
+                .format(result?.timestamp ?? DateTime.now()),
           ),
         ],
       ),

@@ -50,15 +50,15 @@ enum _DropdownKey {
   informasiKonflik,
 }
 
-typedef JagaTanahLocationPickerOpener =
-    Future<LocationPickerResult?> Function(
-      BuildContext context, {
-      String? initialAddress,
-      LatLng? initialPosition,
-    });
+typedef JagaTanahLocationPickerOpener = Future<LocationPickerResult?> Function(
+  BuildContext context, {
+  String? initialAddress,
+  LatLng? initialPosition,
+});
 
-typedef JagaTanahAdminAddressResolver =
-    Future<JagaTanahAdminAddress> Function(LatLng position);
+typedef JagaTanahAdminAddressResolver = Future<JagaTanahAdminAddress> Function(
+  LatLng position,
+);
 
 /// Form pelaporan kondisi dan penyalahgunaan tanah 5 langkah (seperti Laporan Harian).
 class CreateJagaTanahPage extends HookWidget {
@@ -1062,8 +1062,7 @@ class CreateJagaTanahPage extends HookWidget {
                 JagaTanahTextField(
                   controller: descriptionController,
                   label: 'Deskripsi',
-                  hintText:
-                      'Ringkasan singkat atau catatan penting di lapangan (opsional)',
+                  hintText: 'Ringkasan singkat atau catatan penting di lapangan (opsional)',
                   isRequired: false,
                   maxLines: 3,
                   maxLength: 1000,
@@ -1105,9 +1104,8 @@ class CreateJagaTanahPage extends HookWidget {
                 const SizedBox(height: 16),
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    final textScale = MediaQuery.textScalerOf(
-                      context,
-                    ).scale(1.0);
+                    final textScale = MediaQuery.textScalerOf(context)
+                        .scale(1.0);
                     final useTwoColumns =
                         constraints.maxWidth >= 320 && textScale <= 1.35;
 
