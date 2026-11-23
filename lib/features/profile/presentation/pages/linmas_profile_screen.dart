@@ -1,5 +1,6 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -45,9 +46,8 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
       context,
       title: 'Keluar Akun',
       message: unsentReports > 0
-          ? 'Masih ada $unsentReports laporan yang belum terkirim. Laporan '
-                'tetap tersimpan di perangkat dan hanya dikirim saat akun ini '
-                'masuk kembali.\n\nTetap keluar?'
+          ? 'Masih ada $unsentReports laporan yang belum tersinkronisasi. Laporan '
+                'akan dihapus jika Anda keluar.\n\nTetap keluar?'
           : 'Apakah Anda yakin ingin keluar dari akun?',
       confirmText: 'Keluar',
       cancelText: 'Batal',
@@ -57,7 +57,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
 
     if (confirmed && context.mounted) {
       context.read<TrackingBloc>().add(StopTrackingEvent());
-      context.read<AuthBloc>().add(const LogoutEvent());
+      context.read<AuthBloc>().add(const LogoutEvent(clearOfflineQueue: true));
       AppToast.showSuccess(context, message: 'Berhasil keluar dari akun');
       context.goNamed('login', queryParameters: {'role': 'linmas'});
     }
@@ -67,11 +67,20 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
     try {
       final user = await sl<AuthLocalDatasource>().getUser();
       if (user == null) return 0;
-      final reports = await sl<ActivationPendingReportLocalDatasource>()
-          .getPending();
-      return reports
-          .where((report) => report.belongsTo(user.id.toString()))
-          .length;
+      var count = 0;
+      if (sl.isRegistered<OfflineQueueLocalDatasource>()) {
+        count += await sl<OfflineQueueLocalDatasource>().getPendingCount(
+          user.id.toString(),
+        );
+      }
+      if (sl.isRegistered<ActivationPendingReportLocalDatasource>()) {
+        final reports = await sl<ActivationPendingReportLocalDatasource>()
+            .getPending();
+        count += reports
+            .where((report) => report.belongsTo(user.id.toString()))
+            .length;
+      }
+      return count;
     } catch (_) {
       return 0;
     }

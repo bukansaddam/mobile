@@ -1,7 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
-import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/linmas/ronda_malam/data/models/ronda_laporan_model.dart';
 import 'package:akar/utils/app_logger.dart';
 
@@ -25,7 +23,10 @@ class RondaRemoteDatasourceImpl extends BaseRemoteDataSource
       if (response.success && response.data != null) {
         return response.data!;
       } else {
-        throwResponseError(response, fallbackMessage: 'Gagal mengirim laporan harian');
+        throwResponseError(
+          response,
+          fallbackMessage: 'Gagal mengirim laporan harian',
+        );
       }
     } catch (e, s) {
       AppLogger.e('[RONDA_DS] Error in submitLaporan: $e', e, s);

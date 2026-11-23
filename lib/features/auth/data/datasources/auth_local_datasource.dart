@@ -12,6 +12,7 @@ abstract class AuthLocalDatasource {
   Future<String?> getRefreshToken();
   Future<void> saveUser(UserModel user);
   Future<UserModel?> getUser();
+  String? getCachedUserId();
   Future<void> clearSession();
 }
 
@@ -74,6 +75,20 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
         final Map<String, dynamic> jsonMap = jsonDecode(userJsonString);
         return UserModel.fromJson(jsonMap);
       } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  @override
+  String? getCachedUserId() {
+    final userJsonString = sharedPreferences.getString(userKey);
+    if (userJsonString != null && userJsonString.isNotEmpty) {
+      try {
+        final Map<String, dynamic> jsonMap = jsonDecode(userJsonString);
+        return jsonMap['id']?.toString();
+      } catch (_) {
         return null;
       }
     }

@@ -32,8 +32,9 @@ void main() {
 
   setUp(() async {
     tempDir = await Directory.systemTemp.createTemp('sync_coord_test_');
-    queueDatasource =
-        OfflineQueueLocalDatasource(rootDirectory: () async => tempDir);
+    queueDatasource = OfflineQueueLocalDatasource(
+      rootDirectory: () async => tempDir,
+    );
     fakeHandler = _FakeHandler();
     coordinator = OfflineSyncCoordinator(
       queueDatasource: queueDatasource,
@@ -50,32 +51,35 @@ void main() {
     }
   });
 
-  test('single-flight lock prevents parallel overlapping syncNow executions',
-      () async {
-    fakeHandler.syncCompleter = Completer<void>();
+  test(
+    'single-flight lock prevents parallel overlapping syncNow executions',
+    () async {
+      fakeHandler.syncCompleter = Completer<void>();
 
-    await queueDatasource.enqueue(
-      userId: 'user-1',
-      featureType: OfflineFeatureType.jagaTanah,
-      payload: {'title': 'Report 1'},
-    );
+      await queueDatasource.enqueue(
+        userId: 'user-1',
+        featureType: OfflineFeatureType.jagaTanah,
+        payload: {'title': 'Report 1'},
+      );
 
-    // Trigger syncNow twice in parallel
-    final sync1 = coordinator.syncNow();
-    final sync2 = coordinator.syncNow();
+      // Trigger syncNow twice in parallel
+      final sync1 = coordinator.syncNow();
+      final sync2 = coordinator.syncNow();
 
-    expect(coordinator.isSyncing, isTrue);
+      expect(coordinator.isSyncing, isTrue);
 
-    fakeHandler.syncCompleter!.complete();
-    await Future.wait([sync1, sync2]);
+      fakeHandler.syncCompleter!.complete();
+      await Future.wait([sync1, sync2]);
 
-    expect(fakeHandler.syncedIds.length, equals(1));
-    expect(coordinator.isSyncing, isFalse);
-  });
+      expect(fakeHandler.syncedIds.length, equals(1));
+      expect(coordinator.isSyncing, isFalse);
+    },
+  );
 
   test('prioritizes lightweight items before large videos', () async {
     // Enqueue 1 item with video
-    final dummyVideo = File('${tempDir.path}/large_video.mp4')..writeAsStringSync('video data');
+    final dummyVideo = File('${tempDir.path}/large_video.mp4')
+      ..writeAsStringSync('video data');
     final videoItem = await queueDatasource.enqueue(
       userId: 'user-1',
       featureType: OfflineFeatureType.jagaTanah,
@@ -83,9 +87,7 @@ void main() {
       attachments: [dummyVideo],
     );
     await queueDatasource.updateItem(
-      videoItem.copyWith(
-        requiresCellularConsent: true,
-      ),
+      videoItem.copyWith(requiresCellularConsent: true),
     );
 
     // Enqueue 1 lightweight item
@@ -103,10 +105,12 @@ void main() {
   });
 
   test('marks item failedPermanent on 400/422 validation failure', () async {
-    fakeHandler.failureToThrow =
-        const ValidationFailure('Validation error', statusCode: 422);
+    fakeHandler.failureToThrow = const ValidationFailure(
+      'Validation error',
+      statusCode: 422,
+    );
 
-    final item = await queueDatasource.enqueue(
+    await queueDatasource.enqueue(
       userId: 'user-1',
       featureType: OfflineFeatureType.jagaTanah,
       payload: {'title': 'Invalid Report'},
@@ -119,10 +123,12 @@ void main() {
   });
 
   test('schedules retry with backoff on 409 conflict', () async {
-    fakeHandler.failureToThrow =
-        const ServerFailure('Conflict / in-flight', statusCode: 409);
+    fakeHandler.failureToThrow = const ServerFailure(
+      'Conflict / in-flight',
+      statusCode: 409,
+    );
 
-    final item = await queueDatasource.enqueue(
+    await queueDatasource.enqueue(
       userId: 'user-1',
       featureType: OfflineFeatureType.jagaTanah,
       payload: {'title': 'Conflict Report'},

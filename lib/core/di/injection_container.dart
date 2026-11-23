@@ -3,6 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
+import 'package:akar/core/offline/offline_sync_coordinator.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
@@ -199,6 +202,26 @@ Future<void> init() async {
     () => FirebaseNotificationService(
       prefs: sl<SharedPreferences>(),
       disasterAlertService: sl<DisasterAlertService>(),
+    ),
+  );
+
+  // Offline Engine
+  sl.registerLazySingleton<OfflineQueueLocalDatasource>(
+    () => OfflineQueueLocalDatasource(),
+  );
+  sl.registerLazySingleton<OfflineMasterCacheLocalDatasource>(
+    () => OfflineMasterCacheLocalDatasource(dio: sl()),
+  );
+  sl.registerLazySingleton<OfflineSyncCoordinator>(
+    () => OfflineSyncCoordinator(
+      queueDatasource: sl(),
+      currentUserIdResolver: () {
+        if (sl.isRegistered<AuthLocalDatasource>()) {
+          return sl<AuthLocalDatasource>().getCachedUserId() ?? '';
+        }
+        return '';
+      },
+      notificationService: sl<FirebaseNotificationService>(),
     ),
   );
 

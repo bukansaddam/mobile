@@ -1,5 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/routes/app_router.dart';
+import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:go_router/go_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
@@ -512,11 +514,36 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 iconColor: colors.error,
                                 showChevron: false,
                                 onTap: () async {
+                                  int pendingCount = 0;
+                                  if (sl
+                                          .isRegistered<
+                                            OfflineQueueLocalDatasource
+                                          >() &&
+                                      sl.isRegistered<AuthLocalDatasource>()) {
+                                    try {
+                                      final user =
+                                          await sl<AuthLocalDatasource>()
+                                              .getUser();
+                                      if (user != null) {
+                                        pendingCount =
+                                            await sl<
+                                                  OfflineQueueLocalDatasource
+                                                >()
+                                                .getPendingCount(
+                                                  user.id.toString(),
+                                                );
+                                      }
+                                    } catch (_) {}
+                                  }
+                                  if (!context.mounted) return;
+
                                   final confirmed =
                                       await AppDialogs.showConfirmation(
                                         context,
                                         title: 'Keluar dari Akun',
-                                        message: 'Apakah Anda yakin ingin keluar dari akun ini?',
+                                        message: pendingCount > 0
+                                            ? 'Masih ada $pendingCount antrean laporan yang belum tersinkronisasi. Antrean ini akan dihapus jika Anda keluar.\n\nTetap keluar?'
+                                            : 'Apakah Anda yakin ingin keluar dari akun ini?',
                                         confirmText: 'Keluar',
                                         cancelText: 'Batal',
                                         isDestructive: true,
@@ -524,7 +551,9 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                       );
                                   if (confirmed && context.mounted) {
                                     context.read<AuthBloc>().add(
-                                      const LogoutEvent(),
+                                      const LogoutEvent(
+                                        clearOfflineQueue: true,
+                                      ),
                                     );
                                   }
                                 },

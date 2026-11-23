@@ -111,6 +111,9 @@ class FakeAuthLocalDatasource implements AuthLocalDatasource {
   Future<UserModel?> getUser() async => cachedUser;
 
   @override
+  String? getCachedUserId() => cachedUser?.id.toString();
+
+  @override
   Future<void> saveToken(String token) async {
     cachedToken = token;
     await touchActivity();

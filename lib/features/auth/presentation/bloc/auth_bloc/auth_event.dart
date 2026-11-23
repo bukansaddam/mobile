@@ -89,7 +89,12 @@ class RegisterEvent extends AuthEvent {
 }
 
 class LogoutEvent extends AuthEvent {
-  const LogoutEvent();
+  final bool clearOfflineQueue;
+
+  const LogoutEvent({this.clearOfflineQueue = true});
+
+  @override
+  List<Object?> get props => [clearOfflineQueue];
 }
 
 class UpdateAuthUserEvent extends AuthEvent {

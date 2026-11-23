@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
+import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
+import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
@@ -194,6 +198,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
     emit(const AuthLoading());
+
+    if (event.clearOfflineQueue) {
+      String? currentUserId;
+      final currentState = state;
+      if (currentState is AuthAuthenticated) {
+        currentUserId = currentState.user.id.toString();
+      } else if (sl.isRegistered<AuthLocalDatasource>()) {
+        currentUserId = sl<AuthLocalDatasource>().getCachedUserId();
+      }
+
+      if (currentUserId != null &&
+          currentUserId.isNotEmpty &&
+          sl.isRegistered<OfflineQueueLocalDatasource>()) {
+        try {
+          await sl<OfflineQueueLocalDatasource>().clearForUser(currentUserId);
+        } catch (_) {}
+      }
+
+      if (sl.isRegistered<OfflineMasterCacheLocalDatasource>()) {
+        try {
+          await sl<OfflineMasterCacheLocalDatasource>().clearAll();
+        } catch (_) {}
+      }
+    }
+
     await _logoutUsecase();
     DioClient.instance.options.headers.remove('Authorization');
     emit(const AuthUnauthenticated(message: 'Logout berhasil'));
