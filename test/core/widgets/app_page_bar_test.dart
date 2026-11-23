@@ -182,7 +182,7 @@ String? _assetNameOf(WidgetTester tester, Finder finder) {
 void main() {
   group('AppBarCircleButton Widget Tests', () {
     testWidgets(
-      'renders default back button with chevron_left, >= 3:1 grey700 border, and 48x48 tap area',
+      'renders default back button with chevron_left, no border, and 48x48 tap area',
       (tester) async {
         bool tapped = false;
         await tester.pumpWidget(
@@ -197,7 +197,7 @@ void main() {
         expect(iconFinder, findsOneWidget);
 
         final button = tester.widget<IconButton>(find.byType(IconButton));
-        expect(button.style?.side?.resolve({})?.color, AppColors.grey700);
+        expect(button.style?.side?.resolve({}), BorderSide.none);
 
         final sizeBoxFinder = find.byType(SizedBox).first;
         final renderBox = tester.renderObject<RenderBox>(sizeBoxFinder);
@@ -210,7 +210,7 @@ void main() {
     );
 
     testWidgets(
-      'handles active state with primaryDark background, border, and white icon',
+      'handles active state with primaryDark background, no border, and white icon',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -232,12 +232,12 @@ void main() {
           button.style?.backgroundColor?.resolve({}),
           AppColors.primaryDark,
         );
-        expect(button.style?.side?.resolve({})?.color, AppColors.primaryDark);
+        expect(button.style?.side?.resolve({}), BorderSide.none);
       },
     );
 
     testWidgets(
-      'handles disabled state when onPressed is null with disabled colors',
+      'handles disabled state when onPressed is null with disabled colors and no border',
       (tester) async {
         await tester.pumpWidget(
           const MaterialApp(
@@ -256,7 +256,7 @@ void main() {
         expect(icon.color, AppColors.textDisabled);
 
         final button = tester.widget<IconButton>(find.byType(IconButton));
-        expect(button.style?.side?.resolve({})?.color, AppColors.grey200);
+        expect(button.style?.side?.resolve({}), BorderSide.none);
       },
     );
   });

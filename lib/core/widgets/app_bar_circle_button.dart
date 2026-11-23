@@ -10,7 +10,6 @@ class AppBarCircleButton extends StatelessWidget {
   final Color? iconColor;
   final bool isActive;
   final Color? backgroundColor;
-  final Color? borderColor;
 
   const AppBarCircleButton({
     super.key,
@@ -21,7 +20,6 @@ class AppBarCircleButton extends StatelessWidget {
     this.iconColor,
     this.isActive = false,
     this.backgroundColor,
-    this.borderColor,
   });
 
   const AppBarCircleButton.back({
@@ -32,8 +30,7 @@ class AppBarCircleButton extends StatelessWidget {
   }) : icon = Icons.chevron_left_rounded,
        iconSize = 22,
        isActive = false,
-       backgroundColor = null,
-       borderColor = null;
+       backgroundColor = null;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +40,6 @@ class AppBarCircleButton extends StatelessWidget {
         : isDisabled
         ? AppColors.white.withValues(alpha: 0.55)
         : (backgroundColor ?? AppColors.white.withValues(alpha: 0.9));
-    final resolvedBorder = isActive
-        ? AppColors.primaryDark
-        : isDisabled
-        ? AppColors.grey200
-        : (borderColor ?? AppColors.grey700);
     final resolvedIconColor = isActive
         ? AppColors.white
         : isDisabled
@@ -69,7 +61,7 @@ class AppBarCircleButton extends StatelessWidget {
             backgroundColor: resolvedBg,
             disabledBackgroundColor: resolvedBg,
             shape: const CircleBorder(),
-            side: BorderSide(color: resolvedBorder, width: 1),
+            side: BorderSide.none,
           ),
           icon: Icon(icon, color: resolvedIconColor, size: iconSize),
         ),

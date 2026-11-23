@@ -17,10 +17,9 @@
   - `AppColors.background` (`#F4F6F9`): Alas kanvas utama aplikasi dan alas dasar di bawah gradien AppBar.
   - `AppColors.surface` / `AppColors.white` (`#FFFFFF`): Kartu, bottom sheet, dan panel input.
   - `AppColors.topHeaderGradient`: Gradien vertikal lembut `primary` (alpha `0.4`) menuju transparan di atas `AppColors.background` untuk memisahkan zona header tanpa garis keras.
-- **Typography & Borders:**
+- **Typography & Semantic Tokens:**
   - `AppColors.textPrimary` (`#1A1A2E`): Judul, label utama, dan ikon standar.
   - `AppColors.textSecondary` (`#4B5563`): Teks pendukung dan label tab pasif.
-  - `AppColors.grey700` (`#616161`): Border tombol lingkaran pada header agar boundary memenuhi kontras non-teks WCAG `>= 3.0:1`.
   - Semantic states: `success` (`#2E7D32`), `warning` (`#F57F17`), `error` (`#C62828`), `info` (`#0277BD`).
 
 ## Typography (`lib/core/theme/app_text_styles.dart`)
@@ -35,5 +34,5 @@
 
 - **Main Shell (`CustomAppBar`):** Tinggi tetap `60dp` (`toolbarHeight: 60.0`), logo brand `38x38dp` radius `10dp` (`AppLogoBadge.dumas` / `AppLogoBadge.linmas`), dan tombol notifikasi dengan badge unread count reaktif.
 - **Sub-Pages (`AppPageBar`):** Tinggi `kToolbarHeight` (`56dp`) + tinggi opsional `bottom` (misal `TabBar` `48dp`), alas `AppColors.background` di bawah `AppColors.topHeaderGradient` (kecuali layar gradient penuh Auth memakai `transparentBackground: true`).
-- **Header Action & Back Buttons (`AppBarCircleButton`):** Visual lingkaran `36x36dp`, border `1dp` (`AppColors.grey700`), dan area sentuh minimum aksesibel `48x48dp`, simetris `8dp` dari tepi kiri dan kanan.
+- **Header Action & Back Buttons (`AppBarCircleButton`):** Visual lingkaran `36x36dp` tanpa border (`side: BorderSide.none`), latar `AppColors.white` (`0.9` alpha, atau `AppColors.primaryDark` saat `isActive`), dan area sentuh minimum aksesibel `48x48dp`, simetris `8dp` dari tepi kiri dan kanan.
 - **Fullscreen / Camera / Media Exclusions:** `SplashScreen`, `WelcomeScreen`, `DisasterEmergencyWarningPage`, `KtpCameraPage`, `FullscreenImageViewer`, dan `FullscreenVideoViewer` dikecualikan dari `AppPageBar` standar.
