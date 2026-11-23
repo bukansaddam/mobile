@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/core/widgets/app_bar_circle_button.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
@@ -139,9 +141,9 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
         final activity = state.getActivityById(widget.activityId);
 
         if (activity == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Detail Kegiatan')),
-            body: const Center(child: Text('Kegiatan tidak ditemukan')),
+          return const Scaffold(
+            appBar: AppPageBar(title: 'Detail Kegiatan'),
+            body: Center(child: Text('Kegiatan tidak ditemukan')),
           );
         }
 
@@ -149,58 +151,15 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: AppColors.white,
-            foregroundColor: AppColors.textPrimary,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textPrimary,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            ),
-            centerTitle: true,
-            title: Text(
-              'Detail Kegiatan',
-              style: AppTextStyles.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
+          appBar: AppPageBar(
+            title: 'Detail Kegiatan',
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.grey300),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.info_outline_rounded,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                    onPressed: () =>
-                        ActivationDetailModal.show(context, activity),
-                    tooltip: 'Informasi Ringkasan Kegiatan',
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
+              AppBarCircleButton(
+                icon: Icons.info_outline_rounded,
+                iconColor: AppColors.primary,
+                tooltip: 'Informasi Ringkasan Kegiatan',
+                onPressed: () =>
+                    ActivationDetailModal.show(context, activity),
               ),
             ],
           ),

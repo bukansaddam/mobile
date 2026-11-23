@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
-import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_bar_circle_button.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/panic/core/constants/panic_constants.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 
@@ -218,58 +219,14 @@ class _PanicScreenState extends State<PanicScreen> {
 
         return Scaffold(
           backgroundColor: AppColors.background,
-          appBar: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: AppColors.white,
-            foregroundColor: AppColors.textPrimary,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textPrimary,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            ),
-            centerTitle: true,
-            title: Text(
-              'Pusat Bantuan & SOS',
-              style: AppTextStyles.headlineSmall.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: AppColors.textPrimary,
-              ),
-            ),
+          appBar: AppPageBar(
+            title: 'Pusat Bantuan & SOS',
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.grey300),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.my_location_rounded,
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                    onPressed: () => _recenterMap(userLat, userLng),
-                    tooltip: 'Pusatkan Lokasi Saya',
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
+              AppBarCircleButton(
+                icon: Icons.my_location_rounded,
+                iconColor: AppColors.primary,
+                tooltip: 'Pusatkan Lokasi Saya',
+                onPressed: () => _recenterMap(userLat, userLng),
               ),
             ],
           ),

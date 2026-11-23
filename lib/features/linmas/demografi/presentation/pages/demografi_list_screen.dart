@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
@@ -825,44 +826,13 @@ class _DemografiListScreenState extends State<DemografiListScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.grey300),
-            ),
-            child: IconButton(
-              icon: const Icon(
-                Icons.chevron_left_rounded,
-                color: AppColors.textPrimary,
-                size: 22,
-              ),
-              onPressed: () => Navigator.pop(context),
-              padding: EdgeInsets.zero,
-            ),
-          ),
-        ),
-        title: const Text(
-          'Demografi',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
+      appBar: AppPageBar(
+        title: 'Demografi',
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: Container(
-            color: AppColors.white,
-            child: TabBar(
-              controller: _tabController,
-              dividerColor: Colors.transparent,
+          child: TabBar(
+            controller: _tabController,
+            dividerColor: Colors.transparent,
               dividerHeight: 0,
               indicatorColor: AppColors.primary,
               indicatorWeight: 3,
@@ -920,7 +890,6 @@ class _DemografiListScreenState extends State<DemografiListScreen>
             ),
           ),
         ),
-      ),
       floatingActionButton: AnimatedBuilder(
         animation: _tabController,
         builder: (context, _) {

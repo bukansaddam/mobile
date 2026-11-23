@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_bar_circle_button.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/bank_sampah/core/constants/bank_sampah_constants.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
@@ -81,74 +83,14 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          leadingWidth: 56,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Center(
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.grey300),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.chevron_left_rounded,
-                    color: AppColors.textPrimary,
-                    size: 22,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                ),
-              ),
-            ),
-          ),
-          title: const Text(
-            'Laporan Bank Sampah',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
+        appBar: AppPageBar(
+          title: 'Laporan Bank Sampah',
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Center(
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: hasActiveFilter
-                        ? AppColors.primary
-                        : AppColors.white,
-                    border: Border.all(
-                      color: hasActiveFilter
-                          ? AppColors.primary
-                          : AppColors.grey300,
-                    ),
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.tune_rounded,
-                      color: hasActiveFilter
-                          ? Colors.white
-                          : AppColors.textPrimary,
-                      size: 20,
-                    ),
-                    tooltip: 'Filter & Urutkan',
-                    onPressed: () => _showFilterBottomSheet(context),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
+            AppBarCircleButton(
+              icon: Icons.tune_rounded,
+              isActive: hasActiveFilter,
+              tooltip: 'Filter & Urutkan',
+              onPressed: () => _showFilterBottomSheet(context),
             ),
           ],
         ),
