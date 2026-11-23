@@ -41,7 +41,7 @@ void main() {
         find.textContaining('laporan pengaduan yang telah Anda buat'),
         findsOneWidget,
       );
-      expect(find.text('Segera Hadir'), findsOneWidget);
+      expect(find.text('Tersedia'), findsOneWidget);
     });
 
     testWidgets('formats thousands points and shows officer description', (

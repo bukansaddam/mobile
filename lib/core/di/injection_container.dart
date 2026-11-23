@@ -34,6 +34,15 @@ import 'package:akar/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:akar/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 
+// Vouchers
+import 'package:akar/features/vouchers/data/datasources/voucher_remote_datasource.dart';
+import 'package:akar/features/vouchers/data/repositories/voucher_repository_impl.dart';
+import 'package:akar/features/vouchers/domain/repositories/voucher_repository.dart';
+import 'package:akar/features/vouchers/domain/usecases/get_my_vouchers_usecase.dart';
+import 'package:akar/features/vouchers/domain/usecases/redeem_voucher_usecase.dart';
+import 'package:akar/features/vouchers/presentation/bloc/redeem_voucher_bloc/redeem_voucher_bloc.dart';
+import 'package:akar/features/vouchers/presentation/bloc/voucher_list_bloc/voucher_list_bloc.dart';
+
 // Linmas
 import 'package:akar/features/linmas/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:akar/features/linmas/tracking/data/repositories/tracking_repository_impl.dart';
@@ -629,5 +638,25 @@ Future<void> init() async {
       markNotificationRead: sl(),
       markAllNotificationsRead: sl(),
     ),
+  );
+
+  // Vouchers
+  sl.registerLazySingleton<VoucherRemoteDatasource>(
+    () => VoucherRemoteDatasourceImpl(),
+  );
+  sl.registerLazySingleton<VoucherRepository>(
+    () => VoucherRepositoryImpl(remoteDatasource: sl()),
+  );
+  sl.registerLazySingleton<GetMyVouchersUsecase>(
+    () => GetMyVouchersUsecase(sl()),
+  );
+  sl.registerLazySingleton<RedeemVoucherUsecase>(
+    () => RedeemVoucherUsecase(sl()),
+  );
+  sl.registerFactory<VoucherListBloc>(
+    () => VoucherListBloc(getMyVouchers: sl()),
+  );
+  sl.registerFactory<RedeemVoucherBloc>(
+    () => RedeemVoucherBloc(redeemVoucher: sl()),
   );
 }

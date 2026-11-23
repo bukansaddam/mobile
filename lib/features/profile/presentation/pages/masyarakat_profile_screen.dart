@@ -1,5 +1,6 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -12,7 +13,6 @@ import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_blo
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
-import 'package:akar/features/profile/presentation/widgets/profile_points_info_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -373,11 +373,20 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 points: currentUser?.points ?? 0,
                                 isOfficer: false,
                                 isEmbedded: true,
-                                onTap: () => ProfilePointsInfoSheet.show(
-                                  context,
-                                  points: currentUser?.points ?? 0,
-                                  isOfficer: false,
-                                ),
+                                onTap: () async {
+                                  await context.push(
+                                    AppRouter.vouchersPath,
+                                    extra: {
+                                      'points': currentUser?.points ?? 0,
+                                      'isOfficer': false,
+                                    },
+                                  );
+                                  if (context.mounted) {
+                                    context.read<ProfileBloc>().add(
+                                      GetProfileEvent(),
+                                    );
+                                  }
+                                },
                               ),
 
                               const SizedBox(height: 14),

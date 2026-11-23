@@ -184,15 +184,15 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: colors.indigoLight,
+                        color: colors.primaryLight,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Segera Hadir',
+                        'Tersedia',
                         style: TextStyle(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w700,
-                          color: colors.indigo,
+                          color: colors.primaryDark,
                         ),
                       ),
                     ),
@@ -211,7 +211,7 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Fitur penukaran hadiah, voucher, dan manfaat poin akan hadir pada pembaruan mendatang.',
+                            'Setiap 100 poin dapat Anda tukarkan menjadi 1 kode voucher unik melalui halaman Poin & Voucher.',
                             style: TextStyle(
                               fontSize: 12,
                               color: colors.textMuted,

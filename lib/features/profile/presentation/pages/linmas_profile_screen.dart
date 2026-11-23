@@ -15,7 +15,6 @@ import 'package:akar/features/linmas/activation/data/datasources/activation_pend
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
-import 'package:akar/features/profile/presentation/widgets/profile_points_info_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -278,11 +277,15 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                     points: user.points,
                     isOfficer: true,
                     isEmbedded: false,
-                    onTap: () => ProfilePointsInfoSheet.show(
-                      context,
-                      points: user.points,
-                      isOfficer: true,
-                    ),
+                    onTap: () async {
+                      await context.push(
+                        AppRouter.vouchersPath,
+                        extra: {'points': user.points, 'isOfficer': true},
+                      );
+                      if (context.mounted) {
+                        context.read<ProfileBloc>().add(GetProfileEvent());
+                      }
+                    },
                   ),
                   const SizedBox(height: 14),
                   Container(

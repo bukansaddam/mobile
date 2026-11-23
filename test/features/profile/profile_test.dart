@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
@@ -30,6 +32,8 @@ class _FakeAuthBloc extends Fake implements AuthBloc {
 }
 
 class _FakeProfileBloc extends Fake implements ProfileBloc {
+  final List<ProfileEvent> events = [];
+
   @override
   ProfileState get state => ProfileInitial();
 
@@ -37,7 +41,9 @@ class _FakeProfileBloc extends Fake implements ProfileBloc {
   Stream<ProfileState> get stream => const Stream.empty();
 
   @override
-  void add(ProfileEvent event) {}
+  void add(ProfileEvent event) {
+    events.add(event);
+  }
 }
 
 class _FakeMyComplaintListBloc extends Fake implements MyComplaintListBloc {
@@ -343,13 +349,35 @@ void main() {
 
   group('Profile Screen Points Badge Tests', () {
     testWidgets(
-      'MasyarakatProfileScreen menampilkan ProfilePointsCard dan membuka info sheet saat di-tap',
+      'MasyarakatProfileScreen menampilkan ProfilePointsCard dan navigasi ke vouchers saat di-tap',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(600, 900));
         final user = testUser.copyWith(
           role: 'member',
           profilePic: '',
           points: 150,
+        );
+        final profileBloc = _FakeProfileBloc();
+        final router = GoRouter(
+          initialLocation: '/profile',
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => const MasyarakatProfileScreen(),
+            ),
+            GoRoute(
+              path: AppRouter.vouchersPath,
+              name: AppRouter.vouchers,
+              builder: (context, state) => Scaffold(
+                body: Center(
+                  child: TextButton(
+                    onPressed: () => context.pop(),
+                    child: const Text('Vouchers Screen'),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
 
         await tester.pumpWidget(
@@ -360,9 +388,9 @@ void main() {
                   AuthAuthenticated(user: user, token: 'tok'),
                 ),
               ),
-              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+              BlocProvider<ProfileBloc>.value(value: profileBloc),
             ],
-            child: const MaterialApp(home: MasyarakatProfileScreen()),
+            child: MaterialApp.router(routerConfig: router),
           ),
         );
         await tester.pumpAndSettle();
@@ -376,26 +404,47 @@ void main() {
         await tester.tap(find.text('150 Poin'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Poin Laporan'), findsOneWidget);
-        expect(find.text('Total Poin Saat Ini'), findsOneWidget);
-        expect(
-          find.textContaining('laporan pengaduan yang telah Anda buat'),
-          findsOneWidget,
-        );
-        expect(find.text('Segera Hadir'), findsOneWidget);
+        expect(find.text('Vouchers Screen'), findsOneWidget);
+
+        await tester.tap(find.text('Vouchers Screen'));
+        await tester.pumpAndSettle();
+
+        expect(profileBloc.events, contains(isA<GetProfileEvent>()));
 
         await tester.binding.setSurfaceSize(null);
       },
     );
 
     testWidgets(
-      'LinmasProfileScreen menampilkan ProfilePointsCard dan membuka info sheet saat di-tap',
+      'LinmasProfileScreen menampilkan ProfilePointsCard dan navigasi ke vouchers saat di-tap',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(600, 900));
         final user = testUser.copyWith(
           role: 'officer',
           profilePic: '',
           points: 350,
+        );
+        final profileBloc = _FakeProfileBloc();
+        final router = GoRouter(
+          initialLocation: '/profile',
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => const LinmasProfileScreen(),
+            ),
+            GoRoute(
+              path: AppRouter.vouchersPath,
+              name: AppRouter.vouchers,
+              builder: (context, state) => Scaffold(
+                body: Center(
+                  child: TextButton(
+                    onPressed: () => context.pop(),
+                    child: const Text('Vouchers Screen'),
+                  ),
+                ),
+              ),
+            ),
+          ],
         );
 
         await tester.pumpWidget(
@@ -406,9 +455,9 @@ void main() {
                   AuthAuthenticated(user: user, token: 'tok'),
                 ),
               ),
-              BlocProvider<ProfileBloc>.value(value: _FakeProfileBloc()),
+              BlocProvider<ProfileBloc>.value(value: profileBloc),
             ],
-            child: const MaterialApp(home: LinmasProfileScreen()),
+            child: MaterialApp.router(routerConfig: router),
           ),
         );
         await tester.pumpAndSettle();
@@ -422,13 +471,12 @@ void main() {
         await tester.tap(find.text('350 Poin'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Poin Laporan'), findsOneWidget);
-        expect(find.text('Total Poin Saat Ini'), findsOneWidget);
-        expect(
-          find.textContaining('laporan tugas yang telah Anda buat'),
-          findsOneWidget,
-        );
-        expect(find.text('Segera Hadir'), findsOneWidget);
+        expect(find.text('Vouchers Screen'), findsOneWidget);
+
+        await tester.tap(find.text('Vouchers Screen'));
+        await tester.pumpAndSettle();
+
+        expect(profileBloc.events, contains(isA<GetProfileEvent>()));
 
         await tester.binding.setSurfaceSize(null);
       },

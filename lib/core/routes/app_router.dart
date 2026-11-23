@@ -40,6 +40,7 @@ import 'package:akar/features/survey/presentation/pages/initial_survey_screen.da
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 import 'package:akar/features/notifications/presentation/pages/notification_page.dart';
+import 'package:akar/features/vouchers/presentation/pages/voucher_page.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,6 +76,7 @@ class AppRouter {
   static const String emergencyCall = 'emergencyCall';
   static const String emergencyCallPath = '/emergency-call';
   static const String notifications = 'notifications';
+  static const String vouchers = 'vouchers';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -130,6 +132,7 @@ class AppRouter {
   static const String surveyPath = '/survey';
   static const String initialSurveyPath = '/initial-survey';
   static const String notificationsPath = '/notifications';
+  static const String vouchersPath = '/vouchers';
 
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -275,6 +278,16 @@ class AppRouter {
         path: notificationsPath,
         name: notifications,
         builder: (context, state) => const NotificationPage(),
+      ),
+      GoRoute(
+        path: vouchersPath,
+        name: vouchers,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final points = extra?['points'] as int? ?? 0;
+          final isOfficer = extra?['isOfficer'] as bool? ?? false;
+          return VoucherPage(initialPoints: points, isOfficer: isOfficer);
+        },
       ),
       GoRoute(
         path: surveyPath,
