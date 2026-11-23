@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +17,7 @@ class JagaTanahDetailField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final trimmed = value?.trim() ?? '';
     final displayValue = trimmed.isNotEmpty ? trimmed : '-';
 
@@ -28,7 +29,7 @@ class JagaTanahDetailField extends StatelessWidget {
           Text(
             label,
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -36,7 +37,7 @@ class JagaTanahDetailField extends StatelessWidget {
           Text(
             displayValue,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w500,
               height: 1.4,
             ),

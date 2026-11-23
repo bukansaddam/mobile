@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
@@ -31,6 +31,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final canAddMore = attachments.length < maxAttachments;
 
     return Column(
@@ -52,9 +53,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                 '${attachments.length}/$maxAttachments lampiran',
                 style: AppTextStyles.labelMedium.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: !canAddMore
-                      ? AppColors.earth
-                      : AppColors.textSecondary,
+                  color: !canAddMore ? colors.earth : colors.textSecondary,
                 ),
               ),
             ],
@@ -63,7 +62,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Maksimal 1 video, sisanya foto. Diambil langsung dari kamera.',
-          style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+          style: AppTextStyles.caption.copyWith(color: colors.textSecondary),
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
@@ -76,7 +75,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Material(
-                    color: AppColors.grey100,
+                    color: colors.surfaceElevated,
                     borderRadius: BorderRadius.circular(14),
                     child: InkWell(
                       onTap: onAddPhoto,
@@ -94,8 +93,8 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: errorText != null
-                                ? AppColors.error
-                                : AppColors.grey300,
+                                ? colors.error
+                                : colors.borderStrong,
                             width: 1.5,
                           ),
                         ),
@@ -103,9 +102,9 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.camera_alt_rounded,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                               size: 26,
                             ),
                             const SizedBox(height: 4),
@@ -113,7 +112,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                               'Foto',
                               style: AppTextStyles.labelSmall.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],
@@ -126,7 +125,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: Material(
-                      color: AppColors.grey100,
+                      color: colors.surfaceElevated,
                       borderRadius: BorderRadius.circular(14),
                       child: InkWell(
                         onTap: onAddVideo,
@@ -144,8 +143,8 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: errorText != null
-                                  ? AppColors.error
-                                  : AppColors.grey300,
+                                  ? colors.error
+                                  : colors.borderStrong,
                               width: 1.5,
                             ),
                           ),
@@ -153,9 +152,9 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.videocam_rounded,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 size: 26,
                               ),
                               const SizedBox(height: 4),
@@ -163,7 +162,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
                                 'Video',
                                 style: AppTextStyles.labelSmall.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -208,7 +207,7 @@ class JagaTanahAttachmentSection extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             errorText!,
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
+            style: AppTextStyles.bodySmall.copyWith(color: colors.error),
           ),
         ],
       ],

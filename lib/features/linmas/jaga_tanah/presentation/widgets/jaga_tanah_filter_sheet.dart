@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
@@ -47,6 +47,7 @@ class JagaTanahFilterSheet extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final selectedStatus = useState<String?>(initialStatus);
     final selectedCategory = useState<String?>(initialCategory);
     final hasSelection =
@@ -68,7 +69,7 @@ class JagaTanahFilterSheet extends HookWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.grey300,
+                    color: colors.borderStrong,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -81,6 +82,7 @@ class JagaTanahFilterSheet extends HookWidget {
                       'Filter Laporan',
                       style: AppTextStyles.titleLarge.copyWith(
                         fontWeight: FontWeight.w700,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -91,7 +93,7 @@ class JagaTanahFilterSheet extends HookWidget {
                         selectedCategory.value = null;
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.error,
+                        foregroundColor: colors.error,
                         minimumSize: const Size(48, 44),
                       ),
                       child: const Text('Reset Filter'),
@@ -103,14 +105,11 @@ class JagaTanahFilterSheet extends HookWidget {
                       minWidth: 48,
                       minHeight: 48,
                     ),
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: AppColors.textPrimary,
-                    ),
+                    icon: Icon(Icons.close_rounded, color: colors.textPrimary),
                   ),
                 ],
               ),
-              const Divider(height: 16, color: AppColors.grey200),
+              Divider(height: 16, color: colors.divider),
               Flexible(
                 child: SingleChildScrollView(
                   child: Column(
@@ -120,6 +119,7 @@ class JagaTanahFilterSheet extends HookWidget {
                         'Status Laporan',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.w700,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -132,17 +132,17 @@ class JagaTanahFilterSheet extends HookWidget {
                             selected: selectedStatus.value == null,
                             showCheckmark: false,
                             materialTapTargetSize: MaterialTapTargetSize.padded,
-                            selectedColor: AppColors.primaryLight,
-                            backgroundColor: AppColors.grey50,
+                            selectedColor: colors.primaryLight,
+                            backgroundColor: colors.surfaceVariant,
                             side: BorderSide(
                               color: selectedStatus.value == null
-                                  ? AppColors.primaryDark
-                                  : AppColors.grey300,
+                                  ? colors.primaryDark
+                                  : colors.borderStrong,
                             ),
                             labelStyle: AppTextStyles.labelMedium.copyWith(
                               color: selectedStatus.value == null
-                                  ? AppColors.primaryDark
-                                  : AppColors.textPrimary,
+                                  ? colors.primaryDark
+                                  : colors.textPrimary,
                               fontWeight: selectedStatus.value == null
                                   ? FontWeight.w700
                                   : FontWeight.w500,
@@ -158,17 +158,17 @@ class JagaTanahFilterSheet extends HookWidget {
                               showCheckmark: false,
                               materialTapTargetSize:
                                   MaterialTapTargetSize.padded,
-                              selectedColor: AppColors.primaryLight,
-                              backgroundColor: AppColors.grey50,
+                              selectedColor: colors.primaryLight,
+                              backgroundColor: colors.surfaceVariant,
                               side: BorderSide(
                                 color: isSelected
-                                    ? AppColors.primaryDark
-                                    : AppColors.grey300,
+                                    ? colors.primaryDark
+                                    : colors.borderStrong,
                               ),
                               labelStyle: AppTextStyles.labelMedium.copyWith(
                                 color: isSelected
-                                    ? AppColors.primaryDark
-                                    : AppColors.textPrimary,
+                                    ? colors.primaryDark
+                                    : colors.textPrimary,
                                 fontWeight: isSelected
                                     ? FontWeight.w700
                                     : FontWeight.w500,
@@ -187,6 +187,7 @@ class JagaTanahFilterSheet extends HookWidget {
                         'Kategori Laporan',
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.w700,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -199,8 +200,8 @@ class JagaTanahFilterSheet extends HookWidget {
                         builder: (context, state) {
                           if (state.isLoadingCategories &&
                               state.categories.isEmpty) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -208,14 +209,16 @@ class JagaTanahFilterSheet extends HookWidget {
                                     height: 18,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      color: AppColors.primary,
+                                      color: colors.primary,
                                     ),
                                   ),
-                                  SizedBox(width: 10),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
                                       'Memuat kategori Jaga Tanah...',
-                                      style: AppTextStyles.bodySmall,
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: colors.textSecondary,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -229,7 +232,7 @@ class JagaTanahFilterSheet extends HookWidget {
                               width: double.infinity,
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppColors.errorLight,
+                                color: colors.errorLight,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -238,7 +241,7 @@ class JagaTanahFilterSheet extends HookWidget {
                                     child: Text(
                                       state.categoryError!,
                                       style: AppTextStyles.bodySmall.copyWith(
-                                        color: AppColors.error,
+                                        color: colors.error,
                                       ),
                                     ),
                                   ),
@@ -250,7 +253,7 @@ class JagaTanahFilterSheet extends HookWidget {
                                           ),
                                         ),
                                     style: TextButton.styleFrom(
-                                      foregroundColor: AppColors.error,
+                                      foregroundColor: colors.error,
                                       minimumSize: const Size(48, 44),
                                     ),
                                     child: const Text('Muat Ulang'),
@@ -261,9 +264,11 @@ class JagaTanahFilterSheet extends HookWidget {
                           }
 
                           if (state.categories.isEmpty) {
-                            return const Text(
+                            return Text(
                               'Belum ada kategori tersedia.',
-                              style: AppTextStyles.bodySmall,
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: colors.textSecondary,
+                              ),
                             );
                           }
 
@@ -281,17 +286,17 @@ class JagaTanahFilterSheet extends HookWidget {
                                 showCheckmark: false,
                                 materialTapTargetSize:
                                     MaterialTapTargetSize.padded,
-                                selectedColor: AppColors.primaryLight,
-                                backgroundColor: AppColors.grey50,
+                                selectedColor: colors.primaryLight,
+                                backgroundColor: colors.surfaceVariant,
                                 side: BorderSide(
                                   color: selectedCategory.value == null
-                                      ? AppColors.primaryDark
-                                      : AppColors.grey300,
+                                      ? colors.primaryDark
+                                      : colors.borderStrong,
                                 ),
                                 labelStyle: AppTextStyles.labelMedium.copyWith(
                                   color: selectedCategory.value == null
-                                      ? AppColors.primaryDark
-                                      : AppColors.textPrimary,
+                                      ? colors.primaryDark
+                                      : colors.textPrimary,
                                   fontWeight: selectedCategory.value == null
                                       ? FontWeight.w700
                                       : FontWeight.w500,
@@ -308,18 +313,18 @@ class JagaTanahFilterSheet extends HookWidget {
                                   showCheckmark: false,
                                   materialTapTargetSize:
                                       MaterialTapTargetSize.padded,
-                                  selectedColor: AppColors.primaryLight,
-                                  backgroundColor: AppColors.grey50,
+                                  selectedColor: colors.primaryLight,
+                                  backgroundColor: colors.surfaceVariant,
                                   side: BorderSide(
                                     color: isSelected
-                                        ? AppColors.primaryDark
-                                        : AppColors.grey300,
+                                        ? colors.primaryDark
+                                        : colors.borderStrong,
                                   ),
                                   labelStyle: AppTextStyles.labelMedium
                                       .copyWith(
                                         color: isSelected
-                                            ? AppColors.primaryDark
-                                            : AppColors.textPrimary,
+                                            ? colors.primaryDark
+                                            : colors.textPrimary,
                                         fontWeight: isSelected
                                             ? FontWeight.w700
                                             : FontWeight.w500,
@@ -346,8 +351,8 @@ class JagaTanahFilterSheet extends HookWidget {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.onPrimary,
                   minimumSize: const Size(double.infinity, 48),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

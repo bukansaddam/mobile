@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -26,10 +26,11 @@ class JagaTanahOptionSheet extends StatelessWidget {
   }) {
     FocusManager.instance.primaryFocus?.unfocus();
     ScaffoldMessenger.maybeOf(context)?.hideCurrentSnackBar();
+    final colors = context.appColors;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -44,6 +45,7 @@ class JagaTanahOptionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return SafeArea(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -58,7 +60,7 @@ class JagaTanahOptionSheet extends StatelessWidget {
                 width: 38,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colors.borderStrong,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -73,7 +75,7 @@ class JagaTanahOptionSheet extends StatelessWidget {
                       title,
                       style: AppTextStyles.titleLarge.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -84,16 +86,13 @@ class JagaTanahOptionSheet extends StatelessWidget {
                       minWidth: 48,
                       minHeight: 48,
                     ),
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: AppColors.textPrimary,
-                    ),
+                    icon: Icon(Icons.close_rounded, color: colors.textPrimary),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 4),
-            const Divider(height: 1, color: AppColors.grey200),
+            Divider(height: 1, color: colors.divider),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
@@ -111,18 +110,18 @@ class JagaTanahOptionSheet extends StatelessWidget {
                             ? FontWeight.w700
                             : FontWeight.w500,
                         color: isSelected
-                            ? AppColors.primaryDark
-                            : AppColors.textPrimary,
+                            ? colors.primaryDark
+                            : colors.textPrimary,
                       ),
                     ),
                     trailing: isSelected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_circle_rounded,
-                            color: AppColors.primaryDark,
+                            color: colors.primaryDark,
                           )
                         : null,
                     tileColor: isSelected
-                        ? AppColors.primaryLight.withValues(alpha: 0.45)
+                        ? colors.primaryLight.withValues(alpha: 0.45)
                         : null,
                     onTap: () {
                       onSelected(option);

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +19,9 @@ class JagaTanahAttachmentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    const videoOverlayBg = Color(0xFF1E293B); // media-overlay
+    const videoOverlayFg = Color(0xFFFFFFFF); // media-overlay
     final isVideo = FileSecurityUtils.isVideoPath(path);
 
     return Stack(
@@ -32,26 +35,26 @@ class JagaTanahAttachmentTile extends StatelessWidget {
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.grey300),
+              border: Border.all(color: colors.borderStrong),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(13),
               child: isVideo
                   ? Container(
-                      color: AppColors.secondary,
+                      color: videoOverlayBg,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             Icons.play_circle_fill_rounded,
-                            color: AppColors.white,
+                            color: videoOverlayFg,
                             size: 28,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Video',
                             style: AppTextStyles.labelSmall.copyWith(
-                              color: AppColors.white,
+                              color: videoOverlayFg,
                             ),
                           ),
                         ],
@@ -62,9 +65,9 @@ class JagaTanahAttachmentTile extends StatelessWidget {
                       fit: BoxFit.cover,
                       cacheWidth: 300,
                       cacheHeight: 300,
-                      errorBuilder: (_, _, _) => const Icon(
+                      errorBuilder: (_, _, _) => Icon(
                         Icons.broken_image_rounded,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
             ),
@@ -82,14 +85,14 @@ class JagaTanahAttachmentTile extends StatelessWidget {
               child: Container(
                 width: 26,
                 height: 26,
-                decoration: const BoxDecoration(
-                  color: AppColors.error,
+                decoration: BoxDecoration(
+                  color: colors.errorSolid,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child: const Icon(
+                child: Icon(
                   Icons.close_rounded,
-                  color: AppColors.white,
+                  color: colors.onErrorSolid,
                   size: 14,
                 ),
               ),

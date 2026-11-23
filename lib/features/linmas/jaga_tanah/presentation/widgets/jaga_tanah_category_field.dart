@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_field_label.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +29,7 @@ class JagaTanahCategoryField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasValue = selectedLabel != null && selectedLabel!.trim().isNotEmpty;
 
     return Column(
@@ -42,59 +43,50 @@ class JagaTanahCategoryField extends StatelessWidget {
           child: InputDecorator(
             isEmpty: !hasValue,
             decoration: InputDecoration(
-              prefixIcon: Icon(prefixIcon, color: AppColors.primary, size: 20),
+              prefixIcon: Icon(prefixIcon, color: colors.primary, size: 20),
               suffixIcon: isLoading
-                  ? const UnconstrainedBox(
+                  ? UnconstrainedBox(
                       child: SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
                     )
-                  : const Icon(
+                  : Icon(
                       Icons.keyboard_arrow_down_rounded,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       size: 24,
                     ),
               filled: true,
-              fillColor: AppColors.white,
+              fillColor: colors.surface,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 14,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.grey300),
+                borderSide: BorderSide(color: colors.borderStrong),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: errorText != null
-                      ? AppColors.error
-                      : AppColors.grey300,
+                  color: errorText != null ? colors.error : colors.borderStrong,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(
-                  color: AppColors.primary,
-                  width: 1.5,
-                ),
+                borderSide: BorderSide(color: colors.primary, width: 1.5),
               ),
               errorText: errorText,
-              errorStyle: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.error,
-              ),
+              errorStyle: AppTextStyles.bodySmall.copyWith(color: colors.error),
             ),
             child: Text(
               hasValue ? selectedLabel! : hintText,
               style: AppTextStyles.bodyMedium.copyWith(
-                color: hasValue
-                    ? AppColors.textPrimary
-                    : AppColors.textSecondary,
+                color: hasValue ? colors.textPrimary : colors.textSecondary,
                 fontWeight: hasValue ? FontWeight.w500 : FontWeight.normal,
               ),
             ),
@@ -106,7 +98,7 @@ class JagaTanahCategoryField extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: AppColors.errorLight,
+              color: colors.errorLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -115,7 +107,7 @@ class JagaTanahCategoryField extends StatelessWidget {
                   child: Text(
                     fetchErrorText!,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.error,
+                      color: colors.error,
                     ),
                   ),
                 ),
@@ -123,7 +115,7 @@ class JagaTanahCategoryField extends StatelessWidget {
                   TextButton(
                     onPressed: onRetry,
                     style: TextButton.styleFrom(
-                      foregroundColor: AppColors.error,
+                      foregroundColor: colors.error,
                       minimumSize: const Size(48, 44),
                     ),
                     child: const Text('Muat Ulang'),

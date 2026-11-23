@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -18,22 +18,20 @@ class LaporanInsidentilSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return TextField(
       controller: controller,
       textInputAction: TextInputAction.search,
-      style: AppTextStyles.bodyMedium,
+      style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
       onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
       onChanged: onChanged,
       onSubmitted: onSubmitted,
       decoration: InputDecoration(
         hintText: 'Cari judul laporan...',
         hintStyle: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textSecondary,
+          color: colors.textSecondary,
         ),
-        prefixIcon: const Icon(
-          Icons.search_rounded,
-          color: AppColors.textSecondary,
-        ),
+        prefixIcon: Icon(Icons.search_rounded, color: colors.textSecondary),
         suffixIcon: ValueListenableBuilder<TextEditingValue>(
           valueListenable: controller,
           builder: (context, value, _) {
@@ -44,31 +42,31 @@ class LaporanInsidentilSearchBar extends StatelessWidget {
               onPressed: onClear,
               tooltip: 'Hapus pencarian',
               constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-              icon: const Icon(
+              icon: Icon(
                 Icons.close_rounded,
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 size: 20,
               ),
             );
           },
         ),
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: colors.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.grey300),
+          borderSide: BorderSide(color: colors.borderStrong),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.grey300),
+          borderSide: BorderSide(color: colors.borderStrong),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: BorderSide(color: colors.primary, width: 1.5),
         ),
       ),
     );

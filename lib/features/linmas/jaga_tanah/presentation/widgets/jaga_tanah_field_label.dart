@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -14,13 +14,14 @@ class JagaTanahFieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Text.rich(
       TextSpan(
         text: label,
         style: AppTextStyles.titleMedium.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
+          color: colors.textPrimary,
         ),
         children: isRequired
             ? [
@@ -29,7 +30,7 @@ class JagaTanahFieldLabel extends StatelessWidget {
                   style: AppTextStyles.titleMedium.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.error,
+                    color: colors.error,
                   ),
                 ),
               ]

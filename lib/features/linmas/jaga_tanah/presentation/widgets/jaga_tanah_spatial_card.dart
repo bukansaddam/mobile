@@ -1,12 +1,14 @@
 import 'dart:async';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-typedef JagaTanahMapPreviewBuilder =
-    Widget Function(BuildContext context, LatLng center);
+typedef JagaTanahMapPreviewBuilder = Widget Function(
+  BuildContext context,
+  LatLng center,
+);
 
 /// Kartu pratinjau peta untuk memilih atau menampilkan titik lokasi pada form Jaga Tanahku.
 class JagaTanahSpatialCard extends StatefulWidget {
@@ -65,16 +67,17 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final center = _center;
     final isEditable = widget.onOpenMap != null;
 
     final mapContainer = Container(
       height: widget.height,
       decoration: BoxDecoration(
-        color: AppColors.grey100,
+        color: colors.surfaceElevated,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: widget.errorText != null ? AppColors.error : AppColors.grey300,
+          color: widget.errorText != null ? colors.error : colors.borderStrong,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -88,12 +91,12 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                     ? Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const SizedBox(
+                          SizedBox(
                             width: 24,
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2.2,
-                              color: AppColors.primaryDark,
+                              color: colors.primaryDark,
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -101,7 +104,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                             'Mencari lokasi GPS...',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -109,9 +112,9 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                     : Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.add_location_alt_outlined,
-                            color: AppColors.primaryDark,
+                            color: colors.primaryDark,
                             size: 34,
                           ),
                           const SizedBox(height: 6),
@@ -119,7 +122,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                             'Belum ada titik lokasi',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.labelMedium.copyWith(
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -128,7 +131,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                             'Ketuk untuk pilih lokasi di peta',
                             textAlign: TextAlign.center,
                             style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -169,7 +172,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
               top: 8,
               right: 8,
               child: Material(
-                color: AppColors.white.withValues(alpha: 0.94),
+                color: colors.surface.withValues(alpha: 0.94),
                 borderRadius: BorderRadius.circular(10),
                 elevation: 2,
                 child: IconButton(
@@ -179,9 +182,9 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                     minWidth: 44,
                     minHeight: 44,
                   ),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.fullscreen_rounded,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                     size: 22,
                   ),
                 ),
@@ -199,16 +202,16 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.94),
+                    color: colors.surface.withValues(alpha: 0.94),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.pin_drop_outlined,
                         size: 14,
-                        color: AppColors.primaryDark,
+                        color: colors.primaryDark,
                       ),
                       const SizedBox(width: 5),
                       Flexible(
@@ -220,7 +223,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.labelSmall.copyWith(
                             fontSize: 11,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -254,7 +257,7 @@ class _JagaTanahSpatialCardState extends State<JagaTanahSpatialCard> {
           const SizedBox(height: 6),
           Text(
             widget.errorText!,
-            style: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
+            style: AppTextStyles.bodySmall.copyWith(color: colors.error),
           ),
         ],
       ],

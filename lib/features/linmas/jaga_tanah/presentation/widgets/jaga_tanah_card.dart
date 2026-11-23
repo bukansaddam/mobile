@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
@@ -23,34 +23,33 @@ class JagaTanahCard extends StatelessWidget {
     return Icons.landscape_rounded;
   }
 
-  static ({Color bg, Color fg}) _statusPalette(ComplaintStatus status) {
+  static ({Color bg, Color fg}) _statusPalette(
+    ComplaintStatus status,
+    AppColorScheme colors,
+  ) {
     return switch (status) {
       ComplaintStatus.completed => (
-        bg: AppColors.primaryLight,
-        fg: AppColors.primaryDark,
+        bg: colors.primaryLight,
+        fg: colors.primaryDark,
       ),
-      ComplaintStatus.rejected => (
-        bg: AppColors.errorLight,
-        fg: AppColors.error,
-      ),
+      ComplaintStatus.rejected => (bg: colors.errorLight, fg: colors.error),
       ComplaintStatus.pending || ComplaintStatus.inProgress => (
-        bg: AppColors.warningLight,
-        fg: AppColors.accent,
+        bg: colors.warningLight,
+        fg: colors.accent,
       ),
-      ComplaintStatus.received || ComplaintStatus.verified => (
-        bg: AppColors.infoLight,
-        fg: AppColors.secondary,
-      ),
+      ComplaintStatus.received ||
+      ComplaintStatus.verified => (bg: colors.infoLight, fg: colors.secondary),
       ComplaintStatus.cancelled => (
-        bg: AppColors.grey100,
-        fg: AppColors.secondary,
+        bg: colors.surfaceElevated,
+        fg: colors.secondary,
       ),
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    final palette = _statusPalette(item.status);
+    final colors = context.appColors;
+    final palette = _statusPalette(item.status, colors);
     final statusText = item.statusLabel.isNotEmpty
         ? item.statusLabel
         : item.status.label;
@@ -60,11 +59,11 @@ class JagaTanahCard extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withAlpha(6),
+            color: colors.shadow.withAlpha(6),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -89,12 +88,12 @@ class JagaTanahCard extends StatelessWidget {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: AppColors.grey100,
+                        color: colors.surfaceElevated,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         _categoryIcon(item.category),
-                        color: AppColors.earth,
+                        color: colors.earth,
                         size: 22,
                       ),
                     ),
@@ -108,7 +107,7 @@ class JagaTanahCard extends StatelessWidget {
                             style: AppTextStyles.titleMedium.copyWith(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -118,7 +117,7 @@ class JagaTanahCard extends StatelessWidget {
                             item.timeAgo,
                             style: AppTextStyles.caption.copyWith(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

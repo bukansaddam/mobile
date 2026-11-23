@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +26,7 @@ class JagaTanahStatusView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -53,14 +54,16 @@ class JagaTanahStatusView extends StatelessWidget {
                     Text(
                       title,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.titleLarge,
+                      style: AppTextStyles.titleLarge.copyWith(
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       message,
                       textAlign: TextAlign.center,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                     ),
                     if (actionLabel != null && onAction != null) ...[
@@ -70,8 +73,8 @@ class JagaTanahStatusView extends StatelessWidget {
                         icon: Icon(actionIcon ?? Icons.refresh_rounded),
                         label: Text(actionLabel!),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.white,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           minimumSize: const Size(48, 48),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 20,

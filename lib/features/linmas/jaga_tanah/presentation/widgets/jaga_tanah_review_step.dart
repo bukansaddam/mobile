@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
@@ -25,6 +25,9 @@ class JagaTanahReviewStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    const videoOverlayBg = Color(0xFF1E293B); // media-overlay
+    const videoOverlayFg = Color(0xFFFFFFFF); // media-overlay
     final videoCount = draft.photoPaths
         .where(FileSecurityUtils.isVideoPath)
         .length;
@@ -99,7 +102,7 @@ class JagaTanahReviewStep extends StatelessWidget {
               for (var s = 0; s < sections.length; s++) ...[
                 if (s > 0) ...[
                   const SizedBox(height: 8),
-                  const Divider(height: 1, color: AppColors.grey200),
+                  Divider(height: 1, color: colors.divider),
                   const SizedBox(height: 12),
                 ],
                 Row(
@@ -108,7 +111,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                       child: Text(
                         sections[s].title,
                         style: AppTextStyles.titleMedium.copyWith(
-                          color: AppColors.primaryDark,
+                          color: colors.primaryDark,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -116,7 +119,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                     TextButton(
                       onPressed: () => onEditStep(sections[s].step),
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.primaryDark,
+                        foregroundColor: colors.primaryDark,
                         minimumSize: const Size(48, 44),
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                       ),
@@ -143,7 +146,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                         Text(
                           row.$1,
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -151,7 +154,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                         Text(
                           row.$2,
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -199,8 +202,8 @@ class JagaTanahReviewStep extends StatelessWidget {
                               width: 64,
                               height: 64,
                               color: isVideo
-                                  ? AppColors.secondary
-                                  : AppColors.grey100,
+                                  ? videoOverlayBg
+                                  : colors.surfaceElevated,
                               child: isVideo
                                   ? Padding(
                                       padding: const EdgeInsets.all(4),
@@ -212,7 +215,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                                           children: [
                                             const Icon(
                                               Icons.play_circle_fill_rounded,
-                                              color: AppColors.white,
+                                              color: videoOverlayFg,
                                               size: 24,
                                             ),
                                             const SizedBox(height: 2),
@@ -221,7 +224,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                                               maxLines: 1,
                                               style: AppTextStyles.labelSmall
                                                   .copyWith(
-                                                    color: AppColors.white,
+                                                    color: videoOverlayFg,
                                                     fontSize: 10,
                                                   ),
                                             ),
@@ -234,9 +237,9 @@ class JagaTanahReviewStep extends StatelessWidget {
                                       fit: BoxFit.cover,
                                       cacheWidth: 200,
                                       cacheHeight: 200,
-                                      errorBuilder: (_, _, _) => const Icon(
+                                      errorBuilder: (_, _, _) => Icon(
                                         Icons.image_outlined,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                     ),
                             ),
@@ -255,17 +258,17 @@ class JagaTanahReviewStep extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppColors.primaryLight,
+            color: colors.primaryLight,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: AppColors.primaryDark.withValues(alpha: 0.2),
+              color: colors.primaryDark.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.verified_user_outlined,
-                color: AppColors.primaryDark,
+                color: colors.primaryDark,
                 size: 20,
               ),
               const SizedBox(width: 10),
@@ -273,7 +276,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                 child: Text(
                   'Pastikan seluruh data di atas sesuai dengan hasil pengamatan di lapangan sebelum mengirim.',
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.primaryDark,
+                    color: colors.primaryDark,
                     fontWeight: FontWeight.w600,
                     height: 1.35,
                   ),

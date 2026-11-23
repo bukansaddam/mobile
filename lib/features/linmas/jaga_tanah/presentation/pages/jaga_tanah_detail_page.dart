@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
@@ -119,8 +119,9 @@ class JagaTanahDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: const AppPageBar(title: 'Detail Laporan Jaga Tanah'),
       body: BlocConsumer<JagaTanahDetailBloc, JagaTanahDetailState>(
         listenWhen: (previous, current) =>
@@ -149,8 +150,8 @@ class JagaTanahDetailPage extends StatelessWidget {
           if (detail == null && state.status == JagaTanahDetailStatus.failure) {
             return JagaTanahStatusView(
               icon: Icons.cloud_off_rounded,
-              iconColor: AppColors.error,
-              iconBackgroundColor: AppColors.errorLight,
+              iconColor: colors.error,
+              iconBackgroundColor: colors.errorLight,
               title: 'Gagal Memuat Detail Laporan',
               message:
                   state.errorMessage ??
@@ -167,10 +168,10 @@ class JagaTanahDetailPage extends StatelessWidget {
           }
 
           if (detail == null) {
-            return const JagaTanahStatusView(
+            return JagaTanahStatusView(
               icon: Icons.description_outlined,
-              iconColor: AppColors.primaryDark,
-              iconBackgroundColor: AppColors.primaryLight,
+              iconColor: colors.primaryDark,
+              iconBackgroundColor: colors.primaryLight,
               title: 'Data Laporan Tidak Tersedia',
               message: 'Identitas laporan Jaga Tanah tidak ditemukan.',
             );
@@ -179,7 +180,7 @@ class JagaTanahDetailPage extends StatelessWidget {
           return SafeArea(
             top: false,
             child: RefreshIndicator(
-              color: AppColors.primaryDark,
+              color: colors.primaryDark,
               onRefresh: () => _onRefresh(context),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(
@@ -190,12 +191,14 @@ class JagaTanahDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     if (state.isLoading) ...[
-                      const ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(4),
+                        ),
                         child: LinearProgressIndicator(
                           minHeight: 3,
-                          color: AppColors.primaryDark,
-                          backgroundColor: AppColors.primaryLight,
+                          color: colors.primaryDark,
+                          backgroundColor: colors.primaryLight,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -305,8 +308,8 @@ class JagaTanahDetailPage extends StatelessWidget {
                     JagaTanahSectionCard(
                       title: 'Kondisi Penggunaan & Pemanfaatan',
                       icon: Icons.eco_rounded,
-                      accentColor: AppColors.earth,
-                      badgeColor: AppColors.warningLight,
+                      accentColor: colors.earth,
+                      badgeColor: colors.warningLight,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -342,8 +345,8 @@ class JagaTanahDetailPage extends StatelessWidget {
                     JagaTanahSectionCard(
                       title: 'Informasi Hak & Penguasaan',
                       icon: Icons.description_rounded,
-                      accentColor: AppColors.secondary,
-                      badgeColor: AppColors.grey100,
+                      accentColor: colors.secondary,
+                      badgeColor: colors.surfaceElevated,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

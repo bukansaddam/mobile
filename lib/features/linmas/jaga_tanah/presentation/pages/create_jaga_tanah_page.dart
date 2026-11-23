@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -376,10 +376,11 @@ class CreateJagaTanahPage extends HookWidget {
   }) {
     FocusManager.instance.primaryFocus?.unfocus();
     ScaffoldMessenger.maybeOf(context)?.hideCurrentSnackBar();
+    final colors = context.appColors;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -683,32 +684,40 @@ class CreateJagaTanahPage extends HookWidget {
       buttonText: 'Selesai',
       barrierDismissible: false,
       customContent: hasTicket
-          ? Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Nomor Tiket',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.primaryDark,
-                    ),
+          ? Builder(
+              builder: (dialogContext) {
+                final colors = dialogContext.appColors;
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    ticketNumber,
-                    style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.primaryDark,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  decoration: BoxDecoration(
+                    color: colors.primaryLight,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ],
-              ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Nomor Tiket',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: colors.primaryDark,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        ticketNumber,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          color: colors.primaryDark,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             )
           : null,
       onPressed: () {
@@ -830,6 +839,7 @@ class CreateJagaTanahPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final step0FormKey = useMemoized(GlobalKey<FormState>.new);
     final step1FormKey = useMemoized(GlobalKey<FormState>.new);
     final scrollController = useScrollController();
@@ -1151,8 +1161,8 @@ class CreateJagaTanahPage extends HookWidget {
         stepContent = JagaTanahSectionCard(
           title: 'Kondisi Penggunaan & Pemanfaatan',
           icon: Icons.eco_rounded,
-          accentColor: AppColors.earth,
-          badgeColor: AppColors.warningLight,
+          accentColor: colors.earth,
+          badgeColor: colors.warningLight,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: buildDropdownWidgets(_sectionBDropdowns),
@@ -1162,8 +1172,8 @@ class CreateJagaTanahPage extends HookWidget {
         stepContent = JagaTanahSectionCard(
           title: 'Informasi Hak & Penguasaan',
           icon: Icons.description_rounded,
-          accentColor: AppColors.secondary,
-          badgeColor: AppColors.grey100,
+          accentColor: colors.secondary,
+          badgeColor: colors.surfaceElevated,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: buildDropdownWidgets(_sectionCDropdowns),
@@ -1223,7 +1233,7 @@ class CreateJagaTanahPage extends HookWidget {
       child: PopScope(
         canPop: !isSubmitting,
         child: Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: AppPageBar(
             title: 'Buat Laporan Jaga Tanah',
             isBackEnabled: !isSubmitting,
@@ -1285,10 +1295,10 @@ class CreateJagaTanahPage extends HookWidget {
           bottomNavigationBar: Container(
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.black.withValues(alpha: 0.06),
+                  color: colors.shadow.withValues(alpha: 0.06),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
                 ),
@@ -1311,8 +1321,8 @@ class CreateJagaTanahPage extends HookWidget {
                               },
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 50),
-                          foregroundColor: AppColors.textPrimary,
-                          side: const BorderSide(color: AppColors.grey300),
+                          foregroundColor: colors.textPrimary,
+                          side: BorderSide(color: colors.borderStrong),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -1385,12 +1395,12 @@ class CreateJagaTanahPage extends HookWidget {
                             },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
-                        disabledBackgroundColor: AppColors.primary.withValues(
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
+                        disabledBackgroundColor: colors.primary.withValues(
                           alpha: 0.45,
                         ),
-                        disabledForegroundColor: AppColors.white,
+                        disabledForegroundColor: colors.onPrimary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -1401,12 +1411,12 @@ class CreateJagaTanahPage extends HookWidget {
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const SizedBox(
+                                SizedBox(
                                   width: 18,
                                   height: 18,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.2,
-                                    color: AppColors.white,
+                                    color: colors.onPrimary,
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -1415,7 +1425,7 @@ class CreateJagaTanahPage extends HookWidget {
                                     'Mengirim...',
                                     overflow: TextOverflow.ellipsis,
                                     style: AppTextStyles.button.copyWith(
-                                      color: AppColors.white,
+                                      color: colors.onPrimary,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -1425,7 +1435,7 @@ class CreateJagaTanahPage extends HookWidget {
                           : Text(
                               isFinalStep ? 'Kirim' : 'Lanjut',
                               style: AppTextStyles.button.copyWith(
-                                color: AppColors.white,
+                                color: colors.onPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),

@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_card.dart';
@@ -30,6 +30,7 @@ class JagaTanahBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     if (state.status == JagaTanahListStatus.loading && state.items.isEmpty) {
       return const ReportCardShimmerList(
         semanticLabel: 'Memuat laporan Jaga Tanah...',
@@ -38,12 +39,12 @@ class JagaTanahBody extends StatelessWidget {
 
     if (state.status == JagaTanahListStatus.failure && state.items.isEmpty) {
       return RefreshIndicator(
-        color: AppColors.primary,
+        color: colors.primary,
         onRefresh: onRefresh,
         child: JagaTanahStatusView(
           icon: Icons.cloud_off_rounded,
-          iconColor: AppColors.error,
-          iconBackgroundColor: AppColors.errorLight,
+          iconColor: colors.error,
+          iconBackgroundColor: colors.errorLight,
           title: 'Gagal Memuat Laporan',
           message:
               state.errorMessage ??
@@ -76,14 +77,14 @@ class JagaTanahBody extends StatelessWidget {
           : 'Buat Laporan';
 
       return RefreshIndicator(
-        color: AppColors.primary,
+        color: colors.primary,
         onRefresh: onRefresh,
         child: JagaTanahStatusView(
           icon: hasConstraints
               ? Icons.search_off_rounded
               : Icons.landscape_rounded,
-          iconColor: AppColors.primaryDark,
-          iconBackgroundColor: AppColors.primaryLight,
+          iconColor: colors.primaryDark,
+          iconBackgroundColor: colors.primaryLight,
           title: hasConstraints
               ? 'Laporan Tidak Ditemukan'
               : 'Belum Ada Laporan Jaga Tanah',
@@ -100,7 +101,7 @@ class JagaTanahBody extends StatelessWidget {
     }
 
     return RefreshIndicator(
-      color: AppColors.primary,
+      color: colors.primary,
       onRefresh: onRefresh,
       child: ListView.separated(
         controller: scrollController,

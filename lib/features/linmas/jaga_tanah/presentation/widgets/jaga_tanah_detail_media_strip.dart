@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/dio_client.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
@@ -33,6 +33,10 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    const videoOverlayBg = Color(0xFF1E293B); // media-overlay
+    const videoOverlayFg = Color(0xFFFFFFFF); // media-overlay
+    const fullscreenScrim = Color(0x8C000000); // media-overlay
     final photoUrls = attachments
         .where((item) => !_isVideo(item))
         .map((item) => item.url)
@@ -48,7 +52,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
               child: Text(
                 'Lampiran Foto / Video',
                 style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textSecondary,
+                  color: colors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -57,7 +61,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
             Text(
               '${attachments.length} media',
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -102,7 +106,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                   height: 88,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.grey300),
+                    border: Border.all(color: colors.borderStrong),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(11),
@@ -111,7 +115,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                       children: [
                         if (isVideo)
                           Container(
-                            color: AppColors.secondary,
+                            color: videoOverlayBg,
                             padding: const EdgeInsets.all(6),
                             child: FittedBox(
                               fit: BoxFit.scaleDown,
@@ -120,7 +124,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                                 children: [
                                   const Icon(
                                     Icons.play_circle_fill_rounded,
-                                    color: AppColors.white,
+                                    color: videoOverlayFg,
                                     size: 28,
                                   ),
                                   const SizedBox(height: 2),
@@ -128,7 +132,7 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                                     'Video',
                                     maxLines: 1,
                                     style: AppTextStyles.labelSmall.copyWith(
-                                      color: AppColors.white,
+                                      color: videoOverlayFg,
                                       fontSize: 10,
                                     ),
                                   ),
@@ -151,17 +155,17 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                             fit: BoxFit.cover,
                             cacheWidth: 264,
                             cacheHeight: 264,
-                            errorBuilder: (_, _, _) => const Icon(
+                            errorBuilder: (_, _, _) => Icon(
                               Icons.broken_image_rounded,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           )
                         else
-                          const ColoredBox(
-                            color: AppColors.grey100,
+                          ColoredBox(
+                            color: colors.surfaceElevated,
                             child: Icon(
                               Icons.image_outlined,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         Positioned(
@@ -169,13 +173,13 @@ class JagaTanahDetailMediaStrip extends StatelessWidget {
                           bottom: 6,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppColors.black.withValues(alpha: 0.55),
+                            decoration: const BoxDecoration(
+                              color: fullscreenScrim,
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.fullscreen_rounded,
-                              color: AppColors.white,
+                              color: videoOverlayFg,
                               size: 14,
                             ),
                           ),

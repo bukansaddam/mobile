@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_detail_labels.dart';
@@ -13,6 +13,7 @@ class JagaTanahDetailStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final statusIcon = complaintStatusFromCode(detail.status).icon;
     final statusTitle = JagaTanahDetailLabels.resolveStatusLabel(
       detail.status,
@@ -23,10 +24,10 @@ class JagaTanahDetailStatusBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: colors.primaryLight,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
+          color: colors.primary.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -36,11 +37,11 @@ class JagaTanahDetailStatusBanner extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.12),
+              color: colors.primary.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
-            child: Icon(statusIcon, color: AppColors.primaryDark, size: 22),
+            child: Icon(statusIcon, color: colors.primaryDark, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -50,7 +51,7 @@ class JagaTanahDetailStatusBanner extends StatelessWidget {
                 Text(
                   'Status Laporan',
                   style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -58,7 +59,7 @@ class JagaTanahDetailStatusBanner extends StatelessWidget {
                 Text(
                   statusTitle,
                   style: AppTextStyles.titleLarge.copyWith(
-                    color: AppColors.primaryDark,
+                    color: colors.primaryDark,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

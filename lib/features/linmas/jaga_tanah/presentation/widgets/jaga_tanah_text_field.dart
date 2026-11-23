@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_field_label.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +30,7 @@ class JagaTanahTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,48 +42,43 @@ class JagaTanahTextField extends StatelessWidget {
           maxLength: maxLength,
           textInputAction: textInputAction,
           onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-          style: AppTextStyles.bodyMedium,
+          style: AppTextStyles.bodyMedium.copyWith(color: colors.textPrimary),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+              color: colors.textSecondary,
             ),
             counterText: '',
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: AppColors.primaryDark, size: 20)
+                ? Icon(prefixIcon, color: colors.primaryDark, size: 20)
                 : null,
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: colors.surface,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 12,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(
-                color: AppColors.primaryDark,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: colors.primaryDark, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.error),
+              borderSide: BorderSide(color: colors.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+              borderSide: BorderSide(color: colors.error, width: 1.5),
             ),
-            errorStyle: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.error,
-            ),
+            errorStyle: AppTextStyles.bodySmall.copyWith(color: colors.error),
           ),
           validator:
               validator ??

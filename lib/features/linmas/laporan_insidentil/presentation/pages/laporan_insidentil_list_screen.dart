@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/routes/app_router.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -53,6 +53,7 @@ class LaporanInsidentilListScreen extends HookWidget {
 
   void _openFilterSheet(BuildContext context) {
     FocusManager.instance.primaryFocus?.unfocus();
+    final colors = context.appColors;
     final bloc = context.read<MyComplaintListBloc>();
     if (bloc.state.categories.isEmpty && !bloc.state.isLoadingCategories) {
       bloc.add(const FetchIncidentCategoriesEvent());
@@ -61,7 +62,7 @@ class LaporanInsidentilListScreen extends HookWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -99,6 +100,7 @@ class LaporanInsidentilListScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final searchController = useTextEditingController();
     final scrollController = useScrollController();
     final debounceTimer = useRef<Timer?>(null);
@@ -123,7 +125,7 @@ class LaporanInsidentilListScreen extends HookWidget {
     }, [scrollController]);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: const AppPageBar(title: 'Laporan Insidentil'),
       floatingActionButton:
           BlocBuilder<MyComplaintListBloc, MyComplaintListState>(
@@ -134,13 +136,13 @@ class LaporanInsidentilListScreen extends HookWidget {
               }
               return FloatingActionButton.extended(
                 onPressed: () => _openCreateReport(context),
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
                 elevation: 3,
                 icon: const Icon(Icons.add_rounded),
                 label: Text(
                   'Buat Laporan',
-                  style: AppTextStyles.button.copyWith(color: AppColors.white),
+                  style: AppTextStyles.button.copyWith(color: colors.onPrimary),
                 ),
               );
             },

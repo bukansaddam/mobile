@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_detail_labels.dart';
@@ -75,6 +75,7 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final progress = _resolveProgress(detail.status);
     final entries = _effectiveTimeline();
     const icons = [
@@ -93,10 +94,10 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight,
+              color: colors.primaryLight,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: AppColors.primaryDark.withValues(alpha: 0.16),
+                color: colors.primaryDark.withValues(alpha: 0.16),
               ),
             ),
             child: Column(
@@ -111,20 +112,22 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                     final IconData stepIcon;
 
                     if (isCompleted) {
-                      circleColor = AppColors.primaryDark;
-                      iconColor = AppColors.white;
+                      circleColor = colors.primary;
+                      iconColor = colors.onPrimary;
                       stepIcon = Icons.check_rounded;
                     } else if (isCurrent) {
                       circleColor = progress.isTerminalNegative
-                          ? AppColors.error
-                          : AppColors.primaryDark;
-                      iconColor = AppColors.white;
+                          ? colors.errorSolid
+                          : colors.primary;
+                      iconColor = progress.isTerminalNegative
+                          ? colors.onErrorSolid
+                          : colors.onPrimary;
                       stepIcon = progress.isTerminalNegative
                           ? Icons.close_rounded
                           : icons[index];
                     } else {
-                      circleColor = AppColors.grey300;
-                      iconColor = AppColors.secondary;
+                      circleColor = colors.borderStrong;
+                      iconColor = colors.textPrimary;
                       stepIcon = icons[index];
                     }
 
@@ -138,8 +141,8 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                                     height: 2,
                                     margin: const EdgeInsets.only(right: 4),
                                     color: index <= progress.activeStep
-                                        ? AppColors.primaryDark
-                                        : AppColors.grey300,
+                                        ? colors.primaryDark
+                                        : colors.borderStrong,
                                   ),
                           ),
                           Container(
@@ -159,8 +162,8 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                                     height: 2,
                                     margin: const EdgeInsets.only(left: 4),
                                     color: index < progress.activeStep
-                                        ? AppColors.primaryDark
-                                        : AppColors.grey300,
+                                        ? colors.primaryDark
+                                        : colors.borderStrong,
                                   ),
                           ),
                         ],
@@ -191,8 +194,8 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                                     ? FontWeight.w700
                                     : FontWeight.w500,
                                 color: active
-                                    ? AppColors.primaryDark
-                                    : AppColors.textSecondary,
+                                    ? colors.primaryDark
+                                    : colors.textSecondary,
                               ),
                             ),
                           ),
@@ -233,8 +236,8 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                                 ? FontWeight.w700
                                 : FontWeight.w600,
                             color: isLatest
-                                ? AppColors.textPrimary
-                                : AppColors.textSecondary,
+                                ? colors.textPrimary
+                                : colors.textSecondary,
                           ),
                         ),
                         if (created != null) ...[
@@ -244,7 +247,7 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                             textAlign: TextAlign.end,
                             style: AppTextStyles.bodySmall.copyWith(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -260,13 +263,10 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                           height: 16,
                           decoration: BoxDecoration(
                             color: isLatest
-                                ? AppColors.primaryDark
-                                : AppColors.grey400,
+                                ? colors.primaryDark
+                                : colors.textHint,
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.white,
-                              width: 2,
-                            ),
+                            border: Border.all(color: colors.surface, width: 2),
                           ),
                         ),
                         if (!isLast)
@@ -274,7 +274,7 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                             child: Container(
                               width: 2,
                               constraints: const BoxConstraints(minHeight: 28),
-                              color: AppColors.divider,
+                              color: colors.divider,
                             ),
                           ),
                       ],
@@ -290,8 +290,8 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                             note,
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: isLatest
-                                  ? AppColors.textPrimary
-                                  : AppColors.textSecondary,
+                                  ? colors.textPrimary
+                                  : colors.textSecondary,
                               fontWeight: isLatest
                                   ? FontWeight.w600
                                   : FontWeight.w400,
@@ -303,7 +303,7 @@ class JagaTanahDetailTimelineCard extends StatelessWidget {
                             Text(
                               'Oleh: ${entry.actorName}',
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           ],

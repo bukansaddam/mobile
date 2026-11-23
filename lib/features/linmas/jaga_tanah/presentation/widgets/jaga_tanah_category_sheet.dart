@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +33,7 @@ class JagaTanahCategorySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return SafeArea(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -47,7 +48,7 @@ class JagaTanahCategorySheet extends StatelessWidget {
                 width: 38,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colors.borderStrong,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -62,7 +63,7 @@ class JagaTanahCategorySheet extends StatelessWidget {
                       title,
                       style: AppTextStyles.titleLarge.copyWith(
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: colors.textPrimary,
                       ),
                     ),
                   ),
@@ -73,16 +74,13 @@ class JagaTanahCategorySheet extends StatelessWidget {
                       minWidth: 48,
                       minHeight: 48,
                     ),
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: AppColors.textPrimary,
-                    ),
+                    icon: Icon(Icons.close_rounded, color: colors.textPrimary),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 4),
-            const Divider(height: 1, color: AppColors.grey200),
+            Divider(height: 1, color: colors.divider),
             Flexible(
               child: categories.isEmpty
                   ? Center(
@@ -92,7 +90,7 @@ class JagaTanahCategorySheet extends StatelessWidget {
                           'Belum ada kategori tersedia.',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                       ),
@@ -111,16 +109,16 @@ class JagaTanahCategorySheet extends StatelessWidget {
                             height: 36,
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColors.primaryLight
-                                  : AppColors.grey100,
+                                  ? colors.primaryLight
+                                  : colors.surfaceElevated,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               iconFor(item),
                               size: 20,
                               color: isSelected
-                                  ? AppColors.primaryDark
-                                  : AppColors.earth,
+                                  ? colors.primaryDark
+                                  : colors.earth,
                             ),
                           ),
                           title: Text(
@@ -130,27 +128,27 @@ class JagaTanahCategorySheet extends StatelessWidget {
                                   ? FontWeight.w700
                                   : FontWeight.w500,
                               color: isSelected
-                                  ? AppColors.primaryDark
-                                  : AppColors.textPrimary,
+                                  ? colors.primaryDark
+                                  : colors.textPrimary,
                             ),
                           ),
                           subtitle: item.hasSubCategories
                               ? Text(
                                   '${item.children.length} sub-kategori',
                                   style: AppTextStyles.caption.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                 )
                               : null,
                           trailing: isSelected
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check_circle_rounded,
-                                  color: AppColors.primaryDark,
+                                  color: colors.primaryDark,
                                 )
                               : (item.hasSubCategories
-                                    ? const Icon(
+                                    ? Icon(
                                         Icons.chevron_right_rounded,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       )
                                     : null),
                           onTap: () {

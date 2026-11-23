@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -14,16 +14,17 @@ class JagaTanahFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final hasActiveFilter = activeCount > 0;
 
     return Tooltip(
       message: 'Filter laporan',
       child: Material(
-        color: hasActiveFilter ? AppColors.primaryLight : AppColors.white,
+        color: hasActiveFilter ? colors.primaryLight : colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
           side: BorderSide(
-            color: hasActiveFilter ? AppColors.primary : AppColors.grey300,
+            color: hasActiveFilter ? colors.primary : colors.borderStrong,
             width: hasActiveFilter ? 1.5 : 1,
           ),
         ),
@@ -39,8 +40,8 @@ class JagaTanahFilterButton extends StatelessWidget {
                 Icon(
                   Icons.tune_rounded,
                   color: hasActiveFilter
-                      ? AppColors.primaryDark
-                      : AppColors.textPrimary,
+                      ? colors.primaryDark
+                      : colors.textPrimary,
                   size: 22,
                 ),
                 if (hasActiveFilter)
@@ -52,14 +53,14 @@ class JagaTanahFilterButton extends StatelessWidget {
                         horizontal: 5,
                         vertical: 2,
                       ),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryDark,
+                      decoration: BoxDecoration(
+                        color: colors.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Text(
                         '$activeCount',
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.white,
+                          color: colors.onPrimary,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           height: 1.0,

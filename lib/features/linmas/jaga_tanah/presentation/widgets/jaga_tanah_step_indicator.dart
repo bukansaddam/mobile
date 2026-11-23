@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -90,6 +90,7 @@ class _JagaTanahStepIndicatorState extends State<JagaTanahStepIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final safeStep = widget.currentStep.clamp(
       0,
       JagaTanahStepIndicator.totalSteps - 1,
@@ -105,17 +106,17 @@ class _JagaTanahStepIndicatorState extends State<JagaTanahStepIndicator> {
       final Color borderColor;
       final Color textColor;
       if (isActive) {
-        bgColor = AppColors.primaryDark;
-        borderColor = AppColors.primaryDark;
-        textColor = AppColors.white;
+        bgColor = colors.primary;
+        borderColor = colors.primary;
+        textColor = colors.onPrimary;
       } else if (isCompleted) {
-        bgColor = AppColors.primaryLight;
-        borderColor = AppColors.primaryDark.withValues(alpha: 0.35);
-        textColor = AppColors.primaryDark;
+        bgColor = colors.primaryLight;
+        borderColor = colors.primaryDark.withValues(alpha: 0.35);
+        textColor = colors.primaryDark;
       } else {
-        bgColor = AppColors.white;
-        borderColor = AppColors.grey300;
-        textColor = AppColors.textSecondary;
+        bgColor = colors.surface;
+        borderColor = colors.borderStrong;
+        textColor = colors.textSecondary;
       }
 
       return Material(
@@ -174,10 +175,8 @@ class _JagaTanahStepIndicatorState extends State<JagaTanahStepIndicator> {
           child: LinearProgressIndicator(
             value: (safeStep + 1) / JagaTanahStepIndicator.totalSteps,
             minHeight: 6,
-            backgroundColor: AppColors.grey200,
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              AppColors.primaryDark,
-            ),
+            backgroundColor: colors.border,
+            valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
           ),
         ),
         const SizedBox(height: 10),

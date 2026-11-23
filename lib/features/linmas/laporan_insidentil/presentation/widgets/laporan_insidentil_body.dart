@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_card.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
@@ -30,6 +30,7 @@ class LaporanInsidentilBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     if (state.status == MyComplaintListStatus.loading && state.items.isEmpty) {
       return const ReportCardShimmerList(
         semanticLabel: 'Memuat laporan insidentil...',
@@ -38,12 +39,12 @@ class LaporanInsidentilBody extends StatelessWidget {
 
     if (state.status == MyComplaintListStatus.failure && state.items.isEmpty) {
       return RefreshIndicator(
-        color: AppColors.primary,
+        color: colors.primary,
         onRefresh: onRefresh,
         child: LaporanInsidentilStatusView(
           icon: Icons.cloud_off_rounded,
-          iconColor: AppColors.error,
-          iconBackgroundColor: AppColors.errorLight,
+          iconColor: colors.error,
+          iconBackgroundColor: colors.errorLight,
           title: 'Gagal Memuat Laporan',
           message:
               state.errorMessage ??
@@ -76,14 +77,14 @@ class LaporanInsidentilBody extends StatelessWidget {
           : 'Buat Laporan';
 
       return RefreshIndicator(
-        color: AppColors.primary,
+        color: colors.primary,
         onRefresh: onRefresh,
         child: LaporanInsidentilStatusView(
           icon: hasConstraints
               ? Icons.search_off_rounded
               : Icons.report_problem_outlined,
-          iconColor: AppColors.primaryDark,
-          iconBackgroundColor: AppColors.primaryLight,
+          iconColor: colors.primaryDark,
+          iconBackgroundColor: colors.primaryLight,
           title: hasConstraints
               ? 'Laporan Tidak Ditemukan'
               : 'Belum Ada Laporan Insidentil',
@@ -100,7 +101,7 @@ class LaporanInsidentilBody extends StatelessWidget {
     }
 
     return RefreshIndicator(
-      color: AppColors.primary,
+      color: colors.primary,
       onRefresh: onRefresh,
       child: ListView.separated(
         controller: scrollController,
