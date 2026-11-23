@@ -230,6 +230,9 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
   Widget build(BuildContext context) {
     final colors = context.appColors;
     final authState = context.watch<AuthBloc>().state;
+    final activeThemeMode =
+        ThemeModeSelectorTile.maybeWatchBloc(context)?.state.themeMode ??
+        ThemeMode.light;
     final complaintState = _watchMyComplaintState(context);
     final currentUser = authState is AuthAuthenticated ? authState.user : null;
     final userName = currentUser?.name ?? 'Warga Masyarakat';
@@ -418,110 +421,65 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
 
-                        const ThemeModeSelectorTile(),
-
-                        const SizedBox(height: 16),
-
-                        Container(
-                          decoration: BoxDecoration(
-                            color: colors.surface,
-                            borderRadius: BorderRadius.circular(20),
-                            border: colors.isDark
-                                ? Border.all(color: colors.border)
-                                : null,
-                            boxShadow: [
-                              BoxShadow(
-                                color: colors.shadow,
-                                blurRadius: 14,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            children: [
+                        _buildSectionLabel(colors, 'Pengaturan Akun'),
+                        _buildMenuGroupCard(
+                          colors: colors,
+                          children: [
+                            _buildMenuItem(
+                              colors: colors,
+                              icon: Icons.person_outline_rounded,
+                              title: 'Edit Profil Saya',
+                              onTap: () => AppRouter.toEditProfile(context),
+                            ),
+                            if (widget.showNotificationSettings)
                               _buildMenuItem(
                                 colors: colors,
-                                icon: Icons.person_outline_rounded,
-                                title: 'Edit Profil Saya',
+                                icon: Icons.notifications_none_rounded,
+                                title: 'Pengaturan Notifikasi & Alarm Bencana',
+                                onTap: () =>
+                                    _showNotificationSettingsSheet(context),
+                              ),
+                            if (widget.showChangePasswordMenu)
+                              _buildMenuItem(
+                                colors: colors,
+                                icon: Icons.lock_outline_rounded,
+                                title: 'Ubah Kata Sandi',
                                 onTap: () => AppRouter.toEditProfile(context),
                               ),
-                              if (widget.showNotificationSettings) ...[
-                                Divider(height: 1, color: colors.divider),
-                                _buildMenuItem(
-                                  colors: colors,
-                                  icon: Icons.notifications_none_rounded,
-                                  title:
-                                      'Pengaturan Notifikasi & Alarm Bencana',
-                                  onTap: () =>
-                                      _showNotificationSettingsSheet(context),
-                                ),
-                              ],
-                              if (widget.showChangePasswordMenu) ...[
-                                Divider(height: 1, color: colors.divider),
-                                _buildMenuItem(
-                                  colors: colors,
-                                  icon: Icons.lock_outline_rounded,
-                                  title: 'Ubah Kata Sandi',
-                                  onTap: () => AppRouter.toEditProfile(context),
-                                ),
-                              ],
-                              Divider(height: 1, color: colors.divider),
-                              _buildMenuItem(
-                                colors: colors,
-                                icon: Icons.logout_rounded,
-                                title: 'Keluar dari Akun',
-                                textColor: colors.error,
-                                iconColor: colors.error,
-                                showChevron: false,
-                                onTap: () async {
-                                  int pendingCount = 0;
-                                  if (sl
-                                          .isRegistered<
-                                            OfflineQueueLocalDatasource
-                                          >() &&
-                                      sl.isRegistered<AuthLocalDatasource>()) {
-                                    try {
-                                      final user =
-                                          await sl<AuthLocalDatasource>()
-                                              .getUser();
-                                      if (user != null) {
-                                        pendingCount =
-                                            await sl<
-                                                  OfflineQueueLocalDatasource
-                                                >()
-                                                .getPendingCount(
-                                                  user.id.toString(),
-                                                );
-                                      }
-                                    } catch (_) {}
-                                  }
-                                  if (!context.mounted) return;
+                          ],
+                        ),
 
-                                  final confirmed =
-                                      await AppDialogs.showConfirmation(
-                                        context,
-                                        title: 'Keluar dari Akun',
-                                        message: pendingCount > 0
-                                            ? 'Masih ada $pendingCount antrean laporan yang belum tersinkronisasi. Antrean ini akan dihapus jika Anda keluar.\n\nTetap keluar?'
-                                            : 'Apakah Anda yakin ingin keluar dari akun ini?',
-                                        confirmText: 'Keluar',
-                                        cancelText: 'Batal',
-                                        isDestructive: true,
-                                        icon: Icons.logout_rounded,
-                                      );
-                                  if (confirmed && context.mounted) {
-                                    context.read<AuthBloc>().add(
-                                      const LogoutEvent(
-                                        clearOfflineQueue: true,
-                                      ),
-                                    );
-                                  }
-                                },
+                        const SizedBox(height: 18),
+
+                        _buildSectionLabel(colors, 'Pengaturan'),
+                        _buildMenuGroupCard(
+                          colors: colors,
+                          children: [
+                            _buildMenuItem(
+                              colors: colors,
+                              icon: ThemeModeSelectorTile.iconFor(
+                                activeThemeMode,
                               ),
-                            ],
-                          ),
+                              title: 'Tema Tampilan',
+                              trailingLabel: ThemeModeSelectorTile.labelFor(
+                                activeThemeMode,
+                              ),
+                              onTap: () =>
+                                  ThemeModeSelectorTile.showSelectorSheet(
+                                    context,
+                                  ),
+                            ),
+                            _buildMenuItem(
+                              colors: colors,
+                              icon: Icons.logout_rounded,
+                              title: 'Keluar dari Akun',
+                              textColor: colors.error,
+                              iconColor: colors.error,
+                              onTap: () => _confirmAndLogout(context),
+                            ),
+                          ],
                         ),
 
                         const SizedBox(height: 30),
@@ -626,37 +584,102 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
     );
   }
 
+  Future<void> _confirmAndLogout(BuildContext context) async {
+    int pendingCount = 0;
+    if (sl.isRegistered<OfflineQueueLocalDatasource>() &&
+        sl.isRegistered<AuthLocalDatasource>()) {
+      try {
+        final user = await sl<AuthLocalDatasource>().getUser();
+        if (user != null) {
+          pendingCount = await sl<OfflineQueueLocalDatasource>()
+              .getPendingCount(user.id.toString());
+        }
+      } catch (_) {}
+    }
+    if (!context.mounted) return;
+
+    final confirmed = await AppDialogs.showConfirmation(
+      context,
+      title: 'Keluar dari Akun',
+      message: pendingCount > 0
+          ? 'Masih ada $pendingCount antrean laporan yang belum tersinkronisasi. Antrean ini akan dihapus jika Anda keluar.\n\nTetap keluar?'
+          : 'Apakah Anda yakin ingin keluar dari akun ini?',
+      confirmText: 'Keluar',
+      cancelText: 'Batal',
+      isDestructive: true,
+      icon: Icons.logout_rounded,
+    );
+    if (confirmed && context.mounted) {
+      context.read<AuthBloc>().add(const LogoutEvent(clearOfflineQueue: true));
+    }
+  }
+
+  Widget _buildSectionLabel(AppColorScheme colors, String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4, bottom: 10),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w500,
+            color: colors.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuGroupCard({
+    required AppColorScheme colors,
+    required List<Widget> children,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: colors.isDark ? Border.all(color: colors.border) : null,
+        boxShadow: [
+          BoxShadow(
+            color: colors.shadow,
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Column(children: children),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildMenuItem({
     required AppColorScheme colors,
     required IconData icon,
     required String title,
     required VoidCallback onTap,
     String? badge,
+    String? trailingLabel,
     Color? textColor,
     Color? iconColor,
     bool showChevron = true,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: (iconColor ?? colors.textMuted).withAlpha(20),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: iconColor ?? colors.textSecondary,
-              ),
-            ),
-            const SizedBox(width: 12),
+            Icon(icon, size: 22, color: iconColor ?? colors.textPrimary),
+            const SizedBox(width: 14),
             Expanded(
               child: Row(
                 children: [
@@ -664,8 +687,8 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                     child: Text(
                       title,
                       style: TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w500,
                         color: textColor ?? colors.textPrimary,
                       ),
                     ),
@@ -694,11 +717,22 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                 ],
               ),
             ),
+            if (trailingLabel != null) ...[
+              Text(
+                trailingLabel,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w500,
+                  color: colors.textMuted,
+                ),
+              ),
+              const SizedBox(width: 6),
+            ],
             if (showChevron)
               Icon(
                 Icons.chevron_right_rounded,
-                size: 18,
-                color: colors.textHint,
+                size: 20,
+                color: colors.textSecondary,
               ),
           ],
         ),

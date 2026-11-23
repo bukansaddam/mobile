@@ -30,7 +30,7 @@ class ThemeModeSelectorTile extends StatelessWidget {
     }
   }
 
-  ThemeBloc? _maybeWatchBloc(BuildContext context) {
+  static ThemeBloc? maybeWatchBloc(BuildContext context) {
     try {
       return context.watch<ThemeBloc>();
     } catch (_) {
@@ -38,7 +38,21 @@ class ThemeModeSelectorTile extends StatelessWidget {
     }
   }
 
-  void _openSelectorSheet(
+  static ThemeBloc? maybeReadBloc(BuildContext context) {
+    try {
+      return context.read<ThemeBloc>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static void showSelectorSheet(BuildContext context) {
+    final bloc = maybeReadBloc(context);
+    final activeMode = bloc?.state.themeMode ?? ThemeMode.light;
+    _openSelectorSheet(context, bloc, activeMode);
+  }
+
+  static void _openSelectorSheet(
     BuildContext context,
     ThemeBloc? bloc,
     ThemeMode activeMode,
@@ -140,7 +154,7 @@ class ThemeModeSelectorTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.appColors;
-    final bloc = _maybeWatchBloc(context);
+    final bloc = maybeWatchBloc(context);
     final activeMode = bloc?.state.themeMode ?? ThemeMode.light;
 
     return Material(
