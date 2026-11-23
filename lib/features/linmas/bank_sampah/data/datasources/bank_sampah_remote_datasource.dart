@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 
@@ -35,6 +36,17 @@ abstract class BankSampahRemoteDataSource {
 
 class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     implements BankSampahRemoteDataSource {
+  final Dio? _dioOverride;
+  final OfflineMasterCacheLocalDatasource? _masterCache;
+
+  BankSampahRemoteDataSourceImpl({
+    Dio? dio,
+    OfflineMasterCacheLocalDatasource? masterCache,
+  }) : _dioOverride = dio,
+       _masterCache = masterCache;
+
+  @override
+  Dio get dio => _dioOverride ?? super.dio;
   @override
   Future<BankSampahMyDepositsResponseModel> getMyDeposits({
     int? page,
@@ -76,10 +88,7 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
     throw Exception('Format response bank sampah tidak sesuai');
   }
 
-  @override
-  Future<List<BankSampahLocationModel>> getBankSampahMap() async {
-    final response = await dio.get(ApiConstants.bankSampahMap);
-    final rawData = response.data;
+  static List<BankSampahLocationModel> _parseMapResponse(dynamic rawData) {
     List<dynamic>? list;
     if (rawData is Map) {
       // API mengembalikan { data: { rows: [agregat wilayah], points: [titik unit bank sampah] } }.
@@ -110,6 +119,26 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
           .toList();
     }
     return [];
+  }
+
+  @override
+  Future<List<BankSampahLocationModel>> getBankSampahMap() async {
+    try {
+      final response = await dio.get(ApiConstants.bankSampahMap);
+      await _masterCache?.saveCache(
+        OfflineMasterCacheLocalDatasource.keyBankSampahLocations,
+        response.data,
+      );
+      return _parseMapResponse(response.data);
+    } catch (_) {
+      final cached = await _masterCache?.getCache(
+        OfflineMasterCacheLocalDatasource.keyBankSampahLocations,
+      );
+      if (cached != null) {
+        return _parseMapResponse(cached);
+      }
+      rethrow;
+    }
   }
 
   @override

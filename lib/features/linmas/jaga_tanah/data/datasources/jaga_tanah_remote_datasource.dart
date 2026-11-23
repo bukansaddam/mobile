@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
@@ -59,8 +60,13 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
   );
 
   final Dio? _dioOverride;
+  final OfflineMasterCacheLocalDatasource? _masterCache;
 
-  JagaTanahRemoteDatasourceImpl({Dio? dio}) : _dioOverride = dio;
+  JagaTanahRemoteDatasourceImpl({
+    Dio? dio,
+    OfflineMasterCacheLocalDatasource? masterCache,
+  }) : _dioOverride = dio,
+       _masterCache = masterCache;
 
   @override
   Dio get dio => _dioOverride ?? super.dio;
@@ -127,8 +133,18 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
         ApiConstants.categories,
         queryParameters: const {'domain': 'jaga_tanah'},
       );
+      await _masterCache?.saveCache(
+        OfflineMasterCacheLocalDatasource.keyCategoriesJagaTanah,
+        response.data,
+      );
       return parseCategoryTree(response.data);
     } on DioException catch (e) {
+      final cached = await _masterCache?.getCache(
+        OfflineMasterCacheLocalDatasource.keyCategoriesJagaTanah,
+      );
+      if (cached != null) {
+        return parseCategoryTree(cached);
+      }
       AppLogger.e(
         '[JAGA_TANAH_DS] DioException in getCategories: ${e.message}',
         e,

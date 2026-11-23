@@ -278,7 +278,7 @@ Future<void> init() async {
     () => AnnouncementRemoteDatasourceImpl(),
   );
   sl.registerLazySingleton<BankSampahRemoteDataSource>(
-    () => BankSampahRemoteDataSourceImpl(),
+    () => BankSampahRemoteDataSourceImpl(masterCache: sl()),
   );
   sl.registerLazySingleton<MemberDashboardRemoteDataSource>(
     () => MemberDashboardRemoteDataSourceImpl(),
@@ -290,10 +290,10 @@ Future<void> init() async {
     () => LocationNativeDataSourceImpl(),
   );
   sl.registerLazySingleton<ComplaintRemoteDatasource>(
-    () => ComplaintRemoteDatasourceImpl(),
+    () => ComplaintRemoteDatasourceImpl(masterCache: sl()),
   );
   sl.registerLazySingleton<JagaTanahRemoteDatasource>(
-    () => JagaTanahRemoteDatasourceImpl(),
+    () => JagaTanahRemoteDatasourceImpl(masterCache: sl()),
   );
   sl.registerLazySingleton<NotificationRemoteDatasource>(
     () => NotificationRemoteDatasourceImpl(),

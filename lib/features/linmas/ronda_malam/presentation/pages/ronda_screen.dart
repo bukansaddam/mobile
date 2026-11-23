@@ -13,6 +13,7 @@ import 'package:akar/features/linmas/ronda_malam/presentation/widgets/ronda_step
 import 'package:akar/features/linmas/ronda_malam/presentation/widgets/ronda_success_dialog.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/location_picker_page.dart';
 import 'package:akar/utils/app_logger.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -61,6 +62,32 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Future<void> _startRegularRecording() async {
+    try {
+      final connectivity = await Connectivity().checkConnectivity();
+      final isOffline =
+          connectivity.isEmpty ||
+          connectivity.every((r) => r == ConnectivityResult.none);
+      if (isOffline && mounted) {
+        final colors = context.appColors;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Input suara memerlukan koneksi internet. Silakan ketik laporan secara manual.',
+              style: TextStyle(
+                color: colors.isDark ? colors.onSecondary : colors.textPrimary,
+              ),
+            ),
+            backgroundColor: colors.warning,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+        return;
+      }
+    } catch (_) {}
+
     final audioRecorder = sl<AudioRecorderService>();
     final status = await audioRecorder.requestPermissionStatus();
 

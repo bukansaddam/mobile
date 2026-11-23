@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
@@ -54,6 +55,18 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     sendTimeout: const Duration(minutes: 10),
     receiveTimeout: const Duration(minutes: 3),
   );
+
+  final Dio? _dioOverride;
+  final OfflineMasterCacheLocalDatasource? _masterCache;
+
+  ComplaintRemoteDatasourceImpl({
+    Dio? dio,
+    OfflineMasterCacheLocalDatasource? masterCache,
+  }) : _dioOverride = dio,
+       _masterCache = masterCache;
+
+  @override
+  Dio get dio => _dioOverride ?? super.dio;
 
   @override
   Future<ComplaintReportModel> createComplaint({
@@ -141,6 +154,31 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
     category: category,
   );
 
+  static List<ComplaintCategoryOption> _parseCategories(dynamic body) {
+    final rawList = body is Map && body['data'] is List
+        ? body['data'] as List
+        : (body is List ? body : const []);
+    return rawList
+        .whereType<Map>()
+        .map((raw) {
+          final map = Map<String, dynamic>.from(raw);
+          final label = (map['label'] ?? map['name'] ?? '').toString().trim();
+          final code = (map['code'] ?? '').toString().trim();
+          final isActive = map['is_active'] != false;
+          return (
+            active: isActive,
+            item: ComplaintCategoryOption(
+              id: (map['id'] as num?)?.toInt() ?? 0,
+              code: code.isNotEmpty ? code : label,
+              label: label,
+            ),
+          );
+        })
+        .where((entry) => entry.active && entry.item.label.isNotEmpty)
+        .map((entry) => entry.item)
+        .toList();
+  }
+
   @override
   Future<List<ComplaintCategoryOption>> getIncidentCategories() async {
     try {
@@ -148,30 +186,18 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
         ApiConstants.categories,
         queryParameters: const {'domain': 'report'},
       );
-      final body = response.data;
-      final rawList = body is Map && body['data'] is List
-          ? body['data'] as List
-          : (body is List ? body : const []);
-      return rawList
-          .whereType<Map>()
-          .map((raw) {
-            final map = Map<String, dynamic>.from(raw);
-            final label = (map['label'] ?? map['name'] ?? '').toString().trim();
-            final code = (map['code'] ?? '').toString().trim();
-            final isActive = map['is_active'] != false;
-            return (
-              active: isActive,
-              item: ComplaintCategoryOption(
-                id: (map['id'] as num?)?.toInt() ?? 0,
-                code: code.isNotEmpty ? code : label,
-                label: label,
-              ),
-            );
-          })
-          .where((entry) => entry.active && entry.item.label.isNotEmpty)
-          .map((entry) => entry.item)
-          .toList();
+      await _masterCache?.saveCache(
+        OfflineMasterCacheLocalDatasource.keyCategoriesReport,
+        response.data,
+      );
+      return _parseCategories(response.data);
     } on DioException catch (e) {
+      final cached = await _masterCache?.getCache(
+        OfflineMasterCacheLocalDatasource.keyCategoriesReport,
+      );
+      if (cached != null) {
+        return _parseCategories(cached);
+      }
       AppLogger.e(
         '[COMPLAINT_DS] DioException in categories: ${e.message}',
         e,

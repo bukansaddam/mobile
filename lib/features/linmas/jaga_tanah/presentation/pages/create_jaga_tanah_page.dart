@@ -689,14 +689,20 @@ class CreateJagaTanahPage extends HookWidget {
   Future<void> _showSubmitSuccessDialog(
     BuildContext context, {
     ComplaintReportEntity? report,
+    bool isQueuedOffline = false,
   }) {
     final ticketNumber = report?.ticketNumber.trim();
-    final hasTicket = ticketNumber != null && ticketNumber.isNotEmpty;
+    final hasTicket =
+        !isQueuedOffline && ticketNumber != null && ticketNumber.isNotEmpty;
 
     return AppDialogs.showSuccess<void>(
       context,
-      title: 'Laporan Terkirim',
-      message: 'Laporan Jaga Tanah berhasil dikirim dan sedang diproses untuk verifikasi (< 24 jam).',
+      title: isQueuedOffline
+          ? 'Disimpan di Antrean Offline'
+          : 'Laporan Terkirim',
+      message: isQueuedOffline
+          ? 'Laporan Jaga Tanah disimpan di antrean offline dan akan dikirim otomatis saat online.'
+          : 'Laporan Jaga Tanah berhasil dikirim dan sedang diproses untuk verifikasi (< 24 jam).',
       buttonText: 'Selesai',
       barrierDismissible: false,
       customContent: hasTicket
@@ -1256,6 +1262,7 @@ class CreateJagaTanahPage extends HookWidget {
           _showSubmitSuccessDialog(
             listenerContext,
             report: state.submittedReport,
+            isQueuedOffline: state.isQueuedOffline,
           );
         }
       },

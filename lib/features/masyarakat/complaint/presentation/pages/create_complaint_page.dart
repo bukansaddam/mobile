@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -125,6 +126,36 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
     }
   }
 
+  List<IncidentCategoryItem> _parseIncidentCategories(dynamic raw) {
+    List list = [];
+    if (raw is Map && raw['data'] is List) {
+      list = raw['data'] as List;
+    } else if (raw is List) {
+      list = raw;
+    }
+
+    return list
+        .whereType<Map>()
+        .map((e) => IncidentCategoryItem.fromJson(Map<String, dynamic>.from(e)))
+        .where((e) => e.label.isNotEmpty)
+        .toList();
+  }
+
+  void _applyLoadedCategories(List<IncidentCategoryItem> items) {
+    if (!mounted || items.isEmpty) return;
+    setState(() {
+      _categories = items;
+      if (_selectedCategory == null && widget.initialCategory != null) {
+        _selectedCategory = items.firstWhere(
+          (c) =>
+              c.label.toLowerCase() ==
+              widget.initialCategory!.label.toLowerCase(),
+          orElse: () => items.first,
+        );
+      }
+    });
+  }
+
   Future<void> _loadCategories() async {
     setState(() => _isLoadingCategories = true);
     try {
@@ -134,37 +165,22 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         ApiConstants.categories,
         queryParameters: const {'domain': 'report'},
       );
-      final raw = res.data;
-      List list = [];
-      if (raw is Map && raw['data'] is List) {
-        list = raw['data'] as List;
-      } else if (raw is List) {
-        list = raw;
+      if (sl.isRegistered<OfflineMasterCacheLocalDatasource>()) {
+        await sl<OfflineMasterCacheLocalDatasource>().saveCache(
+          OfflineMasterCacheLocalDatasource.keyCategoriesReport,
+          res.data,
+        );
       }
-
-      final items = list
-          .whereType<Map>()
-          .map(
-            (e) => IncidentCategoryItem.fromJson(Map<String, dynamic>.from(e)),
-          )
-          .where((e) => e.label.isNotEmpty)
-          .toList();
-
-      if (mounted && items.isNotEmpty) {
-        setState(() {
-          _categories = items;
-          if (_selectedCategory == null && widget.initialCategory != null) {
-            _selectedCategory = items.firstWhere(
-              (c) =>
-                  c.label.toLowerCase() ==
-                  widget.initialCategory!.label.toLowerCase(),
-              orElse: () => items.first,
-            );
-          }
-        });
-      }
+      _applyLoadedCategories(_parseIncidentCategories(res.data));
     } catch (_) {
-      // shortcut: fallback ke kategori bawaan jika endpoint categories gagal dimuat.
+      if (sl.isRegistered<OfflineMasterCacheLocalDatasource>()) {
+        final cached = await sl<OfflineMasterCacheLocalDatasource>().getCache(
+          OfflineMasterCacheLocalDatasource.keyCategoriesReport,
+        );
+        if (cached != null) {
+          _applyLoadedCategories(_parseIncidentCategories(cached));
+        }
+      }
     } finally {
       if (mounted) setState(() => _isLoadingCategories = false);
     }
@@ -469,6 +485,15 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
         }
       }
     } catch (_) {
+      if (mounted &&
+          _latitude != null &&
+          _longitude != null &&
+          _locationController.text.trim().isEmpty) {
+        setState(() {
+          _locationController.text =
+              'Lat: ${_latitude!.toStringAsFixed(6)}, Long: ${_longitude!.toStringAsFixed(6)}';
+        });
+      }
     } finally {
       if (mounted) {
         setState(() {
@@ -600,6 +625,18 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
           : (ticket.isEmpty
                 ? 'Laporan pengaduan Anda telah tersimpan dan sedang menunggu verifikasi petugas.'
                 : 'Laporan $ticket telah tersimpan dan sedang menunggu verifikasi petugas.'),
+      buttonText: widget.isInsidentil ? 'Kembali' : 'Kembali ke Beranda',
+      onPressed: () => Navigator.pop(context, true),
+    );
+  }
+
+  void _handleQueuedOffline() {
+    AppDialogs.showSuccess(
+      context,
+      title: 'Disimpan di Antrean Offline',
+      message: widget.isInsidentil
+          ? 'Laporan insidentil disimpan di antrean offline dan akan dikirim otomatis saat online.'
+          : 'Pengaduan disimpan di antrean offline dan akan dikirim otomatis saat online.',
       buttonText: widget.isInsidentil ? 'Kembali' : 'Kembali ke Beranda',
       onPressed: () => Navigator.pop(context, true),
     );
@@ -768,10 +805,13 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
       bloc: _bloc,
       listenWhen: (previous, current) =>
           current is CreateComplaintSuccess ||
+          current is CreateComplaintQueuedOffline ||
           current is CreateComplaintFailure,
       listener: (context, state) {
         if (state is CreateComplaintSuccess) {
           _handleSuccess(state.report);
+        } else if (state is CreateComplaintQueuedOffline) {
+          _handleQueuedOffline();
         } else if (state is CreateComplaintFailure) {
           AppToast.showError(context, message: state.message);
         }
