@@ -1,6 +1,9 @@
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/theme/bloc/theme_bloc.dart';
+import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -219,6 +222,105 @@ void main() {
 
         await bloc.close();
         await restoredBloc.close();
+      },
+    );
+  });
+
+  group('ThemeModeSelectorTile & Dark Core Widgets', () {
+    testWidgets(
+      'displays current ThemeMode label, opens sheet, and dispatches ChangeThemeModeEvent',
+      (tester) async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final themeBloc = ThemeBloc(sharedPreferences: prefs);
+        addTearDown(themeBloc.close);
+
+        await tester.pumpWidget(
+          BlocProvider<ThemeBloc>.value(
+            value: themeBloc,
+            child: BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, state) {
+                return MaterialApp(
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: state.themeMode,
+                  home: const Scaffold(
+                    body: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: ThemeModeSelectorTile(),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        expect(find.text('Tema Tampilan'), findsOneWidget);
+        expect(find.text('Ikuti Sistem'), findsOneWidget);
+
+        await tester.tap(find.byType(ThemeModeSelectorTile));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Pilih Tema Tampilan'), findsOneWidget);
+        expect(find.text('Gelap'), findsOneWidget);
+        expect(find.text('Terang'), findsOneWidget);
+
+        await tester.tap(find.text('Gelap'));
+        await tester.pumpAndSettle();
+
+        expect(themeBloc.state.themeMode, ThemeMode.dark);
+        expect(find.text('Gelap'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AppDialogs floating surface uses AppColorScheme.dark surface in Dark Mode',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      AppDialogs.showSuccess<void>(
+                        context,
+                        title: 'Tersimpan',
+                        message: 'Tema gelap aktif.',
+                      );
+                    },
+                    child: const Text('Buka'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Buka'));
+        await tester.pumpAndSettle();
+
+        final surface = tester.widget<Container>(
+          find
+              .ancestor(
+                of: find.text('Tersimpan'),
+                matching: find.byWidgetPredicate((widget) {
+                  if (widget is! Container) return false;
+                  final decoration = widget.decoration;
+                  return decoration is BoxDecoration &&
+                      decoration.borderRadius == BorderRadius.circular(32);
+                }),
+              )
+              .first,
+        );
+        final dec = surface.decoration! as BoxDecoration;
+        expect(dec.color, AppColorScheme.dark.surface);
+        expect(
+          tester.widget<Text>(find.text('Tersimpan')).style?.color,
+          AppColorScheme.dark.textPrimary,
+        );
       },
     );
   });

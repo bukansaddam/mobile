@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -86,18 +86,19 @@ class AppDialogs {
     VoidCallback? onSecondaryPressed,
     Widget? customContent,
     IconData badgeIcon = Icons.check_rounded,
-    Color buttonColor = AppColors.primary,
+    Color? buttonColor,
     bool barrierDismissible = false,
   }) {
     return _showAnimatedDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
+        final colors = dialogContext.appColors;
         return _AppDialogCard(
           badge: RosetteBadge(
             icon: badgeIcon,
-            badgeColor: const Color(0xFFC7F8A5),
-            iconColor: AppColors.primaryDark,
+            badgeColor: colors.primaryLight,
+            iconColor: colors.primaryDark,
           ),
           title: title,
           message: message,
@@ -105,7 +106,10 @@ class AppDialogs {
           actions: [
             _DialogPrimaryButton(
               text: buttonText,
-              color: buttonColor,
+              color: buttonColor ?? colors.primary,
+              foregroundColor: buttonColor != null
+                  ? colors.onErrorSolid
+                  : colors.onPrimary,
               onPressed: () {
                 Navigator.pop(dialogContext);
                 if (onPressed != null) {
@@ -146,11 +150,12 @@ class AppDialogs {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
+        final colors = dialogContext.appColors;
         return _AppDialogCard(
-          badge: const RosetteBadge(
+          badge: RosetteBadge(
             icon: Icons.close_rounded,
-            badgeColor: AppColors.errorLight,
-            iconColor: AppColors.error,
+            badgeColor: colors.errorLight,
+            iconColor: colors.error,
           ),
           title: title,
           message: message,
@@ -174,7 +179,8 @@ class AppDialogs {
                   Expanded(
                     child: _DialogPrimaryButton(
                       text: primaryButtonText,
-                      color: AppColors.error,
+                      color: colors.errorSolid,
+                      foregroundColor: colors.onErrorSolid,
                       onPressed: () {
                         Navigator.pop(dialogContext);
                         if (onPrimaryPressed != null) {
@@ -188,7 +194,8 @@ class AppDialogs {
             ] else ...[
               _DialogPrimaryButton(
                 text: primaryButtonText,
-                color: AppColors.primary,
+                color: colors.primary,
+                foregroundColor: colors.onPrimary,
                 onPressed: () {
                   Navigator.pop(dialogContext);
                   if (onPrimaryPressed != null) {
@@ -220,6 +227,7 @@ class AppDialogs {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
+        final colors = dialogContext.appColors;
         return _AppDialogCard(
           badge: RosetteBadge(
             icon:
@@ -227,10 +235,8 @@ class AppDialogs {
                 (isDestructive
                     ? Icons.warning_amber_rounded
                     : Icons.help_outline_rounded),
-            badgeColor: isDestructive
-                ? AppColors.errorLight
-                : AppColors.warningLight,
-            iconColor: isDestructive ? AppColors.error : AppColors.warning,
+            badgeColor: isDestructive ? colors.errorLight : colors.warningLight,
+            iconColor: isDestructive ? colors.error : colors.warning,
           ),
           title: title,
           message: message,
@@ -248,7 +254,10 @@ class AppDialogs {
                 Expanded(
                   child: _DialogPrimaryButton(
                     text: confirmText,
-                    color: isDestructive ? AppColors.error : AppColors.primary,
+                    color: isDestructive ? colors.errorSolid : colors.primary,
+                    foregroundColor: isDestructive
+                        ? colors.onErrorSolid
+                        : colors.onPrimary,
                     onPressed: () {
                       Navigator.pop(dialogContext, true);
                       if (onConfirm != null) onConfirm();
@@ -276,7 +285,7 @@ class AppDialogs {
     String buttonText = 'Mengerti',
     VoidCallback? onPressed,
     IconData icon = Icons.info_outline_rounded,
-    Color buttonColor = AppColors.primary,
+    Color? buttonColor,
     Widget? customContent,
     bool barrierDismissible = false,
   }) {
@@ -284,11 +293,12 @@ class AppDialogs {
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
+        final colors = dialogContext.appColors;
         return _AppDialogCard(
           badge: RosetteBadge(
             icon: icon,
-            badgeColor: AppColors.infoLight,
-            iconColor: AppColors.info,
+            badgeColor: colors.infoLight,
+            iconColor: colors.info,
           ),
           title: title,
           message: message,
@@ -296,7 +306,10 @@ class AppDialogs {
           actions: [
             _DialogPrimaryButton(
               text: buttonText,
-              color: buttonColor,
+              color: buttonColor ?? colors.primary,
+              foregroundColor: buttonColor != null
+                  ? colors.onErrorSolid
+                  : colors.onPrimary,
               onPressed: () {
                 Navigator.pop(dialogContext);
                 if (onPressed != null) onPressed();
@@ -345,29 +358,32 @@ class AppDialogs {
       canPop: false,
       useRootNavigator: useRootNavigator,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-      builder: (_) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              message,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
+      builder: (dialogContext) {
+        final colors = dialogContext.appColors;
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                color: colors.primary,
               ),
             ),
-          ),
-        ],
-      ),
+            const SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                message,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -378,11 +394,12 @@ class AppDialogs {
     bool useRootNavigator = true,
     required Widget Function(BuildContext) builder,
   }) {
+    final scrimColor = context.appColors.scrim;
     return showGeneralDialog<T>(
       context: context,
       barrierDismissible: barrierDismissible,
       barrierLabel: 'Dismiss Dialog',
-      barrierColor: Colors.black.withValues(alpha: 0.45),
+      barrierColor: scrimColor,
       transitionDuration: const Duration(milliseconds: 260),
       useRootNavigator: useRootNavigator,
       pageBuilder: (ctx, anim1, anim2) {
@@ -461,24 +478,20 @@ class _FloatingDialogSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: padding,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(32),
+        border: colors.isDark ? Border.all(color: colors.border) : null,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.12),
+            color: colors.shadow,
             blurRadius: 36,
             spreadRadius: 0,
             offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -504,6 +517,7 @@ class _AppDialogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return _FloatingDialogSurface(
       padding: const EdgeInsets.fromLTRB(24, 32, 24, 28),
       child: Column(
@@ -524,7 +538,7 @@ class _AppDialogCard extends StatelessWidget {
                     style: AppTextStyles.headlineSmall.copyWith(
                       fontSize: 21,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                       letterSpacing: -0.4,
                     ),
                   ),
@@ -533,7 +547,7 @@ class _AppDialogCard extends StatelessWidget {
                     message,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.bodyMedium.copyWith(
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                       height: 1.5,
                     ),
                   ),
@@ -556,11 +570,13 @@ class _AppDialogCard extends StatelessWidget {
 class _DialogPrimaryButton extends StatelessWidget {
   final String text;
   final Color color;
+  final Color foregroundColor;
   final VoidCallback onPressed;
 
   const _DialogPrimaryButton({
     required this.text,
     required this.color,
+    required this.foregroundColor,
     required this.onPressed,
   });
 
@@ -573,7 +589,7 @@ class _DialogPrimaryButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          foregroundColor: AppColors.white,
+          foregroundColor: foregroundColor,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -583,7 +599,7 @@ class _DialogPrimaryButton extends StatelessWidget {
           text,
           style: AppTextStyles.button.copyWith(
             fontSize: 15,
-            color: AppColors.white,
+            color: foregroundColor,
             letterSpacing: 0.2,
           ),
         ),
@@ -600,14 +616,15 @@ class _DialogOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.secondary,
-          side: const BorderSide(color: AppColors.grey300, width: 1.4),
+          foregroundColor: colors.secondary,
+          side: BorderSide(color: colors.borderStrong, width: 1.4),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -617,7 +634,7 @@ class _DialogOutlinedButton extends StatelessWidget {
           text,
           style: AppTextStyles.button.copyWith(
             fontSize: 15,
-            color: AppColors.secondary,
+            color: colors.secondary,
           ),
         ),
       ),

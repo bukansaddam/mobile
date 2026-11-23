@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 /// Tombol ikon lingkaran standar AppBar (visual 36x36, area sentuh 48x48dp).
@@ -34,17 +34,20 @@ class AppBarCircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final isDisabled = onPressed == null;
+    final activeBg = colors.isDark ? colors.primary : colors.primaryDark;
     final resolvedBg = isActive
-        ? AppColors.primaryDark
+        ? activeBg
         : isDisabled
-        ? AppColors.white.withValues(alpha: 0.55)
-        : (backgroundColor ?? AppColors.white.withValues(alpha: 0.9));
+        ? colors.surface.withValues(alpha: colors.isDark ? 0.5 : 0.55)
+        : (backgroundColor ??
+              colors.surface.withValues(alpha: colors.isDark ? 0.92 : 0.9));
     final resolvedIconColor = isActive
-        ? AppColors.white
+        ? colors.onPrimary
         : isDisabled
-        ? AppColors.textDisabled
-        : (iconColor ?? AppColors.textPrimary);
+        ? colors.textDisabled
+        : (iconColor ?? colors.textPrimary);
 
     return SizedBox(
       width: 48,

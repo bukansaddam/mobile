@@ -1,22 +1,18 @@
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
 
 /// Provider for synchronized Shimmer animations across child widgets.
 class Shimmer extends StatefulWidget {
   final Widget child;
-  final Color baseColor;
-  final Color highlightColor;
+  final Color? baseColor;
+  final Color? highlightColor;
   final Duration duration;
 
   const Shimmer({
     super.key,
     required this.child,
-    this.baseColor = const Color(
-      0xFFCBD5E1,
-    ), // Slate-300: High contrast on white cards
-    this.highlightColor = const Color(
-      0xFFF8FAFC,
-    ), // Slate-50: Crisp bright shimmer sweep
+    this.baseColor,
+    this.highlightColor,
     this.duration = const Duration(milliseconds: 1400),
   });
 
@@ -33,8 +29,8 @@ class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
 
   Listenable get listenable => _controller;
   double get value => _controller.value;
-  Color get baseColor => widget.baseColor;
-  Color get highlightColor => widget.highlightColor;
+  Color? get baseColor => widget.baseColor;
+  Color? get highlightColor => widget.highlightColor;
 
   @override
   void initState() {
@@ -93,6 +89,13 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final defaultBase = colors.isDark
+        ? colors.surfaceElevated
+        : colors.borderStrong;
+    final defaultHighlight = colors.isDark
+        ? colors.borderStrong
+        : colors.surfaceVariant;
     final shimmer = Shimmer.of(context);
     final Listenable animation;
     final double Function() getValue;
@@ -102,8 +105,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     if (shimmer != null) {
       animation = shimmer.listenable;
       getValue = () => shimmer.value;
-      base = widget.baseColor ?? shimmer.baseColor;
-      highlight = widget.highlightColor ?? shimmer.highlightColor;
+      base = widget.baseColor ?? shimmer.baseColor ?? defaultBase;
+      highlight =
+          widget.highlightColor ?? shimmer.highlightColor ?? defaultHighlight;
     } else {
       _localController ??= AnimationController(
         vsync: this,
@@ -111,8 +115,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
       )..repeat();
       animation = _localController!;
       getValue = () => _localController!.value;
-      base = widget.baseColor ?? const Color(0xFFCBD5E1);
-      highlight = widget.highlightColor ?? const Color(0xFFF8FAFC);
+      base = widget.baseColor ?? defaultBase;
+      highlight = widget.highlightColor ?? defaultHighlight;
     }
 
     return AnimatedBuilder(
@@ -169,11 +173,15 @@ class ShimmerBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final placeholderColor = colors.isDark
+        ? colors.surfaceElevated
+        : colors.borderStrong;
     return Container(
       width: width,
       height: height,
       decoration: ShapeDecoration(
-        color: const Color(0xFFCBD5E1), // Slate-300
+        color: placeholderColor,
         shape:
             shape ??
             RoundedRectangleBorder(
@@ -192,18 +200,22 @@ class ShimmerCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    final placeholderColor = colors.isDark
+        ? colors.surfaceElevated
+        : colors.borderStrong;
     return Container(
       width: radius * 2,
       height: radius * 2,
-      decoration: const BoxDecoration(
-        color: Color(0xFFCBD5E1), // Slate-300
+      decoration: BoxDecoration(
+        color: placeholderColor,
         shape: BoxShape.circle,
       ),
     );
   }
 }
 
-/// White card container preserving card boundary and shadow, applying shimmer only to internal placeholders.
+/// Card container preserving card boundary and shadow, applying shimmer only to internal placeholders.
 class _ShimmerCard extends StatelessWidget {
   final Widget child;
 
@@ -211,16 +223,17 @@ class _ShimmerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.04),
+            color: colors.shadow,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -269,8 +282,6 @@ class DemografiShimmerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer(
-      baseColor: const Color(0xFFCBD5E1), // Clear Slate-300 placeholder
-      highlightColor: const Color(0xFFF8FAFC), // Radiant white highlight
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
@@ -405,13 +416,15 @@ class ReportCardShimmerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
+        border: colors.isDark ? Border.all(color: colors.border) : null,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withAlpha(6),
+            color: colors.shadow,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

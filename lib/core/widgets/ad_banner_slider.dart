@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:flutter/material.dart';
 
@@ -126,7 +126,7 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withAlpha(20),
+                          color: context.appColors.shadow,
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -142,13 +142,14 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                             fit: BoxFit.cover,
                             cacheHeight: (widget.height * 3).toInt(),
                             errorBuilder: (context, error, stackTrace) {
+                              final colors = context.appColors;
                               return Container(
-                                color: AppColors.primaryLight,
-                                child: const Center(
+                                color: colors.primaryLight,
+                                child: Center(
                                   child: Icon(
                                     Icons.campaign_outlined,
                                     size: 48,
-                                    color: AppColors.primary,
+                                    color: colors.primary,
                                   ),
                                 ),
                               );
@@ -163,8 +164,10 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withAlpha(40),
-                                    Colors.black.withAlpha(210),
+                                    Colors.black.withAlpha(40), // media-overlay
+                                    Colors.black.withAlpha(
+                                      210,
+                                    ), // media-overlay
                                   ],
                                   stops: const [0.0, 0.35, 1.0],
                                 ),
@@ -181,22 +184,22 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withAlpha(220),
+                                color: context.appColors.primary.withAlpha(220),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     Icons.campaign_rounded,
                                     size: 13,
-                                    color: Colors.white,
+                                    color: context.appColors.onPrimary,
                                   ),
-                                  SizedBox(width: 4),
+                                  const SizedBox(width: 4),
                                   Text(
                                     'INFORMASI',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: context.appColors.onPrimary,
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                       letterSpacing: 0.5,
@@ -220,12 +223,12 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.white, // media-overlay
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     shadows: [
                                       Shadow(
-                                        color: Colors.black87,
+                                        color: Colors.black87, // media-overlay
                                         blurRadius: 6,
                                         offset: Offset(0, 1),
                                       ),
@@ -239,11 +242,14 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withAlpha(240),
+                                      color: Colors.white.withAlpha(
+                                        240,
+                                      ), // media-overlay
                                       fontSize: 12,
                                       shadows: const [
                                         Shadow(
-                                          color: Colors.black87,
+                                          color:
+                                              Colors.black87, // media-overlay
                                           blurRadius: 4,
                                           offset: Offset(0, 1),
                                         ),
@@ -271,13 +277,14 @@ class _AdBannerSliderState extends State<AdBannerSlider> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(_bannerItems.length, (idx) {
               final isActive = idx == _currentPage;
+              final colors = context.appColors;
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 width: isActive ? 20 : 7,
                 height: 7,
                 decoration: BoxDecoration(
-                  color: isActive ? AppColors.primary : AppColors.grey300,
+                  color: isActive ? colors.primary : colors.borderStrong,
                   borderRadius: BorderRadius.circular(4),
                 ),
               );

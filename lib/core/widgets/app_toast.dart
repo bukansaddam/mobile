@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +13,16 @@ class AppToast {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    final colors = context.appColors;
     _showSnackBar(
       context,
       message: message,
-      backgroundColor: AppColors.success,
+      backgroundColor: colors.isDark ? colors.surfaceElevated : colors.success,
+      foregroundColor: colors.isDark ? colors.textPrimary : colors.onErrorSolid,
+      iconColor: colors.isDark ? colors.success : colors.onErrorSolid,
+      borderColor: colors.isDark
+          ? colors.success.withValues(alpha: 0.45)
+          : null,
       icon: Icons.check_circle_rounded,
       duration: duration,
     );
@@ -28,10 +34,16 @@ class AppToast {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    final colors = context.appColors;
     _showSnackBar(
       context,
       message: message,
-      backgroundColor: AppColors.error,
+      backgroundColor: colors.isDark
+          ? colors.surfaceElevated
+          : colors.errorSolid,
+      foregroundColor: colors.isDark ? colors.textPrimary : colors.onErrorSolid,
+      iconColor: colors.isDark ? colors.error : colors.onErrorSolid,
+      borderColor: colors.isDark ? colors.error.withValues(alpha: 0.45) : null,
       icon: Icons.error_rounded,
       duration: duration,
     );
@@ -43,10 +55,16 @@ class AppToast {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    final colors = context.appColors;
     _showSnackBar(
       context,
       message: message,
-      backgroundColor: AppColors.warning,
+      backgroundColor: colors.isDark ? colors.surfaceElevated : colors.warning,
+      foregroundColor: colors.isDark ? colors.textPrimary : colors.onErrorSolid,
+      iconColor: colors.isDark ? colors.warning : colors.onErrorSolid,
+      borderColor: colors.isDark
+          ? colors.warning.withValues(alpha: 0.45)
+          : null,
       icon: Icons.warning_rounded,
       duration: duration,
     );
@@ -58,10 +76,16 @@ class AppToast {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
+    final colors = context.appColors;
     _showSnackBar(
       context,
       message: message,
-      backgroundColor: AppColors.secondary,
+      backgroundColor: colors.isDark
+          ? colors.surfaceElevated
+          : colors.secondary,
+      foregroundColor: colors.isDark ? colors.textPrimary : colors.onSecondary,
+      iconColor: colors.isDark ? colors.info : colors.onSecondary,
+      borderColor: colors.isDark ? colors.borderStrong : null,
       icon: Icons.info_rounded,
       duration: duration,
     );
@@ -71,6 +95,9 @@ class AppToast {
     BuildContext context, {
     required String message,
     required Color backgroundColor,
+    required Color foregroundColor,
+    required Color iconColor,
+    Color? borderColor,
     required IconData icon,
     required Duration duration,
   }) {
@@ -83,13 +110,13 @@ class AppToast {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: Colors.white, size: 20),
+            Icon(icon, color: iconColor, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 cleanMessage,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: foregroundColor,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -102,7 +129,12 @@ class AppToast {
         elevation: 4,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: borderColor != null
+              ? BorderSide(color: borderColor)
+              : BorderSide.none,
+        ),
         duration: duration,
       ),
     );

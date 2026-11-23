@@ -1,5 +1,5 @@
 import 'package:akar/core/constants/app_constants.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_bar_notification_button.dart';
 import 'package:akar/core/widgets/app_logo_badge.dart';
@@ -71,18 +71,19 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
     if (_tapCount >= 5 && _tapCount < 10) {
       final remaining = 10 - _tapCount;
+      final colors = context.appColors;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             'Mode Simulasi: Klik ${_tapCount}x (Tinggal $remaining langkah lagi)',
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.white,
+              color: colors.onSecondary,
               fontWeight: FontWeight.bold,
               fontSize: 12.5,
             ),
           ),
-          backgroundColor: AppColors.secondary,
+          backgroundColor: colors.secondary,
           duration: const Duration(milliseconds: 1200),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -99,6 +100,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final logoBadge = widget.brand == AppBarBrand.linmas
         ? const AppLogoBadge.linmas(
             size: 38,
@@ -112,9 +114,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
           );
 
     return ColoredBox(
-      color: AppColors.background,
+      color: colors.background,
       child: DecoratedBox(
-        decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
+        decoration: BoxDecoration(gradient: colors.topHeaderGradient),
         child: AppBar(
           toolbarHeight: 60.0,
           backgroundColor: Colors.transparent,
@@ -145,7 +147,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.headlineSmall.copyWith(
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.5,
                           height: 1.1,
@@ -159,7 +161,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.labelSmall.copyWith(
-                          color: AppColors.primaryDark,
+                          color: colors.primaryDark,
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.2,

@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget>? actions;
   final PreferredSizeWidget? bottom;
   final bool transparentBackground;
-  final Color baseColor;
+  final Color? baseColor;
 
   const AppPageBar({
     super.key,
@@ -27,7 +27,7 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.bottom,
     this.transparentBackground = false,
-    this.baseColor = AppColors.background,
+    this.baseColor,
   });
 
   @override
@@ -36,6 +36,7 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final resolvedTitle =
         titleWidget ??
         (title != null && title!.isNotEmpty
@@ -44,7 +45,7 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.headlineSmall.copyWith(
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   fontWeight: FontWeight.bold,
                 ),
               )
@@ -82,9 +83,9 @@ class AppPageBar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     return ColoredBox(
-      color: baseColor,
+      color: baseColor ?? colors.background,
       child: DecoratedBox(
-        decoration: BoxDecoration(gradient: AppColors.topHeaderGradient),
+        decoration: BoxDecoration(gradient: colors.topHeaderGradient),
         child: appBar,
       ),
     );

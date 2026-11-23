@@ -70,7 +70,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
       return const Center(
         child: Icon(
           Icons.broken_image_rounded,
-          color: Colors.white54,
+          color: Colors.white54, // media-overlay
           size: 64,
         ),
       );
@@ -82,17 +82,27 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         imageUrl: imagePathOrUrl,
         httpHeaders: widget.httpHeaders,
         fit: BoxFit.contain,
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
+        placeholder: (context, url) => const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ), // media-overlay
+        ),
         errorWidget: (context, url, error) => const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.broken_image_rounded, color: Colors.white54, size: 64),
+              Icon(
+                Icons.broken_image_rounded,
+                color: Colors.white54, // media-overlay
+                size: 64,
+              ),
               SizedBox(height: 12),
               Text(
                 'Gagal memuat gambar',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(
+                  color: Colors.white70, // media-overlay
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -105,7 +115,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
         errorBuilder: (context, error, stackTrace) => const Center(
           child: Icon(
             Icons.broken_image_rounded,
-            color: Colors.white54,
+            color: Colors.white54, // media-overlay
             size: 64,
           ),
         ),
@@ -119,7 +129,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
           errorBuilder: (context, error, stackTrace) => const Center(
             child: Icon(
               Icons.broken_image_rounded,
-              color: Colors.white54,
+              color: Colors.white54, // media-overlay
               size: 64,
             ),
           ),
@@ -134,12 +144,14 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
               httpHeaders: widget.httpHeaders,
               fit: BoxFit.contain,
               placeholder: (context, url) => const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ), // media-overlay
               ),
               errorWidget: (context, url, error) => const Center(
                 child: Icon(
                   Icons.broken_image_rounded,
-                  color: Colors.white54,
+                  color: Colors.white54, // media-overlay
                   size: 64,
                 ),
               ),
@@ -155,7 +167,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
     final total = widget.images.length;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.black, // media-overlay
       body: SafeArea(
         child: Stack(
           children: [
@@ -191,14 +203,16 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
+                      color: Colors.black.withValues(
+                        alpha: 0.6,
+                      ), // media-overlay
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(
                         Icons.close_rounded,
-                        color: Colors.white,
+                        color: Colors.white, // media-overlay
                         size: 26,
                       ),
                       tooltip: 'Tutup',
@@ -211,7 +225,9 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: Colors.black.withValues(
+                          alpha: 0.6,
+                        ), // media-overlay
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -219,7 +235,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                             ? '${widget.title} (${_currentIndex + 1}/$total)'
                             : widget.title!,
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.white, // media-overlay
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -232,13 +248,15 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: Colors.black.withValues(
+                          alpha: 0.6,
+                        ), // media-overlay
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         '${_currentIndex + 1} / $total',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: Colors.white, // media-overlay
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -267,7 +285,10 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                           width: isActive ? 18 : 7,
                           height: 7,
                           decoration: BoxDecoration(
-                            color: isActive ? Colors.white : Colors.white38,
+                            color: isActive
+                                ? Colors
+                                      .white // media-overlay
+                                : Colors.white38, // media-overlay
                             borderRadius: BorderRadius.circular(4),
                           ),
                         );
@@ -281,7 +302,9 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.5),
+                      color: Colors.black.withValues(
+                        alpha: 0.5,
+                      ), // media-overlay
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
@@ -289,7 +312,7 @@ class _FullscreenImageViewerState extends State<FullscreenImageViewer> {
                           ? 'Geser ◄ ► untuk melihat foto • Cubit untuk zoom'
                           : 'Cubit / Zoom untuk memperbesar foto',
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: Colors.white70, // media-overlay
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),

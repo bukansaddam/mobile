@@ -293,7 +293,7 @@ void main() {
         final titleWidget = tester.widget<Text>(find.text('Detail Pengaduan'));
         expect(titleWidget.style?.fontSize, 18);
         expect(titleWidget.style?.fontWeight, FontWeight.bold);
-        expect(titleWidget.style?.color, AppColors.textPrimary);
+        expect(titleWidget.style?.color, AppColorScheme.light.textPrimary);
 
         final baseColoredBox = tester.widget<ColoredBox>(
           find
@@ -681,6 +681,51 @@ void main() {
         final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
         expect(scaffold.backgroundColor, AppColors.background);
         expect(find.byType(AppPageBar), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'AppPageBar and AppBarCircleButton adapt colors cleanly in Dark Mode',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Scaffold(
+              appBar: AppPageBar(
+                title: 'Mode Gelap',
+                actions: [
+                  AppBarCircleButton(
+                    icon: Icons.tune_rounded,
+                    isActive: true,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              body: const SizedBox.shrink(),
+            ),
+          ),
+        );
+
+        final titleWidget = tester.widget<Text>(find.text('Mode Gelap'));
+        expect(titleWidget.style?.color, AppColorScheme.dark.textPrimary);
+
+        final baseColoredBox = tester.widget<ColoredBox>(
+          find
+              .descendant(
+                of: find.byType(AppPageBar),
+                matching: find.byType(ColoredBox),
+              )
+              .first,
+        );
+        expect(baseColoredBox.color, AppColorScheme.dark.background);
+
+        final activeButton = tester.widget<IconButton>(
+          find.byType(IconButton).last,
+        );
+        expect(
+          activeButton.style?.backgroundColor?.resolve({}),
+          AppColorScheme.dark.primary,
+        );
       },
     );
   });

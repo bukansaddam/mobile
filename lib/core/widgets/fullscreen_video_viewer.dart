@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/dio_client.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -236,33 +236,50 @@ class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
   @override
   Widget build(BuildContext context) {
     final controller = _controller;
+    final colors = context.appColors;
 
     return Scaffold(
-      backgroundColor: AppColors.black,
+      backgroundColor: Colors.black, // media-overlay
       appBar: AppBar(
-        backgroundColor: AppColors.black,
-        foregroundColor: AppColors.white,
+        backgroundColor: Colors.black, // media-overlay
+        foregroundColor: Colors.white, // media-overlay
         leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: AppColors.white),
+          icon: const Icon(
+            Icons.close_rounded,
+            color: Colors.white, // media-overlay
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           widget.title ?? 'Video Bukti',
-          style: const TextStyle(fontSize: 16, color: AppColors.white),
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white, // media-overlay
+          ),
         ),
       ),
       body: Center(
         child: _error != null
-            ? Text(_error!, style: const TextStyle(color: AppColors.white))
+            ? Text(
+                _error!,
+                style: const TextStyle(
+                  color: Colors.white, // media-overlay
+                ),
+              )
             : controller == null
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const CircularProgressIndicator(color: AppColors.white),
+                  const CircularProgressIndicator(
+                    color: Colors.white, // media-overlay
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     _statusMessage,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    style: const TextStyle(
+                      color: Colors.white70, // media-overlay
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               )
@@ -278,7 +295,7 @@ class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
                     if (!controller.value.isPlaying)
                       const Icon(
                         Icons.play_circle_fill_rounded,
-                        color: AppColors.white,
+                        color: Colors.white, // media-overlay
                         size: 72,
                       ),
                   ],
@@ -292,10 +309,10 @@ class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
               child: VideoProgressIndicator(
                 controller,
                 allowScrubbing: true,
-                colors: const VideoProgressColors(
-                  playedColor: AppColors.primary,
-                  bufferedColor: AppColors.grey600,
-                  backgroundColor: AppColors.grey800,
+                colors: VideoProgressColors(
+                  playedColor: colors.primary,
+                  bufferedColor: const Color(0xFF757575), // media-overlay
+                  backgroundColor: const Color(0xFF424242), // media-overlay
                 ),
               ),
             ),

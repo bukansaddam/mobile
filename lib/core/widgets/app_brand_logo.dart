@@ -1,5 +1,5 @@
 import 'package:akar/core/constants/app_constants.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 enum AppBrandLogoVariant {
@@ -94,7 +94,7 @@ class AppBrandLogo extends StatelessWidget {
             return Icon(
               Icons.shield_rounded,
               size: fallbackIconSize,
-              color: AppColors.primary,
+              color: context.appColors.primary,
             );
           },
         ),

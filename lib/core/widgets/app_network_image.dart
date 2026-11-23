@@ -1,6 +1,6 @@
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
 
 /// Reusable and optimized network image component with persistent caching,
 /// memory downsampling, and graceful loading/error states.
@@ -76,20 +76,21 @@ class AppNetworkImage extends StatelessWidget {
   }
 
   Widget _buildLoadingShimmer(BuildContext context) {
+    final colors = context.appColors;
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.grey200,
+        color: backgroundColor ?? colors.surfaceElevated,
         borderRadius: borderRadius,
       ),
-      child: const Center(
+      child: Center(
         child: SizedBox(
           width: 18,
           height: 18,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(AppColors.grey400),
+            valueColor: AlwaysStoppedAnimation<Color>(colors.textHint),
           ),
         ),
       ),
@@ -97,11 +98,12 @@ class AppNetworkImage extends StatelessWidget {
   }
 
   Widget _buildErrorPlaceholder(BuildContext context, dynamic error) {
+    final colors = context.appColors;
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.grey100,
+        color: backgroundColor ?? colors.surfaceVariant,
         borderRadius: borderRadius,
       ),
       child: Center(
@@ -113,7 +115,7 @@ class AppNetworkImage extends StatelessWidget {
                   36.0,
                 )
               : 24,
-          color: AppColors.grey400,
+          color: colors.textHint,
         ),
       ),
     );

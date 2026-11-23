@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:akar/core/constants/app_constants.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -111,12 +111,13 @@ class _KtaCardModalState extends State<KtaCardModal> {
     final String memberId =
         '${AppConstants.appName}-${(user.id.toString()).padLeft(6, '0')}';
 
+    final colors = context.appColors;
     final initialLetter = name.isNotEmpty ? name[0].toUpperCase() : 'U';
 
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      decoration: BoxDecoration(
+        color: colors.background,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -128,7 +129,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
               width: 44,
               height: 5,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: colors.borderStrong,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -136,25 +137,21 @@ class _KtaCardModalState extends State<KtaCardModal> {
           const SizedBox(height: 16),
           Row(
             children: [
-              const Icon(
-                Icons.badge_rounded,
-                color: AppColors.primary,
-                size: 24,
-              ),
+              Icon(Icons.badge_rounded, color: colors.primary, size: 24),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Kartu Tanda Anggota (KTA)',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close, color: AppColors.grey600),
+                icon: Icon(Icons.close, color: colors.textMuted),
                 visualDensity: VisualDensity.compact,
               ),
             ],
@@ -166,21 +163,17 @@ class _KtaCardModalState extends State<KtaCardModal> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primaryDark, AppColors.primary],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: colors.primaryGradient,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: colors.shadow,
                     blurRadius: 12,
-                    offset: Offset(0, 6),
+                    offset: const Offset(0, 6),
                   ),
                 ],
                 border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.25),
+                  color: Colors.white.withValues(alpha: 0.25), // media-overlay
                   width: 1.5,
                 ),
               ),
@@ -195,12 +188,14 @@ class _KtaCardModalState extends State<KtaCardModal> {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: Colors.white.withValues(
+                              alpha: 0.2,
+                            ), // media-overlay
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.security_rounded,
-                            color: Colors.white,
+                            color: Colors.white, // media-overlay
                             size: 18,
                           ),
                         ),
@@ -212,7 +207,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               Text(
                                 AppConstants.appName,
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.white, // media-overlay
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.1,
@@ -223,7 +218,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               Text(
                                 'KARTU TANDA ANGGOTA',
                                 style: TextStyle(
-                                  color: Color(0xFFFFD700),
+                                  color: Color(0xFFFFD700), // media-overlay
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 0.8,
@@ -241,16 +236,20 @@ class _KtaCardModalState extends State<KtaCardModal> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color: Colors.white.withValues(
+                              alpha: 0.2,
+                            ), // media-overlay
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.4),
+                              color: Colors.white.withValues(
+                                alpha: 0.4,
+                              ), // media-overlay
                             ),
                           ),
                           child: Text(
                             roleTitle,
                             style: const TextStyle(
-                              color: Colors.white,
+                              color: Colors.white, // media-overlay
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -260,7 +259,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                     ),
                     const SizedBox(height: 14),
                     const Divider(
-                      color: Colors.white24,
+                      color: Colors.white24, // media-overlay
                       height: 1,
                       thickness: 1,
                     ),
@@ -273,12 +272,15 @@ class _KtaCardModalState extends State<KtaCardModal> {
                           width: 74,
                           height: 90,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.white, // media-overlay
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white, width: 2.5),
+                            border: Border.all(
+                              color: Colors.white, // media-overlay
+                              width: 2.5,
+                            ),
                             boxShadow: const [
                               BoxShadow(
-                                color: Colors.black26,
+                                color: Colors.black26, // media-overlay
                                 blurRadius: 6,
                                 offset: Offset(0, 3),
                               ),
@@ -294,14 +296,14 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                     fit: BoxFit.cover,
                                     errorWidget: (context, url, error) {
                                       return Container(
-                                        color: AppColors.primaryLight,
+                                        color: colors.primaryLight,
                                         child: Center(
                                           child: Text(
                                             initialLetter,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 28,
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.primary,
+                                              color: colors.primary,
                                             ),
                                           ),
                                         ),
@@ -309,14 +311,14 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                     },
                                   )
                                 : Container(
-                                    color: AppColors.primaryLight,
+                                    color: colors.primaryLight,
                                     child: Center(
                                       child: Text(
                                         initialLetter,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 28,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
+                                          color: colors.primary,
                                         ),
                                       ),
                                     ),
@@ -331,7 +333,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               Text(
                                 name,
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.white, // media-overlay
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -345,7 +347,9 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               _buildKtaDetailRow(
                                 'Status',
                                 'TERVERIFIKASI ✓',
-                                textColor: const Color(0xFF86EFAC),
+                                textColor: const Color(
+                                  0xFF86EFAC,
+                                ), // media-overlay
                               ),
                             ],
                           ),
@@ -360,7 +364,9 @@ class _KtaCardModalState extends State<KtaCardModal> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.25),
+                        color: Colors.black.withValues(
+                          alpha: 0.25,
+                        ), // media-overlay
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -372,7 +378,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                 Text(
                                   'Diterbitkan oleh Sistem ${AppConstants.appName}',
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: Colors.white70, // media-overlay
                                     fontSize: 9.5,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -383,7 +389,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                 Text(
                                   'STATUS: ANGGOTA AKTIF',
                                   style: TextStyle(
-                                    color: Color(0xFFFFD700),
+                                    color: Color(0xFFFFD700), // media-overlay
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -400,7 +406,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Colors.white, // media-overlay
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Row(
@@ -409,7 +415,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                 Icon(
                                   Icons.qr_code_2_rounded,
                                   size: 22,
-                                  color: AppColors.primaryDark,
+                                  color: Color(0xFF114C30), // media-overlay
                                 ),
                                 SizedBox(width: 4),
                                 Text(
@@ -417,7 +423,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
                                   style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.primaryDark,
+                                    color: Color(0xFF114C30), // media-overlay
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -440,8 +446,8 @@ class _KtaCardModalState extends State<KtaCardModal> {
             child: ElevatedButton.icon(
               onPressed: _isDownloading ? null : _downloadKta,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.onPrimary,
                 elevation: 0,
                 minimumSize: const Size(0, 48),
                 shape: RoundedRectangleBorder(
@@ -449,12 +455,12 @@ class _KtaCardModalState extends State<KtaCardModal> {
                 ),
               ),
               icon: _isDownloading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: colors.onPrimary,
                       ),
                     )
                   : null,
@@ -476,7 +482,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
   Widget _buildKtaDetailRow(
     String label,
     String value, {
-    Color textColor = Colors.white,
+    Color textColor = Colors.white, // media-overlay
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 3.0),
@@ -487,7 +493,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
             child: Text(
               label,
               style: const TextStyle(
-                color: Colors.white70,
+                color: Colors.white70, // media-overlay
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
@@ -495,7 +501,10 @@ class _KtaCardModalState extends State<KtaCardModal> {
           ),
           const Text(
             ': ',
-            style: TextStyle(color: Colors.white70, fontSize: 11),
+            style: TextStyle(
+              color: Colors.white70, // media-overlay
+              fontSize: 11,
+            ),
           ),
           Expanded(
             child: Text(

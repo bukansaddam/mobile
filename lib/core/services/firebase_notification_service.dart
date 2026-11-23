@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/app_logger.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
@@ -789,28 +789,33 @@ class FirebaseNotificationService {
       isDestructive: true,
       icon: Icons.warning_amber_rounded,
       barrierDismissible: false,
-      customContent: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Row(
-          children: [
-            Icon(
-              Icons.check_circle_outline,
-              color: AppColors.primary,
-              size: 18,
+      customContent: Builder(
+        builder: (contentContext) {
+          final colors = contentContext.appColors;
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: colors.primaryLight,
+              borderRadius: BorderRadius.circular(12),
             ),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Layar otomatis menyala & Fullscreen 24/7',
-                style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
-              ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  color: colors.primary,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Layar otomatis menyala & Fullscreen 24/7',
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
     await _prefs.setBool(prefsKey, true);

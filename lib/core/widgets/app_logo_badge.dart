@@ -1,5 +1,5 @@
 import 'package:akar/core/constants/app_constants.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 /// Displays the transparent brand emblem inside a clean rounded badge.
@@ -41,6 +41,7 @@ class AppLogoBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final decodedSize = (size * 3).round();
 
     return Container(
@@ -48,9 +49,11 @@ class AppLogoBadge extends StatelessWidget {
       height: size,
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.isDark
+            ? const Color(0xFFF8FAFC) // media-overlay: keep light crest backing
+            : colors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: AppColors.grey200, width: 1),
+        border: Border.all(color: colors.border, width: 1),
         boxShadow: boxShadow,
       ),
       child: ClipRRect(
@@ -67,7 +70,7 @@ class AppLogoBadge extends StatelessWidget {
           errorBuilder: (context, error, stackTrace) {
             return Icon(
               Icons.shield_rounded,
-              color: AppColors.primary,
+              color: colors.primary,
               size: fallbackIconSize,
             );
           },
