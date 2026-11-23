@@ -528,11 +528,13 @@ class AppRouter {
       GoRoute(
         path: myComplaintsPath,
         name: myComplaints,
-        builder: (context, state) => const MyComplaintHistoryPage(),
+        builder: (context, state) =>
+            const MyComplaintHistoryPage(showAppBar: true),
       ),
       GoRoute(
         path: '/my-complaints',
-        builder: (context, state) => const MyComplaintHistoryPage(),
+        builder: (context, state) =>
+            const MyComplaintHistoryPage(showAppBar: true),
       ),
       GoRoute(
         path: complaintDetailPath,

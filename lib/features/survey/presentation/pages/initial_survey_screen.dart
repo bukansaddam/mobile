@@ -1,6 +1,7 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
@@ -138,19 +139,9 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
           false, // Mengharuskan pengisian survey baseline saat login pertama
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Survey Profil Baseline Linmas',
-            style: AppTextStyles.titleMedium.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
+        appBar: const AppPageBar(
+          title: 'Survey Profil Baseline Linmas',
+          showBackButton: false,
         ),
         body: BlocConsumer<SurveyBloc, SurveyState>(
           listener: (context, state) {

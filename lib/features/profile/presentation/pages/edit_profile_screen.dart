@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -358,38 +359,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             (authState is AuthAuthenticated ? authState.user : null);
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8FAFC),
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Color(0xFF0F172A),
-                size: 20,
-              ),
-              onPressed: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  Navigator.of(context).maybePop();
-                }
-              },
-            ),
-            title: const Text(
-              'Edit Profil',
-              style: TextStyle(
-                color: Color(0xFF0F172A),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            centerTitle: true,
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(1),
-              child: Container(color: const Color(0xFFE2E8F0), height: 1),
-            ),
+          backgroundColor: AppColors.background,
+          appBar: AppPageBar(
+            title: 'Edit Profil',
+            onBackPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                Navigator.of(context).maybePop();
+              }
+            },
           ),
           body: SafeArea(
             child: SingleChildScrollView(

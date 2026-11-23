@@ -14,6 +14,7 @@ import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
@@ -903,13 +904,9 @@ class _RegisterScreenState extends State<RegisterScreen>
             padding: const EdgeInsets.only(left: 8, right: 16, top: 4),
             child: Row(
               children: [
-                IconButton(
-                  onPressed: _handleClose,
+                AppBarCircleButton.back(
                   tooltip: 'Kembali ke login',
-                  icon: const Icon(
-                    Icons.arrow_back_rounded,
-                    color: Color(0xFF111827),
-                  ),
+                  onPressed: _handleClose,
                 ),
                 const Spacer(),
                 if (_canAutoFill)

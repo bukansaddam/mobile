@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_brand_logo.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/entrance_transition.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -150,25 +151,10 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFE8F5E9),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          tooltip: 'Kembali',
-          onPressed: _handleBack,
-        ),
-        title: roleTitle != null
-            ? Text(
-                roleTitle,
-                style: AppTextStyles.titleMedium.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              )
-            : null,
+      appBar: AppPageBar(
+        title: roleTitle,
+        transparentBackground: true,
+        onBackPressed: _handleBack,
       ),
       body: Container(
         decoration: const BoxDecoration(

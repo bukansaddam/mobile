@@ -1,5 +1,6 @@
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
@@ -10,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyComplaintHistoryPage extends StatefulWidget {
-  const MyComplaintHistoryPage({super.key});
+  final bool showAppBar;
+
+  const MyComplaintHistoryPage({super.key, this.showAppBar = false});
 
   @override
   State<MyComplaintHistoryPage> createState() => _MyComplaintHistoryPageState();
@@ -311,8 +314,12 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
             (_selectedCategoryFilter != null ? 1 : 0);
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8FAFC),
+          backgroundColor: AppColors.background,
+          appBar: widget.showAppBar
+              ? const AppPageBar(title: 'Riwayat Pengaduan')
+              : null,
           body: SafeArea(
+            top: !widget.showAppBar,
             child: Column(
               children: [
                 Padding(
