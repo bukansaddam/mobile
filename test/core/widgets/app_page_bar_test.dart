@@ -551,7 +551,10 @@ void main() {
       expect(appBarTheme.centerTitle, isTrue);
       expect(
         appBarTheme.titleTextStyle,
-        AppTextStyles.headlineSmall.copyWith(fontWeight: FontWeight.bold),
+        AppTextStyles.headlineSmall.copyWith(
+          fontWeight: FontWeight.bold,
+          color: AppColorScheme.light.textPrimary,
+        ),
       );
     });
 

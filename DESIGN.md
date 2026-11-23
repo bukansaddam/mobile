@@ -50,3 +50,12 @@
 - **Aksen Hijau Kontras (`AppColors.primaryDark`):** Dikhususkan hanya untuk teks, ikon, atau indikator aktif di atas latar terang atau gradien (seperti subtitle `CustomAppBar`, tab aktif `TabBar`, atau teks pada banner/tombol putih), bukan `backgroundColor` CTA primer.
 - **Destructive & Emergency Actions:** Tombol hapus/bahaya/darurat memakai `AppColors.error` (`#C62828`) solid atau latar lembut `AppColors.errorLight` (`#FFEBEE`) dengan border `AppColors.errorBorder` (`#FCA5A5`) serta teks `AppColors.error` / `AppColors.errorDark`.
 - **Neutral Secondary / Cancel Buttons:** Tombol batal atau tutup netral memakai foreground `AppColors.secondary` (atau `AppColors.textPrimary`) dan border `AppColors.grey300`.
+
+## Dynamic Theming & Dark Mode (`lib/core/theme/app_color_scheme.dart`, `ThemeBloc`)
+
+- **Theme Modes & Persistence:** `ThemeBloc` mendukung 3 mode (`Ikuti Sistem` sebagai default, `Terang`, dan `Gelap`) yang disimpan persisten di `SharedPreferences` (`app_theme_mode`) serta dimuat sinkron pada cold start untuk mencegah flicker.
+- **Extension Access:** Seluruh widget dinamis membaca warna melalui `context.appColors` (`AppColorScheme` ThemeExtension) yang otomatis mengikuti tema Light atau Dark pada pohon widget.
+- **Deep Slate Forest Dark Palette:**
+  - Kanvas utama `background` `#0F172A`, permukaan kartu/sheet `surface` `#1E293B`, isian input `surfaceVariant` `#162032`, permukaan terangkat `surfaceElevated` `#263548`, garis batas/divider `border` `#334155`.
+  - Brand primer dinaikkan menjadi `primary` `#22C55E` dengan foreground `onPrimary` `#052E16` (rasio kontras `6.54:1`), serta `textPrimary` `#F8FAFC`, `textSecondary` `#CBD5E1`, dan `textMuted` `#94A3B8` yang menjaga kontras WCAG AA (`>= 4.5:1`) di seluruh pasangan teks, tombol, dan badge semantik.
+  - Aksi solid destruktif/SOS memakai `errorSolid` `#DC2626` dengan `onErrorSolid` `#FFFFFF` (`4.83:1`).

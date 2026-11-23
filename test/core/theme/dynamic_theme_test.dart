@@ -1,0 +1,225 @@
+import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/core/theme/bloc/theme_bloc.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  double contrastRatio(Color a, Color b) {
+    final l1 = a.computeLuminance();
+    final l2 = b.computeLuminance();
+    final lighter = l1 > l2 ? l1 : l2;
+    final darker = l1 > l2 ? l2 : l1;
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  group('AppColorScheme Contrast & Tokens', () {
+    test(
+      'meets WCAG AA 4.5:1 across all Light Mode text and semantic pairs',
+      () {
+        const c = AppColorScheme.light;
+        final pairs = <(String, Color, Color)>[
+          ('textPrimary on background', c.textPrimary, c.background),
+          ('textPrimary on surface', c.textPrimary, c.surface),
+          ('textSecondary on surface', c.textSecondary, c.surface),
+          ('textMuted on surface', c.textMuted, c.surface),
+          ('primaryDark on surface', c.primaryDark, c.surface),
+          ('primaryDark on primaryLight', c.primaryDark, c.primaryLight),
+          ('success on surface', c.success, c.surface),
+          ('warningDark on warningLight', c.warningDark, c.warningLight),
+          ('error on surface', c.error, c.surface),
+          ('errorDark on errorLight', c.errorDark, c.errorLight),
+          ('onErrorSolid on errorSolid', c.onErrorSolid, c.errorSolid),
+          ('info on surface', c.info, c.surface),
+        ];
+
+        for (final (name, fg, bg) in pairs) {
+          expect(
+            contrastRatio(fg, bg),
+            greaterThanOrEqualTo(4.5),
+            reason: '$name below 4.5:1',
+          );
+        }
+
+        // Bold/large button label on Light primary (#0D8E34) meets >= 3.0:1 AA large text.
+        expect(
+          contrastRatio(c.onPrimary, c.primary),
+          greaterThanOrEqualTo(3.0),
+        );
+      },
+    );
+
+    test(
+      'meets WCAG AA 4.5:1 across all Dark Mode text and semantic pairs',
+      () {
+        const c = AppColorScheme.dark;
+        final pairs = <(String, Color, Color)>[
+          ('textPrimary on background', c.textPrimary, c.background),
+          ('textPrimary on surface', c.textPrimary, c.surface),
+          ('textSecondary on surface', c.textSecondary, c.surface),
+          ('textMuted on surface', c.textMuted, c.surface),
+          ('textMuted on background', c.textMuted, c.background),
+          ('primary on background', c.primary, c.background),
+          ('primary on surface', c.primary, c.surface),
+          ('onPrimary on primary', c.onPrimary, c.primary),
+          ('primaryDark on primaryLight', c.primaryDark, c.primaryLight),
+          ('success on surface', c.success, c.surface),
+          ('success on successLight', c.success, c.successLight),
+          ('warning on surface', c.warning, c.surface),
+          ('warningDark on warningLight', c.warningDark, c.warningLight),
+          ('error on surface', c.error, c.surface),
+          ('errorDark on errorLight', c.errorDark, c.errorLight),
+          ('onErrorSolid on errorSolid', c.onErrorSolid, c.errorSolid),
+          ('info on surface', c.info, c.surface),
+          ('info on infoLight', c.info, c.infoLight),
+          ('indigo on surface', c.indigo, c.surface),
+          ('orange on surface', c.orange, c.surface),
+          ('emerald on surface', c.emerald, c.surface),
+          ('earth on surface', c.earth, c.surface),
+        ];
+
+        for (final (name, fg, bg) in pairs) {
+          expect(
+            contrastRatio(fg, bg),
+            greaterThanOrEqualTo(4.5),
+            reason: '$name below 4.5:1',
+          );
+        }
+      },
+    );
+
+    test('supports copyWith and lerp smoothly between light and dark', () {
+      const light = AppColorScheme.light;
+      const dark = AppColorScheme.dark;
+
+      expect(light.lerp(dark, 0.0).background, light.background);
+      expect(light.lerp(dark, 1.0).background, dark.background);
+
+      final mid = light.lerp(dark, 0.5);
+      expect(
+        mid.background,
+        Color.lerp(light.background, dark.background, 0.5),
+      );
+
+      final copied = light.copyWith(primary: const Color(0xFF123456));
+      expect(copied.primary, const Color(0xFF123456));
+      expect(copied.surface, light.surface);
+    });
+  });
+
+  group('AppTheme Light & Dark Registration', () {
+    test(
+      'registers AppColorScheme, button/FAB themes, and status bar style',
+      () {
+        final light = AppTheme.lightTheme;
+        final dark = AppTheme.darkTheme;
+
+        expect(light.extension<AppColorScheme>(), AppColorScheme.light);
+        expect(dark.extension<AppColorScheme>(), AppColorScheme.dark);
+
+        expect(
+          dark.elevatedButtonTheme.style?.backgroundColor?.resolve({}),
+          AppColorScheme.dark.primary,
+        );
+        expect(
+          dark.elevatedButtonTheme.style?.foregroundColor?.resolve({}),
+          AppColorScheme.dark.onPrimary,
+        );
+        expect(
+          dark.filledButtonTheme.style?.backgroundColor?.resolve({}),
+          AppColorScheme.dark.primary,
+        );
+        expect(
+          dark.floatingActionButtonTheme.backgroundColor,
+          AppColorScheme.dark.primary,
+        );
+        expect(
+          dark.floatingActionButtonTheme.foregroundColor,
+          AppColorScheme.dark.onPrimary,
+        );
+
+        expect(
+          light.appBarTheme.systemOverlayStyle?.statusBarIconBrightness,
+          Brightness.dark,
+        );
+        expect(
+          dark.appBarTheme.systemOverlayStyle?.statusBarIconBrightness,
+          Brightness.light,
+        );
+      },
+    );
+
+    testWidgets(
+      'context.appColors resolves with and without AppColorScheme extension',
+      (tester) async {
+        late AppColorScheme capturedWithExt;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Builder(
+              builder: (context) {
+                capturedWithExt = context.appColors;
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+        expect(capturedWithExt, AppColorScheme.dark);
+
+        late AppColorScheme capturedFallback;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData.dark(),
+            home: Builder(
+              builder: (context) {
+                capturedFallback = context.appColors;
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+        expect(capturedFallback, AppColorScheme.dark);
+      },
+    );
+  });
+
+  group('ThemeBloc Persistence', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+
+    test(
+      'defaults to ThemeMode.system and persists changes synchronously',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        var prefs = await SharedPreferences.getInstance();
+        final bloc = ThemeBloc(sharedPreferences: prefs);
+
+        expect(bloc.state.themeMode, ThemeMode.system);
+
+        bloc.add(const ChangeThemeModeEvent(ThemeMode.dark));
+        await Future<void>.delayed(Duration.zero);
+        expect(bloc.state.themeMode, ThemeMode.dark);
+        expect(prefs.getString(ThemeBloc.themeModeKey), 'dark');
+
+        // New instance restores persisted value immediately in initial state.
+        prefs = await SharedPreferences.getInstance();
+        final restoredBloc = ThemeBloc(sharedPreferences: prefs);
+        expect(restoredBloc.state.themeMode, ThemeMode.dark);
+
+        restoredBloc.add(const ChangeThemeModeEvent(ThemeMode.light));
+        await Future<void>.delayed(Duration.zero);
+        expect(restoredBloc.state.themeMode, ThemeMode.light);
+        expect(prefs.getString(ThemeBloc.themeModeKey), 'light');
+
+        restoredBloc.add(const ChangeThemeModeEvent(ThemeMode.system));
+        await Future<void>.delayed(Duration.zero);
+        expect(restoredBloc.state.themeMode, ThemeMode.system);
+        expect(prefs.getString(ThemeBloc.themeModeKey), 'system');
+
+        await bloc.close();
+        await restoredBloc.close();
+      },
+    );
+  });
+}

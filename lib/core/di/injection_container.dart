@@ -8,6 +8,7 @@ import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
+import 'package:akar/core/theme/bloc/theme_bloc.dart';
 
 // Auth
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
@@ -174,6 +175,9 @@ Future<void> init() async {
   // Core & External
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerFactory<ThemeBloc>(
+    () => ThemeBloc(sharedPreferences: sl<SharedPreferences>()),
+  );
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
   sl.registerLazySingleton<GoogleSpeechService>(() => GoogleSpeechService());
   sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());

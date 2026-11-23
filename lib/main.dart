@@ -10,6 +10,7 @@ import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/services/background_service_helper.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/core/theme/bloc/theme_bloc.dart';
 import 'package:akar/core/di/injection_container.dart' as di;
 import 'package:akar/core/routes/app_router.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ThemeBloc>(create: (_) => di.sl<ThemeBloc>()),
         BlocProvider<AuthBloc>(create: (_) => di.sl<AuthBloc>()),
         BlocProvider<ProfileBloc>(create: (_) => di.sl<ProfileBloc>()),
         BlocProvider<TrackingBloc>(create: (_) => di.sl<TrackingBloc>()),
@@ -88,15 +90,21 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: NotificationLifecycleListener(
-        child: MaterialApp.router(
-          title: AppConstants.appName,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          routerConfig: AppRouter.router,
-          builder: (context, child) {
-            return GestureDetector(
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: child,
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            return MaterialApp.router(
+              title: AppConstants.appName,
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeState.themeMode,
+              routerConfig: AppRouter.router,
+              builder: (context, child) {
+                return GestureDetector(
+                  onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                  child: child,
+                );
+              },
             );
           },
         ),
