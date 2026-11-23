@@ -142,6 +142,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
 
         if (activity == null) {
           return const Scaffold(
+            backgroundColor: AppColors.background,
             appBar: AppPageBar(title: 'Detail Kegiatan'),
             body: Center(child: Text('Kegiatan tidak ditemukan')),
           );
@@ -156,7 +157,7 @@ class _ActivationDetailScreenState extends State<ActivationDetailScreen> {
             actions: [
               AppBarCircleButton(
                 icon: Icons.info_outline_rounded,
-                iconColor: AppColors.primary,
+                iconColor: AppColors.primaryDark,
                 tooltip: 'Informasi Ringkasan Kegiatan',
                 onPressed: () => ActivationDetailModal.show(context, activity),
               ),

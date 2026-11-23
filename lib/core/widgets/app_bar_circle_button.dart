@@ -39,15 +39,15 @@ class AppBarCircleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDisabled = onPressed == null;
     final resolvedBg = isActive
-        ? AppColors.primary
+        ? AppColors.primaryDark
         : isDisabled
         ? AppColors.white.withValues(alpha: 0.55)
         : (backgroundColor ?? AppColors.white.withValues(alpha: 0.9));
     final resolvedBorder = isActive
-        ? AppColors.primary
+        ? AppColors.primaryDark
         : isDisabled
         ? AppColors.grey200
-        : (borderColor ?? AppColors.grey300);
+        : (borderColor ?? AppColors.grey700);
     final resolvedIconColor = isActive
         ? AppColors.white
         : isDisabled

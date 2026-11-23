@@ -6,6 +6,8 @@ import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:akar/core/widgets/app_logo_badge.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
+import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
+import 'package:akar/features/linmas/activation/presentation/pages/activation_detail_screen.dart';
 import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
@@ -15,9 +17,14 @@ import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entit
 import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
+import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
+import 'package:akar/features/survey/presentation/pages/survey_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 class _FakeMyComplaintListBloc extends Fake implements MyComplaintListBloc {
   @override
@@ -138,6 +145,28 @@ class _FakeOrganisasiBloc extends Fake implements OrganisasiBloc {
   void add(OrganisasiEvent event) {}
 }
 
+class _FakeSurveyBloc extends Fake implements SurveyBloc {
+  @override
+  SurveyState get state => SurveyInitialState();
+
+  @override
+  Stream<SurveyState> get stream => const Stream.empty();
+
+  @override
+  void add(SurveyEvent event) {}
+}
+
+class _FakeActivationBloc extends Fake implements ActivationBloc {
+  @override
+  ActivationState get state => const ActivationState();
+
+  @override
+  Stream<ActivationState> get stream => const Stream.empty();
+
+  @override
+  void add(ActivationEvent event) {}
+}
+
 String? _assetNameOf(WidgetTester tester, Finder finder) {
   final image = tester.widget<Image>(finder);
   var provider = image.image;
@@ -153,7 +182,7 @@ String? _assetNameOf(WidgetTester tester, Finder finder) {
 void main() {
   group('AppBarCircleButton Widget Tests', () {
     testWidgets(
-      'renders default back button with chevron_left and 48x48 tap area',
+      'renders default back button with chevron_left, >= 3:1 grey700 border, and 48x48 tap area',
       (tester) async {
         bool tapped = false;
         await tester.pumpWidget(
@@ -167,6 +196,9 @@ void main() {
         final iconFinder = find.byIcon(Icons.chevron_left_rounded);
         expect(iconFinder, findsOneWidget);
 
+        final button = tester.widget<IconButton>(find.byType(IconButton));
+        expect(button.style?.side?.resolve({})?.color, AppColors.grey700);
+
         final sizeBoxFinder = find.byType(SizedBox).first;
         final renderBox = tester.renderObject<RenderBox>(sizeBoxFinder);
         expect(renderBox.size.width, 48.0);
@@ -178,7 +210,7 @@ void main() {
     );
 
     testWidgets(
-      'handles active state with primary background, border, and white icon',
+      'handles active state with primaryDark background, border, and white icon',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -196,8 +228,11 @@ void main() {
         expect(icon.color, AppColors.white);
 
         final button = tester.widget<IconButton>(find.byType(IconButton));
-        expect(button.style?.backgroundColor?.resolve({}), AppColors.primary);
-        expect(button.style?.side?.resolve({})?.color, AppColors.primary);
+        expect(
+          button.style?.backgroundColor?.resolve({}),
+          AppColors.primaryDark,
+        );
+        expect(button.style?.side?.resolve({})?.color, AppColors.primaryDark);
       },
     );
 
@@ -568,6 +603,81 @@ void main() {
         final tabBar = tester.widget<TabBar>(find.byType(TabBar));
         expect(tabBar.labelColor, AppColors.primaryDark);
         expect(tabBar.indicatorColor, AppColors.primaryDark);
+      },
+    );
+
+    testWidgets(
+      'CustomAppBar debug simulation snackbar omits decorative emoji',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              appBar: CustomAppBar(unreadCount: 0),
+              body: SizedBox.shrink(),
+            ),
+          ),
+        );
+
+        final logoFinder = find.byType(AppLogoBadge);
+        for (int i = 0; i < 5; i++) {
+          await tester.tap(logoFinder);
+          await tester.pump();
+        }
+
+        expect(find.textContaining('Simulasi'), findsOneWidget);
+        expect(find.textContaining('🎯'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'SurveyScreen back button guards empty GoRouter stack and navigates to /main',
+      (tester) async {
+        final router = GoRouter(
+          initialLocation: '/survey',
+          routes: [
+            GoRoute(
+              path: '/survey',
+              builder: (context, state) => BlocProvider<SurveyBloc>.value(
+                value: _FakeSurveyBloc(),
+                child: const SurveyScreen(),
+              ),
+            ),
+            GoRoute(
+              path: '/main',
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Main Destination')),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AppPageBar), findsOneWidget);
+        await tester.tap(find.byIcon(Icons.chevron_left_rounded));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('Main Destination'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'ActivationDetailScreen fallback Scaffold sets explicit AppColors.background',
+      (tester) async {
+        await tester.pumpWidget(
+          BlocProvider<ActivationBloc>.value(
+            value: _FakeActivationBloc(),
+            child: const MaterialApp(
+              home: ActivationDetailScreen(activityId: 'missing'),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+        expect(scaffold.backgroundColor, AppColors.background);
+        expect(find.byType(AppPageBar), findsOneWidget);
       },
     );
   });

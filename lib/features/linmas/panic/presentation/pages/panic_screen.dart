@@ -224,7 +224,7 @@ class _PanicScreenState extends State<PanicScreen> {
             actions: [
               AppBarCircleButton(
                 icon: Icons.my_location_rounded,
-                iconColor: AppColors.primary,
+                iconColor: AppColors.primaryDark,
                 tooltip: 'Pusatkan Lokasi Saya',
                 onPressed: () => _recenterMap(userLat, userLng),
               ),

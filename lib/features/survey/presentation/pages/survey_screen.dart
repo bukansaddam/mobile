@@ -157,13 +157,26 @@ class _SurveyScreenState extends State<SurveyScreen> {
     context.read<SurveyBloc>().add(SubmitDynamicMonthlySurveyEvent(survey));
   }
 
+  void _handleBack(BuildContext context) {
+    final router = GoRouter.maybeOf(context);
+    if (router != null) {
+      if (router.canPop()) {
+        router.pop();
+      } else {
+        router.go('/main');
+      }
+      return;
+    }
+    Navigator.of(context).maybePop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppPageBar(
         title: 'Survey Bulanan',
-        onBackPressed: () => context.pop(),
+        onBackPressed: () => _handleBack(context),
       ),
       body: BlocConsumer<SurveyBloc, SurveyState>(
         listener: (context, state) {
@@ -184,7 +197,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
               buttonText: 'Selesai',
               onPressed: () {
                 context.read<SurveyBloc>().add(const CheckSurveyStatusEvent());
-                context.pop();
+                _handleBack(context);
               },
             );
           } else if (state is SurveyFailureState) {

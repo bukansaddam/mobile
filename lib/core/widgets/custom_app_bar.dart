@@ -75,7 +75,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '🎯 Klik ${_tapCount}x (Tinggal $remaining langkah lagi untuk Simulasi)',
+            'Mode Simulasi: Klik ${_tapCount}x (Tinggal $remaining langkah lagi)',
             style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.bold,
