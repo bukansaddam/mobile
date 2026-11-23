@@ -137,9 +137,9 @@ class ActivationDetailModal extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFFBEB),
+                    color: AppColors.warningLight,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFFDE68A)),
+                    border: Border.all(color: AppColors.warningBorder),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,14 +149,14 @@ class ActivationDetailModal extends StatelessWidget {
                           const Icon(
                             Icons.note_alt_rounded,
                             size: 18,
-                            color: Color(0xFFD97706),
+                            color: AppColors.warning,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             'Catatan Khusus',
                             style: AppTextStyles.titleMedium.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFFB45309),
+                              color: AppColors.earth,
                             ),
                           ),
                         ],
@@ -165,7 +165,7 @@ class ActivationDetailModal extends StatelessWidget {
                       Text(
                         activity.notes!,
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF92400E),
+                          color: AppColors.warningDark,
                           fontWeight: FontWeight.w600,
                           height: 1.5,
                           fontSize: 13,

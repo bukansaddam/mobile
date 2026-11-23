@@ -322,12 +322,12 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD97706).withValues(alpha: 0.12),
+                  color: AppColors.warning.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.cleaning_services_rounded,
-                  color: Color(0xFFD97706),
+                  color: AppColors.warning,
                   size: 20,
                 ),
               ),
@@ -337,7 +337,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFD97706),
+                  color: AppColors.warning,
                 ),
               ),
             ],
@@ -519,12 +519,12 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2B6CB0).withValues(alpha: 0.12),
+                  color: AppColors.info.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.security_rounded,
-                  color: Color(0xFF2B6CB0),
+                  color: AppColors.info,
                   size: 20,
                 ),
               ),
@@ -534,7 +534,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2B6CB0),
+                  color: AppColors.info,
                 ),
               ),
             ],
@@ -740,12 +740,12 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2F855A).withValues(alpha: 0.12),
+                  color: AppColors.success.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.eco_rounded,
-                  color: Color(0xFF2F855A),
+                  color: AppColors.success,
                   size: 20,
                 ),
               ),
@@ -755,7 +755,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2F855A),
+                  color: AppColors.success,
                 ),
               ),
             ],

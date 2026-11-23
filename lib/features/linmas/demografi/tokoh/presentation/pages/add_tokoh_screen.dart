@@ -1327,7 +1327,7 @@ class _AddTokohScreenState extends State<AddTokohScreen> {
           if (isRequired)
             const TextSpan(
               text: ' *',
-              style: TextStyle(color: Color(0xFFEF4444)),
+              style: TextStyle(color: AppColors.error),
             ),
         ],
       ),

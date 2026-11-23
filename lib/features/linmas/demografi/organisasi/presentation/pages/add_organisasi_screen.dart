@@ -300,7 +300,7 @@ class _AddOrganisasiScreenState extends State<AddOrganisasiScreen> {
             const TextSpan(
               text: ' *',
               style: TextStyle(
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 fontWeight: FontWeight.bold,
               ),
             ),

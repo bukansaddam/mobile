@@ -166,12 +166,12 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0284C7).withValues(alpha: 0.1),
+                        color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
                         Icons.photo_library_rounded,
-                        color: Color(0xFF0284C7),
+                        color: AppColors.info,
                       ),
                     ),
                     title: const Text(
@@ -449,14 +449,13 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                       vertical: 2,
                                                     ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color(0xFF0284C7)
+                                                  color: AppColors.info
                                                       .withValues(alpha: 0.1),
                                                   borderRadius:
                                                       BorderRadius.circular(10),
                                                   border: Border.all(
-                                                    color: const Color(
-                                                      0xFF0284C7,
-                                                    ).withValues(alpha: 0.3),
+                                                    color: AppColors.info
+                                                        .withValues(alpha: 0.3),
                                                   ),
                                                 ),
                                                 child: Row(
@@ -466,16 +465,14 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
                                                     const Icon(
                                                       Icons.near_me_rounded,
                                                       size: 11,
-                                                      color: Color(0xFF0284C7),
+                                                      color: AppColors.info,
                                                     ),
                                                     const SizedBox(width: 3),
                                                     Text(
                                                       _selectedLocation!
                                                           .formattedDistance,
                                                       style: const TextStyle(
-                                                        color: Color(
-                                                          0xFF0284C7,
-                                                        ),
+                                                        color: AppColors.info,
                                                         fontSize: 10,
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -1032,19 +1029,19 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     switch (jenis.toLowerCase()) {
       case 'organik':
         icon = Icons.eco_rounded;
-        color = const Color(0xFF16A34A);
+        color = AppColors.primary;
         break;
       case 'anorganik':
         icon = Icons.recycling_rounded;
-        color = const Color(0xFF0284C7);
+        color = AppColors.info;
         break;
       case 'botol plastik':
         icon = Icons.local_drink_rounded;
-        color = const Color(0xFF0284C7);
+        color = AppColors.info;
         break;
       case 'kardus':
         icon = Icons.inventory_2_rounded;
-        color = const Color(0xFFD97706);
+        color = AppColors.warning;
         break;
       case 'kertas':
         icon = Icons.newspaper_rounded;
@@ -1052,12 +1049,12 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
         break;
       case 'plastik kemasan':
         icon = Icons.shopping_bag_rounded;
-        color = const Color(0xFFDC2626);
+        color = AppColors.error;
         break;
       case 'campuran kering':
       default:
         icon = Icons.delete_sweep_rounded;
-        color = const Color(0xFF059669);
+        color = AppColors.success;
         break;
     }
 

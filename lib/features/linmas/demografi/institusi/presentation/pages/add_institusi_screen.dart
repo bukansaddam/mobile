@@ -413,7 +413,7 @@ class _AddInstitusiScreenState extends State<AddInstitusiScreen> {
             const TextSpan(
               text: ' *',
               style: TextStyle(
-                color: Color(0xFFEF4444),
+                color: AppColors.error,
                 fontWeight: FontWeight.bold,
               ),
             ),

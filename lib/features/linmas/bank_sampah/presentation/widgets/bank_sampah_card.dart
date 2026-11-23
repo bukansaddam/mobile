@@ -17,20 +17,20 @@ class BankSampahCard extends StatelessWidget {
   Color _getJenisColor(String jenis) {
     switch (jenis.toLowerCase()) {
       case 'organik':
-        return const Color(0xFF16A34A);
+        return AppColors.primary;
       case 'anorganik':
-        return const Color(0xFF0284C7);
+        return AppColors.info;
       case 'botol plastik':
-        return const Color(0xFF0284C7);
+        return AppColors.info;
       case 'kardus':
-        return const Color(0xFFD97706);
+        return AppColors.warning;
       case 'kertas':
         return const Color(0xFF4F46E5);
       case 'plastik kemasan':
-        return const Color(0xFFDC2626);
+        return AppColors.error;
       case 'campuran kering':
       default:
-        return const Color(0xFF059669);
+        return AppColors.success;
     }
   }
 
@@ -38,15 +38,15 @@ class BankSampahCard extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'verified':
       case 'terverifikasi':
-        return const Color(0xFF15803D);
+        return AppColors.success;
       case 'pending':
       case 'menunggu':
-        return const Color(0xFFB45309);
+        return AppColors.earth;
       case 'rejected':
       case 'ditolak':
-        return const Color(0xFFB91C1C);
+        return AppColors.errorDark;
       default:
-        return const Color(0xFF15803D);
+        return AppColors.success;
     }
   }
 
@@ -187,14 +187,12 @@ class BankSampahCard extends StatelessWidget {
                                   vertical: 3.5,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: _getStatusColor(
-                                    report.status,
-                                  ).withValues(alpha: 0.1),
+                                  color: _getStatusColor(report.status)
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                   border: Border.all(
-                                    color: _getStatusColor(
-                                      report.status,
-                                    ).withValues(alpha: 0.3),
+                                    color: _getStatusColor(report.status)
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Text(

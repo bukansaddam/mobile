@@ -3,6 +3,8 @@ import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/widgets/bank_sampah_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_status_view.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
 import 'package:akar/features/linmas/panic/presentation/widgets/panic_bottom_panel.dart';
@@ -12,6 +14,7 @@ import 'package:akar/features/notifications/presentation/widgets/notification_em
 import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class _TestAudioAlarmService extends Fake implements AudioAlarmService {
   @override
@@ -22,6 +25,9 @@ class _TestAudioAlarmService extends Fake implements AudioAlarmService {
 }
 
 void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('id_ID');
+  });
   double contrastRatio(Color a, Color b) {
     final l1 = a.computeLuminance();
     final l2 = b.computeLuminance();
@@ -242,6 +248,75 @@ void main() {
         expect(ComplaintStatus.rejected.bgColor, AppColors.errorLight);
         expect(ComplaintStatus.completed.textColor, AppColors.success);
         expect(ComplaintStatus.completed.bgColor, AppColors.successLight);
+      },
+    );
+  });
+
+  group('Task 5 BankSampahCard Semantic Category & Status Tokens', () {
+    testWidgets(
+      'maps category icons and status labels to standardized AppColors tokens',
+      (tester) async {
+        final cases = <(String, String, String, Color, Color)>[
+          (
+            'Organik',
+            'verified',
+            'Terverifikasi',
+            AppColors.primary,
+            AppColors.success,
+          ),
+          ('Anorganik', 'pending', 'Menunggu', AppColors.info, AppColors.earth),
+          (
+            'Kardus',
+            'rejected',
+            'Ditolak',
+            AppColors.warning,
+            AppColors.errorDark,
+          ),
+          (
+            'Plastik Kemasan',
+            'verified',
+            'Terverifikasi',
+            AppColors.error,
+            AppColors.success,
+          ),
+        ];
+
+        for (final (jenis, status, statusLabel, expectedCat, expectedStatus)
+            in cases) {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: BankSampahCard(
+                  report: BankSampahReportEntity(
+                    id: 'id-$jenis',
+                    bankSampahNama: 'Bank Sampah Uji',
+                    jenisSampah: jenis,
+                    beratKg: 2.0,
+                    nilaiRupiah: 10000,
+                    status: status,
+                    statusLabel: statusLabel,
+                    createdAt: DateTime(2026, 11, 23),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          final catIcon = tester.widget<Icon>(
+            find.byWidgetPredicate(
+              (w) =>
+                  w is Icon &&
+                  (w.icon == Icons.eco_rounded ||
+                      w.icon == Icons.recycling_rounded ||
+                      w.icon == Icons.inventory_2_rounded ||
+                      w.icon == Icons.shopping_bag_rounded),
+            ),
+          );
+          expect(catIcon.color, expectedCat);
+
+          final statusText = tester.widget<Text>(find.text(statusLabel));
+          expect(statusText.style?.color, expectedStatus);
+        }
       },
     );
   });

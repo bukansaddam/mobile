@@ -235,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Laporan Insidentil',
         'subtitle': 'Kejadian Lapangan',
         'icon': Icons.report_problem_rounded,
-        'color': const Color(0xFFE11D48),
+        'color': AppColors.error,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('laporanInsidentil');
@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Bank Sampah',
         'subtitle': 'Laporan & Setor',
         'icon': Icons.recycling_rounded,
-        'color': const Color(0xFF0284C7),
+        'color': AppColors.info,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('bankSampah');

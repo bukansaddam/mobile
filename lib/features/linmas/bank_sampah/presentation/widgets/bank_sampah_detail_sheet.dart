@@ -32,20 +32,20 @@ class BankSampahDetailSheet extends StatelessWidget {
   Color _getJenisColor(String jenis) {
     switch (jenis.toLowerCase()) {
       case 'organik':
-        return const Color(0xFF16A34A);
+        return AppColors.primary;
       case 'anorganik':
-        return const Color(0xFF0284C7);
+        return AppColors.info;
       case 'botol plastik':
-        return const Color(0xFF0284C7);
+        return AppColors.info;
       case 'kardus':
-        return const Color(0xFFD97706);
+        return AppColors.warning;
       case 'kertas':
         return const Color(0xFF4F46E5);
       case 'plastik kemasan':
-        return const Color(0xFFDC2626);
+        return AppColors.error;
       case 'campuran kering':
       default:
-        return const Color(0xFF059669);
+        return AppColors.success;
     }
   }
 
@@ -330,9 +330,8 @@ class BankSampahDetailSheet extends StatelessWidget {
                         color: const Color(0xFF0F9F66).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: const Color(
-                            0xFF0F9F66,
-                          ).withValues(alpha: 0.25),
+                          color: const Color(0xFF0F9F66)
+                              .withValues(alpha: 0.25),
                         ),
                       ),
                       child: Column(
@@ -492,15 +491,15 @@ class BankSampahDetailSheet extends StatelessWidget {
                           decoration: BoxDecoration(
                             color:
                                 (report.status.toLowerCase() == 'verified'
-                                        ? const Color(0xFF15803D)
-                                        : const Color(0xFFB45309))
+                                        ? AppColors.success
+                                        : AppColors.earth)
                                     .withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color:
                                   (report.status.toLowerCase() == 'verified'
-                                          ? const Color(0xFF15803D)
-                                          : const Color(0xFFB45309))
+                                          ? AppColors.success
+                                          : AppColors.earth)
                                       .withValues(alpha: 0.3),
                             ),
                           ),
@@ -509,8 +508,8 @@ class BankSampahDetailSheet extends StatelessWidget {
                             style: AppTextStyles.caption.copyWith(
                               fontWeight: FontWeight.bold,
                               color: report.status.toLowerCase() == 'verified'
-                                  ? const Color(0xFF15803D)
-                                  : const Color(0xFFB45309),
+                                  ? AppColors.success
+                                  : AppColors.earth,
                             ),
                           ),
                         ),
