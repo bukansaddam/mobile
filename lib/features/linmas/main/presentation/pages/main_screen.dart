@@ -1,8 +1,6 @@
-import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:akar/core/widgets/app_bar_notification_button.dart';
-import 'package:akar/core/widgets/app_logo_badge.dart';
+import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_screen.dart';
 import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen.dart';
@@ -129,78 +127,15 @@ class _MainScreenState extends State<MainScreen> {
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          appBar: AppBar(
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-            foregroundColor: AppColors.textPrimary,
-            centerTitle: false,
-            automaticallyImplyLeading: false,
-            title: GestureDetector(
-              onTap: _isExclusiveModeActive ? _onLogoTap : null,
-              behavior: HitTestBehavior.opaque,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AppLogoBadge.linmas(
-                    size: 34,
-                    borderRadius: 9,
-                    fallbackIconSize: 20,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.12),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          AppConstants.appBarTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.headlineSmall.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            letterSpacing: 0.8,
-                            height: 1.1,
-                          ),
-                        ),
-                        Text(
-                          'Laporan Linmas',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10.5,
-                            letterSpacing: 0.3,
-                            height: 1.15,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              if (widget.showNotificationButton)
-                AppBarNotificationButton(
-                  onPressed: () {
-                    _dismissSurveyIfSubmitted(context);
-                    NotificationNavigationHelper.openNotificationCenter(
-                      context,
-                    );
-                  },
-                ),
-            ],
+          appBar: CustomAppBar.linmas(
+            showNotificationButton: widget.showNotificationButton,
+            onLogoTap: _isExclusiveModeActive ? _onLogoTap : null,
+            onNotificationPressed: () {
+              _dismissSurveyIfSubmitted(context);
+              NotificationNavigationHelper.openNotificationCenter(
+                context,
+              );
+            },
           ),
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
