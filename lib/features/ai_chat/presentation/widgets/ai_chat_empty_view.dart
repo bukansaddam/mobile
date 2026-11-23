@@ -16,13 +16,13 @@ class AiChatEmptyView extends StatelessWidget {
   });
 
   static const List<String> _officerPrompts = [
-    'Apa itu AKAR Aslinmas dan apa saja fitur utamanya?',
+    'Apa itu Aslinmas dan apa saja fitur utamanya?',
     'Bagaimana tugas dan peran Linmas di sistem Aslinmas?',
     'Bagaimana cara menggunakan fitur laporan dan presensi di Aslinmas?',
   ];
 
   static const List<String> _memberPrompts = [
-    'Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?',
+    'Apa itu layanan Dumas dan bagaimana cara kerjanya?',
     'Jenis pengaduan apa saja yang bisa dilaporkan lewat Dumas?',
     'Bagaimana alur tindak lanjut aduan warga hingga selesai?',
   ];

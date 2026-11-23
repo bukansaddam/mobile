@@ -123,21 +123,21 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+        find.text('Apa itu Aslinmas dan apa saja fitur utamanya?'),
         findsOneWidget,
       );
       expect(
-        find.text('Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?'),
+        find.text('Apa itu layanan Dumas dan bagaimana cara kerjanya?'),
         findsNothing,
       );
 
       await tester.tap(
-        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+        find.text('Apa itu Aslinmas dan apa saja fitur utamanya?'),
       );
       await tester.pumpAndSettle();
 
       expect(repo.sentMessages, [
-        'Apa itu AKAR Aslinmas dan apa saja fitur utamanya?',
+        'Apa itu Aslinmas dan apa saja fitur utamanya?',
       ]);
       expect(find.textContaining('Berikut langkahnya.'), findsOneWidget);
       expect(find.text('SOP Patroli.pdf'), findsOneWidget);
@@ -150,11 +150,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text('Apa itu layanan Dumas AKAR dan bagaimana cara kerjanya?'),
+        find.text('Apa itu layanan Dumas dan bagaimana cara kerjanya?'),
         findsOneWidget,
       );
       expect(
-        find.text('Apa itu AKAR Aslinmas dan apa saja fitur utamanya?'),
+        find.text('Apa itu Aslinmas dan apa saja fitur utamanya?'),
         findsNothing,
       );
     },
