@@ -133,7 +133,7 @@ class LocationSearchBarWidget extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(6),
                       decoration: const BoxDecoration(
-                        color: Color(0xFFEFF6FF),
+                        color: AppColors.infoLight,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(

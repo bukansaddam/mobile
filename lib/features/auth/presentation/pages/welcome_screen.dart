@@ -32,27 +32,24 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   static const List<FeatureHighlightItem> _features = [
     FeatureHighlightItem(
       title: 'Tanggap Darurat',
-      description:
-          'Laporkan kejadian darurat secara instan untuk respon cepat dan terkoordinasi dari petugas Linmas terdekat.',
+      description: 'Laporkan kejadian darurat secara instan untuk respon cepat dan terkoordinasi dari petugas Linmas terdekat.',
       icon: Icons.crisis_alert_rounded,
-      iconColor: Color(0xFFDC2626),
-      backgroundColor: Color(0xFFFEE2E2),
+      iconColor: AppColors.error,
+      backgroundColor: AppColors.errorLight,
     ),
     FeatureHighlightItem(
       title: 'Kolaborasi Warga & Linmas',
-      description:
-          'Sinergi aktif antara masyarakat dan petugas Linmas demi terciptanya lingkungan yang aman, tertib, dan harmonis.',
+      description: 'Sinergi aktif antara masyarakat dan petugas Linmas demi terciptanya lingkungan yang aman, tertib, dan harmonis.',
       icon: Icons.shield_rounded,
       iconColor: AppColors.primary,
       backgroundColor: Color(0xFFE8F5E9),
     ),
     FeatureHighlightItem(
       title: 'Pemantauan Wilayah',
-      description:
-          'Pantau situasi pos kamling dan rute patroli keamanan lingkungan sekitar Anda secara real-time.',
+      description: 'Pantau situasi pos kamling dan rute patroli keamanan lingkungan sekitar Anda secara real-time.',
       icon: Icons.radar_rounded,
-      iconColor: Color(0xFF0284C7),
-      backgroundColor: Color(0xFFE0F2FE),
+      iconColor: AppColors.info,
+      backgroundColor: AppColors.infoLight,
     ),
   ];
 

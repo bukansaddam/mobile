@@ -1020,7 +1020,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                       if (question.isRequired)
                         const TextSpan(
                           text: ' *',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.error),
                         ),
                     ],
                   ),

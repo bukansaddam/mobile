@@ -492,7 +492,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                 TextSpan(
                   text: ' *',
                   style: TextStyle(
-                    color: Color(0xFFE11D48),
+                    color: AppColors.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -731,7 +731,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
-                color: Color(0xFFE11D48),
+                color: AppColors.error,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -862,7 +862,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide(
                             color: _categoryError != null
-                                ? const Color(0xFFE11D48)
+                                ? AppColors.error
                                 : const Color(0xFFE2E8F0),
                           ),
                         ),
@@ -1026,7 +1026,7 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
                         ),
                         prefixIcon: const Icon(
                           Icons.location_on_outlined,
-                          color: Color(0xFFE11D48),
+                          color: AppColors.error,
                           size: 20,
                         ),
                         suffixIcon: _isFetchingLocation

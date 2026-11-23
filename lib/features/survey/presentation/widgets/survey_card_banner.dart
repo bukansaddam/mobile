@@ -96,11 +96,11 @@ class _SurveyCardBannerState extends State<SurveyCardBanner> {
 
         final badgeBgColor = isSubmitted
             ? AppColors.white
-            : (isAvailable ? const Color(0xFFFEF3C7) : const Color(0xFFE2E8F0));
+            : (isAvailable ? AppColors.warningLight : const Color(0xFFE2E8F0));
 
         final badgeTextColor = isSubmitted
             ? AppColors.accent
-            : (isAvailable ? const Color(0xFF92400E) : const Color(0xFF475569));
+            : (isAvailable ? AppColors.warningDark : const Color(0xFF475569));
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 16.0),

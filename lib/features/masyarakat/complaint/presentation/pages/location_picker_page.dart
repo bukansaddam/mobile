@@ -192,7 +192,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE11D48),
+                          color: AppColors.error,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
@@ -214,7 +214,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                         width: 4,
                         height: 10,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE11D48),
+                          color: AppColors.error,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -294,7 +294,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEFF6FF),
+                                color: AppColors.infoLight,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Row(

@@ -140,7 +140,7 @@ class _EktpScanStepState extends State<EktpScanStep>
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFE0F2FE),
+        color: AppColors.infoLight,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xFFBAE6FD)),
       ),
@@ -187,7 +187,7 @@ class _EktpScanStepState extends State<EktpScanStep>
                   'Nama: • • • • • • • • •',
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 9,
-                    color: const Color(0xFF0284C7),
+                    color: AppColors.info,
                   ),
                 ),
               ],
@@ -303,7 +303,7 @@ class _EktpScanStepState extends State<EktpScanStep>
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_rounded, size: 15, color: Color(0xFF16A34A)),
+          const Icon(Icons.check_rounded, size: 15, color: AppColors.success),
           const SizedBox(width: 6),
           Expanded(
             child: Text(

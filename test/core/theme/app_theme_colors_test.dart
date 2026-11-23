@@ -6,6 +6,7 @@ import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_status_view.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
 import 'package:akar/features/linmas/panic/presentation/widgets/panic_bottom_panel.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/notification/presentation/widgets/emergency_disaster_dialog.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
@@ -225,6 +226,22 @@ void main() {
         expect(safeBtn.style?.side?.resolve({})?.color, AppColors.grey300);
         final safeLabel = tester.widget<Text>(find.text('Saya Aman'));
         expect(safeLabel.style?.color, AppColors.secondary);
+      },
+    );
+  });
+
+  group('Task 4 ComplaintStatus Semantic Token Mapping', () {
+    test(
+      'uses standardized AppColors status tokens across ComplaintStatus',
+      () {
+        expect(ComplaintStatus.pending.textColor, AppColors.warning);
+        expect(ComplaintStatus.pending.bgColor, AppColors.warningLight);
+        expect(ComplaintStatus.verified.textColor, AppColors.info);
+        expect(ComplaintStatus.verified.bgColor, AppColors.infoLight);
+        expect(ComplaintStatus.rejected.textColor, AppColors.error);
+        expect(ComplaintStatus.rejected.bgColor, AppColors.errorLight);
+        expect(ComplaintStatus.completed.textColor, AppColors.success);
+        expect(ComplaintStatus.completed.bgColor, AppColors.successLight);
       },
     );
   });

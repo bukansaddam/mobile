@@ -1,3 +1,4 @@
+import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
@@ -10,25 +11,25 @@ enum ComplaintStatus {
   received(
     'Laporan Masuk',
     Color(0xFF2563EB),
-    Color(0xFFEFF6FF),
+    AppColors.infoLight,
     Icons.inbox_rounded,
   ),
   pending(
     'Menunggu Verifikasi',
-    Color(0xFFD97706),
-    Color(0xFFFEF3C7),
+    AppColors.warning,
+    AppColors.warningLight,
     Icons.hourglass_top_rounded,
   ),
   verified(
     'Diverifikasi',
-    Color(0xFF0284C7),
-    Color(0xFFE0F2FE),
+    AppColors.info,
+    AppColors.infoLight,
     Icons.verified_user_rounded,
   ),
   rejected(
     'Ditolak',
-    Color(0xFFDC2626),
-    Color(0xFFFFEBEE),
+    AppColors.error,
+    AppColors.errorLight,
     Icons.gavel_rounded,
   ),
   inProgress(
@@ -39,8 +40,8 @@ enum ComplaintStatus {
   ),
   completed(
     'Selesai',
-    Color(0xFF16A34A),
-    Color(0xFFDCFCE7),
+    AppColors.success,
+    AppColors.successLight,
     Icons.check_circle_rounded,
   ),
   cancelled(

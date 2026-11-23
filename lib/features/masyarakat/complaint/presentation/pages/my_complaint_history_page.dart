@@ -123,7 +123,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                             'Reset Filter',
                             style: TextStyle(
                               fontSize: 13,
-                              color: Color(0xFFE11D48),
+                              color: AppColors.error,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -261,7 +261,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
     Color? activeTextColor,
   }) {
     final bgColor = isSelected
-        ? (activeBgColor ?? const Color(0xFFDCFCE7))
+        ? (activeBgColor ?? AppColors.successLight)
         : const Color(0xFFF8FAFC);
     final textColor = isSelected
         ? (activeTextColor ?? AppColors.primary)
@@ -398,7 +398,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                               width: 48,
                               decoration: BoxDecoration(
                                 color: hasActiveFilter
-                                    ? const Color(0xFFDCFCE7)
+                                    ? AppColors.successLight
                                     : AppColors.white,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
@@ -513,7 +513,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFDCFCE7),
+                                      color: AppColors.successLight,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: const Color(0xFFBBF7D0),
@@ -585,7 +585,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDCFCE7),
+                              color: AppColors.successLight,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: const Color(0xFFBBF7D0),
@@ -617,7 +617,7 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
-                                  color: Color(0xFFE11D48),
+                                  color: AppColors.error,
                                 ),
                               ),
                             ),

@@ -266,7 +266,7 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDCFCE7),
+                              color: AppColors.successLight,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -275,7 +275,7 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                                 Icon(
                                   ComplaintCategory.getIconFor(item.category),
                                   size: 14,
-                                  color: const Color(0xFF15803D),
+                                  color: AppColors.success,
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
@@ -285,7 +285,7 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 12,
-                                      color: Color(0xFF15803D),
+                                      color: AppColors.success,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -344,7 +344,7 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                         const Icon(
                           Icons.location_on_rounded,
                           size: 20,
-                          color: Color(0xFFE11D48),
+                          color: AppColors.error,
                         ),
                         const SizedBox(width: 8),
                         Expanded(

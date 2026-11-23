@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'package:akar/core/theme/app_colors.dart';
@@ -29,7 +30,7 @@ class _IndonesiaDottedMapState extends State<IndonesiaDottedMap>
     MapPinData(
       x: 0.147,
       y: 0.390,
-      color: Color(0xFF0284C7), // Sky Blue (Sumatra)
+      color: AppColors.info, // Sky Blue (Sumatra)
       icon: Icons.security_rounded,
       phase: 0.0,
     ),
@@ -64,7 +65,7 @@ class _IndonesiaDottedMapState extends State<IndonesiaDottedMap>
     MapPinData(
       x: 0.909,
       y: 0.594,
-      color: Color(0xFFE11D48), // Rose Red (Papua)
+      color: AppColors.error, // Rose Red (Papua)
       icon: Icons.notifications_active_rounded,
       phase: 5.4,
     ),

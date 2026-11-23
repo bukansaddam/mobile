@@ -116,7 +116,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                             'Reset Filter',
                             style: TextStyle(
                               fontSize: 13,
-                              color: Color(0xFFE11D48),
+                              color: AppColors.error,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -255,7 +255,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
     Color? activeTextColor,
   }) {
     final bgColor = isSelected
-        ? (activeBgColor ?? const Color(0xFFDCFCE7))
+        ? (activeBgColor ?? AppColors.successLight)
         : const Color(0xFFF8FAFC);
     final textColor = isSelected
         ? (activeTextColor ?? AppColors.primary)
@@ -381,7 +381,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                 width: 48,
                                 decoration: BoxDecoration(
                                   color: hasActiveFilter
-                                      ? const Color(0xFFDCFCE7)
+                                      ? AppColors.successLight
                                       : AppColors.white,
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
@@ -496,7 +496,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFDCFCE7),
+                                        color: AppColors.successLight,
                                         borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
                                           color: const Color(0xFFBBF7D0),
@@ -569,7 +569,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFDCFCE7),
+                                color: AppColors.successLight,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: const Color(0xFFBBF7D0),
@@ -602,7 +602,7 @@ class _ComplaintListPageState extends State<ComplaintListPage> {
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFFE11D48),
+                                    color: AppColors.error,
                                   ),
                                 ),
                               ),
