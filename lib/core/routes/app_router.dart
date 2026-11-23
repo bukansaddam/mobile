@@ -43,6 +43,9 @@ import 'package:akar/features/notifications/presentation/pages/notification_page
 import 'package:akar/features/vouchers/presentation/pages/voucher_page.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
+import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
+import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
+import 'package:akar/features/ai_chat/presentation/pages/ai_chat_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -77,6 +80,7 @@ class AppRouter {
   static const String emergencyCallPath = '/emergency-call';
   static const String notifications = 'notifications';
   static const String vouchers = 'vouchers';
+  static const String aiChat = 'aiChat';
 
   // Linmas Routes
   static const String activationDetail = 'activationDetail';
@@ -133,6 +137,7 @@ class AppRouter {
   static const String initialSurveyPath = '/initial-survey';
   static const String notificationsPath = '/notifications';
   static const String vouchersPath = '/vouchers';
+  static const String aiChatPath = '/ai-chat';
 
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -637,6 +642,15 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: aiChatPath,
+        name: aiChat,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => BlocProvider<AiChatBloc>(
+          create: (_) => sl<AiChatBloc>()..add(const LoadAiChatInitialEvent()),
+          child: const AiChatPage(),
+        ),
+      ),
     ],
   );
 
@@ -651,6 +665,10 @@ class AppRouter {
     } else {
       context.goNamed(main);
     }
+  }
+
+  static Future<void> toAiChat(BuildContext context) {
+    return context.pushNamed(aiChat);
   }
 
   static void toMyComplaints(BuildContext context) {

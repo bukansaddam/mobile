@@ -1,6 +1,8 @@
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_list_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
@@ -47,15 +49,18 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
         builder: (context, state) {
           return Scaffold(
             appBar: CustomAppBar(onNotificationPressed: _handleNotificationTap),
-            body: IndexedStack(
-              index: state.selectedIndex,
-              children: const [
-                HomeScreen(),
-                ComplaintListPage(),
-                SizedBox.shrink(),
-                MyComplaintHistoryPage(),
-                MasyarakatProfileScreen(),
-              ],
+            body: AiChatFloatingOverlay(
+              onTap: () => AppRouter.toAiChat(context),
+              child: IndexedStack(
+                index: state.selectedIndex,
+                children: const [
+                  HomeScreen(),
+                  ComplaintListPage(),
+                  SizedBox.shrink(),
+                  MyComplaintHistoryPage(),
+                  MasyarakatProfileScreen(),
+                ],
+              ),
             ),
             floatingActionButton: GestureDetector(
               onTap: () => _openCreateComplaint(context),

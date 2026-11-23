@@ -1,6 +1,8 @@
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/activation_screen.dart';
 import 'package:akar/features/linmas/analisis/presentation/pages/analisis_screen.dart';
@@ -229,28 +231,31 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                     )
-                  : IndexedStack(
-                      index: _currentTabIndex,
-                      children: [
-                        HomeScreen(
-                          onNavigateToTab: (index) {
-                            _dismissSurveyIfSubmitted(context);
-                            setState(() {
-                              _currentTabIndex = index;
-                            });
-                          },
-                        ),
-                        AnalisisScreen(
-                          onNavigateToTab: (index) {
-                            _dismissSurveyIfSubmitted(context);
-                            setState(() {
-                              _currentTabIndex = index;
-                            });
-                          },
-                        ),
-                        const ActivationScreen(),
-                        const LinmasProfileScreen(),
-                      ],
+                  : AiChatFloatingOverlay(
+                      onTap: () => AppRouter.toAiChat(context),
+                      child: IndexedStack(
+                        index: _currentTabIndex,
+                        children: [
+                          HomeScreen(
+                            onNavigateToTab: (index) {
+                              _dismissSurveyIfSubmitted(context);
+                              setState(() {
+                                _currentTabIndex = index;
+                              });
+                            },
+                          ),
+                          AnalisisScreen(
+                            onNavigateToTab: (index) {
+                              _dismissSurveyIfSubmitted(context);
+                              setState(() {
+                                _currentTabIndex = index;
+                              });
+                            },
+                          ),
+                          const ActivationScreen(),
+                          const LinmasProfileScreen(),
+                        ],
+                      ),
                     ),
             ),
           ),

@@ -186,6 +186,13 @@ import 'package:akar/features/survey/domain/usecases/submit_initial_quiz_usecase
 import 'package:akar/features/survey/domain/usecases/submit_monthly_survey_usecase.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 
+// AI Chat
+import 'package:akar/features/ai_chat/data/datasources/ai_chat_remote_datasource.dart';
+import 'package:akar/features/ai_chat/data/repositories/ai_chat_repository_impl.dart';
+import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dart';
+import 'package:akar/features/ai_chat/domain/usecases/ai_chat_usecases.dart';
+import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -715,5 +722,45 @@ Future<void> init() async {
   );
   sl.registerFactory<RedeemVoucherBloc>(
     () => RedeemVoucherBloc(redeemVoucher: sl()),
+  );
+
+  // AI Chat
+  sl.registerLazySingleton<AiChatRemoteDatasource>(
+    () => AiChatRemoteDatasourceImpl(dio: sl<Dio>()),
+  );
+  sl.registerLazySingleton<AiChatRepository>(
+    () => AiChatRepositoryImpl(sl<AiChatRemoteDatasource>()),
+  );
+  sl.registerLazySingleton<GetAiChatStatusUsecase>(
+    () => GetAiChatStatusUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<SendAiChatMessageUsecase>(
+    () => SendAiChatMessageUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<GetAiChatSessionsUsecase>(
+    () => GetAiChatSessionsUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<CreateAiChatSessionUsecase>(
+    () => CreateAiChatSessionUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<GetAiChatSessionDetailUsecase>(
+    () => GetAiChatSessionDetailUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<RenameAiChatSessionUsecase>(
+    () => RenameAiChatSessionUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerLazySingleton<DeleteAiChatSessionUsecase>(
+    () => DeleteAiChatSessionUsecase(sl<AiChatRepository>()),
+  );
+  sl.registerFactory<AiChatBloc>(
+    () => AiChatBloc(
+      getStatus: sl<GetAiChatStatusUsecase>(),
+      sendMessage: sl<SendAiChatMessageUsecase>(),
+      getSessions: sl<GetAiChatSessionsUsecase>(),
+      createSession: sl<CreateAiChatSessionUsecase>(),
+      getSessionDetail: sl<GetAiChatSessionDetailUsecase>(),
+      renameSession: sl<RenameAiChatSessionUsecase>(),
+      deleteSession: sl<DeleteAiChatSessionUsecase>(),
+    ),
   );
 }
