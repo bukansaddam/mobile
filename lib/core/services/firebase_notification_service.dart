@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
+import 'package:akar/core/offline/widgets/pending_queue_bottom_sheet.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
@@ -568,6 +569,13 @@ class FirebaseNotificationService {
 
         case 'emergency_report_status_update':
           AppRouter.router.pushNamed(AppRouter.notifications);
+          break;
+
+        case 'offline_queue':
+          final navContext = AppRouter.rootNavigatorKey.currentContext;
+          if (navContext != null && navContext.mounted) {
+            PendingQueueBottomSheet.show(navContext);
+          }
           break;
 
         case 'panic':

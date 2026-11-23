@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/offline/widgets/offline_status_banner.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
@@ -327,6 +328,9 @@ class _RondaScreenState extends State<RondaScreen> {
                 color: colors.background,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: RondaStepIndicator(currentStep: currentStep),
+              ),
+              const OfflineStatusBanner(
+                margin: EdgeInsets.fromLTRB(16, 0, 16, 8),
               ),
               Expanded(
                 child: SingleChildScrollView(

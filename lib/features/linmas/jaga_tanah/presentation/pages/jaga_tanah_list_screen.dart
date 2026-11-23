@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:akar/core/offline/widgets/offline_status_banner.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -160,6 +161,9 @@ class JagaTanahListScreen extends HookWidget {
           top: false,
           child: Column(
             children: [
+              const OfflineStatusBanner(
+                margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
+              ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: Row(

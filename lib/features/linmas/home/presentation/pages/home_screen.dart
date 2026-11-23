@@ -1,4 +1,5 @@
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/offline/widgets/offline_status_banner.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
@@ -112,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const OfflineStatusBanner(),
                       BlocBuilder<MemberDashboardBloc, MemberDashboardState>(
                         builder: (context, dashboardState) {
                           final dashboard =

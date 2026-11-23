@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:akar/core/offline/widgets/offline_status_banner.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
@@ -131,6 +132,11 @@ class _BankSampahListScreenState extends State<BankSampahListScreen> {
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
+              const SliverToBoxAdapter(
+                child: OfflineStatusBanner(
+                  margin: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                ),
+              ),
               if (hasActiveFilter)
                 SliverToBoxAdapter(
                   child: Padding(
