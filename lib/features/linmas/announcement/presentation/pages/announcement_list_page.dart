@@ -1,5 +1,5 @@
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
@@ -9,7 +9,8 @@ import 'package:akar/features/linmas/announcement/presentation/widgets/announcem
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-Widget _buildListImage(String path) {
+Widget _buildListImage(BuildContext context, String path) {
+  final colors = context.appColors;
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return AppNetworkImage(
       imageUrl: path,
@@ -17,7 +18,7 @@ Widget _buildListImage(String path) {
       height: 52,
       fit: BoxFit.cover,
       errorIcon: Icons.campaign_outlined,
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: colors.primaryLight,
     );
   }
   return Image.asset(
@@ -30,12 +31,8 @@ Widget _buildListImage(String path) {
     errorBuilder: (context, error, stackTrace) => Container(
       width: 52,
       height: 52,
-      color: AppColors.primaryLight,
-      child: const Icon(
-        Icons.campaign_outlined,
-        color: AppColors.primary,
-        size: 24,
-      ),
+      color: colors.primaryLight,
+      child: Icon(Icons.campaign_outlined, color: colors.primary, size: 24),
     ),
   );
 }
@@ -102,15 +99,16 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       appBar: const AppPageBar(title: 'Pengumuman'),
       body: BlocBuilder<AnnouncementBloc, AnnouncementState>(
         builder: (context, state) {
           if (state.status == AnnouncementStatus.loading &&
               state.announcements.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
+            return Center(
+              child: CircularProgressIndicator(color: colors.primary),
             );
           }
 
@@ -122,18 +120,18 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline_rounded,
                       size: 48,
-                      color: AppColors.error,
+                      color: colors.error,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       state.errorMessage ?? 'Gagal memuat pengumuman',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -145,8 +143,8 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -163,11 +161,11 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
           if (state.announcements.isEmpty) {
             return RefreshIndicator(
               onRefresh: _onRefresh,
-              color: AppColors.primary,
+              color: colors.primary,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
+                children: [
+                  const SizedBox(height: 120),
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -175,14 +173,14 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                         Icon(
                           Icons.campaign_outlined,
                           size: 48,
-                          color: AppColors.grey400,
+                          color: colors.textHint,
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Text(
                           'Tidak ada pengumuman',
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -196,7 +194,7 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
 
           return RefreshIndicator(
             onRefresh: _onRefresh,
-            color: AppColors.primary,
+            color: colors.primary,
             child: ListView.builder(
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(
@@ -207,15 +205,15 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                   state.announcements.length + (state.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == state.announcements.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Center(
                       child: SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
                     ),
@@ -227,12 +225,12 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.grey200),
+                    border: Border.all(color: colors.border),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.03),
+                        color: colors.shadow,
                         blurRadius: 6,
                         offset: const Offset(0, 2),
                       ),
@@ -250,27 +248,30 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                       leading: item.hasImage
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: _buildListImage(item.allImages.first),
+                              child: _buildListImage(
+                                context,
+                                item.allImages.first,
+                              ),
                             )
                           : Container(
                               width: 52,
                               height: 52,
                               decoration: BoxDecoration(
-                                color: AppColors.primaryLight,
+                                color: colors.primaryLight,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.campaign_outlined,
-                                color: AppColors.primary,
+                                color: colors.primary,
                                 size: 24,
                               ),
                             ),
                       title: Text(
                         item.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -282,9 +283,9 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                           children: [
                             Text(
                               item.subtitle,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 height: 1.2,
                               ),
                               maxLines: 1,
@@ -294,17 +295,17 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                             Row(
                               children: [
                                 if (item.date.isNotEmpty) ...[
-                                  const Icon(
+                                  Icon(
                                     Icons.access_time_rounded,
                                     size: 11,
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
                                     item.date,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 10.5,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -314,9 +315,9 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
                           ],
                         ),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right_rounded,
-                        color: AppColors.grey400,
+                        color: colors.textHint,
                         size: 20,
                       ),
                     ),

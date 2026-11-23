@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
 import '../../domain/entities/panic_entity.dart';
@@ -23,7 +23,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: context.appColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -42,7 +42,9 @@ class PanicMemberDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = isLeader ? AppColors.accent : AppColors.primary;
+    final colors = context.appColors;
+    final themeColor = isLeader ? colors.earth : colors.primary;
+    final onThemeColor = isLeader ? colors.onSecondary : colors.onPrimary;
 
     return SafeArea(
       child: Container(
@@ -59,7 +61,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                 width: 44,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: AppColors.grey300,
+                  color: colors.borderStrong,
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -78,14 +80,14 @@ class PanicMemberDetailSheet extends StatelessWidget {
                             : 'Detail Petugas Linmas',
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Informasi kontak dan posisi tanggap darurat',
                         style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -93,10 +95,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
-                    Icons.close_rounded,
-                    color: AppColors.grey600,
-                  ),
+                  icon: Icon(Icons.close_rounded, color: colors.textMuted),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -117,7 +116,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                     backgroundColor: themeColor,
                     child: Icon(
                       isLeader ? Icons.stars_rounded : Icons.shield_rounded,
-                      color: Colors.white,
+                      color: onThemeColor,
                       size: 28,
                     ),
                   ),
@@ -130,7 +129,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                           member.name,
                           style: AppTextStyles.titleMedium.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -186,15 +185,15 @@ class PanicMemberDetailSheet extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color:
                                     (member.isOnline
-                                            ? AppColors.success
-                                            : AppColors.grey500)
+                                            ? colors.success
+                                            : colors.textMuted)
                                         .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
                                   color:
                                       (member.isOnline
-                                              ? AppColors.success
-                                              : AppColors.grey500)
+                                              ? colors.success
+                                              : colors.textMuted)
                                           .withValues(alpha: 0.3),
                                 ),
                               ),
@@ -207,8 +206,8 @@ class PanicMemberDetailSheet extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: member.isOnline
-                                          ? AppColors.success
-                                          : AppColors.grey500,
+                                          ? colors.success
+                                          : colors.textMuted,
                                     ),
                                   ),
                                   const SizedBox(width: 5),
@@ -218,8 +217,8 @@ class PanicMemberDetailSheet extends StatelessWidget {
                                       fontSize: 11,
                                       fontWeight: FontWeight.w600,
                                       color: member.isOnline
-                                          ? AppColors.success
-                                          : AppColors.grey500,
+                                          ? colors.success
+                                          : colors.textMuted,
                                     ),
                                   ),
                                 ],
@@ -239,15 +238,15 @@ class PanicMemberDetailSheet extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppColors.grey100,
+                  color: colors.surfaceElevated,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.grey200),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.phone_in_talk_rounded,
-                      color: AppColors.primary,
+                      color: colors.primary,
                       size: 20,
                     ),
                     const SizedBox(width: 10),
@@ -255,20 +254,20 @@ class PanicMemberDetailSheet extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Nomor Telepon / WhatsApp',
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             member.phone,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -289,8 +288,8 @@ class PanicMemberDetailSheet extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

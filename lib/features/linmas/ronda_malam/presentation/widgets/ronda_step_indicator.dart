@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/ronda_malam/core/constants/ronda_constants.dart';
 
 class RondaStepIndicator extends StatelessWidget {
@@ -37,6 +37,7 @@ class RondaStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Column(
       children: [
         // Banner Header
@@ -44,7 +45,7 @@ class RondaStepIndicator extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.primary,
+            color: colors.primary,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -52,12 +53,12 @@ class RondaStepIndicator extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
+                  color: colors.onPrimary.withValues(alpha: 0.18),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   _getStepIcon(currentStep),
-                  color: Colors.white,
+                  color: colors.onPrimary,
                   size: 28,
                 ),
               ),
@@ -68,8 +69,8 @@ class RondaStepIndicator extends StatelessWidget {
                   children: [
                     Text(
                       'Form Laporan Harian (${currentStep + 1}/${RondaConstants.totalSteps})',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: colors.onPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -77,8 +78,8 @@ class RondaStepIndicator extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       _getStepDescription(currentStep),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: colors.onPrimary,
                         fontSize: 11,
                         height: 1.25,
                       ),
@@ -97,8 +98,8 @@ class RondaStepIndicator extends StatelessWidget {
           child: LinearProgressIndicator(
             value: (currentStep + 1) / RondaConstants.totalSteps,
             minHeight: 6,
-            backgroundColor: AppColors.grey200,
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+            backgroundColor: colors.border,
+            valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
           ),
         ),
         const SizedBox(height: 12),
@@ -116,17 +117,17 @@ class RondaStepIndicator extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? AppColors.primary
+                      ? colors.primary
                       : (isCompleted
-                            ? AppColors.primary.withValues(alpha: 0.15)
-                            : AppColors.white),
+                            ? colors.primary.withValues(alpha: 0.15)
+                            : colors.surface),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isActive
-                        ? AppColors.primary
+                        ? colors.primary
                         : (isCompleted
-                              ? AppColors.primary.withValues(alpha: 0.4)
-                              : AppColors.grey300),
+                              ? colors.primary.withValues(alpha: 0.4)
+                              : colors.borderStrong),
                   ),
                 ),
                 child: Column(
@@ -137,10 +138,8 @@ class RondaStepIndicator extends StatelessWidget {
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                         color: isActive
-                            ? Colors.white
-                            : (isCompleted
-                                  ? AppColors.primary
-                                  : AppColors.grey500),
+                            ? colors.onPrimary
+                            : (isCompleted ? colors.primary : colors.textMuted),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -152,10 +151,8 @@ class RondaStepIndicator extends StatelessWidget {
                             ? FontWeight.bold
                             : FontWeight.w500,
                         color: isActive
-                            ? Colors.white
-                            : (isCompleted
-                                  ? AppColors.primary
-                                  : AppColors.grey600),
+                            ? colors.onPrimary
+                            : (isCompleted ? colors.primary : colors.textMuted),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

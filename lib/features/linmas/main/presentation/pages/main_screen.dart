@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -52,19 +52,23 @@ class _MainScreenState extends State<MainScreen> {
 
     if (_logoTapCount >= 10) {
       _logoTapCount = 0;
+      final colors = context.appColors;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Row(
             children: [
-              Icon(Icons.stars_rounded, color: AppColors.white),
-              SizedBox(width: 8),
-              Text('Mode Eksklusif: Membuka Pengaturan Tracking...'),
+              Icon(Icons.stars_rounded, color: colors.onPrimary),
+              const SizedBox(width: 8),
+              Text(
+                'Mode Eksklusif: Membuka Pengaturan Tracking...',
+                style: TextStyle(color: colors.onPrimary),
+              ),
             ],
           ),
-          backgroundColor: AppColors.primary,
+          backgroundColor: colors.primary,
           behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       TrackingConfigModal.show(context);
@@ -94,12 +98,13 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         final user = authState.user;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           floatingActionButton: BlocBuilder<PanicBloc, PanicState>(
             builder: (context, panicState) {
               final isEmergency = panicState.isEmergencyActive;
@@ -111,8 +116,8 @@ class _MainScreenState extends State<MainScreen> {
                     _dismissSurveyIfSubmitted(context);
                     context.pushNamed('panic');
                   },
-                  backgroundColor: AppColors.error,
-                  foregroundColor: AppColors.white,
+                  backgroundColor: colors.errorSolid,
+                  foregroundColor: colors.onErrorSolid,
                   elevation: 6,
                   shape: const CircleBorder(),
                   child: Icon(
@@ -138,7 +143,7 @@ class _MainScreenState extends State<MainScreen> {
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
             notchMargin: 8.0,
-            color: AppColors.white,
+            color: colors.surface,
             elevation: 10,
             clipBehavior: Clip.antiAlias,
             child: SizedBox(
@@ -173,7 +178,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           body: SafeArea(
             child: Container(
-              color: AppColors.background,
+              color: colors.background,
               child: user == null
                   ? Center(
                       child: Padding(
@@ -181,21 +186,23 @@ class _MainScreenState extends State<MainScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.account_circle_outlined,
                               size: 80,
-                              color: AppColors.grey400,
+                              color: colors.textHint,
                             ),
                             const SizedBox(height: 16),
-                            const Text(
+                            Text(
                               'Sesi Pengguna Tidak Ditemukan',
-                              style: AppTextStyles.headlineSmall,
+                              style: AppTextStyles.headlineSmall.copyWith(
+                                color: colors.textPrimary,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               'Silakan masuk terlebih dahulu untuk mengakses aplikasi.',
                               style: AppTextStyles.bodyMedium.copyWith(
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -210,8 +217,8 @@ class _MainScreenState extends State<MainScreen> {
                                 icon: const Icon(Icons.login),
                                 label: const Text('Masuk'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: AppColors.white,
+                                  backgroundColor: colors.primary,
+                                  foregroundColor: colors.onPrimary,
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 12,
                                   ),
@@ -257,6 +264,7 @@ class _MainScreenState extends State<MainScreen> {
     required IconData icon,
     required String label,
   }) {
+    final colors = context.appColors;
     final isSelected = _currentTabIndex == index;
     return InkWell(
       onTap: () {
@@ -276,7 +284,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? AppColors.primary : AppColors.grey500,
+              color: isSelected ? colors.primary : colors.textMuted,
               size: 22,
             ),
             const SizedBox(height: 2),
@@ -285,7 +293,7 @@ class _MainScreenState extends State<MainScreen> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.primary : AppColors.grey500,
+                color: isSelected ? colors.primary : colors.textMuted,
               ),
             ),
           ],

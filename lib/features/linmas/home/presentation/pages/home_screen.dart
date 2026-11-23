@@ -1,5 +1,5 @@
 import 'package:akar/core/di/injection_container.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -23,7 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-Widget _buildHomeListImage(String path) {
+Widget _buildHomeListImage(BuildContext context, String path) {
+  final colors = context.appColors;
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return AppNetworkImage(
       imageUrl: path,
@@ -31,7 +32,7 @@ Widget _buildHomeListImage(String path) {
       height: 52,
       fit: BoxFit.cover,
       errorIcon: Icons.campaign_outlined,
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: colors.primaryLight,
     );
   }
   return Image.asset(
@@ -44,12 +45,8 @@ Widget _buildHomeListImage(String path) {
     errorBuilder: (context, error, stackTrace) => Container(
       width: 52,
       height: 52,
-      color: AppColors.primaryLight,
-      child: const Icon(
-        Icons.campaign_outlined,
-        color: AppColors.primary,
-        size: 24,
-      ),
+      color: colors.primaryLight,
+      child: Icon(Icons.campaign_outlined, color: colors.primary, size: 24),
     ),
   );
 }
@@ -182,15 +179,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPengumumanHeader(BuildContext context) {
+    final colors = context.appColors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
+        Text(
           'Pengumuman',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: Color(0xFF0F172A),
+            color: colors.textPrimary,
             letterSpacing: 0.2,
           ),
         ),
@@ -201,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: AppTextStyles.labelMedium.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              color: colors.primary,
             ),
           ),
         ),
@@ -210,12 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMenuUtamaSection(BuildContext context) {
+    final colors = context.appColors;
     final menuItems = [
       {
         'title': 'Perbarui Posisi',
         'subtitle': 'Swafoto & Lokasi',
         'icon': Icons.co_present_rounded,
-        'color': AppColors.primary,
+        'color': colors.primary,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('presensi');
@@ -225,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Laporan Harian',
         'subtitle': 'Catatan & Kegiatan',
         'icon': Icons.assignment_rounded,
-        'color': const Color(0xFF5B4DFF),
+        'color': colors.indigo,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('rondaMalam');
@@ -235,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Laporan Insidentil',
         'subtitle': 'Kejadian Lapangan',
         'icon': Icons.report_problem_rounded,
-        'color': AppColors.error,
+        'color': colors.error,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('laporanInsidentil');
@@ -245,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Demografi',
         'subtitle': 'Tokoh Sekitar',
         'icon': Icons.badge_rounded,
-        'color': const Color(0xFF0F9F66),
+        'color': colors.emerald,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('demografi');
@@ -255,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Bank Sampah',
         'subtitle': 'Laporan & Setor',
         'icon': Icons.recycling_rounded,
-        'color': AppColors.info,
+        'color': colors.info,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('bankSampah');
@@ -265,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'title': 'Jaga Tanah',
         'subtitle': 'Laporan Aset Tanah',
         'icon': Icons.landscape_rounded,
-        'color': AppColors.earth,
+        'color': colors.earth,
         'onTap': () {
           _dismissSurveyIfSubmitted(context);
           context.pushNamed('jagaTanah');
@@ -295,12 +294,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.grey200),
+                border: Border.all(color: colors.border),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.04),
+                    color: colors.shadow,
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -328,10 +327,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: Text(
                           item['title'] as String,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -340,10 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 6),
                   Text(
                     item['subtitle'] as String,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 10, color: colors.textSecondary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -357,19 +353,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPengumumanListTileSection(BuildContext context) {
+    final colors = context.appColors;
     return BlocBuilder<AnnouncementBloc, AnnouncementState>(
       builder: (context, state) {
         if (state.status == AnnouncementStatus.loading &&
             state.announcements.isEmpty) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ),
@@ -382,14 +379,14 @@ class _HomeScreenState extends State<HomeScreen> {
           return Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.grey200),
+              border: Border.all(color: colors.border),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'Belum ada pengumuman',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                style: TextStyle(fontSize: 13, color: colors.textSecondary),
               ),
             ),
           );
@@ -405,12 +402,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return Container(
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.grey200),
+                border: Border.all(color: colors.border),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.black.withValues(alpha: 0.03),
+                    color: colors.shadow,
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -428,27 +425,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: item.hasImage
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: _buildHomeListImage(item.allImages.first),
+                          child: _buildHomeListImage(
+                            context,
+                            item.allImages.first,
+                          ),
                         )
                       : Container(
                           width: 52,
                           height: 52,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryLight,
+                            color: colors.primaryLight,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.campaign_outlined,
-                            color: AppColors.primary,
+                            color: colors.primary,
                             size: 24,
                           ),
                         ),
                   title: Text(
                     item.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -460,9 +460,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text(
                           item.subtitle,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             height: 1.2,
                           ),
                           maxLines: 1,
@@ -472,17 +472,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             if (item.date.isNotEmpty) ...[
-                              const Icon(
+                              Icon(
                                 Icons.access_time_rounded,
                                 size: 11,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 item.date,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 10.5,
-                                  color: AppColors.textSecondary,
+                                  color: colors.textSecondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -492,9 +492,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.grey400,
+                    color: colors.textHint,
                     size: 20,
                   ),
                 ),

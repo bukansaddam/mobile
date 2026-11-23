@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
@@ -131,8 +131,15 @@ class _PresensiScreenState extends State<PresensiScreen>
         }
       },
       builder: (context, state) {
+        final colors = context.appColors;
+        const camBg = Colors.black; // media-overlay
+        const camFallbackTop = Color(0xFF1E2638); // media-overlay
+        const camFallbackBottom = Color(0xFF0F141F); // media-overlay
+        const camWhite = Colors.white; // media-overlay
+        const camWhiteMuted = Colors.white70; // media-overlay
+        const camScrim = Colors.black54; // media-overlay
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: camBg,
           appBar: const AppPageBar(title: 'Perbarui Posisi'),
           body: Stack(
             children: [
@@ -164,7 +171,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                     : Container(
                         decoration: const BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Color(0xFF1E2638), Color(0xFF0F141F)],
+                            colors: [camFallbackTop, camFallbackBottom],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -176,12 +183,12 @@ class _PresensiScreenState extends State<PresensiScreen>
                               Container(
                                 padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.1),
+                                  color: camWhite.withValues(alpha: 0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.camera_front_rounded,
-                                  color: Colors.white70,
+                                  color: camWhiteMuted,
                                   size: 54,
                                 ),
                               ),
@@ -191,7 +198,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                                     ? 'Kamera tidak tersedia'
                                     : 'Membuka kamera...',
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: camWhiteMuted,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -210,7 +217,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                 child: Container(
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.black54, Colors.transparent],
+                      colors: [camScrim, Colors.transparent],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -225,11 +232,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.access_time,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    const Icon(Icons.access_time, color: camWhite, size: 20),
                     const SizedBox(width: 8),
                     ValueListenableBuilder<DateTime>(
                       valueListenable: _currentTimeNotifier,
@@ -237,14 +240,14 @@ class _PresensiScreenState extends State<PresensiScreen>
                         return Text(
                           DateFormat('HH:mm').format(currentTime),
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: camWhite,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
                             shadows: [
                               Shadow(
                                 blurRadius: 6,
-                                color: Colors.black54,
+                                color: camScrim,
                                 offset: Offset(0, 1),
                               ),
                             ],
@@ -265,7 +268,7 @@ class _PresensiScreenState extends State<PresensiScreen>
                       CustomPaint(
                         size: const Size(270, 270),
                         painter: CornerBracketPainter(
-                          color: AppColors.primary,
+                          color: colors.primary,
                           strokeWidth: 4.0,
                           cornerLength: 32.0,
                         ),
@@ -279,16 +282,16 @@ class _PresensiScreenState extends State<PresensiScreen>
                 alignment: Alignment.bottomCenter,
                 child: Container(
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(28),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black26,
+                        color: colors.shadow,
                         blurRadius: 18,
-                        offset: Offset(0, -4),
+                        offset: const Offset(0, -4),
                       ),
                     ],
                   ),
@@ -306,25 +309,25 @@ class _PresensiScreenState extends State<PresensiScreen>
                         children: [
                           Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: AppColors.primaryLight,
+                            decoration: BoxDecoration(
+                              color: colors.primaryLight,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               state.hasCheckedIn
                                   ? Icons.logout_rounded
                                   : Icons.login_rounded,
-                              color: AppColors.primary,
+                              color: colors.primary,
                               size: 22,
                             ),
                           ),
                           const SizedBox(width: 10),
                           Text(
                             state.presensiTypeTitle,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+                              color: colors.primary,
                             ),
                           ),
                         ],
@@ -335,29 +338,29 @@ class _PresensiScreenState extends State<PresensiScreen>
                         children: [
                           Transform.rotate(
                             angle: 0.4,
-                            child: const Icon(
+                            child: Icon(
                               Icons.navigation_outlined,
-                              color: AppColors.primary,
+                              color: colors.primary,
                               size: 20,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Text(
+                          Text(
                             'Lokasi GPS Terkini',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                           const Spacer(),
                           if (state.status == PresensiStatus.loadingLocation)
-                            const SizedBox(
+                            SizedBox(
                               width: 18,
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.primary,
+                                color: colors.primary,
                               ),
                             )
                           else
@@ -373,9 +376,9 @@ class _PresensiScreenState extends State<PresensiScreen>
                                   InitPresensiLocationEvent(userName: userName),
                                 );
                               },
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.refresh_rounded,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                                 size: 22,
                               ),
                               padding: EdgeInsets.zero,
@@ -387,22 +390,22 @@ class _PresensiScreenState extends State<PresensiScreen>
                       const SizedBox(height: 4),
 
                       if (state.status == PresensiStatus.loadingLocation)
-                        const Text(
+                        Text(
                           'Mendeteksi Koordinat GPS & Lokasi...',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontStyle: FontStyle.italic,
                           ),
                         )
                       else
                         Text(
                           state.address,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             height: 1.35,
                           ),
                           maxLines: 4,
@@ -432,20 +435,20 @@ class _PresensiScreenState extends State<PresensiScreen>
                                   presensiBloc.add(SubmitPresensiEvent());
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
+                            backgroundColor: colors.primary,
+                            foregroundColor: colors.onPrimary,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
                           ),
                           child: state.status == PresensiStatus.submitting
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 22,
                                   height: 22,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2.5,
-                                    color: Colors.white,
+                                    color: colors.onPrimary,
                                   ),
                                 )
                               : Text(
@@ -469,25 +472,27 @@ class _PresensiScreenState extends State<PresensiScreen>
   }
 
   void _showSuccessPresensiDialog(BuildContext context, PresensiState state) {
+    final colors = context.appColors;
     final result = state.lastResult;
     final isKeluar = state.lastSubmittedType == PresensiType.keluar;
 
     final detailContent = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.grey100,
+        color: colors.surfaceElevated,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.grey300),
+        border: Border.all(color: colors.borderStrong),
       ),
       child: Column(
         children: [
-          _buildDialogRow('Nama', result?.userName ?? '-'),
+          _buildDialogRow(context, 'Nama', result?.userName ?? '-'),
           const SizedBox(height: 6),
-          _buildDialogRow('Tipe', state.lastSubmittedTypeTitle),
+          _buildDialogRow(context, 'Tipe', state.lastSubmittedTypeTitle),
           const SizedBox(height: 6),
-          _buildDialogRow('Lokasi', state.address),
+          _buildDialogRow(context, 'Lokasi', state.address),
           const SizedBox(height: 6),
           _buildDialogRow(
+            context,
             'Waktu',
             DateFormat('dd MMM yyyy, HH:mm')
                 .format(result?.timestamp ?? DateTime.now()),
@@ -503,7 +508,7 @@ class _PresensiScreenState extends State<PresensiScreen>
         message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
         customContent: detailContent,
         buttonText: 'ISI LAPORAN HARIAN',
-        buttonColor: AppColors.primary,
+        buttonColor: colors.primary,
         onPressed: () {
           context.pushReplacementNamed('rondaMalam');
         },
@@ -519,7 +524,7 @@ class _PresensiScreenState extends State<PresensiScreen>
         message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
         customContent: detailContent,
         buttonText: 'KEMBALI KE HALAMAN UTAMA',
-        buttonColor: AppColors.primary,
+        buttonColor: colors.primary,
         onPressed: () {
           Navigator.pop(context);
         },
@@ -527,21 +532,22 @@ class _PresensiScreenState extends State<PresensiScreen>
     }
   }
 
-  Widget _buildDialogRow(String label, String value) {
+  Widget _buildDialogRow(BuildContext context, String label, String value) {
+    final colors = context.appColors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 11, color: colors.textSecondary),
         ),
         Flexible(
           child: Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
             textAlign: TextAlign.end,
             maxLines: 1,

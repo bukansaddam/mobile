@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 
 class PanicShimmerLoading extends StatelessWidget {
@@ -7,18 +7,19 @@ class PanicShimmerLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return Container(
-      color: AppColors.background,
+      color: colors.background,
       child: Center(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 24),
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.08),
+                color: colors.shadow,
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),

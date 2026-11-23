@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
@@ -6,12 +6,14 @@ import 'package:akar/features/linmas/announcement/domain/entities/announcement_e
 import 'package:flutter/material.dart';
 
 Widget _buildImageWidget(
+  BuildContext context,
   String imgPath, {
   double? width,
   double? height,
   BoxFit fit = BoxFit.cover,
   double iconSize = 28,
 }) {
+  final colors = context.appColors;
   if (imgPath.startsWith('http://') || imgPath.startsWith('https://')) {
     return AppNetworkImage(
       imageUrl: imgPath,
@@ -19,7 +21,7 @@ Widget _buildImageWidget(
       height: height,
       fit: fit,
       errorIcon: Icons.campaign_outlined,
-      backgroundColor: AppColors.primaryLight,
+      backgroundColor: colors.primaryLight,
     );
   }
   return Image.asset(
@@ -36,12 +38,12 @@ Widget _buildImageWidget(
     errorBuilder: (context, error, stackTrace) => Container(
       width: width,
       height: height,
-      color: AppColors.primaryLight,
+      color: colors.primaryLight,
       child: Center(
         child: Icon(
           Icons.campaign_outlined,
           size: iconSize,
-          color: AppColors.primary,
+          color: colors.primary,
         ),
       ),
     ),
@@ -85,6 +87,9 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
+    const mediaBadgeBg = Colors.black; // media-overlay
+    const mediaBadgeFg = Colors.white; // media-overlay
     final item = widget.item;
     final images = item.allImages;
 
@@ -92,9 +97,9 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.88,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -106,7 +111,7 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
               width: 44,
               height: 5,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: colors.borderStrong,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -119,7 +124,7 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
               alignment: Alignment.centerRight,
               child: IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded, color: AppColors.grey600),
+                icon: Icon(Icons.close_rounded, color: colors.textMuted),
                 tooltip: 'Tutup',
               ),
             ),
@@ -161,6 +166,7 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                                     );
                                   },
                                   child: _buildImageWidget(
+                                    context,
                                     imgPath,
                                     fit: BoxFit.cover,
                                     iconSize: 48,
@@ -181,13 +187,13 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.65),
+                                color: mediaBadgeBg.withValues(alpha: 0.65),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
                                 '${_currentImageIndex + 1}/${images.length}',
                                 style: const TextStyle(
-                                  color: Colors.white,
+                                  color: mediaBadgeFg,
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -210,12 +216,12 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                             child: Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: mediaBadgeBg.withValues(alpha: 0.5),
                                 shape: BoxShape.circle,
                               ),
                               child: const Icon(
                                 Icons.fullscreen_rounded,
-                                color: Colors.white,
+                                color: mediaBadgeFg,
                                 size: 18,
                               ),
                             ),
@@ -237,8 +243,8 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                             height: 6,
                             decoration: BoxDecoration(
                               color: isActive
-                                  ? AppColors.primary
-                                  : AppColors.grey300,
+                                  ? colors.primary
+                                  : colors.borderStrong,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           );
@@ -252,7 +258,7 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
                   Text(
                     item.title,
                     style: AppTextStyles.headlineSmall.copyWith(
-                      color: const Color(0xFF0F172A),
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                       height: 1.3,
@@ -263,34 +269,34 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time_rounded,
                         size: 15,
-                        color: AppColors.textSecondary,
+                        color: colors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         item.date,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       if (item.author.isNotEmpty) ...[
                         const SizedBox(width: 12),
-                        const Icon(
+                        Icon(
                           Icons.person_outline_rounded,
                           size: 15,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
                             item.author,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                               fontWeight: FontWeight.w600,
                             ),
                             maxLines: 1,
@@ -305,10 +311,10 @@ class _AnnouncementDetailModalState extends State<AnnouncementDetailModal> {
 
                   Text(
                     item.content ?? item.subtitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       height: 1.6,
-                      color: Color(0xFF334155),
+                      color: colors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -341,15 +347,16 @@ class AnnouncementListModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final list = announcements ?? const [];
 
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       child: Column(
@@ -361,7 +368,7 @@ class AnnouncementListModal extends StatelessWidget {
               width: 44,
               height: 5,
               decoration: BoxDecoration(
-                color: AppColors.grey300,
+                color: colors.borderStrong,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -373,12 +380,12 @@ class AnnouncementListModal extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.campaign_rounded,
-                  color: AppColors.primary,
+                  color: colors.primary,
                   size: 22,
                 ),
               ),
@@ -387,7 +394,7 @@ class AnnouncementListModal extends StatelessWidget {
                 'Daftar Pengumuman',
                 style: AppTextStyles.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   fontSize: 18,
                 ),
               ),
@@ -395,13 +402,13 @@ class AnnouncementListModal extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: colors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${list.length}',
                   style: AppTextStyles.labelSmall.copyWith(
-                    color: AppColors.primary,
+                    color: colors.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -410,7 +417,7 @@ class AnnouncementListModal extends StatelessWidget {
               const Spacer(),
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded, color: AppColors.grey600),
+                icon: Icon(Icons.close_rounded, color: colors.textMuted),
                 tooltip: 'Tutup',
               ),
             ],
@@ -428,9 +435,9 @@ class AnnouncementListModal extends StatelessWidget {
 
                 return Container(
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: colors.background,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.grey200),
+                    border: Border.all(color: colors.border),
                   ),
                   child: Material(
                     color: Colors.transparent,
@@ -450,6 +457,7 @@ class AnnouncementListModal extends StatelessWidget {
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: _buildImageWidget(
+                                      context,
                                       item.allImages.first,
                                       width: 70,
                                       height: 70,
@@ -460,12 +468,12 @@ class AnnouncementListModal extends StatelessWidget {
                                     width: 70,
                                     height: 70,
                                     decoration: BoxDecoration(
-                                      color: AppColors.primaryLight,
+                                      color: colors.primaryLight,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.campaign_outlined,
-                                      color: AppColors.primary,
+                                      color: colors.primary,
                                       size: 32,
                                     ),
                                   ),
@@ -476,17 +484,17 @@ class AnnouncementListModal extends StatelessWidget {
                                 children: [
                                   Row(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.access_time_rounded,
                                         size: 11,
-                                        color: AppColors.textSecondary,
+                                        color: colors.textSecondary,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
                                         item.date,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 11,
-                                          color: AppColors.textSecondary,
+                                          color: colors.textSecondary,
                                         ),
                                       ),
                                     ],
@@ -494,10 +502,10 @@ class AnnouncementListModal extends StatelessWidget {
                                   const SizedBox(height: 6),
                                   Text(
                                     item.title,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 13.5,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                                      color: colors.textPrimary,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -505,9 +513,9 @@ class AnnouncementListModal extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     item.subtitle,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11.5,
-                                      color: AppColors.textSecondary,
+                                      color: colors.textSecondary,
                                       height: 1.3,
                                     ),
                                     maxLines: 2,

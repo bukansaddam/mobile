@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/ronda_malam/core/constants/ronda_constants.dart';
@@ -79,10 +79,14 @@ class _RondaScreenState extends State<RondaScreen> {
         });
       } catch (e) {
         if (mounted) {
+          final colors = context.appColors;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Gagal memulai perekaman: $e'),
-              backgroundColor: AppColors.error,
+              content: Text(
+                'Gagal memulai perekaman: $e',
+                style: TextStyle(color: colors.onErrorSolid),
+              ),
+              backgroundColor: colors.errorSolid,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -93,17 +97,19 @@ class _RondaScreenState extends State<RondaScreen> {
       }
     } else if (status.isPermanentlyDenied) {
       if (mounted) {
+        final colors = context.appColors;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
+            content: Text(
               'Izin mikrofon ditolak permanen. Silakan aktifkan di Pengaturan.',
+              style: TextStyle(color: colors.onErrorSolid),
             ),
             action: SnackBarAction(
               label: 'Pengaturan',
-              textColor: Colors.white,
+              textColor: colors.onErrorSolid,
               onPressed: () => audioRecorder.openSettings(),
             ),
-            backgroundColor: AppColors.error,
+            backgroundColor: colors.errorSolid,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -114,12 +120,16 @@ class _RondaScreenState extends State<RondaScreen> {
       }
     } else {
       if (mounted) {
+        final colors = context.appColors;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
+            content: Text(
               'Izin mikrofon dibutuhkan untuk fitur dikte suara.',
+              style: TextStyle(
+                color: colors.isDark ? colors.onSecondary : colors.textPrimary,
+              ),
             ),
-            backgroundColor: AppColors.warning,
+            backgroundColor: colors.warning,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -144,10 +154,18 @@ class _RondaScreenState extends State<RondaScreen> {
 
       if (audioBytes == null || audioBytes.isEmpty) {
         if (mounted) {
+          final colors = context.appColors;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Tidak ada data suara yang terekam.'),
-              backgroundColor: AppColors.warning,
+              content: Text(
+                'Tidak ada data suara yang terekam.',
+                style: TextStyle(
+                  color: colors.isDark
+                      ? colors.onSecondary
+                      : colors.textPrimary,
+                ),
+              ),
+              backgroundColor: colors.warning,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -161,6 +179,7 @@ class _RondaScreenState extends State<RondaScreen> {
       final transcript = await googleSpeech.transcribeAudioBytes(audioBytes);
 
       if (mounted) {
+        final colors = context.appColors;
         if (transcript.trim().isNotEmpty) {
           var formattedTranscript = transcript.trim();
           if (!formattedTranscript.endsWith('.') &&
@@ -180,8 +199,11 @@ class _RondaScreenState extends State<RondaScreen> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Suara berhasil dikonversi ke teks!'),
-              backgroundColor: AppColors.success,
+              content: Text(
+                'Suara berhasil dikonversi ke teks!',
+                style: TextStyle(color: colors.onPrimary),
+              ),
+              backgroundColor: colors.primary,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -191,10 +213,15 @@ class _RondaScreenState extends State<RondaScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
+              content: Text(
                 'Suara tidak terdengar jelas atau tidak ada suara terdeteksi.',
+                style: TextStyle(
+                  color: colors.isDark
+                      ? colors.onSecondary
+                      : colors.textPrimary,
+                ),
               ),
-              backgroundColor: AppColors.warning,
+              backgroundColor: colors.warning,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -205,11 +232,15 @@ class _RondaScreenState extends State<RondaScreen> {
       }
     } catch (e) {
       if (mounted) {
+        final colors = context.appColors;
         AppLogger.e('Gagal memproses suara : $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Gagal memproses suara: $e'),
-            backgroundColor: AppColors.error,
+            content: Text(
+              'Gagal memproses suara: $e',
+              style: TextStyle(color: colors.onErrorSolid),
+            ),
+            backgroundColor: colors.errorSolid,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -240,10 +271,14 @@ class _RondaScreenState extends State<RondaScreen> {
         if (state is RondaActionSuccess) {
           _showSuccessDialog(context, state.laporan);
         } else if (state is RondaActionFailure) {
+          final colors = context.appColors;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
+              content: Text(
+                state.message,
+                style: TextStyle(color: colors.onErrorSolid),
+              ),
+              backgroundColor: colors.errorSolid,
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -253,15 +288,16 @@ class _RondaScreenState extends State<RondaScreen> {
         }
       },
       builder: (context, state) {
+        final colors = context.appColors;
         final currentStep = state.currentStep;
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: const AppPageBar(title: 'Laporan Harian'),
           body: Column(
             children: [
               Container(
-                color: AppColors.background,
+                color: colors.background,
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: RondaStepIndicator(currentStep: currentStep),
               ),
@@ -299,16 +335,17 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildSampahStep(RondaState state) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -322,28 +359,28 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.12),
+                  color: colors.warning.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.cleaning_services_rounded,
-                  color: AppColors.warning,
+                  color: colors.warning,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'Sampah',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.warning,
+                  color: colors.warning,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 16),
 
           _buildYesNoQuestion(
@@ -400,7 +437,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -434,7 +471,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -496,16 +533,17 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildKeamananStep(RondaState state) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -519,28 +557,28 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.info.withValues(alpha: 0.12),
+                  color: colors.info.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.security_rounded,
-                  color: AppColors.info,
+                  color: colors.info,
                   size: 20,
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'Keamanan',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.info,
+                  color: colors.info,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 16),
 
           _buildYesNoQuestion(
@@ -609,7 +647,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -678,7 +716,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -717,16 +755,17 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildLingkunganStep(RondaState state) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -740,28 +779,24 @@ class _RondaScreenState extends State<RondaScreen> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.12),
+                  color: colors.success.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(
-                  Icons.eco_rounded,
-                  color: AppColors.success,
-                  size: 20,
-                ),
+                child: Icon(Icons.eco_rounded, color: colors.success, size: 20),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'Lingkungan',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.success,
+                  color: colors.success,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 16),
 
           _buildYesNoQuestion(
@@ -818,7 +853,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -867,7 +902,7 @@ class _RondaScreenState extends State<RondaScreen> {
           ],
 
           const SizedBox(height: 20),
-          const Divider(height: 1, color: AppColors.grey200),
+          Divider(height: 1, color: colors.divider),
           const SizedBox(height: 20),
 
           _buildYesNoQuestion(
@@ -920,6 +955,7 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildTambahanStep(RondaState state) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -927,12 +963,12 @@ class _RondaScreenState extends State<RondaScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.grey200),
+            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
-                color: AppColors.black.withValues(alpha: 0.03),
+                color: colors.shadow.withValues(alpha: 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -946,22 +982,22 @@ class _RondaScreenState extends State<RondaScreen> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.edit_note_rounded,
-                      color: AppColors.primary,
+                      color: colors.primary,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Text(
+                  Text(
                     'Catatan & Temuan Tambahan',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -977,37 +1013,31 @@ class _RondaScreenState extends State<RondaScreen> {
                   UpdateRondaFieldEvent(keterangan: val),
                 ),
                 style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: 'tulis keterangan...',
-                  hintStyle: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.grey500,
-                  ),
+                  hintStyle: TextStyle(fontSize: 12, color: colors.textMuted),
                   filled: true,
-                  fillColor: AppColors.grey100,
+                  fillColor: colors.surfaceElevated,
                   contentPadding: const EdgeInsets.all(14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.grey300),
+                    borderSide: BorderSide(color: colors.borderStrong),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.grey300),
+                    borderSide: BorderSide(color: colors.borderStrong),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 1.5,
-                    ),
+                    borderSide: BorderSide(color: colors.primary, width: 1.5),
                   ),
                   suffixIcon: _keteranganController.text.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.cancel_rounded,
-                            color: AppColors.grey500,
+                            color: colors.textMuted,
                             size: 20,
                           ),
                           onPressed: () {
@@ -1029,17 +1059,17 @@ class _RondaScreenState extends State<RondaScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.error.withValues(alpha: 0.08),
+                    color: colors.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.error.withValues(alpha: 0.3),
+                      color: colors.error.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.fiber_manual_record,
-                        color: AppColors.error,
+                        color: colors.error,
                         size: 16,
                       ),
                       const SizedBox(width: 8),
@@ -1049,8 +1079,8 @@ class _RondaScreenState extends State<RondaScreen> {
                           builder: (context, duration, _) {
                             return Text(
                               'Mendengarkan... ${_formatDuration(duration)}',
-                              style: const TextStyle(
-                                color: AppColors.error,
+                              style: TextStyle(
+                                color: colors.error,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11,
                               ),
@@ -1061,8 +1091,8 @@ class _RondaScreenState extends State<RondaScreen> {
                       ElevatedButton.icon(
                         onPressed: () => _stopRegularRecording(),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.error,
-                          foregroundColor: Colors.white,
+                          backgroundColor: colors.errorSolid,
+                          foregroundColor: colors.onErrorSolid,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
@@ -1092,28 +1122,28 @@ class _RondaScreenState extends State<RondaScreen> {
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.08),
+                    color: colors.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.2),
+                      color: colors.primary.withValues(alpha: 0.2),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
                       SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Mengonversi suara ke teks...',
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: colors.primary,
                             fontWeight: FontWeight.w600,
                             fontSize: 11,
                           ),
@@ -1128,9 +1158,9 @@ class _RondaScreenState extends State<RondaScreen> {
                   child: OutlinedButton.icon(
                     onPressed: () => _startRegularRecording(),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
+                      foregroundColor: colors.primary,
                       side: BorderSide(
-                        color: AppColors.primary.withValues(alpha: 0.4),
+                        color: colors.primary.withValues(alpha: 0.4),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -1154,23 +1184,23 @@ class _RondaScreenState extends State<RondaScreen> {
                 ),
               ],
               const SizedBox(height: 8),
-              const Padding(
-                padding: EdgeInsets.only(left: 2, top: 2),
+              Padding(
+                padding: const EdgeInsets.only(left: 2, top: 2),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.info_outline_rounded,
                       size: 13,
-                      color: AppColors.textSecondary,
+                      color: colors.textSecondary,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Expanded(
                       child: Text(
                         'Catatan: Fitur "Bicara untuk menulis" hanya mendukung Bahasa Indonesia.',
                         style: TextStyle(
                           fontSize: 11,
-                          color: AppColors.textSecondary,
+                          color: colors.textSecondary,
                         ),
                       ),
                     ),
@@ -1187,6 +1217,7 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildSummaryCard(RondaState state) {
+    final colors = context.appColors;
     int sampahAlerts = 0;
     if (state.adaSampahMenumpuk) sampahAlerts++;
     if (!state.pengangkutanSesuaiJadwal) sampahAlerts++;
@@ -1206,12 +1237,12 @@ class _RondaScreenState extends State<RondaScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.grey200),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.03),
+            color: colors.shadow.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -1220,31 +1251,31 @@ class _RondaScreenState extends State<RondaScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Ringkasan Laporan',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 10),
           _buildSummaryRow(
             'Sampah',
             '$sampahAlerts temuan terindikasi',
-            sampahAlerts > 0 ? AppColors.warning : AppColors.success,
+            sampahAlerts > 0 ? colors.warning : colors.success,
           ),
           const SizedBox(height: 6),
           _buildSummaryRow(
             'Keamanan',
             '$keamananAlerts temuan terindikasi',
-            keamananAlerts > 0 ? AppColors.warning : AppColors.success,
+            keamananAlerts > 0 ? colors.warning : colors.success,
           ),
           const SizedBox(height: 6),
           _buildSummaryRow(
             'Lingkungan',
             '$lingkunganAlerts temuan terindikasi',
-            lingkunganAlerts > 0 ? AppColors.warning : AppColors.success,
+            lingkunganAlerts > 0 ? colors.warning : colors.success,
           ),
         ],
       ),
@@ -1252,12 +1283,13 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildSummaryRow(String label, String valueText, Color badgeColor) {
+    final colors = context.appColors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 12, color: colors.textSecondary),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -1285,6 +1317,7 @@ class _RondaScreenState extends State<RondaScreen> {
     required bool isNegativeCondition,
     required ValueChanged<bool> onChanged,
   }) {
+    final colors = context.appColors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1294,15 +1327,15 @@ class _RondaScreenState extends State<RondaScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
+                color: colors.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 '$questionNumber',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ),
@@ -1310,10 +1343,10 @@ class _RondaScreenState extends State<RondaScreen> {
             Expanded(
               child: Text(
                 question,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                   height: 1.35,
                 ),
               ),
@@ -1328,8 +1361,8 @@ class _RondaScreenState extends State<RondaScreen> {
                 label: 'Ya',
                 isSelected: value == true,
                 selectedColor: isNegativeCondition
-                    ? AppColors.warning
-                    : AppColors.success,
+                    ? colors.warning
+                    : colors.success,
                 onTap: () => onChanged(true),
               ),
             ),
@@ -1339,8 +1372,8 @@ class _RondaScreenState extends State<RondaScreen> {
                 label: 'Tidak',
                 isSelected: value == false,
                 selectedColor: isNegativeCondition
-                    ? AppColors.success
-                    : AppColors.warning,
+                    ? colors.success
+                    : colors.warning,
                 onTap: () => onChanged(false),
               ),
             ),
@@ -1356,6 +1389,7 @@ class _RondaScreenState extends State<RondaScreen> {
     required Color selectedColor,
     required VoidCallback onTap,
   }) {
+    final colors = context.appColors;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1367,10 +1401,10 @@ class _RondaScreenState extends State<RondaScreen> {
           decoration: BoxDecoration(
             color: isSelected
                 ? selectedColor.withValues(alpha: 0.12)
-                : AppColors.grey100,
+                : colors.surfaceElevated,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? selectedColor : AppColors.grey300,
+              color: isSelected ? selectedColor : colors.borderStrong,
               width: isSelected ? 1.8 : 1.0,
             ),
           ),
@@ -1382,7 +1416,7 @@ class _RondaScreenState extends State<RondaScreen> {
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
                 size: 18,
-                color: isSelected ? selectedColor : AppColors.grey500,
+                color: isSelected ? selectedColor : colors.textMuted,
               ),
               const SizedBox(width: 8),
               Text(
@@ -1390,7 +1424,7 @@ class _RondaScreenState extends State<RondaScreen> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected ? selectedColor : AppColors.textSecondary,
+                  color: isSelected ? selectedColor : colors.textSecondary,
                 ),
               ),
             ],
@@ -1401,14 +1435,15 @@ class _RondaScreenState extends State<RondaScreen> {
   }
 
   Widget _buildNestedContainer({required List<Widget> children}) {
+    final colors = context.appColors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.grey100.withValues(alpha: 0.6),
+        color: colors.surfaceElevated.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.5),
+          color: colors.primary.withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -1426,6 +1461,7 @@ class _RondaScreenState extends State<RondaScreen> {
     onLocationSelected,
     String? hintText,
   }) {
+    final colors = context.appColors;
     final effectiveHint = hintText ?? 'pilih lokasi gps';
     final bool hasValue = value != null && value.isNotEmpty;
 
@@ -1435,16 +1471,16 @@ class _RondaScreenState extends State<RondaScreen> {
         RichText(
           text: TextSpan(
             text: label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
-            children: const [
+            children: [
               TextSpan(
                 text: ' *',
                 style: TextStyle(
-                  color: AppColors.error,
+                  color: colors.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1471,9 +1507,9 @@ class _RondaScreenState extends State<RondaScreen> {
             height: 42,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.grey300),
+              border: Border.all(color: colors.borderStrong),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1488,17 +1524,11 @@ class _RondaScreenState extends State<RondaScreen> {
                       fontWeight: hasValue
                           ? FontWeight.w600
                           : FontWeight.normal,
-                      color: hasValue
-                          ? AppColors.textPrimary
-                          : AppColors.grey500,
+                      color: hasValue ? colors.textPrimary : colors.textMuted,
                     ),
                   ),
                 ),
-                const Icon(
-                  Icons.map_rounded,
-                  size: 20,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.map_rounded, size: 20, color: colors.primary),
               ],
             ),
           ),
@@ -1514,6 +1544,7 @@ class _RondaScreenState extends State<RondaScreen> {
     String? hintText,
     bool isRequired = true,
   }) {
+    final colors = context.appColors;
     final effectiveHint = hintText ?? 'pilih waktu';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1521,17 +1552,17 @@ class _RondaScreenState extends State<RondaScreen> {
         RichText(
           text: TextSpan(
             text: label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
             children: isRequired
-                ? const [
+                ? [
                     TextSpan(
                       text: ' *',
                       style: TextStyle(
-                        color: AppColors.error,
+                        color: colors.error,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -1558,9 +1589,9 @@ class _RondaScreenState extends State<RondaScreen> {
             height: 42,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.grey300),
+              border: Border.all(color: colors.borderStrong),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1573,14 +1604,14 @@ class _RondaScreenState extends State<RondaScreen> {
                         ? FontWeight.w600
                         : FontWeight.normal,
                     color: value != null && value.isNotEmpty
-                        ? AppColors.textPrimary
-                        : AppColors.grey500,
+                        ? colors.textPrimary
+                        : colors.textMuted,
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.access_time_rounded,
                   size: 20,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ],
             ),
@@ -1597,6 +1628,7 @@ class _RondaScreenState extends State<RondaScreen> {
     required ValueChanged<String?> onChanged,
     String? hintText,
   }) {
+    final colors = context.appColors;
     final effectiveHint = hintText ?? 'pilih ${label.toLowerCase()}';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1604,16 +1636,16 @@ class _RondaScreenState extends State<RondaScreen> {
         RichText(
           text: TextSpan(
             text: label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+              color: colors.textPrimary,
             ),
-            children: const [
+            children: [
               TextSpan(
                 text: ' *',
                 style: TextStyle(
-                  color: AppColors.error,
+                  color: colors.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -1625,61 +1657,58 @@ class _RondaScreenState extends State<RondaScreen> {
           initialValue: items.contains(value) ? value : null,
           hint: Text(
             effectiveHint,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.normal,
-              color: AppColors.grey500,
+              color: colors.textMuted,
             ),
           ),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: colors.textPrimary,
           ),
           decoration: InputDecoration(
             isDense: true,
             hintText: effectiveHint,
-            hintStyle: const TextStyle(
+            hintStyle: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.normal,
-              color: AppColors.grey500,
+              color: colors.textMuted,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: colors.surface,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 10,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.grey300),
+              borderSide: BorderSide(color: colors.borderStrong),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                color: AppColors.primary,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: colors.primary, width: 1.5),
             ),
           ),
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_arrow_down_rounded,
             size: 20,
-            color: AppColors.primary,
+            color: colors.primary,
           ),
           items: items.map((item) {
             return DropdownMenuItem<String>(
               value: item,
               child: Text(
                 item,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: colors.textPrimary,
                 ),
               ),
             );
@@ -1695,15 +1724,16 @@ class _RondaScreenState extends State<RondaScreen> {
     RondaState state,
     int currentStep,
   ) {
+    final colors = context.appColors;
     final isFinalStep = currentStep == 3;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.06),
+            color: colors.shadow.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, -4),
           ),
@@ -1722,8 +1752,8 @@ class _RondaScreenState extends State<RondaScreen> {
                     onPressed: () =>
                         context.read<RondaBloc>().add(PreviousRondaStepEvent()),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.grey300),
+                      foregroundColor: colors.textPrimary,
+                      side: BorderSide(color: colors.borderStrong),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -1755,20 +1785,20 @@ class _RondaScreenState extends State<RondaScreen> {
                           }
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                   ),
                   child: state is RondaActionLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 22,
                           height: 22,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            color: Colors.white,
+                            color: colors.onPrimary,
                           ),
                         )
                       : Text(
@@ -1908,29 +1938,31 @@ class _RondaScreenState extends State<RondaScreen> {
   void _onNextPressed(BuildContext context, RondaState state, int currentStep) {
     final error = _validateStep(state, currentStep);
     if (error != null) {
+      final colors = context.appColors;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.warning_amber_rounded,
-                color: Colors.white,
+                color: colors.onErrorSolid,
                 size: 20,
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   error,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
+                    color: colors.onErrorSolid,
                   ),
                 ),
               ),
             ],
           ),
-          backgroundColor: AppColors.error,
+          backgroundColor: colors.errorSolid,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -1947,30 +1979,32 @@ class _RondaScreenState extends State<RondaScreen> {
     for (int step = 0; step < 3; step++) {
       final error = _validateStep(state, step);
       if (error != null) {
+        final colors = context.appColors;
         context.read<RondaBloc>().add(SetRondaStepEvent(step));
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.warning_amber_rounded,
-                  color: Colors.white,
+                  color: colors.onErrorSolid,
                   size: 20,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
                     error,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
+                      color: colors.onErrorSolid,
                     ),
                   ),
                 ),
               ],
             ),
-            backgroundColor: AppColors.error,
+            backgroundColor: colors.errorSolid,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),

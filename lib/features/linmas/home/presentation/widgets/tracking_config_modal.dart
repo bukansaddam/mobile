@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
@@ -17,6 +17,7 @@ class TrackingConfigModal {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (modalContext) {
+        final colors = modalContext.appColors;
         return BlocBuilder<TrackingBloc, TrackingState>(
           builder: (context, trackingState) {
             final intervals = [
@@ -29,9 +30,11 @@ class TrackingConfigModal {
             ];
 
             return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              decoration: BoxDecoration(
+                color: colors.surface,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -43,16 +46,16 @@ class TrackingConfigModal {
                     children: [
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.satellite_alt_rounded,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                           const SizedBox(width: 10),
                           Text(
                             'Konfigurasi Tracking API',
                             style: AppTextStyles.titleLarge.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ],
@@ -70,8 +73,8 @@ class TrackingConfigModal {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: trackingState.isTrackingActive
-                          ? AppColors.successLight.withValues(alpha: 0.15)
-                          : AppColors.grey200,
+                          ? colors.primaryLight
+                          : colors.surfaceElevated,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -84,6 +87,7 @@ class TrackingConfigModal {
                               'Background Tracking',
                               style: AppTextStyles.bodyLarge.copyWith(
                                 fontWeight: FontWeight.bold,
+                                color: colors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 2),
@@ -93,15 +97,15 @@ class TrackingConfigModal {
                                   : 'Dinonaktifkan',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: trackingState.isTrackingActive
-                                    ? AppColors.success
-                                    : AppColors.textSecondary,
+                                    ? colors.success
+                                    : colors.textSecondary,
                               ),
                             ),
                           ],
                         ),
                         Switch(
                           value: trackingState.isTrackingActive,
-                          activeThumbColor: AppColors.primary,
+                          activeThumbColor: colors.primary,
                           onChanged: (val) {
                             if (val) {
                               context.read<TrackingBloc>().add(
@@ -123,7 +127,7 @@ class TrackingConfigModal {
                     'Interval Pengiriman API',
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -134,7 +138,7 @@ class TrackingConfigModal {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.grey300),
+                      border: Border.all(color: colors.borderStrong),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<int>(
@@ -145,7 +149,9 @@ class TrackingConfigModal {
                             value: item['value'] as int,
                             child: Text(
                               item['label'] as String,
-                              style: AppTextStyles.bodyMedium,
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                color: colors.textPrimary,
+                              ),
                             ),
                           );
                         }).toList(),
@@ -165,9 +171,9 @@ class TrackingConfigModal {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.grey100,
+                      color: colors.surfaceElevated,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.grey300),
+                      border: Border.all(color: colors.borderStrong),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +182,7 @@ class TrackingConfigModal {
                           'Status Terakhir API:',
                           style: AppTextStyles.bodySmall.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -188,8 +194,8 @@ class TrackingConfigModal {
                                   : Icons.error_rounded,
                               size: 16,
                               color: trackingState.lastSuccess
-                                  ? AppColors.success
-                                  : AppColors.error,
+                                  ? colors.success
+                                  : colors.error,
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -198,8 +204,8 @@ class TrackingConfigModal {
                                     'Belum ada pengiriman ke API',
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: trackingState.lastSuccess
-                                      ? AppColors.textPrimary
-                                      : AppColors.error,
+                                      ? colors.textPrimary
+                                      : colors.error,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -210,17 +216,17 @@ class TrackingConfigModal {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.access_time_rounded,
                                 size: 14,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
                                   'Waktu Terakhir: ${DateFormat('dd MMM yyyy, HH:mm:ss').format(trackingState.lastSentTime!)} WIB',
                                   style: AppTextStyles.bodySmall.copyWith(
-                                    color: AppColors.textSecondary,
+                                    color: colors.textSecondary,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -234,7 +240,7 @@ class TrackingConfigModal {
                           Text(
                             'Koordinat Terakhir: ${trackingState.lastLatitude}, ${trackingState.lastLongitude}',
                             style: AppTextStyles.bodySmall.copyWith(
-                              color: AppColors.textSecondary,
+                              color: colors.textSecondary,
                             ),
                           ),
                         ],
@@ -254,12 +260,12 @@ class TrackingConfigModal {
                               );
                             },
                       icon: trackingState.isSending
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: colors.onPrimary,
                               ),
                             )
                           : const Icon(Icons.send_rounded),
@@ -267,8 +273,8 @@ class TrackingConfigModal {
                         trackingState.isSending ? 'Mengirim...' : 'Kirim',
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -281,7 +287,7 @@ class TrackingConfigModal {
                     'Pengujian Status Survey (Mode Eksklusif)',
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -295,8 +301,7 @@ class TrackingConfigModal {
                         Navigator.pop(modalContext);
                         AppToast.showSuccess(
                           context,
-                          message:
-                              'Seluruh status survey (Baseline & Bulanan) berhasil di-reset untuk pengujian.',
+                          message: 'Seluruh status survey (Baseline & Bulanan) berhasil di-reset untuk pengujian.',
                         );
                       },
                       icon: const Icon(Icons.restart_alt_rounded),
@@ -304,8 +309,8 @@ class TrackingConfigModal {
                         'Reset Status Survey (Baseline & Bulanan)',
                       ),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.error,
-                        side: const BorderSide(color: AppColors.error),
+                        foregroundColor: colors.error,
+                        side: BorderSide(color: colors.error),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

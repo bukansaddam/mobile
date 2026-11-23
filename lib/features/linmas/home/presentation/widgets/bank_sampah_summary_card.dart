@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
@@ -55,6 +55,7 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final name = (widget.userName != null && widget.userName!.trim().isNotEmpty)
         ? widget.userName!.trim()
         : ((widget.user?.name != null && widget.user!.name!.trim().isNotEmpty)
@@ -74,12 +75,12 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.grey200.withValues(alpha: 0.8)),
+        border: Border.all(color: colors.border.withValues(alpha: 0.8)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
+            color: colors.shadow,
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -100,9 +101,9 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                     height: 42,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withValues(alpha: 0.1),
+                      color: colors.primary.withValues(alpha: 0.1),
                       border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.2),
+                        color: colors.primary.withValues(alpha: 0.2),
                       ),
                     ),
                     child: ClipOval(
@@ -115,10 +116,10 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                               errorIcon: Icons.person_rounded,
                               backgroundColor: Colors.transparent,
                             )
-                          : const Icon(
+                          : Icon(
                               Icons.person_rounded,
                               size: 24,
-                              color: AppColors.primary,
+                              color: colors.primary,
                             ),
                     ),
                   ),
@@ -133,7 +134,7 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                         style: AppTextStyles.titleMedium.copyWith(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: AppColors.textPrimary,
+                          color: colors.textPrimary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -142,17 +143,17 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.phone_android_rounded,
                             size: 13,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                           const SizedBox(width: 4),
                           Flexible(
                             child: Text(
                               phoneNumber,
                               style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.primary,
+                                color: colors.primary,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -173,7 +174,7 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
             Text(
               'Total Pendapatan Bank Sampah',
               style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
+                color: colors.textSecondary,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -189,7 +190,7 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                   style: AppTextStyles.headlineMedium.copyWith(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
+                    color: colors.textPrimary,
                     letterSpacing: -0.5,
                   ),
                 ),
@@ -207,7 +208,7 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
                       size: 20,
-                      color: AppColors.grey500,
+                      color: colors.textMuted,
                     ),
                   ),
                 ),
@@ -218,17 +219,13 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
 
             Row(
               children: [
-                const Icon(
-                  Icons.recycling_rounded,
-                  size: 14,
-                  color: AppColors.primary,
-                ),
+                Icon(Icons.recycling_rounded, size: 14, color: colors.primary),
                 const SizedBox(width: 4),
                 Text(
                   'Total Sampah Disetor: ',
                   style: AppTextStyles.bodySmall.copyWith(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: colors.textSecondary,
                   ),
                 ),
                 Text(
@@ -236,14 +233,14 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                   style: AppTextStyles.bodySmall.copyWith(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryDark,
+                    color: colors.primaryDark,
                   ),
                 ),
               ],
             ),
 
             const SizedBox(height: 16),
-            const Divider(height: 1, color: AppColors.grey200),
+            Divider(height: 1, color: colors.divider),
             const SizedBox(height: 8),
 
             Material(
@@ -264,13 +261,13 @@ class _BankSampahSummaryCardState extends State<BankSampahSummaryCard> {
                         style: AppTextStyles.labelMedium.copyWith(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_rounded,
                         size: 16,
-                        color: AppColors.primary,
+                        color: colors.primary,
                       ),
                     ],
                   ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
 
@@ -35,16 +35,17 @@ class PanicBottomPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final totalNearby = filteredMembers.length + filteredLeaders.length;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.12),
+            color: colors.shadow,
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -66,7 +67,7 @@ class PanicBottomPanel extends StatelessWidget {
                     width: 38,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.grey300,
+                      color: colors.borderStrong,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -77,21 +78,21 @@ class PanicBottomPanel extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.grey100,
+                color: colors.surfaceElevated,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.grey200),
+                border: Border.all(color: colors.border),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.12),
+                      color: colors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.location_on_rounded,
-                      color: AppColors.primary,
+                      color: colors.primary,
                       size: 22,
                     ),
                   ),
@@ -100,11 +101,11 @@ class PanicBottomPanel extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Alamat Lokasi Anda',
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppColors.textSecondary,
+                            color: colors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -114,7 +115,7 @@ class PanicBottomPanel extends StatelessWidget {
                           style: AppTextStyles.titleMedium.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                             height: 1.25,
                           ),
                           maxLines: 2,
@@ -137,11 +138,11 @@ class PanicBottomPanel extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isExpanded
-                      ? AppColors.primary.withValues(alpha: 0.1)
-                      : AppColors.primary.withValues(alpha: 0.05),
+                      ? colors.primary.withValues(alpha: 0.1)
+                      : colors.primary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.25),
+                    color: colors.primary.withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
@@ -149,20 +150,20 @@ class PanicBottomPanel extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.people_alt_rounded,
                           size: 18,
-                          color: AppColors.primary,
+                          color: colors.primary,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           isExpanded
                               ? 'Sembunyikan Responden ($totalNearby)'
                               : 'Lihat Petugas & Pejabat Terdekat ($totalNearby)',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
+                            color: colors.primary,
                           ),
                         ),
                       ],
@@ -172,7 +173,7 @@ class PanicBottomPanel extends StatelessWidget {
                           ? Icons.keyboard_arrow_up_rounded
                           : Icons.keyboard_arrow_down_rounded,
                       size: 20,
-                      color: AppColors.primary,
+                      color: colors.primary,
                     ),
                   ],
                 ),
@@ -187,12 +188,12 @@ class PanicBottomPanel extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 12),
-                        const Text(
+                        Text(
                           'Petugas Linmas Terdekat:',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -201,19 +202,17 @@ class PanicBottomPanel extends StatelessWidget {
                             width: double.infinity,
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: AppColors.warning.withValues(alpha: 0.08),
+                              color: colors.warning.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: AppColors.warning.withValues(
-                                  alpha: 0.25,
-                                ),
+                                color: colors.warning.withValues(alpha: 0.25),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Tidak ada petugas Linmas di sekitar lokasi Anda.',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppColors.textSecondary,
+                                color: colors.textSecondary,
                               ),
                             ),
                           )
@@ -243,24 +242,24 @@ class PanicBottomPanel extends StatelessWidget {
                                     margin: const EdgeInsets.only(right: 8),
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withValues(
+                                      color: colors.primary.withValues(
                                         alpha: 0.05,
                                       ),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: AppColors.primary.withValues(
+                                        color: colors.primary.withValues(
                                           alpha: 0.2,
                                         ),
                                       ),
                                     ),
                                     child: Row(
                                       children: [
-                                        const CircleAvatar(
+                                        CircleAvatar(
                                           radius: 16,
-                                          backgroundColor: AppColors.primary,
+                                          backgroundColor: colors.primary,
                                           child: Icon(
                                             Icons.shield_rounded,
-                                            color: Colors.white,
+                                            color: colors.onPrimary,
                                             size: 16,
                                           ),
                                         ),
@@ -274,20 +273,19 @@ class PanicBottomPanel extends StatelessWidget {
                                             children: [
                                               Text(
                                                 member.name,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.bold,
-                                                  color: AppColors.textPrimary,
+                                                  color: colors.textPrimary,
                                                 ),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               Text(
                                                 member.distanceText,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 10,
-                                                  color:
-                                                      AppColors.textSecondary,
+                                                  color: colors.textSecondary,
                                                 ),
                                               ),
                                             ],
@@ -302,12 +300,12 @@ class PanicBottomPanel extends StatelessWidget {
                           ),
                         const SizedBox(height: 10),
                         if (filteredLeaders.isNotEmpty) ...[
-                          const Text(
+                          Text(
                             'Tokoh / Pejabat Wilayah:',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimary,
+                              color: colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -337,24 +335,26 @@ class PanicBottomPanel extends StatelessWidget {
                                     margin: const EdgeInsets.only(right: 8),
                                     padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
-                                      color: AppColors.accent.withValues(
+                                      color: colors.accent.withValues(
                                         alpha: 0.06,
                                       ),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: AppColors.accent.withValues(
+                                        color: colors.accent.withValues(
                                           alpha: 0.25,
                                         ),
                                       ),
                                     ),
                                     child: Row(
                                       children: [
-                                        const CircleAvatar(
+                                        CircleAvatar(
                                           radius: 16,
-                                          backgroundColor: AppColors.accent,
+                                          backgroundColor: colors.accent,
                                           child: Icon(
                                             Icons.stars_rounded,
-                                            color: Colors.white,
+                                            color: colors.isDark
+                                                ? colors.onSecondary
+                                                : colors.onPrimary,
                                             size: 16,
                                           ),
                                         ),
@@ -368,19 +368,19 @@ class PanicBottomPanel extends StatelessWidget {
                                             children: [
                                               Text(
                                                 leader.name,
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.bold,
-                                                  color: AppColors.textPrimary,
+                                                  color: colors.textPrimary,
                                                 ),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                               Text(
                                                 '${leader.role} • ${leader.distanceText}',
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 9,
-                                                  color: AppColors.accent,
+                                                  color: colors.accent,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                                 maxLines: 1,
@@ -415,27 +415,27 @@ class PanicBottomPanel extends StatelessWidget {
                     ),
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withValues(alpha: 0.08),
+                      color: colors.error.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: AppColors.error.withValues(alpha: 0.25),
+                        color: colors.error.withValues(alpha: 0.25),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.warning_rounded,
-                          color: AppColors.error,
+                          color: colors.error,
                           size: 18,
                         ),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             'Status Darurat Anda Sedang Aktif di Server',
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.error,
+                              color: colors.error,
                             ),
                           ),
                         ),
@@ -450,20 +450,20 @@ class PanicBottomPanel extends StatelessWidget {
                           ? null
                           : onDeactivateButtonPressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
+                        backgroundColor: colors.primary,
+                        foregroundColor: colors.onPrimary,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                       child: isActionLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
-                                color: AppColors.white,
+                                color: colors.onPrimary,
                               ),
                             )
                           : const Text(
@@ -490,20 +490,20 @@ class PanicBottomPanel extends StatelessWidget {
                           ? null
                           : onEmergencyButtonPressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.error,
-                        foregroundColor: Colors.white,
+                        backgroundColor: colors.errorSolid,
+                        foregroundColor: colors.onErrorSolid,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                       child: isActionLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 22,
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
-                                color: Colors.white,
+                                color: colors.onErrorSolid,
                               ),
                             )
                           : Text(
@@ -526,8 +526,8 @@ class PanicBottomPanel extends StatelessWidget {
                         Icons.info_outline_rounded,
                         size: 12,
                         color: tapCount > 0
-                            ? AppColors.error
-                            : AppColors.textSecondary,
+                            ? colors.error
+                            : colors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -537,8 +537,8 @@ class PanicBottomPanel extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           color: tapCount > 0
-                              ? AppColors.error
-                              : AppColors.textSecondary,
+                              ? colors.error
+                              : colors.textSecondary,
                           fontWeight: tapCount > 0
                               ? FontWeight.bold
                               : FontWeight.w500,

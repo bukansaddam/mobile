@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/features/linmas/announcement/domain/entities/announcement_entity.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
@@ -10,13 +10,13 @@ import 'package:akar/features/linmas/announcement/presentation/widgets/announcem
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-Widget _buildBannerImage(String path) {
+Widget _buildBannerImage(BuildContext context, String path) {
+  final fallbackColor = context.appColors.primaryGradient.colors.last;
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return AppNetworkImage(
       imageUrl: path,
       fit: BoxFit.cover,
-      errorWidget: (context, url, error) =>
-          Container(color: AppColors.primaryDark),
+      errorWidget: (context, url, error) => Container(color: fallbackColor),
     );
   }
   return Image.asset(
@@ -24,7 +24,7 @@ Widget _buildBannerImage(String path) {
     fit: BoxFit.cover,
     cacheHeight: 510,
     errorBuilder: (context, error, stackTrace) =>
-        Container(color: AppColors.primaryDark),
+        Container(color: fallbackColor),
   );
 }
 
@@ -97,21 +97,22 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
         _startAutoPlay(state.bannerAnnouncements.length);
       },
       builder: (context, state) {
+        final colors = context.appColors;
         if (state.bannerStatus == AnnouncementStatus.loading &&
             state.bannerAnnouncements.isEmpty) {
           return Container(
             height: widget.height,
             decoration: BoxDecoration(
-              color: AppColors.grey200,
+              color: colors.border,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Center(
+            child: Center(
               child: SizedBox(
                 width: 24,
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  color: AppColors.primary,
+                  color: colors.primary,
                 ),
               ),
             ),
@@ -130,6 +131,11 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
   }
 
   Widget _buildSlider(List<AnnouncementEntity> items) {
+    final colors = context.appColors;
+    const overlayWhite = Colors.white; // media-overlay
+    const overlayWhiteMuted = Colors.white70; // media-overlay
+    const overlayBlack = Colors.black; // media-overlay
+    const overlayShadow = Colors.black87; // media-overlay
     return Column(
       children: [
         SizedBox(
@@ -154,7 +160,7 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
+                          color: colors.shadow,
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -166,17 +172,10 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                         fit: StackFit.expand,
                         children: [
                           item.hasImage
-                              ? _buildBannerImage(item.allImages.first)
+                              ? _buildBannerImage(context, item.allImages.first)
                               : Container(
-                                  decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        AppColors.primary,
-                                        AppColors.primaryDark,
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
+                                  decoration: BoxDecoration(
+                                    gradient: colors.primaryGradient,
                                   ),
                                   child: Align(
                                     alignment: Alignment.centerRight,
@@ -187,7 +186,7 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                       child: Icon(
                                         Icons.campaign_rounded,
                                         size: 100,
-                                        color: Colors.white.withValues(
+                                        color: overlayWhite.withValues(
                                           alpha: 0.15,
                                         ),
                                       ),
@@ -202,9 +201,9 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    Colors.black.withValues(alpha: 0.15),
-                                    Colors.black.withValues(alpha: 0.4),
-                                    Colors.black.withValues(alpha: 0.85),
+                                    overlayBlack.withValues(alpha: 0.15),
+                                    overlayBlack.withValues(alpha: 0.4),
+                                    overlayBlack.withValues(alpha: 0.85),
                                   ],
                                   stops: const [0.0, 0.4, 1.0],
                                 ),
@@ -226,13 +225,13 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                       const Icon(
                                         Icons.access_time_rounded,
                                         size: 11,
-                                        color: Colors.white70,
+                                        color: overlayWhiteMuted,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
                                         item.date,
                                         style: const TextStyle(
-                                          color: Colors.white70,
+                                          color: overlayWhiteMuted,
                                           fontSize: 10.5,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -245,12 +244,12 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: overlayWhite,
                                     fontSize: 14.5,
                                     fontWeight: FontWeight.bold,
                                     shadows: [
                                       Shadow(
-                                        color: Colors.black87,
+                                        color: overlayShadow,
                                         blurRadius: 6,
                                         offset: Offset(0, 1),
                                       ),
@@ -264,13 +263,13 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      color: Colors.white.withValues(
+                                      color: overlayWhite.withValues(
                                         alpha: 0.9,
                                       ),
                                       fontSize: 11.5,
                                       shadows: const [
                                         Shadow(
-                                          color: Colors.black87,
+                                          color: overlayShadow,
                                           blurRadius: 4,
                                           offset: Offset(0, 1),
                                         ),
@@ -305,7 +304,7 @@ class _PengumumanBannerSliderState extends State<PengumumanBannerSlider> {
                     width: isActive ? 20 : 7,
                     height: 7,
                     decoration: BoxDecoration(
-                      color: isActive ? AppColors.primary : AppColors.grey300,
+                      color: isActive ? colors.primary : colors.borderStrong,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   );

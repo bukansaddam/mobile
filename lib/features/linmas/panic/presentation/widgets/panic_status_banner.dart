@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 
 class PanicStatusBanner extends StatelessWidget {
   final bool isEmergencyActive;
@@ -13,9 +13,11 @@ class PanicStatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     final bgColor = isEmergencyActive
-        ? AppColors.error.withValues(alpha: 0.95)
-        : AppColors.primary.withValues(alpha: 0.92);
+        ? colors.errorSolid.withValues(alpha: 0.95)
+        : colors.primary.withValues(alpha: 0.92);
+    final fgColor = isEmergencyActive ? colors.onErrorSolid : colors.onPrimary;
 
     final iconData = isEmergencyActive
         ? Icons.emergency_rounded
@@ -32,7 +34,7 @@ class PanicStatusBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.15),
+            color: colors.shadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -40,13 +42,13 @@ class PanicStatusBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(iconData, color: Colors.white, size: 22),
+          Icon(iconData, color: fgColor, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               statusText,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: fgColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
                 height: 1.25,

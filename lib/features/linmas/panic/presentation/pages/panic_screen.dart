@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/panic/core/constants/panic_constants.dart';
@@ -91,8 +91,10 @@ class _PanicScreenState extends State<PanicScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.appColors;
     return BlocConsumer<PanicBloc, PanicState>(
       listener: (context, state) {
+        final listenerColors = context.appColors;
         if (state is PanicActionSuccess) {
           if (state.isEmergencyActive) {
             PanicDialogs.showSuccessEmergencyDialog(
@@ -104,11 +106,12 @@ class _PanicScreenState extends State<PanicScreen> {
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Sinyal darurat (SOS) telah berhasil dinonaktifkan. Anda dalam status aman.',
+                  style: TextStyle(color: listenerColors.onPrimary),
                 ),
-                backgroundColor: AppColors.success,
+                backgroundColor: listenerColors.primary,
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -116,16 +119,22 @@ class _PanicScreenState extends State<PanicScreen> {
         } else if (state is PanicActionFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Terjadi kesalahan'),
-              backgroundColor: AppColors.error,
+              content: Text(
+                state.errorMessage ?? 'Terjadi kesalahan',
+                style: TextStyle(color: listenerColors.onErrorSolid),
+              ),
+              backgroundColor: listenerColors.errorSolid,
               behavior: SnackBarBehavior.floating,
             ),
           );
         } else if (state is PanicFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Terjadi kesalahan'),
-              backgroundColor: AppColors.error,
+              content: Text(
+                state.errorMessage ?? 'Terjadi kesalahan',
+                style: TextStyle(color: listenerColors.onErrorSolid),
+              ),
+              backgroundColor: listenerColors.errorSolid,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -203,8 +212,8 @@ class _PanicScreenState extends State<PanicScreen> {
         };
 
         final circleColor = state.isEmergencyActive
-            ? AppColors.error
-            : AppColors.primary;
+            ? colors.errorSolid
+            : colors.primary;
 
         final Set<Circle> circles = {
           Circle(
@@ -218,13 +227,13 @@ class _PanicScreenState extends State<PanicScreen> {
         };
 
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: colors.background,
           appBar: AppPageBar(
             title: 'Pusat Bantuan & SOS',
             actions: [
               AppBarCircleButton(
                 icon: Icons.my_location_rounded,
-                iconColor: AppColors.primaryDark,
+                iconColor: colors.primaryDark,
                 tooltip: 'Pusatkan Lokasi Saya',
                 onPressed: () => _recenterMap(userLat, userLng),
               ),

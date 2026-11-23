@@ -1,4 +1,4 @@
-import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 
@@ -10,19 +10,17 @@ class PanicDialogs {
     required int notifiedMembersCount,
     required VoidCallback onDismiss,
   }) {
+    final colors = context.appColors;
     final customContent = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
+        color: colors.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.25)),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.notifications_active_rounded,
-            color: AppColors.primary,
-          ),
+          Icon(Icons.notifications_active_rounded, color: colors.primary),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -30,18 +28,15 @@ class PanicDialogs {
               children: [
                 Text(
                   '$notifiedMembersCount Anggota Menerima Notifikasi',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: AppColors.primary,
+                    color: colors.primary,
                   ),
                 ),
-                const Text(
+                Text(
                   'Seluruh tim terdekat sedang merespons dan menuju titik posisi Anda.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: colors.textSecondary),
                 ),
               ],
             ),
@@ -53,11 +48,10 @@ class PanicDialogs {
     AppDialogs.showSuccess(
       context,
       title: 'Permintaan Bantuan Terkirim!',
-      message:
-          'Sinyal darurat (SOS) telah berhasil disiarkan secara serentak ke seluruh tim tanggap darurat terdekat.',
+      message: 'Sinyal darurat (SOS) telah berhasil disiarkan secara serentak ke seluruh tim tanggap darurat terdekat.',
       customContent: customContent,
       buttonText: 'Mengerti',
-      buttonColor: AppColors.primary,
+      buttonColor: colors.primary,
       onPressed: onDismiss,
     );
   }
@@ -69,8 +63,7 @@ class PanicDialogs {
     await AppDialogs.showConfirmation(
       context,
       title: 'Matikan Sinyal SOS?',
-      message:
-          'Apakah kondisi darurat Anda sudah selesai dan situasi telah aman?\n\nMenonaktifkan SOS akan memperbarui status Anda menjadi normal (is_emergency: false) di server.',
+      message: 'Apakah kondisi darurat Anda sudah selesai dan situasi telah aman?\n\nMenonaktifkan SOS akan memperbarui status Anda menjadi normal (is_emergency: false) di server.',
       confirmText: 'Ya, Matikan SOS',
       cancelText: 'Batal',
       icon: Icons.check_circle_outline_rounded,
