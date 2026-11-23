@@ -1,14 +1,15 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_state.dart';
-import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_empty_view.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_input_bar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_message_bubble.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_sessions_sheet.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_typing_indicator.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,8 @@ class AiChatPage extends StatefulWidget {
 class _AiChatPageState extends State<AiChatPage> {
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Object? _typingMessageKey;
+  bool _expectingNewReply = false;
 
   @override
   void dispose() {
@@ -34,6 +37,9 @@ class _AiChatPageState extends State<AiChatPage> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  Object _resolveMessageKey(AiChatMessageEntity msg) =>
+      msg.id ?? msg.localId ?? msg.hashCode;
 
   bool _resolveIsOfficer(BuildContext context) {
     if (widget.isOfficerOverride != null) {
@@ -95,8 +101,35 @@ class _AiChatPageState extends State<AiChatPage> {
     final isOfficer = _resolveIsOfficer(context);
 
     return BlocConsumer<AiChatBloc, AiChatState>(
-      listenWhen: (prev, curr) => prev.messages.length != curr.messages.length,
-      listener: (_, _) => _scrollToBottom(),
+      listenWhen: (prev, curr) =>
+          prev.isSending != curr.isSending ||
+          prev.isLoadingSession != curr.isLoadingSession ||
+          prev.messages != curr.messages ||
+          prev.activeSession?.id != curr.activeSession?.id,
+      listener: (context, state) {
+        if (state.messages.isEmpty || state.isLoadingSession) {
+          _expectingNewReply = false;
+          if (_typingMessageKey != null) {
+            setState(() => _typingMessageKey = null);
+          }
+          return;
+        }
+        final last = state.messages.last;
+        if (state.isSending) {
+          _expectingNewReply = true;
+          if (_typingMessageKey != null) {
+            setState(() => _typingMessageKey = null);
+          }
+          if (last.role == AiChatMessageRole.user) {
+            _scrollToBottom();
+          }
+          return;
+        }
+        if (_expectingNewReply && last.role == AiChatMessageRole.assistant) {
+          _expectingNewReply = false;
+          setState(() => _typingMessageKey = _resolveMessageKey(last));
+        }
+      },
       builder: (context, state) {
         final bannerText = state.isOffline
             ? 'Sedang offline. Riwayat yang termuat tetap dapat dibaca, pengiriman pesan dinonaktifkan.'
@@ -221,8 +254,17 @@ class _AiChatPageState extends State<AiChatPage> {
 
                           if (cursor < state.messages.length) {
                             final msg = state.messages[cursor];
+                            final msgKey = _resolveMessageKey(msg);
                             return AiChatMessageBubble(
                               message: msg,
+                              animateTyping:
+                                  msg.role == AiChatMessageRole.assistant &&
+                                  msgKey == _typingMessageKey,
+                              onTypingCompleted: () {
+                                if (mounted && _typingMessageKey == msgKey) {
+                                  setState(() => _typingMessageKey = null);
+                                }
+                              },
                               onRetry: msg.localId != null
                                   ? () => context.read<AiChatBloc>().add(
                                       RetryFailedAiChatMessageEvent(
@@ -233,23 +275,7 @@ class _AiChatPageState extends State<AiChatPage> {
                             );
                           }
 
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6),
-                            child: Row(
-                              children: [
-                                const AiChatAvatar(size: 20),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    'Siska sedang mengetik...',
-                                    style: AppTextStyles.bodySmall.copyWith(
-                                      color: colors.textMuted,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                          return const AiChatTypingIndicator();
                         },
                       ),
               ),

@@ -2,15 +2,23 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
-import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_formatted_text.dart';
+import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_typewriter_text.dart';
 import 'package:flutter/material.dart';
 
 /// Bubble percakapan tunggal untuk pesan pengguna atau Asisten AI Siska.
 class AiChatMessageBubble extends StatelessWidget {
   final AiChatMessageEntity message;
   final VoidCallback? onRetry;
+  final bool animateTyping;
+  final VoidCallback? onTypingCompleted;
 
-  const AiChatMessageBubble({super.key, required this.message, this.onRetry});
+  const AiChatMessageBubble({
+    super.key,
+    required this.message,
+    this.onRetry,
+    this.animateTyping = false,
+    this.onTypingCompleted,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +76,15 @@ class AiChatMessageBubble extends StatelessWidget {
                     ],
                   ),
                 ),
-              AiChatFormattedText(text: message.content, baseStyle: textStyle),
-              if (!isUser && message.references.isNotEmpty) ...[
+              AiChatTypewriterText(
+                text: message.content,
+                baseStyle: textStyle,
+                animate: !isUser && animateTyping,
+                onCompleted: onTypingCompleted,
+              ),
+              if (!isUser &&
+                  !animateTyping &&
+                  message.references.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
