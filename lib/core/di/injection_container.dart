@@ -193,6 +193,12 @@ import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dar
 import 'package:akar/features/ai_chat/domain/usecases/ai_chat_usecases.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 
+// Permissions
+import 'package:akar/features/permissions/data/services/app_permission_service.dart';
+import 'package:akar/features/permissions/data/services/device_permission_gateway.dart';
+import 'package:akar/features/permissions/domain/services/permission_gateway.dart';
+import 'package:akar/features/permissions/presentation/bloc/permission_onboarding_bloc/permission_onboarding_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -215,6 +221,14 @@ Future<void> init() async {
       prefs: sl<SharedPreferences>(),
       disasterAlertService: sl<DisasterAlertService>(),
     ),
+  );
+  sl.registerLazySingleton<PermissionGateway>(
+    () => DevicePermissionGateway(
+      notificationService: sl<FirebaseNotificationService>(),
+    ),
+  );
+  sl.registerLazySingleton<AppPermissionService>(
+    () => AppPermissionService(gateway: sl<PermissionGateway>()),
   );
 
   // Offline Engine
@@ -511,6 +525,12 @@ Future<void> init() async {
       logoutUsecase: sl(),
       refreshTokenUsecase: sl(),
       notificationService: sl<FirebaseNotificationService>(),
+      permissionService: sl<AppPermissionService>(),
+    ),
+  );
+  sl.registerFactory<PermissionOnboardingBloc>(
+    () => PermissionOnboardingBloc(
+      permissionService: sl<AppPermissionService>(),
     ),
   );
   sl.registerLazySingleton<ProfileBloc>(

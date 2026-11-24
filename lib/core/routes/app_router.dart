@@ -46,6 +46,9 @@ import 'package:flutter/material.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/pages/ai_chat_page.dart';
+import 'package:akar/features/permissions/data/services/app_permission_service.dart';
+import 'package:akar/features/permissions/presentation/bloc/permission_onboarding_bloc/permission_onboarding_bloc.dart';
+import 'package:akar/features/permissions/presentation/pages/permission_setup_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -76,6 +79,7 @@ class AppRouter {
   static const String main = 'main';
   static const String survey = 'survey';
   static const String initialSurvey = 'initialSurvey';
+  static const String permissionSetup = 'permissionSetup';
   static const String emergencyCall = 'emergencyCall';
   static const String emergencyCallPath = '/emergency-call';
   static const String notifications = 'notifications';
@@ -135,6 +139,7 @@ class AppRouter {
   static const String myComplaintsPath = '/masyarakat/my-complaints';
   static const String surveyPath = '/survey';
   static const String initialSurveyPath = '/initial-survey';
+  static const String permissionSetupPath = '/permission-setup';
   static const String notificationsPath = '/notifications';
   static const String vouchersPath = '/vouchers';
   static const String aiChatPath = '/ai-chat';
@@ -142,102 +147,132 @@ class AppRouter {
   static final GlobalKey<NavigatorState> rootNavigatorKey =
       GlobalKey<NavigatorState>();
 
+  static String? resolveRedirect({
+    required AuthState authState,
+    required String location,
+    required bool hasAllPermissions,
+    required bool hasCompletedSurvey,
+  }) {
+    if (authState is AuthInitial || authState is AuthChecking) {
+      return null;
+    }
+
+    final isSplash = location == splashPath;
+    final isEmergencyCall = location == emergencyCallPath;
+    if (isSplash || isEmergencyCall) {
+      return null;
+    }
+
+    final isLoggedIn = authState is AuthAuthenticated;
+    final isAuthRoute =
+        location == welcomePath ||
+        location == loginPath ||
+        location == registerPath;
+
+    if (!isLoggedIn && !isAuthRoute) {
+      return welcomePath;
+    }
+
+    if (isLoggedIn) {
+      final isMember = authState.user.isMember;
+
+      if (!hasAllPermissions) {
+        return location == permissionSetupPath ? null : permissionSetupPath;
+      }
+
+      final defaultHome = isMember
+          ? masyarakatMainPath
+          : hasCompletedSurvey
+          ? mainPath
+          : initialSurveyPath;
+
+      if (location == permissionSetupPath) {
+        return defaultHome;
+      }
+
+      // Pengecekan survey hanya saat login. Jika sudah selesai dan membuka rute survey awal, redirect ke main.
+      if (location == initialSurveyPath && hasCompletedSurvey) {
+        return mainPath;
+      }
+
+      if (isAuthRoute) {
+        return defaultHome;
+      }
+
+      // Guard: Jika Member mencoba mengakses rute khusus Linmas
+      final linmasOnlyPrefixes = [
+        '/main',
+        '/panic',
+        '/presensi',
+        '/ronda-malam',
+        '/demografi',
+        '/tambah-tokoh',
+        '/tambah-institusi',
+        '/tambah-organisasi',
+        '/bank-sampah',
+        '/tambah-bank-sampah',
+        '/laporan-insidentil',
+        '/tambah-laporan-insidentil',
+        '/jaga-tanah',
+        '/tambah-jaga-tanah',
+        '/activation-detail',
+        '/activation_detail',
+        '/survey',
+        '/initial-survey',
+      ];
+
+      final isAttemptingLinmasRoute = linmasOnlyPrefixes.any(
+        (prefix) =>
+            location == prefix ||
+            location.startsWith('$prefix/') ||
+            location.startsWith('$prefix?'),
+      );
+
+      if (isMember && isAttemptingLinmasRoute) {
+        return masyarakatMainPath;
+      }
+
+      // Guard: Jika Linmas mencoba mengakses rute utama Masyarakat
+      if (!isMember && location == masyarakatMainPath) {
+        return mainPath;
+      }
+    }
+
+    return null;
+  }
+
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: splashPath,
-    refreshListenable: GoRouterRefreshStream(sl<AuthBloc>().stream),
+    refreshListenable: sl.isRegistered<AppPermissionService>()
+        ? Listenable.merge([
+            GoRouterRefreshStream(sl<AuthBloc>().stream),
+            sl<AppPermissionService>(),
+          ])
+        : GoRouterRefreshStream(sl<AuthBloc>().stream),
     redirect: (context, state) {
       final authState = sl<AuthBloc>().state;
+      final currentUser = authState is AuthAuthenticated ? authState.user : null;
+      final isOfficer = currentUser?.isOfficer ?? false;
+      final hasAllPermissions = sl.isRegistered<AppPermissionService>()
+          ? sl<AppPermissionService>().hasAllRequiredPermissionsSync(
+              isOfficer: isOfficer,
+            )
+          : true;
+      final hasCompletedSurvey =
+          currentUser != null &&
+          (currentUser.hasCompletedInitialQuiz ||
+              (sl.isRegistered<SurveyLocalDatasource>() &&
+                  sl<SurveyLocalDatasource>().isInitialSurveyCompletedSync(
+                    currentUser.id,
+                  )));
 
-      if (authState is AuthInitial || authState is AuthChecking) {
-        return null;
-      }
-
-      final isLoggedIn = authState is AuthAuthenticated;
-      final UserEntity? currentUser = authState is AuthAuthenticated
-          ? authState.user
-          : null;
-      final location = state.matchedLocation;
-      final isMember = currentUser?.isMember ?? false;
-
-      final isSplash = location == splashPath;
-      final isEmergencyCall = location == emergencyCallPath;
-      final isAuthRoute =
-          location == welcomePath ||
-          location == loginPath ||
-          location == registerPath;
-
-      if (isSplash || isEmergencyCall) {
-        return null;
-      }
-
-      if (!isLoggedIn && !isAuthRoute) {
-        return welcomePath;
-      }
-
-      if (isLoggedIn) {
-        final hasCompletedSurvey =
-            currentUser != null &&
-            (currentUser.hasCompletedInitialQuiz ||
-                sl<SurveyLocalDatasource>().isInitialSurveyCompletedSync(
-                  currentUser.id,
-                ));
-
-        // Pengecekan survey hanya saat login. Jika sudah selesai dan membuka rute survey awal, redirect ke main.
-        if (location == initialSurveyPath && hasCompletedSurvey) {
-          return mainPath;
-        }
-
-        final defaultHome = isMember
-            ? masyarakatMainPath
-            : hasCompletedSurvey
-            ? mainPath
-            : initialSurveyPath;
-
-        if (isAuthRoute) {
-          return defaultHome;
-        }
-
-        // Guard: Jika Member mencoba mengakses rute khusus Linmas
-        final linmasOnlyPrefixes = [
-          '/main',
-          '/panic',
-          '/presensi',
-          '/ronda-malam',
-          '/demografi',
-          '/tambah-tokoh',
-          '/tambah-institusi',
-          '/tambah-organisasi',
-          '/bank-sampah',
-          '/tambah-bank-sampah',
-          '/laporan-insidentil',
-          '/tambah-laporan-insidentil',
-          '/jaga-tanah',
-          '/tambah-jaga-tanah',
-          '/activation-detail',
-          '/activation_detail',
-          '/survey',
-          '/initial-survey',
-        ];
-
-        final isAttemptingLinmasRoute = linmasOnlyPrefixes.any(
-          (prefix) =>
-              location == prefix ||
-              location.startsWith('$prefix/') ||
-              location.startsWith('$prefix?'),
-        );
-
-        if (isMember && isAttemptingLinmasRoute) {
-          return masyarakatMainPath;
-        }
-
-        // Guard: Jika Linmas mencoba mengakses rute utama Masyarakat
-        if (!isMember && location == masyarakatMainPath) {
-          return mainPath;
-        }
-      }
-
-      return null;
+      return resolveRedirect(
+        authState: authState,
+        location: state.matchedLocation,
+        hasAllPermissions: hasAllPermissions,
+        hasCompletedSurvey: hasCompletedSurvey,
+      );
     },
     routes: [
       // Common
@@ -303,6 +338,14 @@ class AppRouter {
         path: initialSurveyPath,
         name: initialSurvey,
         builder: (context, state) => const InitialSurveyScreen(),
+      ),
+      GoRoute(
+        path: permissionSetupPath,
+        name: permissionSetup,
+        builder: (context, state) => BlocProvider<PermissionOnboardingBloc>(
+          create: (_) => sl<PermissionOnboardingBloc>(),
+          child: const PermissionSetupScreen(),
+        ),
       ),
       GoRoute(
         path: emergencyCallPath,

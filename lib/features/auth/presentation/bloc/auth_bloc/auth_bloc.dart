@@ -15,6 +15,7 @@ import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
+import 'package:akar/features/permissions/data/services/app_permission_service.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -27,6 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LogoutUsecase _logoutUsecase;
   final RefreshTokenUsecase _refreshTokenUsecase;
   final FirebaseNotificationService? _notificationService;
+  final AppPermissionService? _permissionService;
 
   AuthBloc({
     required LoginUsecase loginUsecase,
@@ -36,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required LogoutUsecase logoutUsecase,
     required RefreshTokenUsecase refreshTokenUsecase,
     FirebaseNotificationService? notificationService,
+    AppPermissionService? permissionService,
   }) : _loginUsecase = loginUsecase,
        _registerUsecase = registerUsecase,
        _getSavedUserUsecase = getSavedUserUsecase,
@@ -43,6 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
        _logoutUsecase = logoutUsecase,
        _refreshTokenUsecase = refreshTokenUsecase,
        _notificationService = notificationService,
+       _permissionService = permissionService,
        super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<LoginEvent>(_onLogin);
@@ -71,6 +75,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           if (failure.isRetryable) {
             DioClient.instance.options.headers['Authorization'] =
                 'Bearer $token';
+            await _permissionService?.refreshStatuses(
+              isOfficer: currentUser.isOfficer,
+            );
             emit(
               AuthAuthenticated(
                 user: currentUser,
@@ -95,6 +102,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
           DioClient.instance.options.headers['Authorization'] =
               'Bearer ${refreshed.accessToken}';
+          await _permissionService?.refreshStatuses(
+            isOfficer: refreshed.user.isOfficer,
+          );
           emit(
             AuthAuthenticated(
               user: refreshed.user,
@@ -140,6 +150,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     DioClient.instance.options.headers['Authorization'] =
         'Bearer ${authEntity.accessToken}';
+    await _permissionService?.refreshStatuses(
+      isOfficer: authEntity.user.isOfficer,
+    );
     emit(
       AuthAuthenticated(
         user: authEntity.user,
@@ -173,26 +186,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       deviceId: deviceId,
     );
 
-    result.fold((failure) => emit(AuthFailure(failure.message)), (authEntity) {
-      if (authEntity.accessToken.isNotEmpty) {
-        DioClient.instance.options.headers['Authorization'] =
-            'Bearer ${authEntity.accessToken}';
-        emit(
-          AuthAuthenticated(
-            user: authEntity.user,
-            token: authEntity.accessToken,
-            message: authEntity.message ?? 'Registrasi berhasil',
-          ),
-        );
-      } else {
-        emit(
-          RegisterSuccess(
-            message: authEntity.message ?? 'Registrasi berhasil',
-            user: authEntity.user,
-          ),
-        );
-      }
-    });
+    await result.fold<Future<void>>(
+      (failure) async => emit(AuthFailure(failure.message)),
+      (authEntity) async {
+        if (authEntity.accessToken.isNotEmpty) {
+          DioClient.instance.options.headers['Authorization'] =
+              'Bearer ${authEntity.accessToken}';
+          await _permissionService?.refreshStatuses(
+            isOfficer: authEntity.user.isOfficer,
+          );
+          emit(
+            AuthAuthenticated(
+              user: authEntity.user,
+              token: authEntity.accessToken,
+              message: authEntity.message ?? 'Registrasi berhasil',
+            ),
+          );
+        } else {
+          emit(
+            RegisterSuccess(
+              message: authEntity.message ?? 'Registrasi berhasil',
+              user: authEntity.user,
+            ),
+          );
+        }
+      },
+    );
   }
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
@@ -224,6 +243,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
 
     await _logoutUsecase();
+    _permissionService?.resetCache();
     DioClient.instance.options.headers.remove('Authorization');
     emit(const AuthUnauthenticated(message: 'Logout berhasil'));
   }
