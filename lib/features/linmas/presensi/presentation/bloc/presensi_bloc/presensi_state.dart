@@ -1,7 +1,5 @@
 part of 'presensi_bloc.dart';
 
-enum PresensiType { masuk, keluar }
-
 enum PresensiStatus {
   initial,
   loadingLocation,
@@ -12,8 +10,6 @@ enum PresensiStatus {
 }
 
 class PresensiState extends Equatable {
-  final bool hasCheckedIn;
-  final PresensiType? lastSubmittedType;
   final PresensiStatus status;
   final double userLatitude;
   final double userLongitude;
@@ -30,8 +26,6 @@ class PresensiState extends Equatable {
   final PresensiDataEntity? lastResult;
 
   const PresensiState({
-    this.hasCheckedIn = false,
-    this.lastSubmittedType,
     this.status = PresensiStatus.initial,
     this.userLatitude = -6.2088,
     this.userLongitude = 106.8456,
@@ -48,19 +42,7 @@ class PresensiState extends Equatable {
     this.lastResult,
   });
 
-  PresensiType get presensiType =>
-      hasCheckedIn ? PresensiType.keluar : PresensiType.masuk;
-
-  String get presensiTypeTitle =>
-      hasCheckedIn ? 'Perbarui Posisi Keluar' : 'Perbarui Posisi Masuk';
-
-  String get lastSubmittedTypeTitle => lastSubmittedType == PresensiType.keluar
-      ? 'Perbarui Posisi Keluar'
-      : 'Perbarui Posisi Masuk';
-
   PresensiState copyWith({
-    bool? hasCheckedIn,
-    PresensiType? lastSubmittedType,
     PresensiStatus? status,
     double? userLatitude,
     double? userLongitude,
@@ -77,8 +59,6 @@ class PresensiState extends Equatable {
     PresensiDataEntity? lastResult,
   }) {
     return PresensiState(
-      hasCheckedIn: hasCheckedIn ?? this.hasCheckedIn,
-      lastSubmittedType: lastSubmittedType ?? this.lastSubmittedType,
       status: status ?? this.status,
       userLatitude: userLatitude ?? this.userLatitude,
       userLongitude: userLongitude ?? this.userLongitude,
@@ -98,8 +78,6 @@ class PresensiState extends Equatable {
 
   @override
   List<Object?> get props => [
-    hasCheckedIn,
-    lastSubmittedType,
     status,
     userLatitude,
     userLongitude,

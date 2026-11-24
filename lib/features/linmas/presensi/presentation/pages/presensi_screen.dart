@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import 'package:akar/core/theme/app_color_scheme.dart';
@@ -314,20 +313,22 @@ class _PresensiScreenState extends State<PresensiScreen>
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              state.hasCheckedIn
-                                  ? Icons.logout_rounded
-                                  : Icons.login_rounded,
+                              Icons.my_location_rounded,
                               color: colors.primary,
                               size: 22,
                             ),
                           ),
                           const SizedBox(width: 10),
-                          Text(
-                            state.presensiTypeTitle,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: colors.primary,
+                          Expanded(
+                            child: Text(
+                              'Perbarui Posisi',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: colors.primary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
@@ -451,9 +452,9 @@ class _PresensiScreenState extends State<PresensiScreen>
                                     color: colors.onPrimary,
                                   ),
                                 )
-                              : Text(
-                                  state.presensiTypeTitle,
-                                  style: const TextStyle(
+                              : const Text(
+                                  'Perbarui Posisi',
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
                                   ),
@@ -474,7 +475,6 @@ class _PresensiScreenState extends State<PresensiScreen>
   void _showSuccessPresensiDialog(BuildContext context, PresensiState state) {
     final colors = context.appColors;
     final result = state.lastResult;
-    final isKeluar = state.lastSubmittedType == PresensiType.keluar;
 
     final detailContent = Container(
       padding: const EdgeInsets.all(12),
@@ -487,49 +487,30 @@ class _PresensiScreenState extends State<PresensiScreen>
         children: [
           _buildDialogRow(context, 'Nama', result?.userName ?? '-'),
           const SizedBox(height: 6),
-          _buildDialogRow(context, 'Tipe', state.lastSubmittedTypeTitle),
-          const SizedBox(height: 6),
           _buildDialogRow(context, 'Lokasi', state.address),
           const SizedBox(height: 6),
           _buildDialogRow(
             context,
             'Waktu',
-            DateFormat('dd MMM yyyy, HH:mm')
-                .format(result?.timestamp ?? DateTime.now()),
+            DateFormat(
+              'dd MMM yyyy, HH:mm',
+            ).format(result?.timestamp ?? DateTime.now()),
           ),
         ],
       ),
     );
 
-    if (isKeluar) {
-      AppDialogs.showSuccess(
-        context,
-        title: 'Posisi Berhasil Diperbarui!',
-        message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
-        customContent: detailContent,
-        buttonText: 'ISI LAPORAN HARIAN',
-        buttonColor: colors.primary,
-        onPressed: () {
-          context.pushReplacementNamed('rondaMalam');
-        },
-        secondaryButtonText: 'KEMBALI KE HALAMAN UTAMA',
-        onSecondaryPressed: () {
-          Navigator.pop(context);
-        },
-      );
-    } else {
-      AppDialogs.showSuccess(
-        context,
-        title: 'Posisi Berhasil Diperbarui!',
-        message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
-        customContent: detailContent,
-        buttonText: 'KEMBALI KE HALAMAN UTAMA',
-        buttonColor: colors.primary,
-        onPressed: () {
-          Navigator.pop(context);
-        },
-      );
-    }
+    AppDialogs.showSuccess(
+      context,
+      title: 'Posisi Berhasil Diperbarui!',
+      message: 'Bukti pembaruan posisi Anda telah tercatat pada sistem.',
+      customContent: detailContent,
+      buttonText: 'KEMBALI KE HALAMAN UTAMA',
+      buttonColor: colors.primary,
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
   }
 
   Widget _buildDialogRow(BuildContext context, String label, String value) {

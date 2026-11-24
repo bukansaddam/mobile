@@ -164,8 +164,6 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
     SubmitPresensiEvent event,
     Emitter<PresensiState> emit,
   ) async {
-    final currentType = state.presensiType;
-
     // Security Check: Validasi deteksi lokasi tiruan (Fake GPS / Mock Location)
     if (state.isLocationMocked) {
       emit(
@@ -230,8 +228,6 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
           state.copyWith(
             status: PresensiStatus.success,
             lastResult: dataResult,
-            lastSubmittedType: currentType,
-            hasCheckedIn: !state.hasCheckedIn,
           ),
         );
       },
