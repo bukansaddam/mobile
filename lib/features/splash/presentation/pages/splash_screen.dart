@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
+import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_brand_logo.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
+import 'package:akar/features/permissions/data/services/app_permission_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -115,16 +118,24 @@ class _SplashScreenState extends State<SplashScreen>
     final state = authBloc.state;
     if (state is AuthAuthenticated) {
       final isOfficer = state.user.isOfficer;
-      if (isOfficer) {
+      final hasAllPermissions =
+          !sl.isRegistered<AppPermissionService>() ||
+          sl<AppPermissionService>().hasAllRequiredPermissionsSync(
+            isOfficer: isOfficer,
+          );
+      if (!hasAllPermissions) {
+        context.read<TrackingBloc>().add(StopTrackingEvent());
+        context.goNamed(AppRouter.permissionSetup);
+      } else if (isOfficer) {
         context.read<TrackingBloc>().add(StartTrackingEvent());
-        context.goNamed('main');
+        context.goNamed(AppRouter.main);
       } else {
         context.read<TrackingBloc>().add(StopTrackingEvent());
-        context.goNamed('masyarakatMain');
+        context.goNamed(AppRouter.masyarakatMain);
       }
     } else {
       context.read<TrackingBloc>().add(StopTrackingEvent());
-      context.goNamed('welcome');
+      context.goNamed(AppRouter.welcome);
     }
   }
 

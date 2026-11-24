@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/offline/widgets/offline_status_banner.dart';
@@ -34,9 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestHomePermissions();
-    });
 
     _alertSubscription = sl<DisasterAlertService>().alertStream.listen((event) {
       if (mounted) {
@@ -49,17 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _alertSubscription?.cancel();
     super.dispose();
-  }
-
-  Future<void> _requestHomePermissions() async {
-    try {
-      final locationStatus = await Permission.location.status;
-      final cameraStatus = await Permission.camera.status;
-
-      if (!locationStatus.isGranted || !cameraStatus.isGranted) {
-        await [Permission.location, Permission.camera].request();
-      }
-    } catch (_) {}
   }
 
   Future<void> _onRefresh(BuildContext context) async {

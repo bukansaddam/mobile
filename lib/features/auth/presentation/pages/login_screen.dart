@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_brand_logo.dart';
@@ -13,8 +14,7 @@ import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/auth/presentation/widgets/sliding_pill_tab_bar.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
-
-import 'package:akar/utils/app_logger.dart';
+import 'package:akar/features/permissions/data/services/app_permission_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? role;
@@ -39,33 +39,11 @@ class _LoginScreenState extends State<LoginScreen>
   bool _isPasswordObscured = true;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestLocationPermission();
-    });
-  }
-
-  @override
   void dispose() {
     _identifierController.dispose();
     _passwordController.dispose();
     _entranceController.dispose();
     super.dispose();
-  }
-
-  Future<void> _requestLocationPermission() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) return;
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        await Geolocator.requestPermission();
-      }
-    } catch (e) {
-      AppLogger.w('[LOGIN] Gagal meminta izin lokasi: $e');
-    }
   }
 
   String? _validateIdentifier(String? value) {
@@ -87,13 +65,10 @@ class _LoginScreenState extends State<LoginScreen>
     return null;
   }
 
-  Future<void> _handleLogin() async {
+  void _handleLogin() {
     if (!_formKey.currentState!.validate()) return;
 
     FocusScope.of(context).unfocus();
-    await _requestLocationPermission();
-
-    if (!mounted) return;
     context.read<AuthBloc>().add(
       LoginEvent(
         username: _identifierController.text.trim(),
@@ -182,25 +157,34 @@ class _LoginScreenState extends State<LoginScreen>
                     AppToast.showError(context, message: state.message);
                   } else if (state is AuthAuthenticated) {
                     final isOfficer = state.user.isOfficer;
-                    if (isOfficer) {
-                      context.read<TrackingBloc>().add(StartTrackingEvent());
-                    } else {
-                      context.read<TrackingBloc>().add(StopTrackingEvent());
-                    }
+                    final hasAllPermissions =
+                        !sl.isRegistered<AppPermissionService>() ||
+                        sl<AppPermissionService>()
+                            .hasAllRequiredPermissionsSync(
+                              isOfficer: isOfficer,
+                            );
 
                     AppToast.showSuccess(
                       context,
                       message: state.message ?? "Login berhasil!",
                     );
 
+                    if (!hasAllPermissions) {
+                      context.read<TrackingBloc>().add(StopTrackingEvent());
+                      context.goNamed(AppRouter.permissionSetup);
+                      return;
+                    }
+
                     if (isOfficer) {
+                      context.read<TrackingBloc>().add(StartTrackingEvent());
                       if (state.user.hasCompletedInitialQuiz) {
-                        context.goNamed('main');
+                        context.goNamed(AppRouter.main);
                       } else {
-                        context.goNamed('initialSurvey');
+                        context.goNamed(AppRouter.initialSurvey);
                       }
                     } else {
-                      context.goNamed('masyarakatMain');
+                      context.read<TrackingBloc>().add(StopTrackingEvent());
+                      context.goNamed(AppRouter.masyarakatMain);
                     }
                   }
                 },
