@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
@@ -31,7 +32,10 @@ import 'package:akar/utils/app_logger.dart';
 /// 1. foto e-KTP, 2. data kependudukan, 3. pembuatan akun, 4. review data,
 /// 5. verifikasi OTP WhatsApp.
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  @visibleForTesting
+  final Future<File?> Function(ImageSource source)? photoPickerOverride;
+
+  const RegisterScreen({super.key, this.photoPickerOverride});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -78,6 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen>
   KtpOcrEntity? _cachedOcr;
   bool _ocrPrompted = false;
   bool _ocrApplied = false;
+  bool _allowManualWithoutOcr = false;
+  int _ocrRequestId = 0;
 
   bool get _canAutoFill => _step == 1 && _cachedOcr != null && !_ocrApplied;
 
@@ -95,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   ];
 
   static const _subtitles = [
-    'Posisikan seluruh e-KTP di dalam bingkai, lalu tekan Lanjut untuk memindai datanya.',
+    'Posisikan seluruh e-KTP di dalam bingkai. Data e-KTP akan dipindai otomatis setelah foto dipilih.',
     'Lengkapi data kependudukan sesuai e-KTP, lalu periksa kembali sebelum lanjut ke pembuatan akun.',
     'Lengkapi kontak aktif dan kata sandi untuk login ke aplikasi ${AppConstants.appName}.',
     'Pastikan seluruh data kependudukan dan akun Anda sudah sesuai sebelum menyelesaikan pendaftaran.',
@@ -332,8 +338,10 @@ class _RegisterScreenState extends State<RegisterScreen>
   void _handlePhotoPicked(File file) {
     setState(() {
       _ktpPhoto = file;
+      _allowManualWithoutOcr = false;
       _resetOcrCache();
     });
+    unawaited(_scanSelectedKtp(file));
   }
 
   void _resetOcrCache() {
@@ -344,6 +352,7 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   Future<void> _showPhotoSourceSheet() async {
+    if (_isPickingPhoto || _isScanningKtp) return;
     final colors = context.appColors;
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
@@ -385,6 +394,19 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
 
     if (!mounted || source == null) return;
+    final override = widget.photoPickerOverride;
+    if (override != null) {
+      setState(() => _isPickingPhoto = true);
+      try {
+        final file = await override(source);
+        if (!mounted || file == null) return;
+        _handlePhotoPicked(file);
+      } finally {
+        if (mounted) setState(() => _isPickingPhoto = false);
+      }
+      return;
+    }
+
     if (source == ImageSource.camera) {
       await _captureKtp();
     } else {
@@ -464,41 +486,76 @@ class _RegisterScreenState extends State<RegisterScreen>
     }
   }
 
-  Future<void> _scanKtpInBackground() async {
-    final photo = _ktpPhoto;
-    if (photo == null) return;
-
-    // Foto ini sudah pernah diproses: pakai cache, jangan panggil server lagi.
-    if (_ocrPhotoPath == photo.path) {
-      final ocr = _cachedOcr;
-      if (ocr != null && !_ocrPrompted) await _promptApplyOcr(ocr);
-      return;
-    }
-
-    if (_isScanningKtp) return;
-
+  Future<void> _scanSelectedKtp(File photo) async {
+    final requestId = ++_ocrRequestId;
     setState(() => _isScanningKtp = true);
-    final result = await sl<ScanKtpUsecase>()(photo);
-    if (!mounted) return;
 
-    if (_ktpPhoto?.path != photo.path) {
-      setState(() => _isScanningKtp = false);
+    final result = await sl<ScanKtpUsecase>()(photo);
+    if (!mounted || requestId != _ocrRequestId || _ktpPhoto?.path != photo.path) {
       return;
     }
 
-    final ocr = result.isRight ? result.right : null;
-    final hasData =
-        ocr != null &&
-        (ocr.nik.isNotEmpty || ocr.name.isNotEmpty || ocr.address.isNotEmpty);
+    setState(() => _isScanningKtp = false);
 
-    setState(() {
-      _isScanningKtp = false;
-      _ocrPhotoPath = photo.path;
-      _cachedOcr = hasData ? ocr : null;
-    });
+    result.fold(
+      (failure) {
+        final colors = context.appColors;
+        if (failure is ValidationFailure) {
+          _clearPhoto();
+          unawaited(
+            AppDialogs.showFailed(
+              context,
+              title: 'Foto Bukan e-KTP',
+              message: failure.message,
+              primaryButtonText: 'Ambil Foto Ulang',
+              primaryButtonColor: colors.primary,
+              onPrimaryPressed: () => unawaited(_showPhotoSourceSheet()),
+              secondaryButtonText: 'Tutup',
+            ),
+          );
+          return;
+        }
 
-    // Bila user sudah pindah step, cache disimpan untuk dipakai saat kembali.
-    if (hasData && _step == 1) await _promptApplyOcr(ocr);
+        unawaited(
+          AppDialogs.showFailed(
+            context,
+            title: 'Gagal Memindai e-KTP',
+            message:
+                '${failure.message} Anda dapat mencoba memindai ulang atau '
+                'mengisi data secara manual.',
+            primaryButtonText: 'Coba Scan Ulang',
+            primaryButtonColor: colors.primary,
+            onPrimaryPressed: () => unawaited(_scanSelectedKtp(photo)),
+            secondaryButtonText: 'Lanjut Manual',
+            onSecondaryPressed: () {
+              if (!mounted) return;
+              setState(() => _allowManualWithoutOcr = true);
+              _goToStep(1);
+            },
+          ),
+        );
+      },
+      (ocr) {
+        setState(() {
+          _ocrPhotoPath = photo.path;
+          _cachedOcr = ocr;
+          _ocrPrompted = false;
+          _ocrApplied = false;
+          _allowManualWithoutOcr = false;
+        });
+        _goToStep(1);
+        unawaited(_promptApplyOcrAfterStepReady(ocr, photo.path));
+      },
+    );
+  }
+
+  Future<void> _promptApplyOcrAfterStepReady(
+    KtpOcrEntity ocr,
+    String photoPath,
+  ) async {
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted || _step != 1 || _ocrPhotoPath != photoPath) return;
+    await _promptApplyOcr(ocr);
   }
 
   Future<void> _promptApplyOcr(KtpOcrEntity ocr) async {
@@ -542,14 +599,28 @@ class _RegisterScreenState extends State<RegisterScreen>
   }
 
   void _handleContinueToIdentity() {
-    _goToStep(1);
-    if (_ktpPhoto == null) return;
-    _scanKtpInBackground();
+    final photo = _ktpPhoto;
+    if (photo == null || _isScanningKtp) return;
+    if (_cachedOcr != null && _ocrPhotoPath == photo.path) {
+      _goToStep(1);
+      if (!_ocrPrompted) {
+        unawaited(_promptApplyOcrAfterStepReady(_cachedOcr!, photo.path));
+      }
+      return;
+    }
+    if (_allowManualWithoutOcr) {
+      _goToStep(1);
+      return;
+    }
+    unawaited(_scanSelectedKtp(photo));
   }
 
   void _clearPhoto() {
+    if (_isScanningKtp) return;
+    _ocrRequestId++;
     setState(() {
       _ktpPhoto = null;
+      _allowManualWithoutOcr = false;
       _resetOcrCache();
     });
   }
@@ -706,7 +777,8 @@ class _RegisterScreenState extends State<RegisterScreen>
               }
             },
             builder: (context, state) {
-              final isLoading = state is AuthLoading || _isSendingOtp;
+              final isLoading =
+                  state is AuthLoading || _isSendingOtp || _isScanningKtp;
 
               return Column(
                 children: [
@@ -773,6 +845,7 @@ class _RegisterScreenState extends State<RegisterScreen>
           entrance: _entranceController,
           photo: _ktpPhoto,
           onClearPhoto: _clearPhoto,
+          isScanning: _isScanningKtp,
         );
     }
   }
