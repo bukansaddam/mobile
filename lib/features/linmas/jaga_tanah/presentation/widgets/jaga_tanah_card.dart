@@ -1,5 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/utils/report_point_policy.dart';
+import 'package:akar/core/widgets/report_point_badge.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
 
@@ -56,6 +58,13 @@ class JagaTanahCard extends StatelessWidget {
     final titleText = item.title.trim().isNotEmpty
         ? item.title.trim()
         : 'Laporan tanpa judul';
+    final pointInfo = ReportPointPolicy.resolve(
+      category: ReportPointCategory.jagaTanah,
+      statusCode: item.statusCode,
+      fallbackStatus: item.status,
+      apiPoints: item.pointsAwarded,
+      timelineTypes: item.timelineTypes,
+    );
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -126,28 +135,41 @@ class JagaTanahCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxBadgeWidth),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: palette.bg,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          statusText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.labelSmall.copyWith(
-                            color: palette.fg,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: maxBadgeWidth),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: palette.bg,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              statusText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: palette.fg,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        if (pointInfo.isEarned) ...[
+                          const SizedBox(height: 6),
+                          ReportPointBadge(
+                            info: pointInfo,
+                            maxWidth: maxBadgeWidth,
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 );

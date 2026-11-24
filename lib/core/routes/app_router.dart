@@ -602,9 +602,10 @@ class AppRouter {
         name: complaintDetail,
         pageBuilder: (context, state) {
           final item = state.extra as ComplaintItem;
+          final showPoints = state.uri.queryParameters['showPoints'] == '1';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: ComplaintDetailPage(item: item),
+            child: ComplaintDetailPage(item: item, showPoints: showPoints),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -624,9 +625,10 @@ class AppRouter {
         path: '/complaint-detail',
         pageBuilder: (context, state) {
           final item = state.extra as ComplaintItem;
+          final showPoints = state.uri.queryParameters['showPoints'] == '1';
           return CustomTransitionPage(
             key: state.pageKey,
-            child: ComplaintDetailPage(item: item),
+            child: ComplaintDetailPage(item: item, showPoints: showPoints),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   return SlideTransition(
@@ -720,9 +722,14 @@ class AppRouter {
 
   static Future<void> toComplaintDetail(
     BuildContext context,
-    ComplaintItem item,
-  ) {
-    return context.pushNamed(complaintDetail, extra: item);
+    ComplaintItem item, {
+    bool showPoints = false,
+  }) {
+    return context.pushNamed(
+      complaintDetail,
+      extra: item,
+      queryParameters: showPoints ? const {'showPoints': '1'} : const {},
+    );
   }
 
   static Future<bool?> toCreateComplaint(BuildContext context) {

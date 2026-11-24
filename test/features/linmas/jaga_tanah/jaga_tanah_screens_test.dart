@@ -15,10 +15,12 @@ import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tana
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_detail_labels.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/create_jaga_tanah_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_detail_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_list_screen.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_attachment_section.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_detail_status_banner.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_review_step.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
@@ -1131,4 +1133,185 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  group('Jaga Tanah points UI', () {
+    testWidgets(
+      'JagaTanahCard hanya menampilkan +10 Poin untuk status terverifikasi dan aman di layar sempit',
+      (tester) async {
+        final verifiedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '101',
+            ticketNumber: 'JGT-101',
+            title: 'Lahan Kosong Sangat Luas Dekat Perbatasan Wilayah Desa',
+            category: 'Tanah Pemda',
+            status: 'bpn_forwarded',
+            statusLabel: 'Diteruskan ke BPN',
+          ),
+        );
+        final pendingItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '102',
+            ticketNumber: 'JGT-102',
+            title: 'Lahan Baru Diajukan',
+            category: 'Tanah Kas Desa',
+            status: 'submitted',
+            statusLabel: 'Diajukan',
+          ),
+        );
+        final rejectedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '103',
+            ticketNumber: 'JGT-103',
+            title: 'Lahan Ditolak',
+            category: 'Tanah Kas Desa',
+            status: 'rejected',
+            statusLabel: 'Ditolak',
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(
+                size: Size(320, 640),
+                textScaler: TextScaler.linear(2.0),
+              ),
+              child: Scaffold(
+                body: ListView(
+                  children: [
+                    JagaTanahCard(item: verifiedItem, onTap: () {}),
+                    JagaTanahCard(item: pendingItem, onTap: () {}),
+                    JagaTanahCard(item: rejectedItem, onTap: () {}),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('+10 Poin'), findsOneWidget);
+        expect(find.text('Potensi +10 Poin'), findsNothing);
+        expect(find.text('0 Poin'), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'JagaTanahDetailStatusBanner menampilkan strip poin untuk earned, pending, rejected, dan override API',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    JagaTanahDetailStatusBanner(
+                      detail: JagaTanahDetailEntity(
+                        id: '1',
+                        status: 'verified',
+                        statusLabel: 'Terverifikasi',
+                      ),
+                    ),
+                    JagaTanahDetailStatusBanner(
+                      detail: JagaTanahDetailEntity(
+                        id: '2',
+                        status: 'verification_assigned',
+                        statusLabel: 'Verifikasi Ditugaskan',
+                      ),
+                    ),
+                    JagaTanahDetailStatusBanner(
+                      detail: JagaTanahDetailEntity(
+                        id: '3',
+                        status: 'rejected',
+                        statusLabel: 'Ditolak',
+                      ),
+                    ),
+                    JagaTanahDetailStatusBanner(
+                      detail: JagaTanahDetailEntity(
+                        id: '4',
+                        status: 'verified',
+                        statusLabel: 'Terverifikasi',
+                        pointsAwarded: 25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('+10 Poin'), findsOneWidget);
+        expect(find.text('Potensi +10 Poin'), findsOneWidget);
+        expect(find.text('0 Poin'), findsOneWidget);
+        expect(find.text('+25 Poin'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'JagaTanahDetailPage mempertahankan pointsAwarded dari initialItem saat detail API tidak mengirim field poin',
+      (tester) async {
+        final repository = _FakeJagaTanahRepository()
+          ..detailResponse = const Right(
+            JagaTanahDetailEntity(
+              id: '90',
+              ticketNumber: 'JGT-090',
+              title: 'Lahan Desa',
+              description: 'Deskripsi lahan',
+              status: 'verified',
+              statusLabel: 'Terverifikasi',
+              category: 'Tanah Kas Desa',
+              address: 'Jl. Desa No. 9',
+            ),
+          );
+        final detailBloc = JagaTanahDetailBloc(
+          getReportDetail: GetJagaTanahDetailUsecase(repository),
+        );
+        addTearDown(detailBloc.close);
+
+        final initialItem = ComplaintItem(
+          id: 'JGT-090',
+          reportId: '90',
+          title: 'Lahan Desa',
+          category: 'Tanah Kas Desa',
+          dateTime: DateTime(2026, 11, 20),
+          description: 'Deskripsi lahan',
+          location: 'Jl. Desa No. 9',
+          attachments: const [],
+          status: ComplaintStatus.verified,
+          statusLabel: 'Terverifikasi',
+          pointsAwarded: 15,
+          statusHistory: const [],
+          icon: Icons.landscape_rounded,
+        );
+
+        // Pastikan fallback manual ComplaintStatus.verified tanpa statusCode tetap terverifikasi
+        final fallbackEntity = JagaTanahDetailLabels.fromComplaintItem(
+          initialItem,
+        );
+        expect(fallbackEntity.status, equals('verified'));
+        expect(fallbackEntity.pointsAwarded, equals(15));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: BlocProvider.value(
+              value: detailBloc,
+              child: JagaTanahDetailPage(
+                reportId: '90',
+                initialItem: initialItem,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('+15 Poin'), findsOneWidget);
+
+        detailBloc.add(const FetchJagaTanahDetailEvent('90'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('+15 Poin'), findsOneWidget);
+        expect(find.text('Poin diperoleh'), findsOneWidget);
+      },
+    );
+  });
 }

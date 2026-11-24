@@ -6,11 +6,13 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
+import 'package:akar/core/widgets/report_point_banner_strip.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +20,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ComplaintDetailPage extends StatefulWidget {
   final ComplaintItem item;
+  final bool showPoints;
 
-  const ComplaintDetailPage({super.key, required this.item});
+  const ComplaintDetailPage({
+    super.key,
+    required this.item,
+    this.showPoints = false,
+  });
 
-  static Future<void> show(BuildContext context, ComplaintItem item) {
-    return AppRouter.toComplaintDetail(context, item);
+  static Future<void> show(
+    BuildContext context,
+    ComplaintItem item, {
+    bool showPoints = false,
+  }) {
+    return AppRouter.toComplaintDetail(context, item, showPoints: showPoints);
   }
 
   static Future<void> showAsBottomSheet(
     BuildContext context,
-    ComplaintItem item,
-  ) {
+    ComplaintItem item, {
+    bool showPoints = false,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -54,7 +66,9 @@ class ComplaintDetailPage extends StatefulWidget {
                   borderRadius: BorderRadius.circular(3),
                 ),
               ),
-              Expanded(child: ComplaintDetailPage(item: item)),
+              Expanded(
+                child: ComplaintDetailPage(item: item, showPoints: showPoints),
+              ),
             ],
           ),
         );
@@ -154,48 +168,63 @@ class _ComplaintDetailPageState extends State<ComplaintDetailPage> {
                     width: 1,
                   ),
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: colors.primary.withAlpha(30),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        item.status.icon,
-                        color: colors.primary,
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Status Pengaduan',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: colors.textSecondary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: colors.primary.withAlpha(30),
+                            shape: BoxShape.circle,
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            item.statusLabel.isNotEmpty
-                                ? item.statusLabel
-                                : item.status.label,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: colors.primary,
-                            ),
+                          child: Icon(
+                            item.status.icon,
+                            color: colors.primary,
+                            size: 22,
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Status Pengaduan',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: colors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                item.statusLabel.isNotEmpty
+                                    ? item.statusLabel
+                                    : item.status.label,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: colors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+                    if (widget.showPoints)
+                      ReportPointBannerStrip(
+                        info: ReportPointPolicy.resolve(
+                          category: ReportPointCategory.laporanInsidentil,
+                          statusCode: item.statusCode,
+                          fallbackStatus: item.status,
+                          apiPoints: item.pointsAwarded,
+                          timelineTypes: item.timelineTypes,
+                        ),
+                      ),
                   ],
                 ),
               ),

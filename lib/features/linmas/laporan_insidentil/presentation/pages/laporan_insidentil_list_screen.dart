@@ -48,7 +48,7 @@ class LaporanInsidentilListScreen extends HookWidget {
 
   void _openDetail(BuildContext context, ComplaintItem item) {
     FocusManager.instance.primaryFocus?.unfocus();
-    ComplaintDetailPage.show(context, item);
+    ComplaintDetailPage.show(context, item, showPoints: true);
   }
 
   void _openFilterSheet(BuildContext context) {

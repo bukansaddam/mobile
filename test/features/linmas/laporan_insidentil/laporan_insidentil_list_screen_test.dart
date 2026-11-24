@@ -1,18 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/routes/app_router.dart';
+import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
+import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_card.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
+import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_incident_categories_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_my_complaints_usecase.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
+import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
+import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +40,7 @@ class _FakeComplaintRepository implements ComplaintRepository {
         ComplaintCategoryOption(id: 2, code: 'lingkungan', label: 'Lingkungan'),
       ]);
   Completer<Either<Failure, ComplaintPaginatedEntity>>? pendingCompleter;
+  Either<Failure, ComplaintReportEntity>? detailResponse;
   int fetchCalls = 0;
   int categoryFetchCalls = 0;
   String? lastStatusFilter;
@@ -80,8 +88,11 @@ class _FakeComplaintRepository implements ComplaintRepository {
   }
 
   @override
-  Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(String id) {
-    throw UnimplementedError();
+  Future<Either<Failure, ComplaintReportEntity>> getComplaintDetail(
+    String id,
+  ) async {
+    return detailResponse ??
+        Right(ComplaintReportEntity(id: id, ticketNumber: 'INC-$id'));
   }
 
   @override
@@ -440,5 +451,328 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(320, 640));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  group('Laporan Insidentil points UI', () {
+    testWidgets(
+      'LaporanInsidentilCard menampilkan +1 Poin hanya untuk laporan terverifikasi dan mengabaikan verification/rejected',
+      (tester) async {
+        final verifiedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '201',
+            ticketNumber: 'INC-201',
+            title: 'Pohon Tumbang Menutup Jalan Utama',
+            category: 'Bencana Alam',
+            status: 'completed',
+            statusLabel: 'Selesai',
+          ),
+        );
+        final waitingVerificationItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '202',
+            ticketNumber: 'INC-202',
+            title: 'Lampu Jalan Mati',
+            category: 'Lingkungan',
+            status: 'verification',
+            statusLabel: 'Menunggu Verifikasi',
+          ),
+        );
+        final rejectedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '203',
+            ticketNumber: 'INC-203',
+            title: 'Laporan Ganda',
+            category: 'Keamanan',
+            status: 'rejected',
+            statusLabel: 'Ditolak',
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(
+                size: Size(320, 640),
+                textScaler: TextScaler.linear(2.0),
+              ),
+              child: Scaffold(
+                body: ListView(
+                  children: [
+                    LaporanInsidentilCard(item: verifiedItem, onTap: () {}),
+                    LaporanInsidentilCard(
+                      item: waitingVerificationItem,
+                      onTap: () {},
+                    ),
+                    LaporanInsidentilCard(item: rejectedItem, onTap: () {}),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('+1 Poin'), findsOneWidget);
+        expect(find.text('Potensi +1 Poin'), findsNothing);
+        expect(find.text('0 Poin'), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'ComplaintDetailPage menampilkan strip poin saat showPoints true dan menyembunyikannya untuk Dumas (default false)',
+      (tester) async {
+        final verifiedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '',
+            ticketNumber: 'INC-201',
+            title: 'Pohon Tumbang',
+            category: 'Bencana Alam',
+            status: 'verified',
+            statusLabel: 'Diverifikasi',
+          ),
+        );
+        final pendingItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '',
+            ticketNumber: 'INC-202',
+            title: 'Lampu Mati',
+            category: 'Lingkungan',
+            status: 'verification',
+            statusLabel: 'Menunggu Verifikasi',
+          ),
+        );
+        final rejectedItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '',
+            ticketNumber: 'INC-203',
+            title: 'Laporan Ganda',
+            category: 'Keamanan',
+            status: 'rejected',
+            statusLabel: 'Ditolak',
+          ),
+        );
+
+        // Default (Dumas): tidak ada strip poin
+        await tester.pumpWidget(
+          MaterialApp(home: ComplaintDetailPage(item: verifiedItem)),
+        );
+        expect(find.text('+1 Poin'), findsNothing);
+        expect(find.text('Poin diperoleh'), findsNothing);
+
+        // Insidentil (showPoints: true) - earned
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ComplaintDetailPage(item: verifiedItem, showPoints: true),
+          ),
+        );
+        expect(find.text('+1 Poin'), findsOneWidget);
+        expect(find.text('Poin diperoleh'), findsOneWidget);
+
+        // Insidentil (showPoints: true) - pending (verification)
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ComplaintDetailPage(item: pendingItem, showPoints: true),
+          ),
+        );
+        expect(find.text('Potensi +1 Poin'), findsOneWidget);
+        expect(find.text('Menunggu verifikasi'), findsOneWidget);
+
+        // Insidentil (showPoints: true) - rejected
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ComplaintDetailPage(item: rejectedItem, showPoints: true),
+          ),
+        );
+        expect(find.text('0 Poin'), findsOneWidget);
+        expect(find.text('Tidak memperoleh poin'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'LaporanInsidentilListScreen meneruskan query showPoints=1 saat membuka detail',
+      (tester) async {
+        final repository = _FakeComplaintRepository()
+          ..response = const Right(
+            ComplaintPaginatedEntity(
+              data: [
+                ComplaintReportEntity(
+                  id: '301',
+                  ticketNumber: 'INC-301',
+                  title: 'Longsor Kecil',
+                  category: 'Bencana Alam',
+                  status: 'verified',
+                  statusLabel: 'Diverifikasi',
+                ),
+              ],
+              currentPage: 1,
+              lastPage: 1,
+              total: 1,
+            ),
+          );
+        final bloc = MyComplaintListBloc(
+          getMyComplaints: GetMyComplaintsUsecase(repository),
+        );
+        addTearDown(bloc.close);
+
+        String? capturedShowPoints;
+        final router = GoRouter(
+          initialLocation: AppRouter.laporanInsidentilPath,
+          routes: [
+            GoRoute(
+              path: AppRouter.laporanInsidentilPath,
+              name: AppRouter.laporanInsidentil,
+              builder: (context, state) => BlocProvider.value(
+                value: bloc,
+                child: const LaporanInsidentilListScreen(),
+              ),
+            ),
+            GoRoute(
+              path: AppRouter.complaintDetailPath,
+              name: AppRouter.complaintDetail,
+              builder: (context, state) {
+                capturedShowPoints = state.uri.queryParameters['showPoints'];
+                final item = state.extra as ComplaintItem;
+                return Scaffold(body: Text('Detail ${item.id}'));
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        bloc.add(const FetchMyComplaintsEvent(isInsidentil: true));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Longsor Kecil'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Detail INC-301'), findsOneWidget);
+        expect(capturedShowPoints, equals('1'));
+      },
+    );
+
+    testWidgets(
+      'ComplaintDetailPage memperbarui strip poin setelah ComplaintDetailBloc memuat detail terbaru dan aman di 320dp 2.0x Dark/Light',
+      (tester) async {
+        final repository = _FakeComplaintRepository()
+          ..detailResponse = const Right(
+            ComplaintReportEntity(
+              id: '501',
+              ticketNumber: 'INC-501',
+              title: 'Pohon Tumbang',
+              description: 'Menutup jalan',
+              category: 'Bencana Alam',
+              address: 'Jl. Merdeka',
+              status: 'verified',
+              statusLabel: 'Diverifikasi',
+              pointsAwarded: 4,
+            ),
+          );
+
+        if (sl.isRegistered<ComplaintDetailBloc>()) {
+          sl.unregister<ComplaintDetailBloc>();
+        }
+        sl.registerFactory<ComplaintDetailBloc>(
+          () => ComplaintDetailBloc(
+            getComplaintDetail: GetComplaintDetailUsecase(repository),
+          ),
+        );
+        addTearDown(() {
+          if (sl.isRegistered<ComplaintDetailBloc>()) {
+            sl.unregister<ComplaintDetailBloc>();
+          }
+        });
+
+        final initialItem = ComplaintItem.fromReport(
+          const ComplaintReportEntity(
+            id: '501',
+            ticketNumber: 'INC-501',
+            title: 'Pohon Tumbang',
+            description: 'Menutup jalan',
+            category: 'Bencana Alam',
+            address: 'Jl. Merdeka',
+            status: 'verification',
+            statusLabel: 'Menunggu Verifikasi',
+          ),
+        );
+
+        for (final theme in [AppTheme.lightTheme, AppTheme.darkTheme]) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: theme,
+              home: MediaQuery(
+                data: const MediaQueryData(
+                  size: Size(320, 640),
+                  textScaler: TextScaler.linear(2.0),
+                ),
+                child: ComplaintDetailPage(
+                  item: initialItem,
+                  showPoints: true,
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(find.text('+4 Poin'), findsOneWidget);
+          expect(find.text('Poin diperoleh'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        }
+      },
+    );
+
+    testWidgets(
+      'NotificationNavigationHelper meneruskan showPoints=1 dan statusCode untuk petugas Linmas',
+      (tester) async {
+        String? capturedShowPoints;
+        ComplaintItem? capturedItem;
+
+        final router = GoRouter(
+          initialLocation: '/',
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () {
+                    NotificationNavigationHelper.handleNotificationTap(
+                      context,
+                      const AppNotificationEntity(
+                        id: 'notif-1',
+                        type: 'report',
+                        kind: 'report_status_update',
+                        severity: NotificationSeverity.normal,
+                        title: 'Laporan Diverifikasi',
+                        body: 'Laporan Anda telah diverifikasi.',
+                        reportId: '999',
+                        ticketNumber: 'INC-999',
+                        status: 'verified',
+                      ),
+                    );
+                  },
+                  child: const Text('Buka Notif'),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: AppRouter.complaintDetailPath,
+              name: AppRouter.complaintDetail,
+              builder: (context, state) {
+                capturedShowPoints = state.uri.queryParameters['showPoints'];
+                capturedItem = state.extra as ComplaintItem;
+                return const Scaffold(body: Text('Opened Detail'));
+              },
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.tap(find.text('Buka Notif'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Opened Detail'), findsOneWidget);
+        expect(capturedShowPoints, equals('1'));
+        expect(capturedItem?.statusCode, equals('verified'));
+      },
+    );
   });
 }

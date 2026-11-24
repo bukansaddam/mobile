@@ -57,11 +57,16 @@ class NotificationNavigationHelper {
           location: '-',
           attachments: const [],
           status: complaintStatusFromCode(item.status ?? ''),
+          statusCode: item.status ?? '',
           statusLabel: item.status ?? '',
           statusHistory: const [],
           icon: Icons.assignment_outlined,
         );
-        await router.pushNamed(AppRouter.complaintDetail, extra: placeholder);
+        await router.pushNamed(
+          AppRouter.complaintDetail,
+          extra: placeholder,
+          queryParameters: !isMember ? const {'showPoints': '1'} : const {},
+        );
         return;
       }
 

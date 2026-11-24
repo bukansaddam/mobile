@@ -1,4 +1,5 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
+import 'package:akar/features/profile/presentation/widgets/officer_points_breakdown_card.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ class ProfilePointsInfoSheet extends StatelessWidget {
     final colors = context.appColors;
     final formattedPoints = ProfilePointsCard.formatPoints(points);
     final roleDescription = isOfficer
-        ? 'Poin diperoleh dari laporan tugas yang telah Anda buat dan diperbarui secara otomatis oleh sistem.'
+        ? 'Poin diperoleh dari laporan tugas yang telah Anda buat setelah laporan diverifikasi dan diperbarui secara otomatis oleh sistem.'
         : 'Poin diperoleh dari laporan pengaduan yang telah Anda buat dan diperbarui secara otomatis oleh sistem.';
 
     return Material(
@@ -133,13 +134,15 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                           size: 26,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          formattedPoints,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: colors.warningDark,
-                            letterSpacing: -0.5,
+                        Expanded(
+                          child: Text(
+                            formattedPoints,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: colors.warningDark,
+                              letterSpacing: -0.5,
+                            ),
                           ),
                         ),
                       ],
@@ -165,6 +168,10 @@ class ProfilePointsInfoSheet extends StatelessWidget {
                   height: 1.45,
                 ),
               ),
+              if (isOfficer) ...[
+                const SizedBox(height: 12),
+                const OfficerPointsBreakdownCard(),
+              ],
               const SizedBox(height: 18),
               Container(
                 width: double.infinity,

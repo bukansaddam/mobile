@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_info_sheet.dart';
 
@@ -74,6 +75,65 @@ void main() {
         find.textContaining('laporan tugas yang telah Anda buat'),
         findsOneWidget,
       );
+      expect(find.text('Laporan Jaga Tanah'), findsOneWidget);
+      expect(find.text('+10 Poin'), findsOneWidget);
+      expect(find.text('Laporan Insidentil'), findsOneWidget);
+      expect(find.text('+1 Poin'), findsOneWidget);
+      expect(
+        find.textContaining('setelah laporan diverifikasi'),
+        findsWidgets,
+      );
     });
+
+    testWidgets('hides officer point breakdown on citizen sheet', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: ProfilePointsInfoSheet(points: 50, isOfficer: false),
+          ),
+        ),
+      );
+
+      expect(find.text('Laporan Jaga Tanah'), findsNothing);
+      expect(find.text('+10 Poin'), findsNothing);
+      expect(find.text('Laporan Insidentil'), findsNothing);
+      expect(find.text('+1 Poin'), findsNothing);
+    });
+
+    testWidgets(
+      'renders officer breakdown cleanly on 320x640 at 2.5x text scale in Light and Dark Mode',
+      (tester) async {
+        for (final theme in [AppTheme.lightTheme, AppTheme.darkTheme]) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: theme,
+              home: const MediaQuery(
+                data: MediaQueryData(
+                  size: Size(320, 640),
+                  textScaler: TextScaler.linear(2.5),
+                ),
+                child: Scaffold(
+                  body: SizedBox(
+                    width: 320,
+                    child: ProfilePointsInfoSheet(
+                      points: 1250,
+                      isOfficer: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          expect(find.text('Laporan Jaga Tanah'), findsOneWidget);
+          expect(find.text('+10 Poin'), findsOneWidget);
+          expect(find.text('Laporan Insidentil'), findsOneWidget);
+          expect(find.text('+1 Poin'), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        }
+      },
+    );
   });
 }

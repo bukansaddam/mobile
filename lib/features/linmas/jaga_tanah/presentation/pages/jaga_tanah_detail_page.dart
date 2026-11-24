@@ -55,6 +55,7 @@ class JagaTanahDetailPage extends StatelessWidget {
         reportedAt: loaded.reportedAt ?? fallback.reportedAt,
         updatedAt: loaded.updatedAt,
         escalationLevel: loaded.escalationLevel,
+        pointsAwarded: loaded.pointsAwarded ?? fallback.pointsAwarded,
         address: loaded.address.isNotEmpty ? loaded.address : fallback.address,
         province: loaded.province,
         regency: loaded.regency,
