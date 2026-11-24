@@ -828,7 +828,7 @@ as DateTime?,
 /// @nodoc
 mixin _$ComplaintReportEntity {
 
- String get id; String get ticketNumber; String get title; String get description; String get status; String get statusLabel; String get category; String get address; double? get latitude; double? get longitude; DateTime? get reportedAt; List<ComplaintAttachmentEntity> get attachments; ComplaintSlaEntity? get sla; List<ComplaintTimelineEntity> get timeline;
+ String get id; String get ticketNumber; String get title; String get description; String get status; String get statusLabel; String get category; String get address; double? get latitude; double? get longitude; DateTime? get reportedAt; int? get pointsAwarded; List<ComplaintAttachmentEntity> get attachments; ComplaintSlaEntity? get sla; List<ComplaintTimelineEntity> get timeline;
 /// Create a copy of ComplaintReportEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -840,20 +840,20 @@ $ComplaintReportEntityCopyWith<ComplaintReportEntity> get copyWith => _$Complain
 @override
 bool operator ==(Object other) {
   final _this = this as ComplaintReportEntity;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.ticketNumber, _this.ticketNumber) || other.ticketNumber == _this.ticketNumber)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.statusLabel, _this.statusLabel) || other.statusLabel == _this.statusLabel)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.reportedAt, _this.reportedAt) || other.reportedAt == _this.reportedAt)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.sla, _this.sla) || other.sla == _this.sla)&&const DeepCollectionEquality().equals(other.timeline, _this.timeline));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplaintReportEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.ticketNumber, _this.ticketNumber) || other.ticketNumber == _this.ticketNumber)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.statusLabel, _this.statusLabel) || other.statusLabel == _this.statusLabel)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.address, _this.address) || other.address == _this.address)&&(identical(other.latitude, _this.latitude) || other.latitude == _this.latitude)&&(identical(other.longitude, _this.longitude) || other.longitude == _this.longitude)&&(identical(other.reportedAt, _this.reportedAt) || other.reportedAt == _this.reportedAt)&&(identical(other.pointsAwarded, _this.pointsAwarded) || other.pointsAwarded == _this.pointsAwarded)&&const DeepCollectionEquality().equals(other.attachments, _this.attachments)&&(identical(other.sla, _this.sla) || other.sla == _this.sla)&&const DeepCollectionEquality().equals(other.timeline, _this.timeline));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ComplaintReportEntity;
-  return Object.hash(runtimeType,_this.id,_this.ticketNumber,_this.title,_this.description,_this.status,_this.statusLabel,_this.category,_this.address,_this.latitude,_this.longitude,_this.reportedAt,const DeepCollectionEquality().hash(_this.attachments),_this.sla,const DeepCollectionEquality().hash(_this.timeline));
+  return Object.hash(runtimeType,_this.id,_this.ticketNumber,_this.title,_this.description,_this.status,_this.statusLabel,_this.category,_this.address,_this.latitude,_this.longitude,_this.reportedAt,_this.pointsAwarded,const DeepCollectionEquality().hash(_this.attachments),_this.sla,const DeepCollectionEquality().hash(_this.timeline));
 }
 
 @override
 String toString() {
   final _this = this as ComplaintReportEntity;
-  return 'ComplaintReportEntity(id: ${_this.id}, ticketNumber: ${_this.ticketNumber}, title: ${_this.title}, description: ${_this.description}, status: ${_this.status}, statusLabel: ${_this.statusLabel}, category: ${_this.category}, address: ${_this.address}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, reportedAt: ${_this.reportedAt}, attachments: ${_this.attachments}, sla: ${_this.sla}, timeline: ${_this.timeline})';
+  return 'ComplaintReportEntity(id: ${_this.id}, ticketNumber: ${_this.ticketNumber}, title: ${_this.title}, description: ${_this.description}, status: ${_this.status}, statusLabel: ${_this.statusLabel}, category: ${_this.category}, address: ${_this.address}, latitude: ${_this.latitude}, longitude: ${_this.longitude}, reportedAt: ${_this.reportedAt}, pointsAwarded: ${_this.pointsAwarded}, attachments: ${_this.attachments}, sla: ${_this.sla}, timeline: ${_this.timeline})';
 }
 
 
@@ -864,7 +864,7 @@ abstract mixin class $ComplaintReportEntityCopyWith<$Res>  {
   factory $ComplaintReportEntityCopyWith(ComplaintReportEntity value, $Res Function(ComplaintReportEntity) _then) = _$ComplaintReportEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String ticketNumber, String title, String description, String status, String statusLabel, String category, String address, double? latitude, double? longitude, DateTime? reportedAt, List<ComplaintAttachmentEntity> attachments, ComplaintSlaEntity? sla, List<ComplaintTimelineEntity> timeline
+ String id, String ticketNumber, String title, String description, String status, String statusLabel, String category, String address, double? latitude, double? longitude, DateTime? reportedAt, int? pointsAwarded, List<ComplaintAttachmentEntity> attachments, ComplaintSlaEntity? sla, List<ComplaintTimelineEntity> timeline
 });
 
 
@@ -881,7 +881,7 @@ class _$ComplaintReportEntityCopyWithImpl<$Res>
 
 /// Create a copy of ComplaintReportEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? pointsAwarded = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
   return _then(ComplaintReportEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
@@ -894,7 +894,8 @@ as String,address: null == address ? _self.address : address // ignore: cast_nul
 as String,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,reportedAt: freezed == reportedAt ? _self.reportedAt : reportedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,attachments: null == attachments ? _self.attachments : attachments // ignore: cast_nullable_to_non_nullable
+as DateTime?,pointsAwarded: freezed == pointsAwarded ? _self.pointsAwarded : pointsAwarded // ignore: cast_nullable_to_non_nullable
+as int?,attachments: null == attachments ? _self.attachments : attachments // ignore: cast_nullable_to_non_nullable
 as List<ComplaintAttachmentEntity>,sla: freezed == sla ? _self.sla : sla // ignore: cast_nullable_to_non_nullable
 as ComplaintSlaEntity?,timeline: null == timeline ? _self.timeline : timeline // ignore: cast_nullable_to_non_nullable
 as List<ComplaintTimelineEntity>,
@@ -994,10 +995,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  int? pointsAwarded,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ComplaintReportEntity() when $default != null:
-return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.attachments,_that.sla,_that.timeline);case _:
+return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.pointsAwarded,_that.attachments,_that.sla,_that.timeline);case _:
   return orElse();
 
 }
@@ -1015,10 +1016,10 @@ return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  int? pointsAwarded,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)  $default,) {final _that = this;
 switch (_that) {
 case _ComplaintReportEntity():
-return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.attachments,_that.sla,_that.timeline);case _:
+return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.pointsAwarded,_that.attachments,_that.sla,_that.timeline);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1035,10 +1036,10 @@ return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String ticketNumber,  String title,  String description,  String status,  String statusLabel,  String category,  String address,  double? latitude,  double? longitude,  DateTime? reportedAt,  int? pointsAwarded,  List<ComplaintAttachmentEntity> attachments,  ComplaintSlaEntity? sla,  List<ComplaintTimelineEntity> timeline)?  $default,) {final _that = this;
 switch (_that) {
 case _ComplaintReportEntity() when $default != null:
-return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.attachments,_that.sla,_that.timeline);case _:
+return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.status,_that.statusLabel,_that.category,_that.address,_that.latitude,_that.longitude,_that.reportedAt,_that.pointsAwarded,_that.attachments,_that.sla,_that.timeline);case _:
   return null;
 
 }
@@ -1050,7 +1051,7 @@ return $default(_that.id,_that.ticketNumber,_that.title,_that.description,_that.
 
 
 class _ComplaintReportEntity extends ComplaintReportEntity {
-  const _ComplaintReportEntity({this.id = '', this.ticketNumber = '', this.title = '', this.description = '', this.status = '', this.statusLabel = '', this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt,  List<ComplaintAttachmentEntity> attachments = const [], this.sla,  List<ComplaintTimelineEntity> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
+  const _ComplaintReportEntity({this.id = '', this.ticketNumber = '', this.title = '', this.description = '', this.status = '', this.statusLabel = '', this.category = '', this.address = '', this.latitude, this.longitude, this.reportedAt, this.pointsAwarded,  List<ComplaintAttachmentEntity> attachments = const [], this.sla,  List<ComplaintTimelineEntity> timeline = const []}): _attachments = attachments,_timeline = timeline,super._();
   
 
 @override@JsonKey() final  String id;
@@ -1064,6 +1065,7 @@ class _ComplaintReportEntity extends ComplaintReportEntity {
 @override final  double? latitude;
 @override final  double? longitude;
 @override final  DateTime? reportedAt;
+@override final  int? pointsAwarded;
  final  List<ComplaintAttachmentEntity> _attachments;
 @override@JsonKey() List<ComplaintAttachmentEntity> get attachments {
   if (_attachments is EqualUnmodifiableListView) return _attachments;
@@ -1090,18 +1092,18 @@ _$ComplaintReportEntityCopyWith<_ComplaintReportEntity> get copyWith => __$Compl
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, _timeline));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplaintReportEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusLabel, statusLabel) || other.statusLabel == statusLabel)&&(identical(other.category, category) || other.category == category)&&(identical(other.address, address) || other.address == address)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&(identical(other.reportedAt, reportedAt) || other.reportedAt == reportedAt)&&(identical(other.pointsAwarded, pointsAwarded) || other.pointsAwarded == pointsAwarded)&&const DeepCollectionEquality().equals(other.attachments, _attachments)&&(identical(other.sla, sla) || other.sla == sla)&&const DeepCollectionEquality().equals(other.timeline, _timeline));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
+    return Object.hash(runtimeType,id,ticketNumber,title,description,status,statusLabel,category,address,latitude,longitude,reportedAt,pointsAwarded,const DeepCollectionEquality().hash(_attachments),sla,const DeepCollectionEquality().hash(_timeline));
 }
 
 @override
 String toString() {
-    return 'ComplaintReportEntity(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, attachments: $attachments, sla: $sla, timeline: $timeline)';
+    return 'ComplaintReportEntity(id: $id, ticketNumber: $ticketNumber, title: $title, description: $description, status: $status, statusLabel: $statusLabel, category: $category, address: $address, latitude: $latitude, longitude: $longitude, reportedAt: $reportedAt, pointsAwarded: $pointsAwarded, attachments: $attachments, sla: $sla, timeline: $timeline)';
 }
 
 
@@ -1112,7 +1114,7 @@ abstract mixin class _$ComplaintReportEntityCopyWith<$Res> implements $Complaint
   factory _$ComplaintReportEntityCopyWith(_ComplaintReportEntity value, $Res Function(_ComplaintReportEntity) _then) = __$ComplaintReportEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String ticketNumber, String title, String description, String status, String statusLabel, String category, String address, double? latitude, double? longitude, DateTime? reportedAt, List<ComplaintAttachmentEntity> attachments, ComplaintSlaEntity? sla, List<ComplaintTimelineEntity> timeline
+ String id, String ticketNumber, String title, String description, String status, String statusLabel, String category, String address, double? latitude, double? longitude, DateTime? reportedAt, int? pointsAwarded, List<ComplaintAttachmentEntity> attachments, ComplaintSlaEntity? sla, List<ComplaintTimelineEntity> timeline
 });
 
 
@@ -1129,7 +1131,7 @@ class __$ComplaintReportEntityCopyWithImpl<$Res>
 
 /// Create a copy of ComplaintReportEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ticketNumber = null,Object? title = null,Object? description = null,Object? status = null,Object? statusLabel = null,Object? category = null,Object? address = null,Object? latitude = freezed,Object? longitude = freezed,Object? reportedAt = freezed,Object? pointsAwarded = freezed,Object? attachments = null,Object? sla = freezed,Object? timeline = null,}) {
   return _then(_ComplaintReportEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
@@ -1142,7 +1144,8 @@ as String,address: null == address ? _self.address : address // ignore: cast_nul
 as String,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,reportedAt: freezed == reportedAt ? _self.reportedAt : reportedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,attachments: null == attachments ? _self._attachments : attachments // ignore: cast_nullable_to_non_nullable
+as DateTime?,pointsAwarded: freezed == pointsAwarded ? _self.pointsAwarded : pointsAwarded // ignore: cast_nullable_to_non_nullable
+as int?,attachments: null == attachments ? _self._attachments : attachments // ignore: cast_nullable_to_non_nullable
 as List<ComplaintAttachmentEntity>,sla: freezed == sla ? _self.sla : sla // ignore: cast_nullable_to_non_nullable
 as ComplaintSlaEntity?,timeline: null == timeline ? _self._timeline : timeline // ignore: cast_nullable_to_non_nullable
 as List<ComplaintTimelineEntity>,

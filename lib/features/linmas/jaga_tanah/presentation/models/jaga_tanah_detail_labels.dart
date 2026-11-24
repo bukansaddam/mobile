@@ -99,10 +99,15 @@ class JagaTanahDetailLabels {
       ticketNumber: item.id,
       title: item.title,
       description: item.description,
-      status: complaintStatusCode(item.status),
+      status: item.statusCode.isNotEmpty
+          ? item.statusCode
+          : (item.status == ComplaintStatus.verified
+                ? 'verified'
+                : complaintStatusCode(item.status)),
       statusLabel: item.statusLabel,
       category: item.category,
       reportedAt: item.dateTime,
+      pointsAwarded: item.pointsAwarded,
       address: item.location,
       attachments: item.attachments
           .map(

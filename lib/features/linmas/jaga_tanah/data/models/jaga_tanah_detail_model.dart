@@ -1,5 +1,6 @@
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
+import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 
@@ -109,6 +110,7 @@ class JagaTanahDetailModel {
         escalationLevel:
             _pickInt(coreMaps, const ['escalation_level', 'escalationLevel']) ??
             0,
+        pointsAwarded: ReportPointPolicy.parsePointsFromMaps(coreMaps),
         address: _pickString(spatialMaps, const ['address', 'landmark']) ?? '',
         province: _pickString(spatialMaps, const ['province', 'province_name']),
         regency: _pickString(spatialMaps, const ['regency', 'regency_name']),

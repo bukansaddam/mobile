@@ -84,6 +84,7 @@ _ComplaintReportModel _$ComplaintReportModelFromJson(
   updatedAt: json['updatedAt'] == null
       ? null
       : DateTime.parse(json['updatedAt'] as String),
+  pointsAwarded: (_readPointsAwarded(json, 'points_awarded') as num?)?.toInt(),
   attachments:
       (json['attachments'] as List<dynamic>?)
           ?.map(
@@ -118,6 +119,7 @@ Map<String, dynamic> _$ComplaintReportModelToJson(
   'longitude': instance.longitude,
   'reportedAt': instance.reportedAt?.toIso8601String(),
   'updatedAt': instance.updatedAt?.toIso8601String(),
+  'points_awarded': instance.pointsAwarded,
   'attachments': instance.attachments,
   'sla': instance.sla,
   'timeline': instance.timeline,
@@ -160,6 +162,7 @@ _ComplaintReportDetailModel _$ComplaintReportDetailModelFromJson(
       : ComplaintLocationModel.fromJson(
           json['location'] as Map<String, dynamic>,
         ),
+  pointsAwarded: (_readPointsAwarded(json, 'points_awarded') as num?)?.toInt(),
   attachments:
       (json['attachments'] as List<dynamic>?)
           ?.map(
@@ -184,6 +187,7 @@ Map<String, dynamic> _$ComplaintReportDetailModelToJson(
 ) => <String, dynamic>{
   'complaint': instance.complaint,
   'location': instance.location,
+  'points_awarded': instance.pointsAwarded,
   'attachments': instance.attachments,
   'sla': instance.sla,
   'timeline': instance.timeline,

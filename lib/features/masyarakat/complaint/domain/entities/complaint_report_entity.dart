@@ -50,6 +50,7 @@ abstract class ComplaintReportEntity with _$ComplaintReportEntity {
     double? latitude,
     double? longitude,
     DateTime? reportedAt,
+    int? pointsAwarded,
     @Default([]) List<ComplaintAttachmentEntity> attachments,
     ComplaintSlaEntity? sla,
     @Default([]) List<ComplaintTimelineEntity> timeline,

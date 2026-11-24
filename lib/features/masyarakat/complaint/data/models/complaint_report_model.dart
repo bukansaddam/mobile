@@ -1,7 +1,11 @@
+import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'complaint_report_model.freezed.dart';
 part 'complaint_report_model.g.dart';
+
+Object? _readPointsAwarded(Map json, String key) =>
+    ReportPointPolicy.parsePointsFromMap(json);
 
 Object? _readTicketNumber(Map json, String key) =>
     (json['ticketNumber'] ?? json['ticket_number'])?.toString() ?? '';
@@ -92,6 +96,8 @@ abstract class ComplaintReportModel with _$ComplaintReportModel {
     num? longitude,
     DateTime? reportedAt,
     DateTime? updatedAt,
+    @JsonKey(name: 'points_awarded', readValue: _readPointsAwarded)
+    int? pointsAwarded,
     @Default([]) List<ComplaintAttachmentModel> attachments,
     ComplaintSlaModel? sla,
     @Default([]) List<ComplaintTimelineModel> timeline,
@@ -122,6 +128,8 @@ abstract class ComplaintReportDetailModel with _$ComplaintReportDetailModel {
   const factory ComplaintReportDetailModel({
     @Default(ComplaintReportModel()) ComplaintReportModel complaint,
     ComplaintLocationModel? location,
+    @JsonKey(name: 'points_awarded', readValue: _readPointsAwarded)
+    int? pointsAwarded,
     @Default([]) List<ComplaintAttachmentModel> attachments,
     ComplaintSlaModel? sla,
     @Default([]) List<ComplaintTimelineModel> timeline,

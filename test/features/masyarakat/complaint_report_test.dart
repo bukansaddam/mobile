@@ -669,4 +669,44 @@ void main() {
       expect((state as ComplaintDetailFailure).message, 'Tidak ditemukan');
     });
   });
+
+  group('Hybrid points & raw statusCode parsing', () {
+    test('parses points_awarded and preserves statusCode and timelineTypes', () {
+      final model = ComplaintReportModel.fromJson({
+        'id': 77,
+        'ticketNumber': 'INC-2026-00077',
+        'title': 'Pohon Tumbang',
+        'status': 'verification',
+        'statusLabel': 'Menunggu Verifikasi',
+        'points_awarded': 3,
+        'timeline': [
+          {'type': 'created', 'description': 'Dibuat'},
+          {'type': 'verified', 'description': 'Diverifikasi'},
+        ],
+      });
+
+      final entity = model.toDomain();
+      expect(entity.pointsAwarded, 3);
+
+      final item = ComplaintItem.fromReport(entity);
+      expect(item.statusCode, 'verification');
+      expect(item.pointsAwarded, 3);
+      expect(item.timelineTypes, containsAll(['created', 'verified']));
+    });
+
+    test('parses detail top-level points_awarded when nested complaint omits it', () {
+      final detail = ComplaintReportDetailModel.fromJson({
+        'complaint': {
+          'id': 78,
+          'ticketNumber': 'INC-2026-00078',
+          'title': 'Lampu Jalan Mati',
+          'status': 'verified',
+        },
+        'points_awarded': 2,
+      });
+
+      final entity = detail.toDomain();
+      expect(entity.pointsAwarded, 2);
+    });
+  });
 }

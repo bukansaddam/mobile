@@ -14,6 +14,7 @@ class JagaTanahDetailEntity extends Equatable {
   final DateTime? reportedAt;
   final DateTime? updatedAt;
   final int escalationLevel;
+  final int? pointsAwarded;
 
   // A. Lokasi & Data Spasial
   final String address;
@@ -75,6 +76,7 @@ class JagaTanahDetailEntity extends Equatable {
     this.reportedAt,
     this.updatedAt,
     this.escalationLevel = 0,
+    this.pointsAwarded,
     this.address = '',
     this.province,
     this.regency,
@@ -128,6 +130,7 @@ class JagaTanahDetailEntity extends Equatable {
       latitude: report.latitude,
       longitude: report.longitude,
       reportedAt: report.reportedAt,
+      pointsAwarded: report.pointsAwarded,
       attachments: report.attachments,
       sla: report.sla,
       timeline: report.timeline,
@@ -176,6 +179,7 @@ class JagaTanahDetailEntity extends Equatable {
     reportedAt,
     updatedAt,
     escalationLevel,
+    pointsAwarded,
     address,
     province,
     regency,

@@ -160,7 +160,10 @@ class ComplaintItem {
   final List<String> attachments;
   final Set<String> videoUrls;
   final ComplaintStatus status;
+  final String statusCode;
   final String statusLabel;
+  final int? pointsAwarded;
+  final List<String> timelineTypes;
   final List<ComplaintStatusHistory> statusHistory;
   final IconData icon;
 
@@ -175,7 +178,10 @@ class ComplaintItem {
     required this.attachments,
     this.videoUrls = const {},
     required this.status,
+    this.statusCode = '',
     this.statusLabel = '',
+    this.pointsAwarded,
+    this.timelineTypes = const [],
     required this.statusHistory,
     required this.icon,
   });
@@ -202,7 +208,13 @@ class ComplaintItem {
           .map((attachment) => attachment.url)
           .toSet(),
       status: status,
+      statusCode: report.status,
       statusLabel: report.statusLabel,
+      pointsAwarded: report.pointsAwarded,
+      timelineTypes: report.timeline
+          .map((entry) => entry.type.trim())
+          .where((type) => type.isNotEmpty)
+          .toList(),
       icon: ComplaintCategory.getIconFor(report.category),
       statusHistory: report.timeline.isEmpty
           ? [

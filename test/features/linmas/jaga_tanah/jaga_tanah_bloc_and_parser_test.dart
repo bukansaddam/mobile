@@ -894,4 +894,27 @@ void main() {
       },
     );
   });
+
+  group('JagaTanahDetailModel hybrid points parsing', () {
+    test('parses points_awarded from nested report or root and keeps null when absent', () {
+      final withNestedPoints = JagaTanahDetailModel.fromJson({
+        'report': {
+          'id': 91,
+          'ticket_number': 'JGT-2611200091',
+          'title': 'Lahan Desa',
+          'status': 'verified',
+          'points_awarded': 15,
+        },
+      });
+      expect(withNestedPoints.entity.pointsAwarded, 15);
+
+      final withoutPoints = JagaTanahDetailModel.fromJson({
+        'id': 92,
+        'ticket_number': 'JGT-2611200092',
+        'title': 'Lahan Pemda',
+        'status': 'submitted',
+      });
+      expect(withoutPoints.entity.pointsAwarded, isNull);
+    });
+  });
 }
