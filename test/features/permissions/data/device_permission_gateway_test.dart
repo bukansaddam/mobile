@@ -26,6 +26,7 @@ class _FakeFirebaseNotificationService extends Fake
 class _FakeFirebaseMessaging extends Fake implements FirebaseMessaging {
   int requestPermissionCalls = 0;
   int getTokenCalls = 0;
+  int onTokenRefreshGetterCalls = 0;
   AuthorizationStatus authorizationStatus = AuthorizationStatus.authorized;
   String? tokenToReturn = 'test-fcm-token';
   final StreamController<String> _tokenRefreshController =
@@ -76,7 +77,14 @@ class _FakeFirebaseMessaging extends Fake implements FirebaseMessaging {
   }
 
   @override
-  Stream<String> get onTokenRefresh => _tokenRefreshController.stream;
+  Stream<String> get onTokenRefresh {
+    onTokenRefreshGetterCalls += 1;
+    return _tokenRefreshController.stream;
+  }
+
+  void emitTokenRefresh(String token) {
+    _tokenRefreshController.add(token);
+  }
 
   @override
   Future<RemoteMessage?> getInitialMessage() async => null;
@@ -396,6 +404,47 @@ void main() {
         );
         expect(fcm.getTokenCalls, equals(0));
         expect(service.cachedToken, equals('existing-token'));
+      },
+    );
+
+    test(
+      'initialize followed by requestNotificationPermission subscribes to onTokenRefresh only once',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final fcm = _FakeFirebaseMessaging()..tokenToReturn = null;
+        final localNotifications = _FakeLocalNotificationsPlugin();
+        addTearDown(fcm.dispose);
+
+        final service = FirebaseNotificationService(
+          prefs: prefs,
+          fcm: fcm,
+          localNotifications: localNotifications,
+        );
+        addTearDown(service.dispose);
+
+        final emittedTokens = <String>[];
+        final sub = service.onTokenRefresh.listen(emittedTokens.add);
+        addTearDown(sub.cancel);
+
+        await service.initialize();
+        expect(service.cachedToken, isNull);
+        expect(fcm.onTokenRefreshGetterCalls, equals(1));
+
+        fcm
+          ..authorizationStatus = AuthorizationStatus.authorized
+          ..tokenToReturn = 'post-permission-token';
+
+        final granted = await service.requestNotificationPermission();
+        expect(granted, isTrue);
+        expect(service.cachedToken, equals('post-permission-token'));
+        expect(fcm.onTokenRefreshGetterCalls, equals(1));
+
+        fcm.emitTokenRefresh('refreshed-token-1');
+        await Future<void>.delayed(Duration.zero);
+
+        expect(emittedTokens, equals(['refreshed-token-1']));
+        expect(service.cachedToken, equals('refreshed-token-1'));
       },
     );
   });

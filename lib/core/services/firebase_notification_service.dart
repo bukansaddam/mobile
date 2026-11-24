@@ -178,6 +178,7 @@ class FirebaseNotificationService {
   final DisasterAlertService? _disasterAlertService;
 
   bool _isInitialized = false;
+  StreamSubscription<String>? _tokenRefreshSubscription;
 
   FirebaseNotificationService({
     required SharedPreferences prefs,
@@ -305,7 +306,7 @@ class FirebaseNotificationService {
       AppLogger.w('🔥 [FCM Service] Unable to get FCM token: $e');
     }
 
-    _fcm.onTokenRefresh.listen((newToken) async {
+    _tokenRefreshSubscription ??= _fcm.onTokenRefresh.listen((newToken) async {
       await _prefs.setString(_prefsFcmTokenKey, newToken);
       await _prefs.setString(_prefsDeviceIdKey, newToken);
       _tokenRefreshController.add(newToken);
@@ -849,6 +850,8 @@ class FirebaseNotificationService {
   }
 
   void dispose() {
+    _tokenRefreshSubscription?.cancel();
+    _tokenRefreshSubscription = null;
     _foregroundMessageController.close();
     _notificationTapController.close();
     _tokenRefreshController.close();
