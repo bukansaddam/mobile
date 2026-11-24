@@ -8,6 +8,7 @@ import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
 import 'package:akar/features/permissions/presentation/bloc/permission_onboarding_bloc/permission_onboarding_bloc.dart';
+import 'package:akar/features/permissions/presentation/widgets/permission_action_footer.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_completed_view.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_progress_header.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_seamless_background.dart';
@@ -172,46 +173,49 @@ class _PermissionSetupScreenState extends State<PermissionSetupScreen>
                         );
                       }
 
-                      return LayoutBuilder(
-                        builder: (context, constraints) {
-                          final illustrationHeight =
-                              (constraints.maxHeight * 0.28).clamp(
-                                140.0,
-                                230.0,
-                              );
-                          final minHeight = (constraints.maxHeight - 32).clamp(
-                            0.0,
-                            double.infinity,
-                          );
-
-                          return SingleChildScrollView(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 16,
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 480,
+                                ),
+                                child: PermissionProgressHeader(
+                                  currentStepNumber: state.activeStepIndex + 1,
+                                  totalSteps: state.steps.length,
+                                  steps: state.steps,
+                                  statuses: state.statuses,
+                                ),
+                              ),
                             ),
-                            child: ConstrainedBox(
-                              constraints: BoxConstraints(minHeight: minHeight),
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 480,
+                          ),
+                          Expanded(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final illustrationHeight =
+                                    (constraints.maxHeight * 0.42).clamp(
+                                      130.0,
+                                      220.0,
+                                    );
+                                final minHeight = (constraints.maxHeight - 24)
+                                    .clamp(0.0, double.infinity);
+
+                                return SingleChildScrollView(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      PermissionProgressHeader(
-                                        currentStepNumber:
-                                            state.activeStepIndex + 1,
-                                        totalSteps: state.steps.length,
-                                        steps: state.steps,
-                                        statuses: state.statuses,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      minHeight: minHeight,
+                                    ),
+                                    child: Center(
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          maxWidth: 480,
                                         ),
                                         child: AnimatedSwitcher(
                                           duration: const Duration(
@@ -247,63 +251,32 @@ class _PermissionSetupScreenState extends State<PermissionSetupScreen>
                                                   ),
                                                   spec: state.currentStep,
                                                   status: state.currentStatus,
-                                                  isRequesting:
-                                                      state.isRequesting,
                                                   illustrationHeight:
                                                       illustrationHeight,
-                                                  onPrimaryPressed: () =>
-                                                      _handlePrimaryAction(
-                                                        state.currentStatus,
-                                                      ),
-                                                  onRefreshPressed: () => context
-                                                      .read<
-                                                        PermissionOnboardingBloc
-                                                      >()
-                                                      .add(
-                                                        const RefreshPermissionsEvent(),
-                                                      ),
                                                 ),
                                         ),
                                       ),
-                                      if (!state.isCompleted)
-                                        Center(
-                                          child: TextButton(
-                                            onPressed: _handleLogout,
-                                            style: TextButton.styleFrom(
-                                              foregroundColor:
-                                                  colors.textSecondary,
-                                              minimumSize: const Size(88, 48),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 12,
-                                                  ),
-                                              tapTargetSize:
-                                                  MaterialTapTargetSize.padded,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'Keluar',
-                                              style: AppTextStyles.labelLarge
-                                                  .copyWith(
-                                                    color: colors.textSecondary,
-                                                    letterSpacing: 0.1,
-                                                  ),
-                                            ),
-                                          ),
-                                        )
-                                      else
-                                        const SizedBox(height: 16),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              },
                             ),
-                          );
-                        },
+                          ),
+                          if (!state.isCompleted)
+                            PermissionActionFooter(
+                              spec: state.currentStep,
+                              status: state.currentStatus,
+                              isRequesting: state.isRequesting,
+                              onPrimaryPressed: () =>
+                                  _handlePrimaryAction(state.currentStatus),
+                              onRefreshPressed: () => context
+                                  .read<PermissionOnboardingBloc>()
+                                  .add(const RefreshPermissionsEvent()),
+                              onLogoutPressed: _handleLogout,
+                            )
+                          else
+                            const SizedBox(height: 16),
+                        ],
                       );
                     },
                   ),

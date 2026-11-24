@@ -25,9 +25,7 @@ class PermissionNoticeStrip extends StatelessWidget {
     final colors = context.appColors;
     final isInfo = _variant == _PermissionNoticeVariant.info;
 
-    final backgroundColor = isInfo
-        ? (colors.isDark ? colors.infoLight : colors.surface)
-        : colors.warningLight;
+    final backgroundColor = isInfo ? colors.infoLight : colors.warningLight;
     final borderColor = isInfo
         ? colors.info.withValues(alpha: 0.35)
         : colors.warningBorder;

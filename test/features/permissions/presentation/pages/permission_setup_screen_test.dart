@@ -584,6 +584,34 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('Buka Pengaturan'), findsOneWidget);
         expect(find.text('Periksa Ulang Status'), findsOneWidget);
+
+        // Verify sticky top header and sticky bottom footer stay pinned while scrolling content.
+        final headerTopBefore = tester
+            .getTopLeft(find.byType(PermissionProgressHeader))
+            .dy;
+        final ctaTopBefore = tester
+            .getTopLeft(find.byType(ElevatedButton))
+            .dy;
+        final logoutTopBefore = tester.getTopLeft(find.text('Keluar')).dy;
+
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -180),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getTopLeft(find.byType(PermissionProgressHeader)).dy,
+          equals(headerTopBefore),
+        );
+        expect(
+          tester.getTopLeft(find.byType(ElevatedButton)).dy,
+          equals(ctaTopBefore),
+        );
+        expect(
+          tester.getTopLeft(find.text('Keluar')).dy,
+          equals(logoutTopBefore),
+        );
       },
     );
 

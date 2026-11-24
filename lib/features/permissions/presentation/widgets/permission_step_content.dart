@@ -6,34 +6,18 @@ import 'package:akar/features/permissions/presentation/widgets/permission_illust
 import 'package:akar/features/permissions/presentation/widgets/permission_notice_strip.dart';
 import 'package:flutter/material.dart';
 
-/// Cardless seamless step body for a single permission onboarding step.
+/// Scrollable cardless step content (illustration, copy, and conditional notices).
 class PermissionStepContent extends StatelessWidget {
   final PermissionStepSpec spec;
   final PermissionStepStatus status;
-  final bool isRequesting;
   final double illustrationHeight;
-  final VoidCallback onPrimaryPressed;
-  final VoidCallback onRefreshPressed;
 
   const PermissionStepContent({
     super.key,
     required this.spec,
     required this.status,
-    required this.isRequesting,
     required this.illustrationHeight,
-    required this.onPrimaryPressed,
-    required this.onRefreshPressed,
   });
-
-  String _primaryCtaLabel() {
-    if (status.requiresSettings) {
-      return 'Buka Pengaturan';
-    }
-    if (status == PermissionStepStatus.denied) {
-      return 'Coba Izinkan Lagi';
-    }
-    return spec.actionLabel;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,61 +68,6 @@ class PermissionStepContent extends StatelessWidget {
             message: requiresSettings
                 ? spec.settingsHint
                 : 'Izin belum diberikan. Izinkan akses ini agar fitur aplikasi dapat berfungsi dengan baik.',
-          ),
-        ],
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: isRequesting ? null : onPrimaryPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colors.primary,
-            foregroundColor: colors.onPrimary,
-            disabledBackgroundColor: colors.primary.withValues(alpha: 0.65),
-            disabledForegroundColor: colors.onPrimary,
-            minimumSize: const Size(double.infinity, 52),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            elevation: 0,
-          ),
-          child: isRequesting
-              ? SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.4,
-                    color: colors.onPrimary,
-                  ),
-                )
-              : Text(
-                  _primaryCtaLabel(),
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: colors.onPrimary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-        ),
-        if (requiresSettings) ...[
-          const SizedBox(height: 8),
-          TextButton.icon(
-            onPressed: isRequesting ? null : onRefreshPressed,
-            style: TextButton.styleFrom(
-              foregroundColor: colors.primaryDark,
-              minimumSize: const Size(double.infinity, 48),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-            icon: const Icon(Icons.refresh_rounded, size: 18),
-            label: Text(
-              'Periksa Ulang Status',
-              style: AppTextStyles.labelLarge.copyWith(
-                color: colors.primaryDark,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
           ),
         ],
       ],

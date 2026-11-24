@@ -21,7 +21,7 @@ class _CorruptPermissionAssetBundle extends CachingAssetBundle {
 void main() {
   group('PermissionSeamlessBackground', () {
     testWidgets(
-      'renders RepaintBoundary wrapping CustomPaint in both Light and Dark themes',
+      'renders vertical LinearGradient matching SplashScreen and WelcomeScreen in Light and Dark themes',
       (tester) async {
         for (final theme in [AppTheme.lightTheme, AppTheme.darkTheme]) {
           await tester.pumpWidget(
@@ -36,21 +36,28 @@ void main() {
           await tester.pump();
 
           final backgroundFinder = find.byType(PermissionSeamlessBackground);
-          expect(backgroundFinder, findsOneWidget);
-          expect(
+          final context = tester.element(backgroundFinder);
+          final colors = context.appColors;
+
+          final decoratedBox = tester.widget<DecoratedBox>(
             find.descendant(
               of: backgroundFinder,
-              matching: find.byType(RepaintBoundary),
+              matching: find.byType(DecoratedBox),
             ),
-            findsOneWidget,
           );
+          final decoration = decoratedBox.decoration as BoxDecoration;
+          final gradient = decoration.gradient as LinearGradient;
+          expect(gradient.begin, equals(Alignment.topCenter));
+          expect(gradient.end, equals(Alignment.bottomCenter));
           expect(
-            find.descendant(
-              of: backgroundFinder,
-              matching: find.byType(CustomPaint),
-            ),
-            findsOneWidget,
+            gradient.colors,
+            equals([
+              colors.primaryLight,
+              colors.surfaceVariant,
+              colors.isDark ? colors.background : colors.surface,
+            ]),
           );
+          expect(gradient.stops, equals([0.0, 0.45, 1.0]));
         }
       },
     );
@@ -142,7 +149,7 @@ void main() {
 
   group('PermissionNoticeStrip', () {
     testWidgets(
-      'info variant renders flat strip with colors.surface in Light Mode and colors.infoLight in Dark Mode',
+      'info variant renders flat strip with colors.infoLight in Light and Dark Mode',
       (tester) async {
         for (final theme in [AppTheme.lightTheme, AppTheme.darkTheme]) {
           await tester.pumpWidget(
@@ -173,10 +180,7 @@ void main() {
           );
           final decoration = container.decoration as BoxDecoration;
           expect(decoration.boxShadow, isNull);
-          expect(
-            decoration.color,
-            equals(colors.isDark ? colors.infoLight : colors.surface),
-          );
+          expect(decoration.color, equals(colors.infoLight));
         }
       },
     );
