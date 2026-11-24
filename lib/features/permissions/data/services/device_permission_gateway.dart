@@ -2,6 +2,7 @@ import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/features/permissions/domain/entities/app_permission_type.dart';
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
 import 'package:akar/features/permissions/domain/services/permission_gateway.dart';
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Platform-backed [PermissionGateway] using `permission_handler` and [FirebaseNotificationService].
@@ -12,6 +13,8 @@ class DevicePermissionGateway implements PermissionGateway {
   final Future<PermissionStatus> Function(Permission permission)
       _requestPlatformPermission;
   final Future<bool> Function() _openPlatformSettings;
+  final Future<bool> Function(Permission permission) _shouldShowRationale;
+  final bool _isAndroid;
 
   DevicePermissionGateway({
     required this._notificationService,
@@ -20,11 +23,19 @@ class DevicePermissionGateway implements PermissionGateway {
     Future<PermissionStatus> Function(Permission permission)?
         requestPlatformPermission,
     Future<bool> Function()? openPlatformSettings,
+    Future<bool> Function(Permission permission)? shouldShowRationale,
+    bool? isAndroidOverride,
   }) : _checkPlatformPermission =
            checkPlatformPermission ?? ((permission) => permission.status),
        _requestPlatformPermission =
            requestPlatformPermission ?? ((permission) => permission.request()),
-       _openPlatformSettings = openPlatformSettings ?? openAppSettings;
+       _openPlatformSettings = openPlatformSettings ?? openAppSettings,
+       _shouldShowRationale =
+           shouldShowRationale ??
+           ((permission) => permission.shouldShowRequestRationale),
+       _isAndroid =
+           isAndroidOverride ??
+           (!kIsWeb && defaultTargetPlatform == TargetPlatform.android);
 
   @override
   Future<PermissionStepStatus> checkStatus(AppPermissionType type) async {
@@ -35,6 +46,9 @@ class DevicePermissionGateway implements PermissionGateway {
   @override
   Future<PermissionStepStatus> request(AppPermissionType type) async {
     if (type == AppPermissionType.notification) {
+      if (_isAndroid) {
+        return _requestAndroidNotification();
+      }
       final authorized =
           await _notificationService.requestNotificationPermission();
       final osStatus = await _checkPlatformPermission(Permission.notification);
@@ -51,6 +65,34 @@ class DevicePermissionGateway implements PermissionGateway {
       _toPlatformPermission(type),
     );
     return _mapStatus(status, isRequest: true);
+  }
+
+  Future<PermissionStepStatus> _requestAndroidNotification() async {
+    final status = await _requestPlatformPermission(Permission.notification);
+    if (status.isGranted || status.isLimited || status.isProvisional) {
+      await _notificationService.ensureTokenCached();
+      return PermissionStepStatus.granted;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      return PermissionStepStatus.permanentlyDenied;
+    }
+    if (status.isDenied) {
+      final canAskAgain = await _safeShouldShowRationale(
+        Permission.notification,
+      );
+      return canAskAgain
+          ? PermissionStepStatus.denied
+          : PermissionStepStatus.needsSettings;
+    }
+    return PermissionStepStatus.denied;
+  }
+
+  Future<bool> _safeShouldShowRationale(Permission permission) async {
+    try {
+      return await _shouldShowRationale(permission);
+    } catch (_) {
+      return true;
+    }
   }
 
   @override

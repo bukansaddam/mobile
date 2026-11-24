@@ -15,6 +15,12 @@ class _FakeFirebaseNotificationService extends Fake
     implements FirebaseNotificationService {
   bool requestNotificationResult = true;
   int requestNotificationCalls = 0;
+  int ensureTokenCachedCalls = 0;
+
+  @override
+  Future<void> ensureTokenCached() async {
+    ensureTokenCachedCalls += 1;
+  }
 
   @override
   Future<bool> requestNotificationPermission() async {
@@ -154,23 +160,19 @@ void main() {
     late _FakeFirebaseNotificationService notificationService;
     late Map<Permission, PermissionStatus> statusByPermission;
     late Map<Permission, PermissionStatus> requestResultByPermission;
+    late Map<Permission, bool> shouldShowRationaleByPermission;
+    late bool shouldShowRationaleThrows;
     late List<Permission> checkedPermissions;
     late List<Permission> requestedPermissions;
+    late List<Permission> rationaleCheckedPermissions;
     late int openSettingsCalls;
     late bool openSettingsResult;
     late DevicePermissionGateway gateway;
 
-    setUp(() {
-      notificationService = _FakeFirebaseNotificationService();
-      statusByPermission = {};
-      requestResultByPermission = {};
-      checkedPermissions = [];
-      requestedPermissions = [];
-      openSettingsCalls = 0;
-      openSettingsResult = true;
-
-      gateway = DevicePermissionGateway(
+    DevicePermissionGateway createGateway({bool? isAndroidOverride}) {
+      return DevicePermissionGateway(
         notificationService: notificationService,
+        isAndroidOverride: isAndroidOverride,
         checkPlatformPermission: (permission) async {
           checkedPermissions.add(permission);
           return statusByPermission[permission] ?? PermissionStatus.denied;
@@ -186,7 +188,29 @@ void main() {
           openSettingsCalls += 1;
           return openSettingsResult;
         },
+        shouldShowRationale: (permission) async {
+          rationaleCheckedPermissions.add(permission);
+          if (shouldShowRationaleThrows) {
+            throw UnimplementedError('Not supported on this platform');
+          }
+          return shouldShowRationaleByPermission[permission] ?? true;
+        },
       );
+    }
+
+    setUp(() {
+      notificationService = _FakeFirebaseNotificationService();
+      statusByPermission = {};
+      requestResultByPermission = {};
+      shouldShowRationaleByPermission = {};
+      shouldShowRationaleThrows = false;
+      checkedPermissions = [];
+      requestedPermissions = [];
+      rationaleCheckedPermissions = [];
+      openSettingsCalls = 0;
+      openSettingsResult = true;
+
+      gateway = createGateway();
     });
 
     test('maps every AppPermissionType to the expected OS Permission', () async {
@@ -248,12 +272,110 @@ void main() {
     });
 
     test(
-      'request(notification) invokes FirebaseNotificationService and returns granted when authorized',
+      'Android request(notification) uses Permission.notification.request(), calls ensureTokenCached() when granted, and skips requestNotificationPermission()',
       () async {
+        final androidGateway = createGateway(isAndroidOverride: true);
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.granted;
+
+        final result = await androidGateway.request(
+          AppPermissionType.notification,
+        );
+
+        expect(result, equals(PermissionStepStatus.granted));
+        expect(requestedPermissions, equals([Permission.notification]));
+        expect(notificationService.ensureTokenCachedCalls, equals(1));
+        expect(notificationService.requestNotificationCalls, equals(0));
+      },
+    );
+
+    test(
+      'Android request(notification) returns permanentlyDenied when OS status is permanentlyDenied or restricted',
+      () async {
+        final androidGateway = createGateway(isAndroidOverride: true);
+
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.permanentlyDenied;
+        expect(
+          await androidGateway.request(AppPermissionType.notification),
+          equals(PermissionStepStatus.permanentlyDenied),
+        );
+
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.restricted;
+        expect(
+          await androidGateway.request(AppPermissionType.notification),
+          equals(PermissionStepStatus.permanentlyDenied),
+        );
+
+        expect(notificationService.ensureTokenCachedCalls, equals(0));
+        expect(notificationService.requestNotificationCalls, equals(0));
+      },
+    );
+
+    test(
+      'Android request(notification) returns denied when denied with shouldShowRationale == true',
+      () async {
+        final androidGateway = createGateway(isAndroidOverride: true);
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.denied;
+        shouldShowRationaleByPermission[Permission.notification] = true;
+
+        final result = await androidGateway.request(
+          AppPermissionType.notification,
+        );
+
+        expect(result, equals(PermissionStepStatus.denied));
+        expect(rationaleCheckedPermissions, equals([Permission.notification]));
+        expect(notificationService.ensureTokenCachedCalls, equals(0));
+        expect(notificationService.requestNotificationCalls, equals(0));
+      },
+    );
+
+    test(
+      'Android request(notification) returns needsSettings when denied with shouldShowRationale == false (Android < 13 disabled notifications)',
+      () async {
+        final androidGateway = createGateway(isAndroidOverride: true);
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.denied;
+        shouldShowRationaleByPermission[Permission.notification] = false;
+
+        final result = await androidGateway.request(
+          AppPermissionType.notification,
+        );
+
+        expect(result, equals(PermissionStepStatus.needsSettings));
+        expect(rationaleCheckedPermissions, equals([Permission.notification]));
+        expect(notificationService.ensureTokenCachedCalls, equals(0));
+        expect(notificationService.requestNotificationCalls, equals(0));
+      },
+    );
+
+    test(
+      'Android request(notification) falls back to denied when shouldShowRationale throws',
+      () async {
+        final androidGateway = createGateway(isAndroidOverride: true);
+        requestResultByPermission[Permission.notification] =
+            PermissionStatus.denied;
+        shouldShowRationaleThrows = true;
+
+        final result = await androidGateway.request(
+          AppPermissionType.notification,
+        );
+
+        expect(result, equals(PermissionStepStatus.denied));
+        expect(rationaleCheckedPermissions, equals([Permission.notification]));
+      },
+    );
+
+    test(
+      'iOS request(notification) delegates to FirebaseNotificationService and returns granted when authorized',
+      () async {
+        final iosGateway = createGateway(isAndroidOverride: false);
         notificationService.requestNotificationResult = true;
         statusByPermission[Permission.notification] = PermissionStatus.granted;
 
-        final result = await gateway.request(AppPermissionType.notification);
+        final result = await iosGateway.request(AppPermissionType.notification);
 
         expect(result, equals(PermissionStepStatus.granted));
         expect(notificationService.requestNotificationCalls, equals(1));
@@ -263,13 +385,14 @@ void main() {
     );
 
     test(
-      'request(notification) returns granted when authorized provisionally on iOS',
+      'iOS request(notification) returns granted when authorized provisionally',
       () async {
+        final iosGateway = createGateway(isAndroidOverride: false);
         notificationService.requestNotificationResult = true;
         statusByPermission[Permission.notification] =
             PermissionStatus.provisional;
 
-        final result = await gateway.request(AppPermissionType.notification);
+        final result = await iosGateway.request(AppPermissionType.notification);
 
         expect(result, equals(PermissionStepStatus.granted));
         expect(notificationService.requestNotificationCalls, equals(1));
@@ -278,13 +401,14 @@ void main() {
     );
 
     test(
-      'request(notification) returns permanentlyDenied when OS status is permanentlyDenied',
+      'iOS request(notification) returns permanentlyDenied when OS status is permanentlyDenied',
       () async {
+        final iosGateway = createGateway(isAndroidOverride: false);
         notificationService.requestNotificationResult = false;
         statusByPermission[Permission.notification] =
             PermissionStatus.permanentlyDenied;
 
-        final result = await gateway.request(AppPermissionType.notification);
+        final result = await iosGateway.request(AppPermissionType.notification);
 
         expect(result, equals(PermissionStepStatus.permanentlyDenied));
         expect(notificationService.requestNotificationCalls, equals(1));
@@ -294,12 +418,13 @@ void main() {
     );
 
     test(
-      'request(notification) returns denied when unauthorized and OS status is denied',
+      'iOS request(notification) returns denied when unauthorized and OS status is denied',
       () async {
+        final iosGateway = createGateway(isAndroidOverride: false);
         notificationService.requestNotificationResult = false;
         statusByPermission[Permission.notification] = PermissionStatus.denied;
 
-        final result = await gateway.request(AppPermissionType.notification);
+        final result = await iosGateway.request(AppPermissionType.notification);
 
         expect(result, equals(PermissionStepStatus.denied));
         expect(notificationService.requestNotificationCalls, equals(1));
@@ -349,7 +474,7 @@ void main() {
     );
 
     test(
-      'FirebaseNotificationService.requestNotificationPermission requests OS permissions and caches missing token locally',
+      'FirebaseNotificationService.requestNotificationPermission requests FCM permissions without calling androidPlugin.requestNotificationsPermission() and caches missing token locally',
       () async {
         SharedPreferences.setMockInitialValues({});
         final prefs = await SharedPreferences.getInstance();
@@ -371,7 +496,7 @@ void main() {
         expect(fcm.requestPermissionCalls, equals(1));
         expect(
           localNotifications.androidPlugin.requestNotificationsCalls,
-          equals(1),
+          equals(0),
         );
         expect(fcm.getTokenCalls, equals(1));
         expect(service.cachedToken, equals('fresh-local-token'));
@@ -379,7 +504,7 @@ void main() {
     );
 
     test(
-      'FirebaseNotificationService.requestNotificationPermission returns false when denied and skips token refresh when already cached',
+      'FirebaseNotificationService.requestNotificationPermission returns false when denied and skips token refresh and androidPlugin prompt when already cached',
       () async {
         SharedPreferences.setMockInitialValues({'FCM_TOKEN': 'existing-token'});
         final prefs = await SharedPreferences.getInstance();
@@ -400,10 +525,35 @@ void main() {
         expect(fcm.requestPermissionCalls, equals(1));
         expect(
           localNotifications.androidPlugin.requestNotificationsCalls,
-          equals(1),
+          equals(0),
         );
         expect(fcm.getTokenCalls, equals(0));
         expect(service.cachedToken, equals('existing-token'));
+      },
+    );
+
+    test(
+      'FirebaseNotificationService.ensureTokenCached fetches token only when cachedToken is null or empty',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final fcm = _FakeFirebaseMessaging()..tokenToReturn = 'cached-via-helper';
+        final localNotifications = _FakeLocalNotificationsPlugin();
+        addTearDown(fcm.dispose);
+
+        final service = FirebaseNotificationService(
+          prefs: prefs,
+          fcm: fcm,
+          localNotifications: localNotifications,
+        );
+        addTearDown(service.dispose);
+
+        await service.ensureTokenCached();
+        expect(fcm.getTokenCalls, equals(1));
+        expect(service.cachedToken, equals('cached-via-helper'));
+
+        await service.ensureTokenCached();
+        expect(fcm.getTokenCalls, equals(1));
       },
     );
 

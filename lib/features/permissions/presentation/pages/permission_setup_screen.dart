@@ -1,3 +1,5 @@
+import 'package:akar/core/di/injection_container.dart';
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -8,8 +10,10 @@ import 'package:akar/features/permissions/domain/entities/permission_step_status
 import 'package:akar/features/permissions/presentation/bloc/permission_onboarding_bloc/permission_onboarding_bloc.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_progress_header.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_step_card.dart';
+import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 /// Sequential mandatory permission onboarding wizard gated before app shells.
 class PermissionSetupScreen extends StatefulWidget {
@@ -62,7 +66,40 @@ class _PermissionSetupScreenState extends State<PermissionSetupScreen>
       isDestructive: true,
     );
     if (!mounted || !confirmed) return;
+    context.read<TrackingBloc>().add(StopTrackingEvent());
     context.read<AuthBloc>().add(const LogoutEvent());
+  }
+
+  void _scheduleCompletionFallback() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final router = GoRouter.maybeOf(context);
+      if (router == null) return;
+
+      final currentPath = router.routerDelegate.currentConfiguration.uri.path;
+      if (currentPath != AppRouter.permissionSetupPath) return;
+
+      final authState = context.read<AuthBloc>().state;
+      final currentUser =
+          authState is AuthAuthenticated ? authState.user : null;
+      final hasCompletedSurvey =
+          currentUser != null &&
+          (currentUser.hasCompletedInitialQuiz ||
+              (sl.isRegistered<SurveyLocalDatasource>() &&
+                  sl<SurveyLocalDatasource>().isInitialSurveyCompletedSync(
+                    currentUser.id,
+                  )));
+
+      final target = AppRouter.resolveRedirect(
+        authState: authState,
+        location: currentPath,
+        hasAllPermissions: true,
+        hasCompletedSurvey: hasCompletedSurvey,
+      );
+      if (target != null && target != currentPath) {
+        router.go(target);
+      }
+    });
   }
 
   void _handlePrimaryAction(PermissionStepStatus status) {
@@ -112,6 +149,7 @@ class _PermissionSetupScreenState extends State<PermissionSetupScreen>
                       if (state.isOfficer) {
                         context.read<TrackingBloc>().add(StartTrackingEvent());
                       }
+                      _scheduleCompletionFallback();
                     }
                   },
                   builder: (context, state) {

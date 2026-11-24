@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:akar/features/permissions/presentation/widgets/permission_step_c
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 class _FakePermissionGateway implements PermissionGateway {
   final Map<AppPermissionType, PermissionStepStatus> checkStatuses = {};
@@ -51,9 +53,10 @@ class _FakePermissionGateway implements PermissionGateway {
 }
 
 class _RecordingAuthBloc extends Fake implements AuthBloc {
-  _RecordingAuthBloc(this._state);
+  _RecordingAuthBloc(this._state, {this.eventLog});
 
   final AuthState _state;
+  final List<String>? eventLog;
   final _controller = StreamController<AuthState>.broadcast();
   final List<AuthEvent> events = [];
 
@@ -69,6 +72,7 @@ class _RecordingAuthBloc extends Fake implements AuthBloc {
   @override
   void add(AuthEvent event) {
     events.add(event);
+    eventLog?.add(event.runtimeType.toString());
   }
 
   @override
@@ -78,7 +82,10 @@ class _RecordingAuthBloc extends Fake implements AuthBloc {
 }
 
 class _RecordingTrackingBloc extends Fake implements TrackingBloc {
+  _RecordingTrackingBloc({this.eventLog});
+
   final TrackingState _state = const TrackingState();
+  final List<String>? eventLog;
   final _controller = StreamController<TrackingState>.broadcast();
   final List<TrackingEvent> events = [];
 
@@ -94,6 +101,7 @@ class _RecordingTrackingBloc extends Fake implements TrackingBloc {
   @override
   void add(TrackingEvent event) {
     events.add(event);
+    eventLog?.add(event.runtimeType.toString());
   }
 
   @override
@@ -108,6 +116,7 @@ class _TestHarness {
   final PermissionOnboardingBloc permissionBloc;
   final _RecordingAuthBloc authBloc;
   final _RecordingTrackingBloc trackingBloc;
+  final List<String> eventLog;
 
   _TestHarness._({
     required this.gateway,
@@ -115,10 +124,12 @@ class _TestHarness {
     required this.permissionBloc,
     required this.authBloc,
     required this.trackingBloc,
+    required this.eventLog,
   });
 
   factory _TestHarness.create({
     required bool isOfficer,
+    bool hasCompletedInitialQuiz = false,
     Map<AppPermissionType, PermissionStepStatus>? checkStatuses,
     Map<AppPermissionType, PermissionStepStatus>? requestResults,
   }) {
@@ -131,6 +142,7 @@ class _TestHarness {
     }
     final service = AppPermissionService(gateway: gateway);
     final permissionBloc = PermissionOnboardingBloc(permissionService: service);
+    final eventLog = <String>[];
     final authBloc = _RecordingAuthBloc(
       AuthAuthenticated(
         user: UserEntity(
@@ -138,17 +150,20 @@ class _TestHarness {
           name: isOfficer ? 'Petugas Budi' : 'Warga Siti',
           username: isOfficer ? 'officer' : 'member',
           role: isOfficer ? 'linmas' : 'masyarakat',
+          isInitialQuizCompleted: hasCompletedInitialQuiz,
         ),
         token: isOfficer ? 'token-officer' : 'token-member',
       ),
+      eventLog: eventLog,
     );
-    final trackingBloc = _RecordingTrackingBloc();
+    final trackingBloc = _RecordingTrackingBloc(eventLog: eventLog);
     return _TestHarness._(
       gateway: gateway,
       service: service,
       permissionBloc: permissionBloc,
       authBloc: authBloc,
       trackingBloc: trackingBloc,
+      eventLog: eventLog,
     );
   }
 
@@ -345,7 +360,7 @@ void main() {
     );
 
     testWidgets(
-      'tapping header Keluar opens AppDialogs.showConfirmation and dispatches LogoutEvent only when confirmed',
+      'tapping header Keluar opens AppDialogs.showConfirmation and dispatches StopTrackingEvent before LogoutEvent only when confirmed',
       (tester) async {
         final harness = _TestHarness.create(isOfficer: false);
         addTearDown(harness.dispose);
@@ -371,14 +386,21 @@ void main() {
 
         await tester.tap(find.text('Batal'));
         await tester.pumpAndSettle();
+        expect(harness.trackingBloc.events.whereType<StopTrackingEvent>(), isEmpty);
         expect(harness.authBloc.events.whereType<LogoutEvent>(), isEmpty);
+        expect(harness.eventLog, isEmpty);
 
         await tester.tap(logoutFinder);
         await tester.pumpAndSettle();
         await tester.tap(find.text('Keluar').last);
         await tester.pumpAndSettle();
 
+        expect(
+          harness.trackingBloc.events.whereType<StopTrackingEvent>(),
+          hasLength(1),
+        );
         expect(harness.authBloc.events.whereType<LogoutEvent>(), hasLength(1));
+        expect(harness.eventLog, equals(['StopTrackingEvent', 'LogoutEvent']));
       },
     );
 
@@ -511,6 +533,178 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.text('Buka Pengaturan'), findsOneWidget);
         expect(find.text('Periksa Ulang Status'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'GoRouter-integrated Linmas completion dispatches StartTrackingEvent and exits /permission-setup to /initial-survey',
+      (tester) async {
+        final harness = _TestHarness.create(
+          isOfficer: true,
+          hasCompletedInitialQuiz: false,
+          checkStatuses: {
+            AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+            AppPermissionType.locationAlways: PermissionStepStatus.granted,
+            AppPermissionType.camera: PermissionStepStatus.granted,
+            AppPermissionType.microphone: PermissionStepStatus.granted,
+            AppPermissionType.notification: PermissionStepStatus.denied,
+          },
+          requestResults: {
+            AppPermissionType.notification: PermissionStepStatus.granted,
+          },
+        );
+        addTearDown(harness.dispose);
+
+        final router = GoRouter(
+          initialLocation: AppRouter.permissionSetupPath,
+          refreshListenable: harness.service,
+          redirect: (context, state) => AppRouter.resolveRedirect(
+            authState: harness.authBloc.state,
+            location: state.matchedLocation,
+            hasAllPermissions: harness.service.hasAllRequiredPermissionsSync(
+              isOfficer: true,
+            ),
+            hasCompletedSurvey: false,
+          ),
+          routes: [
+            GoRoute(
+              path: AppRouter.permissionSetupPath,
+              builder: (context, state) => const PermissionSetupScreen(),
+            ),
+            GoRoute(
+              path: AppRouter.initialSurveyPath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Initial Survey Destination')),
+            ),
+            GoRoute(
+              path: AppRouter.mainPath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Main Destination')),
+            ),
+            GoRoute(
+              path: AppRouter.masyarakatMainPath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Masyarakat Main Destination')),
+            ),
+            GoRoute(
+              path: AppRouter.welcomePath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Welcome Destination')),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<PermissionOnboardingBloc>.value(
+                value: harness.permissionBloc,
+              ),
+              BlocProvider<AuthBloc>.value(value: harness.authBloc),
+              BlocProvider<TrackingBloc>.value(value: harness.trackingBloc),
+            ],
+            child: MaterialApp.router(
+              theme: AppTheme.lightTheme,
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Langkah 5 dari 5'), findsOneWidget);
+        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.pumpAndSettle();
+
+        expect(
+          harness.trackingBloc.events.whereType<StartTrackingEvent>(),
+          hasLength(1),
+        );
+        expect(find.text('Initial Survey Destination'), findsOneWidget);
+        expect(find.byType(PermissionSetupScreen), findsNothing);
+        expect(
+          router.routerDelegate.currentConfiguration.uri.path,
+          equals(AppRouter.initialSurveyPath),
+        );
+      },
+    );
+
+    testWidgets(
+      'post-frame fallback navigates Linmas out of /permission-setup to /main when GoRouter has no refreshListenable',
+      (tester) async {
+        final harness = _TestHarness.create(
+          isOfficer: true,
+          hasCompletedInitialQuiz: true,
+          checkStatuses: {
+            AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+            AppPermissionType.locationAlways: PermissionStepStatus.granted,
+            AppPermissionType.camera: PermissionStepStatus.granted,
+            AppPermissionType.microphone: PermissionStepStatus.granted,
+            AppPermissionType.notification: PermissionStepStatus.denied,
+          },
+          requestResults: {
+            AppPermissionType.notification: PermissionStepStatus.granted,
+          },
+        );
+        addTearDown(harness.dispose);
+
+        final router = GoRouter(
+          initialLocation: AppRouter.permissionSetupPath,
+          routes: [
+            GoRoute(
+              path: AppRouter.permissionSetupPath,
+              builder: (context, state) => const PermissionSetupScreen(),
+            ),
+            GoRoute(
+              path: AppRouter.initialSurveyPath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Initial Survey Destination')),
+            ),
+            GoRoute(
+              path: AppRouter.mainPath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Main Destination')),
+            ),
+            GoRoute(
+              path: AppRouter.welcomePath,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Welcome Destination')),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+
+        await tester.pumpWidget(
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<PermissionOnboardingBloc>.value(
+                value: harness.permissionBloc,
+              ),
+              BlocProvider<AuthBloc>.value(value: harness.authBloc),
+              BlocProvider<TrackingBloc>.value(value: harness.trackingBloc),
+            ],
+            child: MaterialApp.router(
+              theme: AppTheme.lightTheme,
+              routerConfig: router,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Langkah 5 dari 5'), findsOneWidget);
+        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.pumpAndSettle();
+
+        expect(
+          harness.trackingBloc.events.whereType<StartTrackingEvent>(),
+          hasLength(1),
+        );
+        expect(find.text('Main Destination'), findsOneWidget);
+        expect(find.byType(PermissionSetupScreen), findsNothing);
+        expect(
+          router.routerDelegate.currentConfiguration.uri.path,
+          equals(AppRouter.mainPath),
+        );
       },
     );
   });

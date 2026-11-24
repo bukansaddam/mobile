@@ -225,18 +225,15 @@ class FirebaseNotificationService {
     }
   }
 
-  Future<bool> requestNotificationPermission() async {
-    final settings = await _requestPermission();
-
-    final androidPlugin = _localNotifications
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
-    await androidPlugin?.requestNotificationsPermission();
-
+  Future<void> ensureTokenCached() async {
     if (cachedToken == null || cachedToken!.isEmpty) {
       await _initToken();
     }
+  }
+
+  Future<bool> requestNotificationPermission() async {
+    final settings = await _requestPermission();
+    await ensureTokenCached();
 
     return settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional;

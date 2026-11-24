@@ -44,7 +44,7 @@ class _SpyPermissionService extends AppPermissionService {
     if (refreshGate != null) {
       await refreshGate!.future;
     }
-    return {};
+    return super.refreshStatuses(isOfficer: isOfficer);
   }
 
   @override
@@ -288,12 +288,35 @@ void main() {
       },
     );
 
-    test('LogoutEvent calls permissionService.resetCache()', () async {
-      authBloc.add(const LogoutEvent(clearOfflineQueue: false));
-      await pumpEventQueue();
+    test(
+      'LogoutEvent calls permissionService.resetCache() before emitting AuthLoading and before AuthUnauthenticated',
+      () async {
+        await permissionService.refreshStatuses(isOfficer: true);
+        expect(permissionService.hasAllRequiredPermissionsSync(isOfficer: true), isTrue);
 
-      expect(permissionService.resetCacheCalls, 1);
-      expect(authBloc.state, isA<AuthUnauthenticated>());
-    });
+        int? resetCallsAtLoading;
+        bool? hasAllAtLoading;
+        final sub = authBloc.stream.listen((state) {
+          if (state is AuthLoading) {
+            resetCallsAtLoading = permissionService.resetCacheCalls;
+            hasAllAtLoading =
+                permissionService.hasAllRequiredPermissionsSync(isOfficer: true);
+          }
+        });
+        addTearDown(sub.cancel);
+
+        authBloc.add(const LogoutEvent(clearOfflineQueue: false));
+        await pumpEventQueue();
+
+        expect(resetCallsAtLoading, equals(1));
+        expect(hasAllAtLoading, isFalse);
+        expect(permissionService.resetCacheCalls, equals(2));
+        expect(
+          permissionService.hasAllRequiredPermissionsSync(isOfficer: true),
+          isFalse,
+        );
+        expect(authBloc.state, isA<AuthUnauthenticated>());
+      },
+    );
   });
 }

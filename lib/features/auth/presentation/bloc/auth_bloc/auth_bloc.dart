@@ -216,6 +216,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
+    _permissionService?.resetCache();
     emit(const AuthLoading());
 
     if (event.clearOfflineQueue) {

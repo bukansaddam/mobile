@@ -7,11 +7,17 @@ import 'package:flutter/foundation.dart';
 /// Single source of truth for role-based permission steps and cached OS statuses.
 class AppPermissionService extends ChangeNotifier {
   final PermissionGateway _gateway;
+  final bool _isIos;
   final Map<AppPermissionType, PermissionStepStatus> _statuses = {};
   final Set<AppPermissionType> _attemptedTypes = {};
   bool _hasRefreshed = false;
 
-  AppPermissionService({required this._gateway});
+  AppPermissionService({
+    required this._gateway,
+    bool? isIosOverride,
+  }) : _isIos =
+           isIosOverride ??
+           (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS);
 
   List<PermissionStepSpec> stepsForRole({required bool isOfficer}) {
     return PermissionStepCatalog.stepsForRole(isOfficer: isOfficer);
@@ -34,9 +40,16 @@ class AppPermissionService extends ChangeNotifier {
     required bool isOfficer,
   }) async {
     final steps = stepsForRole(isOfficer: isOfficer);
+    final updated = <AppPermissionType, PermissionStepStatus>{};
     for (final step in steps) {
-      _statuses[step.type] = await _checkNormalizedStatus(step.type);
+      updated[step.type] = await _checkNormalizedStatus(
+        step.type,
+        knownStatuses: updated,
+      );
     }
+    _statuses
+      ..clear()
+      ..addAll(updated);
     _hasRefreshed = true;
     notifyListeners();
     return cachedStatuses;
@@ -62,7 +75,6 @@ class AppPermissionService extends ChangeNotifier {
       }
     }
 
-    _attemptedTypes.add(type);
     final resolvedStatus = await _executeRequest(type);
     _statuses[type] = resolvedStatus;
     notifyListeners();
@@ -86,11 +98,16 @@ class AppPermissionService extends ChangeNotifier {
   }
 
   Future<PermissionStepStatus> _checkNormalizedStatus(
-    AppPermissionType type,
-  ) async {
+    AppPermissionType type, {
+    Map<AppPermissionType, PermissionStepStatus>? knownStatuses,
+  }) async {
     try {
       final osStatus = await _gateway.checkStatus(type);
-      return _normalizeCheckStatus(type, osStatus);
+      return _normalizeCheckStatus(
+        type,
+        osStatus,
+        knownStatuses: knownStatuses,
+      );
     } catch (e, st) {
       AppLogger.w('Failed to check permission status for $type', e, st);
       return PermissionStepStatus.denied;
@@ -101,8 +118,21 @@ class AppPermissionService extends ChangeNotifier {
   // initial unprompted steps from prior denials or background-location settings hops.
   PermissionStepStatus _normalizeCheckStatus(
     AppPermissionType type,
-    PermissionStepStatus osStatus,
-  ) {
+    PermissionStepStatus osStatus, {
+    Map<AppPermissionType, PermissionStepStatus>? knownStatuses,
+  }) {
+    final referenceStatuses = knownStatuses ?? _statuses;
+    // On iOS, permission_handler reports locationAlways as permanentlyDenied
+    // as soon as locationWhenInUse is granted, even before requesting Always.
+    if (_isIos &&
+        type == AppPermissionType.locationAlways &&
+        osStatus == PermissionStepStatus.permanentlyDenied &&
+        referenceStatuses[AppPermissionType.locationWhenInUse] ==
+            PermissionStepStatus.granted) {
+      return _attemptedTypes.contains(AppPermissionType.locationAlways)
+          ? PermissionStepStatus.needsSettings
+          : PermissionStepStatus.notRequested;
+    }
     if (osStatus == PermissionStepStatus.granted ||
         osStatus == PermissionStepStatus.permanentlyDenied ||
         osStatus == PermissionStepStatus.needsSettings) {
@@ -119,6 +149,7 @@ class AppPermissionService extends ChangeNotifier {
   Future<PermissionStepStatus> _executeRequest(AppPermissionType type) async {
     try {
       final rawStatus = await _gateway.request(type);
+      _attemptedTypes.add(type);
       if (type == AppPermissionType.locationAlways && !rawStatus.isGranted) {
         return PermissionStepStatus.needsSettings;
       }

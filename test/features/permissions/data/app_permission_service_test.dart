@@ -420,5 +420,160 @@ void main() {
         );
       },
     );
+
+    test(
+      'iOS (isIosOverride: true) normalizes unattempted locationAlways permanentlyDenied to notRequested when locationWhenInUse is granted, then stays needsSettings after request',
+      () async {
+        final iosService = AppPermissionService(
+          gateway: gateway,
+          isIosOverride: true,
+        );
+        addTearDown(iosService.dispose);
+
+        // First refresh: locationWhenInUse starts ungranted.
+        gateway.checkStatuses.addAll({
+          AppPermissionType.locationWhenInUse: PermissionStepStatus.denied,
+          AppPermissionType.locationAlways:
+              PermissionStepStatus.permanentlyDenied,
+          AppPermissionType.camera: PermissionStepStatus.denied,
+          AppPermissionType.microphone: PermissionStepStatus.denied,
+          AppPermissionType.notification: PermissionStepStatus.denied,
+        });
+        await iosService.refreshStatuses(isOfficer: true);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
+          PermissionStepStatus.notRequested,
+        );
+
+        // User grants locationWhenInUse; iOS immediately reports locationAlways
+        // as permanentlyDenied before any Always prompt has been shown.
+        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+            PermissionStepStatus.granted;
+        await iosService.refreshStatuses(isOfficer: true);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
+          PermissionStepStatus.granted,
+        );
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.notRequested,
+        );
+
+        // User triggers native "Change to Always Allow" prompt and declines /
+        // keeps While Using (iOS returns permanentlyDenied/denied).
+        gateway.requestResults[AppPermissionType.locationAlways] =
+            PermissionStepStatus.permanentlyDenied;
+        final requested = await iosService.requestPermission(
+          AppPermissionType.locationAlways,
+          isOfficer: true,
+        );
+        expect(
+          gateway.requestedTypes,
+          contains(AppPermissionType.locationAlways),
+        );
+        expect(requested, PermissionStepStatus.needsSettings);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.needsSettings,
+        );
+
+        // Subsequent refreshes must remain needsSettings while still ungranted.
+        await iosService.refreshStatuses(isOfficer: true);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.needsSettings,
+        );
+
+        gateway.checkStatuses[AppPermissionType.locationAlways] =
+            PermissionStepStatus.denied;
+        await iosService.refreshStatuses(isOfficer: true);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.needsSettings,
+        );
+      },
+    );
+
+    test(
+      'non-iOS preserves permanentlyDenied for unattempted locationAlways',
+      () async {
+        final androidService = AppPermissionService(
+          gateway: gateway,
+          isIosOverride: false,
+        );
+        addTearDown(androidService.dispose);
+
+        gateway.checkStatuses.addAll({
+          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+          AppPermissionType.locationAlways:
+              PermissionStepStatus.permanentlyDenied,
+        });
+
+        await androidService.refreshStatuses(isOfficer: true);
+        expect(
+          androidService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.permanentlyDenied,
+        );
+      },
+    );
+
+    test(
+      'exception thrown by gateway.request(locationAlways) does not mark _attemptedTypes',
+      () async {
+        gateway.checkStatuses.addAll({
+          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+          AppPermissionType.locationAlways: PermissionStepStatus.denied,
+        });
+        await service.refreshStatuses(isOfficer: true);
+        expect(
+          service.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.notRequested,
+        );
+
+        gateway.requestErrors.add(AppPermissionType.locationAlways);
+        final requested = await service.requestPermission(
+          AppPermissionType.locationAlways,
+          isOfficer: true,
+        );
+        expect(requested, PermissionStepStatus.denied);
+
+        await service.refreshStatuses(isOfficer: true);
+        expect(
+          service.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.notRequested,
+        );
+      },
+    );
+
+    test(
+      'iOS exception thrown by gateway.request(locationAlways) keeps subsequent refresh at notRequested',
+      () async {
+        final iosService = AppPermissionService(
+          gateway: gateway,
+          isIosOverride: true,
+        );
+        addTearDown(iosService.dispose);
+
+        gateway.checkStatuses.addAll({
+          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+          AppPermissionType.locationAlways:
+              PermissionStepStatus.permanentlyDenied,
+        });
+        await iosService.refreshStatuses(isOfficer: true);
+
+        gateway.requestErrors.add(AppPermissionType.locationAlways);
+        final requested = await iosService.requestPermission(
+          AppPermissionType.locationAlways,
+          isOfficer: true,
+        );
+        expect(requested, PermissionStepStatus.denied);
+
+        await iosService.refreshStatuses(isOfficer: true);
+        expect(
+          iosService.cachedStatuses[AppPermissionType.locationAlways],
+          PermissionStepStatus.notRequested,
+        );
+      },
+    );
   });
 }
