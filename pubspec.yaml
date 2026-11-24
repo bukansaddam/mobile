@@ -60,6 +60,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/permissions/
     - assets/sounds/
     - lib/core/crd/akar-504702-d2d27b0e66f2.json
 
