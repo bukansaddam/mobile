@@ -78,3 +78,5 @@ anti-slop/*
 # QA & Personal Test Reports
 test_reports/
 test_report/
+
+tools/video_demo/*
