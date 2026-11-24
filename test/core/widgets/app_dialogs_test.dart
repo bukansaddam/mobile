@@ -2,6 +2,7 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/theme/app_colors.dart';
+import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/analisis/presentation/widgets/bank_sampah_analisis_card.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_alert_banner.dart';
@@ -473,6 +474,72 @@ void main() {
           find.text('Periode: Januari ${DateTime.now().year}'),
           findsOneWidget,
         );
+      },
+    );
+
+    testWidgets(
+      'showFailed supports primaryButtonColor override in dark mode at 320x640 200% scale',
+      (tester) async {
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+        await tester.binding.setSurfaceSize(const Size(320, 640));
+        tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+
+        var primaryTapped = false;
+        var secondaryTapped = false;
+        late AppColorScheme darkColors;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.darkTheme,
+            home: Builder(
+              builder: (context) {
+                darkColors = context.appColors;
+                return Scaffold(
+                  body: Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        AppDialogs.showFailed<void>(
+                          context,
+                          title: 'Gagal Memindai e-KTP',
+                          message: 'Koneksi timeout.',
+                          primaryButtonText: 'Coba Scan Ulang',
+                          primaryButtonColor: darkColors.primary,
+                          onPrimaryPressed: () => primaryTapped = true,
+                          secondaryButtonText: 'Lanjut Manual',
+                          onSecondaryPressed: () => secondaryTapped = true,
+                        );
+                      },
+                      child: const Text('Buka Error'),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+
+        await tester.tap(find.text('Buka Error'));
+        await tester.pumpAndSettle();
+
+        final primaryBtn = tester.widget<ElevatedButton>(
+          find.widgetWithText(ElevatedButton, 'Coba Scan Ulang'),
+        );
+        expect(
+          primaryBtn.style?.backgroundColor?.resolve({}),
+          darkColors.primary,
+        );
+        expect(
+          primaryBtn.style?.foregroundColor?.resolve({}),
+          darkColors.onPrimary,
+        );
+        expect(tester.takeException(), isNull);
+
+        await tester.tap(find.text('Coba Scan Ulang'));
+        await tester.pumpAndSettle();
+        expect(primaryTapped, isTrue);
+        expect(secondaryTapped, isFalse);
       },
     );
   });
