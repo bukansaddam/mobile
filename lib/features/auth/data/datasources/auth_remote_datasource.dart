@@ -43,6 +43,12 @@ abstract class AuthRemoteDatasource {
 
 class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     implements AuthRemoteDatasource {
+  final Dio? _dioOverride;
+
+  AuthRemoteDatasourceImpl({Dio? dioClient}) : _dioOverride = dioClient;
+
+  @override
+  Dio get dio => _dioOverride ?? super.dio;
   @override
   Future<AuthModel> login({
     required String username,
@@ -233,6 +239,13 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     }
   }
 
+  static const _invalidKtpMessage =
+      'Foto yang diunggah bukan e-KTP yang valid. Pastikan seluruh e-KTP terlihat jelas.';
+  static const _wrongDocumentTypeMessage =
+      'Foto yang diunggah bukan e-KTP. Silakan ambil foto e-KTP asli.';
+  static const _unreadableKtpMessage =
+      'Data e-KTP tidak dapat terbaca. Pastikan foto jelas, terang, dan merupakan e-KTP asli.';
+
   @override
   Future<KtpOcrModel> scanKtp(File file) async {
     FileSecurityUtils.validateImageFile(file);
@@ -245,8 +258,8 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
           'type_document': 'ktp',
         }),
         options: Options(
-          sendTimeout: const Duration(minutes: 5),
-          receiveTimeout: const Duration(minutes: 5),
+          sendTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
         ),
       );
 
@@ -255,20 +268,61 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
           : const <String, dynamic>{};
 
       if (body['success'] == false) {
-        throw Exception(
-          (body['message'] ?? body['error'] ?? 'Gagal memindai e-KTP')
-              .toString(),
-        );
+        final rawMsg = (body['message'] ?? body['error'] ?? '').toString();
+        final msg = ErrorUtils.cleanExceptionMessage(rawMsg);
+        throw ValidationException(msg.isNotEmpty ? msg : _invalidKtpMessage);
       }
-      return KtpOcrModel.fromJson(body);
+
+      final payload = body['data'] is Map
+          ? Map<String, dynamic>.from(body['data'] as Map)
+          : body;
+      final docType = (payload['document_type'] ?? body['document_type'] ?? '')
+          .toString()
+          .trim()
+          .toLowerCase();
+      if (docType.isNotEmpty && docType != 'ktp') {
+        throw const ValidationException(_wrongDocumentTypeMessage);
+      }
+
+      final model = KtpOcrModel.fromJson(body);
+      if (!model.hasReadableData) {
+        throw const ValidationException(_unreadableKtpMessage);
+      }
+      return model;
+    } on AppException {
+      rethrow;
     } on DioException catch (e) {
       AppLogger.e(
         '[AUTH_DS] DioException in scanKtp: ${e.message}',
         e,
         e.stackTrace,
       );
-      throw Exception(ErrorUtils.parseErrorMessage(e));
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 400 || statusCode == 422) {
+        throw ValidationException(
+          _resolveScanValidationMessage(e),
+          statusCode: statusCode,
+        );
+      }
+      throw ErrorUtils.toAppException(e, fallbackMessage: 'Gagal memindai e-KTP');
     }
+  }
+
+  String _resolveScanValidationMessage(DioException e) {
+    final parsed = ErrorUtils.parseErrorMessage(e);
+    if (parsed.isNotEmpty &&
+        parsed != 'Format data tidak valid' &&
+        parsed != 'Terjadi Kesalahan') {
+      return parsed;
+    }
+    final rawData = e.response?.data;
+    if (rawData is Map && rawData['error'] != null) {
+      final cleaned = ErrorUtils.cleanExceptionMessage(
+        rawData['error'].toString(),
+      );
+      if (cleaned.isNotEmpty) return cleaned;
+    }
+    return _invalidKtpMessage;
   }
 
   AuthModel _parseAuthModel(dynamic json) {

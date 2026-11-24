@@ -106,3 +106,12 @@ abstract class KtpOcrModel with _$KtpOcrModel {
     );
   }
 }
+
+extension KtpOcrModelValidation on KtpOcrModel {
+  bool get hasReadableData =>
+      nik.isNotEmpty ||
+      name.isNotEmpty ||
+      birthPlace.isNotEmpty ||
+      birthDate.isNotEmpty ||
+      address.isNotEmpty;
+}
