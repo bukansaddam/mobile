@@ -205,8 +205,6 @@ class FirebaseNotificationService {
     if (_isInitialized) return;
 
     try {
-      await _requestPermission();
-
       await _fcm.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
@@ -224,6 +222,23 @@ class FirebaseNotificationService {
     } catch (e, stack) {
       AppLogger.e('🔥 [FCM Service] Initialization error: $e', e, stack);
     }
+  }
+
+  Future<bool> requestNotificationPermission() async {
+    final settings = await _requestPermission();
+
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    await androidPlugin?.requestNotificationsPermission();
+
+    if (cachedToken == null || cachedToken!.isEmpty) {
+      await _initToken();
+    }
+
+    return settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional;
   }
 
   Future<NotificationSettings> _requestPermission() async {
@@ -249,10 +264,10 @@ class FirebaseNotificationService {
       '@mipmap/ic_launcher',
     );
     const darwinSettings = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      requestCriticalPermission: true,
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      requestCriticalPermission: false,
     );
 
     const initSettings = InitializationSettings(
@@ -275,7 +290,6 @@ class FirebaseNotificationService {
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(defaultChannel);
       await androidPlugin.createNotificationChannel(emergencyChannel);
-      await androidPlugin.requestNotificationsPermission();
     }
   }
 

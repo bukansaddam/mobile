@@ -66,10 +66,10 @@ class DisasterAlertService {
 
       const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
       const darwinInit = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        requestCriticalPermission: true,
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+        requestCriticalPermission: false,
       );
       const initSettings = InitializationSettings(
         android: androidInit,
@@ -96,21 +96,6 @@ class DisasterAlertService {
           >();
       if (androidPlugin != null) {
         await androidPlugin.createNotificationChannel(androidChannel);
-        await androidPlugin.requestNotificationsPermission();
-        await androidPlugin.requestExactAlarmsPermission();
-      }
-
-      final iosPlugin = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin
-          >();
-      if (iosPlugin != null) {
-        await iosPlugin.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-          critical: true,
-        );
       }
     } catch (e) {
       debugPrint('Error initializing local notifications: $e');
