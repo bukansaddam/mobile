@@ -15,12 +15,14 @@ class EktpScanStep extends StatefulWidget {
   final Animation<double> entrance;
   final File? photo;
   final VoidCallback onClearPhoto;
+  final bool isScanning;
 
   const EktpScanStep({
     super.key,
     required this.entrance,
     required this.photo,
     required this.onClearPhoto,
+    this.isScanning = false,
   });
 
   @override
@@ -38,17 +40,33 @@ class _EktpScanStepState extends State<EktpScanStep>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    if (widget.photo != null) _laserController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncLaserAnimation();
   }
 
   @override
   void didUpdateWidget(covariant EktpScanStep oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final isNewPhoto =
-        widget.photo != null && widget.photo!.path != oldWidget.photo?.path;
-    if (isNewPhoto &&
-        !(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
-      _laserController.forward(from: 0);
+    if (widget.isScanning != oldWidget.isScanning ||
+        widget.photo?.path != oldWidget.photo?.path) {
+      _syncLaserAnimation();
+    }
+  }
+
+  void _syncLaserAnimation() {
+    final disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (widget.isScanning && widget.photo != null && !disableAnimations) {
+      if (!_laserController.isAnimating) {
+        _laserController.repeat(reverse: true);
+      }
+    } else if (_laserController.isAnimating || _laserController.value != 0) {
+      _laserController.stop();
+      _laserController.value = 0;
     }
   }
 
@@ -166,12 +184,16 @@ class _EktpScanStepState extends State<EktpScanStep>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      'REPUBLIK INDONESIA',
-                      style: AppTextStyles.caption.copyWith(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: colors.info,
+                    Expanded(
+                      child: Text(
+                        'REPUBLIK INDONESIA',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.caption.copyWith(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: colors.info,
+                        ),
                       ),
                     ),
                   ],
@@ -179,6 +201,8 @@ class _EktpScanStepState extends State<EktpScanStep>
                 const Spacer(),
                 Text(
                   'NIK: • • • • • • • • • • • • • • • •',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -188,6 +212,8 @@ class _EktpScanStepState extends State<EktpScanStep>
                 const SizedBox(height: 4),
                 Text(
                   'Nama: • • • • • • • • •',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.caption.copyWith(
                     fontSize: 9,
                     color: colors.info,
@@ -240,44 +266,91 @@ class _EktpScanStepState extends State<EktpScanStep>
               ),
             ),
           ),
-          IgnorePointer(
-            child: AnimatedBuilder(
-              animation: _laserController,
-              builder: (context, _) {
-                final t = MediaQuery.of(context).disableAnimations
-                    ? 0.5
-                    : Curves.easeInOutCubic.transform(_laserController.value);
-                return Align(
-                  alignment: Alignment(0, -1 + 2 * t),
-                  child: Container(
-                    height: 3,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.transparent,
-                          colors.success,
-                          Colors.transparent,
-                        ],
+          if (widget.isScanning) ...[
+            Positioned.fill(
+              child: ColoredBox(color: colors.scrim),
+            ),
+            IgnorePointer(
+              child: AnimatedBuilder(
+                animation: _laserController,
+                builder: (context, _) {
+                  final t = MediaQuery.of(context).disableAnimations
+                      ? 0.5
+                      : Curves.easeInOutCubic.transform(_laserController.value);
+                  return Align(
+                    alignment: Alignment(0, -1 + 2 * t),
+                    child: Container(
+                      height: 3,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            colors.success,
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              onPressed: widget.onClearPhoto,
-              tooltip: 'Hapus foto',
-              style: IconButton.styleFrom(
-                backgroundColor: colors.surface,
-                foregroundColor: colors.error,
+                  );
+                },
               ),
-              icon: const Icon(Icons.delete_outline_rounded, size: 20),
             ),
-          ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: colors.border),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Memindai data e-KTP...',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.caption.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ] else
+            Positioned(
+              top: 8,
+              right: 8,
+              child: IconButton(
+                onPressed: widget.onClearPhoto,
+                tooltip: 'Hapus foto',
+                style: IconButton.styleFrom(
+                  backgroundColor: colors.surface,
+                  foregroundColor: colors.error,
+                ),
+                icon: const Icon(Icons.delete_outline_rounded, size: 20),
+              ),
+            ),
         ],
       ),
     );

@@ -140,6 +140,7 @@ class AppDialogs {
     String title = 'Terjadi Kesalahan',
     required String message,
     String primaryButtonText = 'Tutup',
+    Color? primaryButtonColor,
     VoidCallback? onPrimaryPressed,
     String? secondaryButtonText,
     VoidCallback? onSecondaryPressed,
@@ -151,6 +152,15 @@ class AppDialogs {
       barrierDismissible: barrierDismissible,
       builder: (dialogContext) {
         final colors = dialogContext.appColors;
+        final twoButtonPrimaryColor = primaryButtonColor ?? colors.errorSolid;
+        final twoButtonForeground = twoButtonPrimaryColor == colors.primary
+            ? colors.onPrimary
+            : colors.onErrorSolid;
+        final singleButtonPrimaryColor = primaryButtonColor ?? colors.primary;
+        final singleButtonForeground =
+            singleButtonPrimaryColor == colors.primary
+            ? colors.onPrimary
+            : colors.onErrorSolid;
         return _AppDialogCard(
           badge: RosetteBadge(
             icon: Icons.close_rounded,
@@ -179,8 +189,8 @@ class AppDialogs {
                   Expanded(
                     child: _DialogPrimaryButton(
                       text: primaryButtonText,
-                      color: colors.errorSolid,
-                      foregroundColor: colors.onErrorSolid,
+                      color: twoButtonPrimaryColor,
+                      foregroundColor: twoButtonForeground,
                       onPressed: () {
                         Navigator.pop(dialogContext);
                         if (onPrimaryPressed != null) {
@@ -194,8 +204,8 @@ class AppDialogs {
             ] else ...[
               _DialogPrimaryButton(
                 text: primaryButtonText,
-                color: colors.primary,
-                foregroundColor: colors.onPrimary,
+                color: singleButtonPrimaryColor,
+                foregroundColor: singleButtonForeground,
                 onPressed: () {
                   Navigator.pop(dialogContext);
                   if (onPrimaryPressed != null) {
