@@ -11,8 +11,11 @@ import 'package:akar/features/permissions/domain/entities/permission_step_status
 import 'package:akar/features/permissions/domain/services/permission_gateway.dart';
 import 'package:akar/features/permissions/presentation/bloc/permission_onboarding_bloc/permission_onboarding_bloc.dart';
 import 'package:akar/features/permissions/presentation/pages/permission_setup_screen.dart';
+import 'package:akar/features/permissions/presentation/widgets/permission_completed_view.dart';
+import 'package:akar/features/permissions/presentation/widgets/permission_illustration.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_progress_header.dart';
-import 'package:akar/features/permissions/presentation/widgets/permission_step_card.dart';
+import 'package:akar/features/permissions/presentation/widgets/permission_seamless_background.dart';
+import 'package:akar/features/permissions/presentation/widgets/permission_step_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -208,9 +211,12 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(tester.takeException(), isNull);
+          expect(find.byType(PermissionSeamlessBackground), findsOneWidget);
           expect(find.byType(PermissionProgressHeader), findsOneWidget);
-          expect(find.byType(PermissionStepCard), findsOneWidget);
-          expect(find.text('Masyarakat'), findsOneWidget);
+          expect(find.byType(PermissionStepContent), findsOneWidget);
+          expect(find.byType(PermissionIllustration), findsOneWidget);
+          expect(find.text('Masyarakat'), findsNothing);
+          expect(find.text('Petugas Linmas'), findsNothing);
           expect(find.text('Langkah 1 dari 3'), findsOneWidget);
           expect(find.text('Akses Lokasi'), findsOneWidget);
           expect(find.text('Izinkan Akses Lokasi'), findsOneWidget);
@@ -232,7 +238,8 @@ void main() {
         await tester.pumpWidget(harness.buildApp());
         await tester.pumpAndSettle();
 
-        expect(find.text('Petugas Linmas'), findsOneWidget);
+        expect(find.text('Petugas Linmas'), findsNothing);
+        expect(find.text('Masyarakat'), findsNothing);
         expect(find.text('Langkah 2 dari 5'), findsOneWidget);
         expect(find.text('Lokasi Latar Belakang (24/7)'), findsOneWidget);
         expect(find.textContaining('Izinkan sepanjang waktu'), findsOneWidget);
@@ -360,7 +367,7 @@ void main() {
     );
 
     testWidgets(
-      'tapping header Keluar opens AppDialogs.showConfirmation and dispatches StopTrackingEvent before LogoutEvent only when confirmed',
+      'tapping bottom Keluar opens AppDialogs.showConfirmation and dispatches StopTrackingEvent before LogoutEvent only when confirmed',
       (tester) async {
         final harness = _TestHarness.create(isOfficer: false);
         addTearDown(harness.dispose);
@@ -370,6 +377,10 @@ void main() {
 
         final logoutFinder = find.text('Keluar');
         expect(logoutFinder, findsOneWidget);
+        expect(
+          tester.getTopLeft(logoutFinder).dy,
+          greaterThan(tester.getBottomLeft(find.byType(ElevatedButton)).dy),
+        );
         final logoutSize = tester.getSize(
           find.ancestor(
             of: logoutFinder,
@@ -378,6 +389,8 @@ void main() {
         );
         expect(logoutSize.height, greaterThanOrEqualTo(48));
 
+        await tester.ensureVisible(logoutFinder);
+        await tester.pumpAndSettle();
         await tester.tap(logoutFinder);
         await tester.pumpAndSettle();
 
@@ -390,6 +403,8 @@ void main() {
         expect(harness.authBloc.events.whereType<LogoutEvent>(), isEmpty);
         expect(harness.eventLog, isEmpty);
 
+        await tester.ensureVisible(logoutFinder);
+        await tester.pumpAndSettle();
         await tester.tap(logoutFinder);
         await tester.pumpAndSettle();
         await tester.tap(find.text('Keluar').last);
@@ -401,6 +416,42 @@ void main() {
         );
         expect(harness.authBloc.events.whereType<LogoutEvent>(), hasLength(1));
         expect(harness.eventLog, equals(['StopTrackingEvent', 'LogoutEvent']));
+      },
+    );
+
+    testWidgets(
+      'when all permissions are granted, renders cardless PermissionCompletedView and hides Keluar',
+      (tester) async {
+        final harness = _TestHarness.create(
+          isOfficer: false,
+          checkStatuses: {
+            AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+            AppPermissionType.camera: PermissionStepStatus.granted,
+            AppPermissionType.notification: PermissionStepStatus.granted,
+          },
+        );
+        addTearDown(harness.dispose);
+
+        await tester.pumpWidget(harness.buildApp());
+        await tester.pumpAndSettle();
+
+        expect(find.byType(PermissionCompletedView), findsOneWidget);
+        expect(find.text('Semua Izin Lengkap'), findsOneWidget);
+        expect(find.text('Keluar'), findsNothing);
+
+        final decoratedBoxes = tester.widgetList<DecoratedBox>(
+          find.descendant(
+            of: find.byType(PermissionCompletedView),
+            matching: find.byType(DecoratedBox),
+          ),
+        );
+        for (final box in decoratedBoxes) {
+          final decoration = box.decoration;
+          if (decoration is BoxDecoration) {
+            expect(decoration.border, isNull);
+            expect(decoration.boxShadow, isNull);
+          }
+        }
       },
     );
 
