@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,12 +14,17 @@ part 'tracking_state.dart';
 class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
   final SendLocationUsecase sendLocationUsecase;
   final SharedPreferences sharedPreferences;
+  final bool isDebugMode;
+  final FlutterBackgroundService _service;
   StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
 
   TrackingBloc({
     required this.sendLocationUsecase,
     required this.sharedPreferences,
-  }) : super(const TrackingState()) {
+    this.isDebugMode = kDebugMode,
+    FlutterBackgroundService? backgroundService,
+  }) : _service = backgroundService ?? FlutterBackgroundService(),
+       super(const TrackingState()) {
     on<InitTrackingEvent>(_onInitTracking);
     on<StartTrackingEvent>(_onStartTracking);
     on<StopTrackingEvent>(_onStopTracking);
@@ -29,7 +35,7 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
 
     add(InitTrackingEvent());
 
-    _serviceSubscription = FlutterBackgroundService()
+    _serviceSubscription = _service
         .on('locationUpdated')
         .listen((event) {
           if (event != null) {
@@ -42,10 +48,18 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     InitTrackingEvent event,
     Emitter<TrackingState> emit,
   ) async {
-    final active =
-        sharedPreferences.getBool('isTrackingActive') ??
-        sharedPreferences.getBool('isTrackingEnabled') ??
-        false;
+    final bool active;
+    if (isDebugMode) {
+      // Mode debug default off agar tidak mengirim lokasi otomatis saat pengembangan.
+      await sharedPreferences.setBool('isTrackingActive', false);
+      await sharedPreferences.setBool('isTrackingEnabled', false);
+      active = false;
+    } else {
+      active =
+          sharedPreferences.getBool('isTrackingActive') ??
+          sharedPreferences.getBool('isTrackingEnabled') ??
+          false;
+    }
     final interval =
         sharedPreferences.getInt('trackingIntervalSeconds') ??
         sharedPreferences.getInt('intervalSeconds') ??
@@ -117,13 +131,13 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     StartTrackingEvent event,
     Emitter<TrackingState> emit,
   ) async {
+    if (isDebugMode && !event.manual) return;
     await sharedPreferences.setBool('isTrackingActive', true);
     await sharedPreferences.setBool('isTrackingEnabled', true);
-    final service = FlutterBackgroundService();
-    if (!await service.isRunning()) {
-      await service.startService();
+    if (!await _service.isRunning()) {
+      await _service.startService();
     } else {
-      service.invoke('updateStatus', {'active': true});
+      _service.invoke('updateStatus', {'active': true});
     }
     emit(state.copyWith(isTrackingActive: true));
   }
@@ -134,10 +148,9 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
   ) async {
     await sharedPreferences.setBool('isTrackingActive', false);
     await sharedPreferences.setBool('isTrackingEnabled', false);
-    final service = FlutterBackgroundService();
-    if (await service.isRunning()) {
-      service.invoke('updateStatus', {'active': false});
-      service.invoke('stopService');
+    if (await _service.isRunning()) {
+      _service.invoke('updateStatus', {'active': false});
+      _service.invoke('stopService');
     }
     emit(state.copyWith(isTrackingActive: false));
   }
@@ -152,9 +165,8 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
       event.intervalSeconds,
     );
     await sharedPreferences.setInt('intervalSeconds', event.intervalSeconds);
-    final service = FlutterBackgroundService();
-    if (await service.isRunning()) {
-      service.invoke('updateInterval', {'interval': event.intervalSeconds});
+    if (await _service.isRunning()) {
+      _service.invoke('updateInterval', {'interval': event.intervalSeconds});
     }
     emit(state.copyWith(intervalSeconds: event.intervalSeconds));
   }

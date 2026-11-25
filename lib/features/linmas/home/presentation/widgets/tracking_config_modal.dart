@@ -109,7 +109,7 @@ class TrackingConfigModal {
                           onChanged: (val) {
                             if (val) {
                               context.read<TrackingBloc>().add(
-                                StartTrackingEvent(),
+                                const StartTrackingEvent(manual: true),
                               );
                             } else {
                               context.read<TrackingBloc>().add(

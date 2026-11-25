@@ -9,7 +9,14 @@ abstract class TrackingEvent extends Equatable {
 
 class InitTrackingEvent extends TrackingEvent {}
 
-class StartTrackingEvent extends TrackingEvent {}
+class StartTrackingEvent extends TrackingEvent {
+  final bool manual;
+
+  const StartTrackingEvent({this.manual = false});
+
+  @override
+  List<Object?> get props => [manual];
+}
 
 class StopTrackingEvent extends TrackingEvent {}
 
