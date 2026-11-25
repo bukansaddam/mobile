@@ -331,7 +331,7 @@ void main() {
 
   group('Profile Screen Points Badge Tests', () {
     testWidgets(
-      'MasyarakatProfileScreen menampilkan ProfilePointsCard dan navigasi ke vouchers saat di-tap',
+      'MasyarakatProfileScreen menyembunyikan ProfilePointsCard karena poin khusus Linmas dan route /vouchers diblokir untuk member',
       (tester) async {
         await tester.binding.setSurfaceSize(const Size(600, 900));
         final user = testUser.copyWith(
@@ -340,27 +340,6 @@ void main() {
           points: 150,
         );
         final profileBloc = _FakeProfileBloc();
-        final router = GoRouter(
-          initialLocation: '/profile',
-          routes: [
-            GoRoute(
-              path: '/profile',
-              builder: (context, state) => const MasyarakatProfileScreen(),
-            ),
-            GoRoute(
-              path: AppRouter.vouchersPath,
-              name: AppRouter.vouchers,
-              builder: (context, state) => Scaffold(
-                body: Center(
-                  child: TextButton(
-                    onPressed: () => context.pop(),
-                    child: const Text('Vouchers Screen'),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
 
         await tester.pumpWidget(
           MultiBlocProvider(
@@ -372,26 +351,38 @@ void main() {
               ),
               BlocProvider<ProfileBloc>.value(value: profileBloc),
             ],
-            child: MaterialApp.router(routerConfig: router),
+            child: const MaterialApp(home: MasyarakatProfileScreen()),
           ),
         );
         await tester.pumpAndSettle();
 
-        expect(find.text('150 Poin'), findsOneWidget);
+        expect(find.text('150 Poin'), findsNothing);
         expect(
           find.text('Diperoleh dari laporan yang telah dibuat'),
-          findsOneWidget,
+          findsNothing,
         );
 
-        await tester.tap(find.text('150 Poin'));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Vouchers Screen'), findsOneWidget);
-
-        await tester.tap(find.text('Vouchers Screen'));
-        await tester.pumpAndSettle();
-
-        expect(profileBloc.events, contains(isA<GetProfileEvent>()));
+        expect(
+          AppRouter.resolveRedirect(
+            authState: AuthAuthenticated(user: user, token: 'tok'),
+            location: AppRouter.vouchersPath,
+            hasAllPermissions: true,
+            hasCompletedSurvey: true,
+          ),
+          AppRouter.masyarakatMainPath,
+        );
+        expect(
+          AppRouter.resolveRedirect(
+            authState: AuthAuthenticated(
+              user: user.copyWith(role: 'officer'),
+              token: 'tok',
+            ),
+            location: AppRouter.vouchersPath,
+            hasAllPermissions: true,
+            hasCompletedSurvey: true,
+          ),
+          isNull,
+        );
 
         await tester.binding.setSurfaceSize(null);
       },

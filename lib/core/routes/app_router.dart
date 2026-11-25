@@ -219,6 +219,7 @@ class AppRouter {
         '/activation_detail',
         '/survey',
         '/initial-survey',
+        vouchersPath,
       ];
 
       final isAttemptingLinmasRoute = linmasOnlyPrefixes.any(

@@ -2,7 +2,6 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
-import 'package:go_router/go_router.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
@@ -14,7 +13,6 @@ import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
-import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -373,29 +371,8 @@ class _MasyarakatProfileScreenState extends State<MasyarakatProfileScreen> {
                                 ],
                               ),
 
+                              // shortcut: kartu poin disembunyikan untuk Masyarakat, saat ini poin khusus Linmas.
                               const SizedBox(height: 18),
-
-                              ProfilePointsCard(
-                                points: currentUser?.points ?? 0,
-                                isOfficer: false,
-                                isEmbedded: true,
-                                onTap: () async {
-                                  await context.push(
-                                    AppRouter.vouchersPath,
-                                    extra: {
-                                      'points': currentUser?.points ?? 0,
-                                      'isOfficer': false,
-                                    },
-                                  );
-                                  if (context.mounted) {
-                                    context.read<ProfileBloc>().add(
-                                      GetProfileEvent(),
-                                    );
-                                  }
-                                },
-                              ),
-
-                              const SizedBox(height: 14),
 
                               Row(
                                 children: [
