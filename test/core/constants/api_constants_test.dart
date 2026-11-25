@@ -8,7 +8,8 @@ void main() {
     });
 
     test('auth endpoints decode accurately', () {
-      expect(ApiConstants.login, '/api/login');
+      expect(ApiConstants.loginMember, '/api/login/member');
+      expect(ApiConstants.loginOfficer, '/api/login/officer');
       expect(ApiConstants.refreshToken, '/api/auth/refresh');
       expect(ApiConstants.register, '/api/register');
       expect(ApiConstants.registerPublic, '/api/register/public');

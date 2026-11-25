@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
@@ -16,10 +18,38 @@ import 'package:akar/features/auth/domain/usecases/register_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+class _RecordingAdapter implements HttpClientAdapter {
+  _RecordingAdapter(this.responseBody);
+
+  final Map<String, dynamic> responseBody;
+  String? lastPath;
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    lastPath = options.path;
+    return ResponseBody.fromString(
+      jsonEncode(responseBody),
+      200,
+      headers: {
+        Headers.contentTypeHeader: [Headers.jsonContentType],
+      },
+    );
+  }
+
+  @override
+  void close({bool force = false}) {}
+}
 
 class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
   late AuthModel fakeResponse;
+  bool? lastIsOfficer;
 
   @override
   Future<KtpOcrModel> scanKtp(File file) {
@@ -31,7 +61,9 @@ class FakeAuthRemoteDatasource implements AuthRemoteDatasource {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   }) async {
+    lastIsOfficer = isOfficer;
     return fakeResponse;
   }
 
@@ -343,41 +375,85 @@ void main() {
       );
     }
 
-    final memberLoginJson = {
+    final multiRoleLoginJson = {
       "success": true,
       "message": "Login berhasil",
-      "access_token": "477|member-token",
+      "access_token": "477|multi-role-token",
       "token_type": "Bearer",
       "user": {
-        "id": 250421,
-        "name": "Warga",
-        "username": "warga",
-        "role": "member",
-        "village_members_id": null,
+        "id": 769798,
+        "name": "Rezzitukam",
+        "username": "rezzitukam",
+        "village_members_id": 6234204,
       },
     };
 
-    test('menolak login Linmas untuk akun masyarakat', () async {
+    test(
+      'akun multi-role dengan village_members_id berhasil login sebagai masyarakat',
+      () async {
+        final remote = FakeAuthRemoteDatasource()
+          ..fakeResponse = AuthModel.fromJson(multiRoleLoginJson);
+        final local = FakeAuthLocalDatasource();
+        final bloc = buildBloc(remote, local);
+
+        final emissions = expectLater(
+          bloc.stream,
+          emitsInOrder([isA<AuthLoading>(), isA<AuthAuthenticated>()]),
+        );
+        bloc.add(
+          const LoginEvent(
+            username: 'rezzitukam',
+            password: 'password',
+            expectOfficer: false,
+          ),
+        );
+        await emissions;
+
+        final authState = bloc.state as AuthAuthenticated;
+        expect(remote.lastIsOfficer, isFalse);
+        expect(authState.user.role, 'member');
+        expect(authState.user.isMember, isTrue);
+        expect(local.cachedUser?.role, 'member');
+        await bloc.close();
+      },
+    );
+
+    test('UpdateAuthUserEvent mempertahankan role sesi aktif akun multi-role', () async {
       final remote = FakeAuthRemoteDatasource()
-        ..fakeResponse = AuthModel.fromJson(memberLoginJson);
+        ..fakeResponse = AuthModel.fromJson(multiRoleLoginJson);
       final local = FakeAuthLocalDatasource();
       final bloc = buildBloc(remote, local);
 
-      final emissions = expectLater(
+      final loginDone = expectLater(
         bloc.stream,
-        emitsInOrder([isA<AuthLoading>(), isA<AuthFailure>()]),
+        emitsInOrder([isA<AuthLoading>(), isA<AuthAuthenticated>()]),
       );
       bloc.add(
         const LoginEvent(
-          username: 'warga',
+          username: 'rezzitukam',
           password: 'password',
-          expectOfficer: true,
+          expectOfficer: false,
         ),
       );
-      await emissions;
+      await loginDone;
 
-      expect((bloc.state as AuthFailure).message, 'Akun tidak ditemukan');
-      expect(local.cachedToken, isNull);
+      final updateDone = expectLater(bloc.stream, emits(isA<AuthAuthenticated>()));
+      bloc.add(
+        UpdateAuthUserEvent(
+          UserModel.fromJson({
+            'id': 769798,
+            'name': 'Rezzitukam Updated',
+            'username': 'rezzitukam',
+            'village_members_id': 6234204,
+          }).toDomain(),
+        ),
+      );
+      await updateDone;
+
+      final authState = bloc.state as AuthAuthenticated;
+      expect(authState.user.name, 'Rezzitukam Updated');
+      expect(authState.user.role, 'member');
+      expect(authState.user.isMember, isTrue);
       await bloc.close();
     });
 
@@ -411,8 +487,65 @@ void main() {
       );
       await emissions;
 
+      final authState = bloc.state as AuthAuthenticated;
+      expect(remote.lastIsOfficer, isTrue);
+      expect(authState.user.role, 'officer');
+      expect(authState.user.isOfficer, isTrue);
       expect(local.cachedToken, isNotNull);
       await bloc.close();
+    });
+
+    test('login masyarakat dan fallback role null mengirim isOfficer false', () async {
+      final remote = FakeAuthRemoteDatasource()
+        ..fakeResponse = AuthModel.fromJson(multiRoleLoginJson);
+      final local = FakeAuthLocalDatasource();
+      final bloc = buildBloc(remote, local);
+
+      for (final expectOfficer in [false, null]) {
+        remote.lastIsOfficer = null;
+        final emissions = expectLater(
+          bloc.stream,
+          emitsInOrder([isA<AuthLoading>(), isA<AuthAuthenticated>()]),
+        );
+        bloc.add(
+          LoginEvent(
+            username: 'warga',
+            password: 'password',
+            expectOfficer: expectOfficer,
+          ),
+        );
+        await emissions;
+        expect(remote.lastIsOfficer, isFalse);
+      }
+
+      await bloc.close();
+    });
+  });
+
+  group('AuthRemoteDatasourceImpl.login endpoint routing', () {
+    test('memilih /api/login/member untuk masyarakat dan /api/login/officer untuk linmas', () async {
+      final adapter = _RecordingAdapter({
+        'success': true,
+        'message': 'Login berhasil',
+        'data': {
+          'access_token': 'token-123',
+          'token_type': 'Bearer',
+          'user': {'id': 1, 'name': 'User', 'role': 'member'},
+        },
+      });
+      final dio = Dio(BaseOptions(baseUrl: 'https://test.local'))
+        ..httpClientAdapter = adapter;
+      final datasource = AuthRemoteDatasourceImpl(dioClient: dio);
+
+      await datasource.login(username: 'warga', password: 'secret');
+      expect(adapter.lastPath, '/api/login/member');
+
+      await datasource.login(
+        username: 'petugas',
+        password: 'secret',
+        isOfficer: true,
+      );
+      expect(adapter.lastPath, '/api/login/officer');
     });
   });
 }

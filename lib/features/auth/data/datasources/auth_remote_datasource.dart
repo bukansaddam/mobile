@@ -17,6 +17,7 @@ abstract class AuthRemoteDatasource {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   });
   Future<AuthModel> refreshToken(String refreshToken);
   Future<AuthModel> register({
@@ -54,16 +55,20 @@ class AuthRemoteDatasourceImpl extends BaseRemoteDataSource
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   }) async {
     final Map<String, dynamic> requestData = {
       'username': username,
       'password': password,
       if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
     };
+    final endpoint = isOfficer
+        ? ApiConstants.loginOfficer
+        : ApiConstants.loginMember;
 
     try {
       final response = await handleRequest<AuthModel>(
-        () => dio.post(ApiConstants.login, data: requestData),
+        () => dio.post(endpoint, data: requestData),
         fromJson: _parseAuthModel,
       );
 

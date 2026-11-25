@@ -32,29 +32,36 @@ class AuthRepositoryImpl implements AuthRepository {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   }) async {
     try {
       final authModel = await remoteDatasource.login(
         username: username,
         password: password,
         deviceId: deviceId,
+        isOfficer: isOfficer,
       );
 
-      await _saveSession(authModel);
+      // Akun multi-role: kunci role sesi aktif mengikuti endpoint login yang dipilih.
+      final scopedAuth = authModel.copyWith(
+        user: authModel.user.copyWith(role: isOfficer ? 'officer' : 'member'),
+      );
+
+      await _saveSession(scopedAuth);
 
       final isQuizCompleted =
-          (authModel.isInitialQuizCompleted == true) ||
-          (authModel.user.isInitialQuizCompleted == true) ||
-          (authModel.isInitialQuizFilled == true) ||
-          (authModel.user.isInitialQuizFilled == true);
+          (scopedAuth.isInitialQuizCompleted == true) ||
+          (scopedAuth.user.isInitialQuizCompleted == true) ||
+          (scopedAuth.isInitialQuizFilled == true) ||
+          (scopedAuth.user.isInitialQuizFilled == true);
       if (surveyLocalDatasource != null) {
         await surveyLocalDatasource!.setInitialSurveyCompleted(
-          authModel.user.id,
+          scopedAuth.user.id,
           isQuizCompleted,
         );
       }
 
-      return Right(authModel.toDomain());
+      return Right(scopedAuth.toDomain());
     } catch (e) {
       return Left(ErrorUtils.toFailure(e));
     }
@@ -185,12 +192,16 @@ class AuthRepositoryImpl implements AuthRepository {
         return Right(AuthEntity(user: user.toDomain(), accessToken: token));
       }
 
+      final cachedRole = (await localDatasource.getUser())?.role;
       final authModel = await remoteDatasource
           .refreshToken(refreshToken)
           // Batasi agar splash tidak menunggu melewati batas waktunya.
           .timeout(const Duration(seconds: 8));
-      await _saveSession(authModel);
-      return Right(authModel.toDomain());
+      final scopedAuth = cachedRole != null
+          ? authModel.copyWith(user: authModel.user.copyWith(role: cachedRole))
+          : authModel;
+      await _saveSession(scopedAuth);
+      return Right(scopedAuth.toDomain());
     } catch (e) {
       return Left(ErrorUtils.toFailure(e));
     }

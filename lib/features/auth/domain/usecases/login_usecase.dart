@@ -11,9 +11,11 @@ class LoginUsecase {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   }) => repository.login(
     username: username,
     password: password,
     deviceId: deviceId,
+    isOfficer: isOfficer,
   );
 }

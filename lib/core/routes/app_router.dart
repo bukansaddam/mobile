@@ -241,15 +241,29 @@ class AppRouter {
     return null;
   }
 
+  static Object authRoutingKey(AuthState state) => state is AuthAuthenticated
+      ? (state.user.id, state.user.isMember, state.user.hasCompletedInitialQuiz)
+      : state.runtimeType;
+
+  static Stream<Object> _authRefreshStream() {
+    final bloc = sl<AuthBloc>();
+    var lastKey = authRoutingKey(bloc.state);
+    return bloc.stream.map(authRoutingKey).where((key) {
+      if (key == lastKey) return false;
+      lastKey = key;
+      return true;
+    });
+  }
+
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: splashPath,
     refreshListenable: sl.isRegistered<AppPermissionService>()
         ? Listenable.merge([
-            GoRouterRefreshStream(sl<AuthBloc>().stream),
+            GoRouterRefreshStream(_authRefreshStream()),
             sl<AppPermissionService>(),
           ])
-        : GoRouterRefreshStream(sl<AuthBloc>().stream),
+        : GoRouterRefreshStream(_authRefreshStream()),
     redirect: (context, state) {
       final authState = sl<AuthBloc>().state;
       final currentUser = authState is AuthAuthenticated ? authState.user : null;
@@ -751,16 +765,10 @@ class AppRouter {
     return context.pushNamed(jagaTanahDetail, extra: item);
   }
 
-  static bool _isNavigatingToEditProfile = false;
-
-  static Future<void> toEditProfile(BuildContext context) async {
-    if (_isNavigatingToEditProfile) return;
-    _isNavigatingToEditProfile = true;
-    try {
-      await context.pushNamed(editProfile);
-    } finally {
-      await Future.delayed(const Duration(milliseconds: 600));
-      _isNavigatingToEditProfile = false;
+  static Future<void> toEditProfile(BuildContext context) {
+    if (GoRouter.of(context).state.matchedLocation == editProfilePath) {
+      return Future<void>.value();
     }
+    return context.pushNamed(editProfile);
   }
 }

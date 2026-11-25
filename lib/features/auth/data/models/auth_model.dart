@@ -28,6 +28,8 @@ Object? _readPhone(Map json, String key) {
 }
 
 Object? _readRole(Map json, String key) {
+  if (json['role'] != null) return json['role'].toString();
+
   final username = (json['username'] ?? '').toString().trim().toLowerCase();
   if (username == 'officer') {
     return 'officer';
@@ -36,7 +38,6 @@ Object? _readRole(Map json, String key) {
     return 'member';
   }
 
-  if (json['role'] != null) return json['role'].toString();
   if (json['roles'] is List && (json['roles'] as List).isNotEmpty) {
     final first = (json['roles'] as List).first;
     if (first is Map && first['name'] != null) return first['name'].toString();

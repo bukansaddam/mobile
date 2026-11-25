@@ -55,7 +55,12 @@ class TokenRefreshInterceptor extends QueuedInterceptor {
       if (nextRefreshToken != null && nextRefreshToken.isNotEmpty) {
         await local.saveRefreshToken(nextRefreshToken);
       }
-      await local.saveUser(authModel.user);
+      final cachedRole = (await local.getUser())?.role;
+      await local.saveUser(
+        cachedRole != null
+            ? authModel.user.copyWith(role: cachedRole)
+            : authModel.user,
+      );
 
       dio.options.headers['Authorization'] = 'Bearer ${authModel.accessToken}';
       return await _retry(request, authModel.accessToken, handler);
@@ -82,7 +87,8 @@ class TokenRefreshInterceptor extends QueuedInterceptor {
   }
 
   bool _isAuthPath(String path) =>
-      path.contains(ApiConstants.login) ||
+      path.contains(ApiConstants.loginMember) ||
+      path.contains(ApiConstants.loginOfficer) ||
       path.contains(ApiConstants.register) ||
       path.contains(ApiConstants.refreshToken);
 

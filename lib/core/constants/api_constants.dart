@@ -31,7 +31,7 @@ class ApiConstants {
   ]);
 
   // Auth
-  static final String login = EndpointSecurity.decode(const <int>[
+  static final String loginMember = EndpointSecurity.decode(const <int>[
     117,
     79,
     44,

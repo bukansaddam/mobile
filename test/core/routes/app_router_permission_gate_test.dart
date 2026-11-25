@@ -1,7 +1,9 @@
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   const memberUser = UserEntity(
@@ -163,6 +165,79 @@ void main() {
           ),
           isNull,
         );
+      },
+    );
+  });
+
+  group('AppRouter.toEditProfile & authRoutingKey', () {
+    test('authRoutingKey tetap sama saat nama/profil berubah tanpa ganti role/quiz', () {
+      const before = AuthAuthenticated(
+        user: UserEntity(id: 10, name: 'Lama', role: 'member'),
+        token: 'tok',
+      );
+      const after = AuthAuthenticated(
+        user: UserEntity(id: 10, name: 'Baru', role: 'member'),
+        token: 'tok',
+      );
+      const loggedOut = AuthUnauthenticated();
+
+      expect(
+        AppRouter.authRoutingKey(before),
+        equals(AppRouter.authRoutingKey(after)),
+      );
+      expect(
+        AppRouter.authRoutingKey(before),
+        isNot(equals(AppRouter.authRoutingKey(loggedOut))),
+      );
+    });
+
+    testWidgets(
+      'toEditProfile tetap bisa dibuka ulang setelah pop meski router sempat refresh',
+      (tester) async {
+        final router = GoRouter(
+          initialLocation: AppRouter.masyarakatMainPath,
+          routes: [
+            GoRoute(
+              path: AppRouter.masyarakatMainPath,
+              builder: (context, state) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () => AppRouter.toEditProfile(context),
+                  child: const Text('Edit Profil Saya'),
+                ),
+              ),
+            ),
+            GoRoute(
+              path: AppRouter.editProfilePath,
+              name: AppRouter.editProfile,
+              builder: (context, state) => Scaffold(
+                body: ElevatedButton(
+                  onPressed: () => context.pop(true),
+                  child: const Text('Selesai Edit'),
+                ),
+              ),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Edit Profil Saya'));
+        await tester.pumpAndSettle();
+        expect(find.text('Selesai Edit'), findsOneWidget);
+
+        // Simulasikan router.refresh() saat EditProfile terbuka (seperti efek UpdateAuthUserEvent).
+        router.refresh();
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Selesai Edit'));
+        await tester.pumpAndSettle();
+        expect(find.text('Edit Profil Saya'), findsOneWidget);
+
+        // Buka ulang Edit Profil: sebelumnya terkunci permanen oleh _isNavigatingToEditProfile.
+        await tester.tap(find.text('Edit Profil Saya'));
+        await tester.pumpAndSettle();
+        expect(find.text('Selesai Edit'), findsOneWidget);
       },
     );
   });

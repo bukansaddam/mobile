@@ -102,19 +102,24 @@ void main() {
     expect(testHandler.errorPassed, equals(dioError));
   });
 
-  test('does not trigger LogoutEvent on login endpoint 401/403', () {
-    final dioError = DioException(
-      requestOptions: RequestOptions(path: '/api/login'),
-      response: Response(
-        requestOptions: RequestOptions(path: '/api/login'),
-        statusCode: 401,
-      ),
-    );
+  test('does not trigger LogoutEvent on login endpoints 401/403', () {
+    for (final path in ['/api/login/member', '/api/login/officer']) {
+      for (final statusCode in [401, 403]) {
+        fakeAuthBloc.logoutCalled = false;
+        final dioError = DioException(
+          requestOptions: RequestOptions(path: path),
+          response: Response(
+            requestOptions: RequestOptions(path: path),
+            statusCode: statusCode,
+          ),
+        );
 
-    interceptor.onError(dioError, testHandler);
+        interceptor.onError(dioError, testHandler);
 
-    expect(fakeAuthBloc.logoutCalled, isFalse);
-    expect(testHandler.errorPassed, equals(dioError));
+        expect(fakeAuthBloc.logoutCalled, isFalse);
+        expect(testHandler.errorPassed, equals(dioError));
+      }
+    }
   });
 
   test('mencatat aktivitas dan membatasi tulisan berdekatan', () {

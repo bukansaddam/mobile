@@ -1,6 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
+import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
 import 'package:akar/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:akar/features/profile/domain/entities/update_profile_params.dart';
@@ -18,10 +19,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
     this.surveyLocalDatasource,
   });
 
+  Future<UserModel> _preserveSessionRole(UserModel userModel) async {
+    final cachedRole = (await localDatasource.getUser())?.role;
+    return cachedRole != null
+        ? userModel.copyWith(role: cachedRole)
+        : userModel;
+  }
+
   @override
   Future<Either<Failure, UserEntity>> getProfile() async {
     try {
-      final userModel = await remoteDatasource.getProfile();
+      final userModel = await _preserveSessionRole(
+        await remoteDatasource.getProfile(),
+      );
       await localDatasource.saveUser(userModel);
 
       final isQuizCompleted =
@@ -45,7 +55,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     UpdateProfileParams params,
   ) async {
     try {
-      final userModel = await remoteDatasource.updateProfile(params);
+      final userModel = await _preserveSessionRole(
+        await remoteDatasource.updateProfile(params),
+      );
       await localDatasource.saveUser(userModel);
 
       final isQuizCompleted =

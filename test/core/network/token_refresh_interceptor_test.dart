@@ -26,6 +26,9 @@ class _FakeLocal extends Fake implements AuthLocalDatasource {
   Future<void> saveRefreshToken(String value) async => refreshToken = value;
 
   @override
+  Future<UserModel?> getUser() async => user;
+
+  @override
   Future<void> saveUser(UserModel value) async => user = value;
 }
 
@@ -152,5 +155,25 @@ void main() {
 
     await expectLater(dio.get('/api/profile'), throwsA(isA<DioException>()));
     expect(local.token, 'old-access');
+  });
+
+  test('tidak memicu refresh saat 401 di endpoint login member/officer', () async {
+    for (final path in ['/api/login/member', '/api/login/officer']) {
+      await expectLater(dio.post(path), throwsA(isA<DioException>()));
+    }
+    expect(refreshAdapter.calls, 0);
+  });
+
+  test('mempertahankan role sesi aktif setelah refresh token', () async {
+    local.user = UserModel.fromJson({
+      'id': 250420,
+      'name': 'Multi Role',
+      'role': 'member',
+      'village_members_id': 6234204,
+    });
+
+    await dio.get('/api/profile');
+
+    expect(local.user?.role, 'member');
   });
 }

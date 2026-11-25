@@ -40,7 +40,8 @@ class AuthInterceptor extends Interceptor {
     if (statusCode == 401 || statusCode == 403) {
       final path = err.requestOptions.path;
       // Hindari auto-logout jika request berasal dari endpoint login atau register
-      if (!path.contains(ApiConstants.login) &&
+      if (!path.contains(ApiConstants.loginMember) &&
+          !path.contains(ApiConstants.loginOfficer) &&
           !path.contains(ApiConstants.register)) {
         AppLogger.w(
           'AuthInterceptor: Sesi dibatalkan karena kode HTTP $statusCode ($path). Memicu Logout.',

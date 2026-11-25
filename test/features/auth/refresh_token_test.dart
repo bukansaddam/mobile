@@ -7,6 +7,7 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_token_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/get_saved_user_usecase.dart';
 import 'package:akar/features/auth/domain/usecases/login_usecase.dart';
@@ -115,6 +116,25 @@ void main() {
       expect(local.user?.name, 'Agus Sunandar');
       expect(remote.receivedRefreshToken, 'old-refresh');
     });
+
+    test(
+      'mempertahankan role sesi aktif saat refresh untuk akun multi-role',
+      () async {
+        local.user = UserModel.fromJson({
+          'id': 250420,
+          'name': 'Multi Role',
+          'role': 'member',
+          'village_members_id': 6234204,
+        });
+
+        final result = await repository.refreshToken();
+
+        expect(result.isRight, isTrue);
+        expect(result.right.user.role, 'member');
+        expect(result.right.user.isMember, isTrue);
+        expect(local.user?.role, 'member');
+      },
+    );
 
     test(
       'mempertahankan refresh token lama bila respons tidak mengirimnya',

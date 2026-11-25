@@ -10,6 +10,7 @@ abstract class AuthRepository {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   });
   Future<Either<Failure, AuthEntity>> register({
     required String name,

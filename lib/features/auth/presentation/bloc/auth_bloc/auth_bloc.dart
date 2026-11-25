@@ -129,6 +129,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       username: event.username,
       password: event.password,
       deviceId: deviceId,
+      isOfficer: event.expectOfficer ?? false,
     );
 
     AuthEntity? loggedIn;
@@ -139,14 +140,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final authEntity = loggedIn;
     if (authEntity == null) return;
-
-    final isOfficer = authEntity.user.isOfficer;
-    if (event.expectOfficer != null && event.expectOfficer != isOfficer) {
-      await _logoutUsecase();
-      DioClient.instance.options.headers.remove('Authorization');
-      emit(const AuthFailure('Akun tidak ditemukan'));
-      return;
-    }
 
     DioClient.instance.options.headers['Authorization'] =
         'Bearer ${authEntity.accessToken}';
@@ -252,7 +245,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onUpdateAuthUser(UpdateAuthUserEvent event, Emitter<AuthState> emit) {
     final currentState = state;
     if (currentState is AuthAuthenticated) {
-      emit(currentState.copyWith(user: event.user));
+      final activeRole = currentState.user.role;
+      final nextUser = activeRole != null
+          ? event.user.copyWith(role: activeRole)
+          : event.user;
+      emit(currentState.copyWith(user: nextUser));
     }
   }
 

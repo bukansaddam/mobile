@@ -62,6 +62,7 @@ class _FakeLoginUsecase extends Fake implements LoginUsecase {
     required String username,
     required String password,
     String? deviceId,
+    bool isOfficer = false,
   }) async {
     return result!;
   }

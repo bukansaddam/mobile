@@ -45,13 +45,13 @@ extension UserEntityRoleExt on UserEntity {
       (isInitialQuizCompleted == true) || (isInitialQuizFilled == true);
 
   bool get isOfficer {
-    final u = (username ?? '').trim().toLowerCase();
-    if (u == 'officer') return true;
-    if (u == 'member') return false;
-
     final r = role?.toLowerCase();
     if (r == 'officer' || r == 'linmas') return true;
     if (r == 'member' || r == 'masyarakat') return false;
+
+    final u = (username ?? '').trim().toLowerCase();
+    if (u == 'officer') return true;
+    if (u == 'member') return false;
     return villageMembersId != null;
   }
 
