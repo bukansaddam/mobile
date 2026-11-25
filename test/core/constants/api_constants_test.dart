@@ -69,6 +69,14 @@ void main() {
       expect(ApiConstants.categories, '/api/categories');
     });
 
+    test('baseline regions endpoints decode accurately', () {
+      expect(ApiConstants.baselineRegions, '/api/baseline/regions');
+      expect(
+        ApiConstants.baselineRegionVillages,
+        '/api/baseline/regions/villages',
+      );
+    });
+
     test('emergency endpoint decodes accurately', () {
       expect(ApiConstants.emergencyStatus, '/api/emergency/status');
       expect(ApiConstants.emergencyStatusMe, '/api/emergency/status');

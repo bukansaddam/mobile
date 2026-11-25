@@ -9,6 +9,7 @@ import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/models/jaga_tanah_detail_model.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -24,6 +25,23 @@ abstract class JagaTanahRemoteDatasource {
   Future<JagaTanahDetailModel> getReportDetail(String id);
 
   Future<List<JagaTanahCategoryEntity>> getCategories();
+
+  Future<List<JagaTanahRegionEntity>> getProvinces({bool forceRefresh = false});
+
+  Future<List<JagaTanahRegionEntity>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  });
+
+  Future<List<JagaTanahRegionEntity>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  });
+
+  Future<List<JagaTanahRegionEntity>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  });
 
   Future<ComplaintReportModel> createReport({
     required String title,
@@ -61,6 +79,11 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
 
   final Dio? _dioOverride;
   final OfflineMasterCacheLocalDatasource? _masterCache;
+
+  List<JagaTanahRegionEntity>? _provincesCache;
+  final Map<String, List<JagaTanahRegionEntity>> _regenciesCache = {};
+  final Map<String, List<JagaTanahRegionEntity>> _districtsCache = {};
+  final Map<String, List<JagaTanahRegionEntity>> _villagesCache = {};
 
   JagaTanahRemoteDatasourceImpl({
     Dio? dio,
@@ -152,6 +175,209 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
       );
       throw Exception(ErrorUtils.parseErrorMessage(e));
     }
+  }
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getProvinces({
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh &&
+        _provincesCache != null &&
+        _provincesCache!.isNotEmpty) {
+      return _provincesCache!;
+    }
+    try {
+      final response = await dio.get(ApiConstants.baselineRegions);
+      final items = parseRegionList(
+        response.data,
+        preferredKeys: _provinceKeys,
+      );
+      if (items.isNotEmpty) {
+        _provincesCache = items;
+        if (response.statusCode == 200 && response.data != null) {
+          await _masterCache?.saveCache(
+            OfflineMasterCacheLocalDatasource.keyBaselineProvinces,
+            response.data,
+          );
+        }
+      }
+      return items;
+    } on DioException catch (e) {
+      final cached = await _masterCache?.getCache(
+        OfflineMasterCacheLocalDatasource.keyBaselineProvinces,
+      );
+      if (cached != null) {
+        final items = parseRegionList(cached, preferredKeys: _provinceKeys);
+        if (items.isNotEmpty) {
+          _provincesCache = items;
+          return items;
+        }
+      }
+      AppLogger.e(
+        '[JAGA_TANAH_DS] DioException in getProvinces: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw ErrorUtils.toAppException(e);
+    }
+  }
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  }) {
+    return _fetchChildRegions(
+      parentId: provinceId,
+      endpoint: ApiConstants.baselineRegions,
+      paramKey: 'province_id',
+      preferredKeys: _regencyKeys,
+      cache: _regenciesCache,
+      methodName: 'getRegencies',
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  }) {
+    return _fetchChildRegions(
+      parentId: regencyId,
+      endpoint: ApiConstants.baselineRegions,
+      paramKey: 'regency_id',
+      preferredKeys: _districtKeys,
+      cache: _districtsCache,
+      methodName: 'getDistricts',
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  }) {
+    return _fetchChildRegions(
+      parentId: districtId,
+      endpoint: ApiConstants.baselineRegionVillages,
+      paramKey: 'district_id',
+      preferredKeys: _villageKeys,
+      cache: _villagesCache,
+      methodName: 'getVillages',
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  Future<List<JagaTanahRegionEntity>> _fetchChildRegions({
+    required String parentId,
+    required String endpoint,
+    required String paramKey,
+    required List<String> preferredKeys,
+    required Map<String, List<JagaTanahRegionEntity>> cache,
+    required String methodName,
+    required bool forceRefresh,
+  }) async {
+    final key = parentId.trim();
+    if (key.isEmpty) return const [];
+    if (!forceRefresh) {
+      final cached = cache[key];
+      if (cached != null && cached.isNotEmpty) {
+        return cached;
+      }
+    }
+    try {
+      final response = await dio.get(
+        endpoint,
+        queryParameters: {paramKey: key},
+      );
+      final items = parseRegionList(
+        response.data,
+        preferredKeys: preferredKeys,
+      );
+      if (items.isNotEmpty) {
+        cache[key] = items;
+      }
+      return items;
+    } on DioException catch (e) {
+      AppLogger.e(
+        '[JAGA_TANAH_DS] DioException in $methodName: ${e.message}',
+        e,
+        e.stackTrace,
+      );
+      throw ErrorUtils.toAppException(e);
+    }
+  }
+
+  static const List<String> _provinceKeys = ['provinces', 'provinsi'];
+  static const List<String> _regencyKeys = ['regencies', 'cities', 'kabupaten'];
+  static const List<String> _districtKeys = ['districts', 'kecamatan'];
+  static const List<String> _villageKeys = ['villages', 'kelurahan', 'desa'];
+  static const List<String> _regionCollectionKeys = [
+    'items',
+    'regions',
+    'provinces',
+    'regencies',
+    'districts',
+    'villages',
+  ];
+
+  static List<dynamic>? _extractListFromMap(
+    Map map, {
+    List<String> preferredKeys = const [],
+  }) {
+    for (final key in preferredKeys) {
+      final value = map[key];
+      if (value is List) return value;
+    }
+    List<dynamic>? firstList;
+    for (final key in _regionCollectionKeys) {
+      final value = map[key];
+      if (value is List) {
+        if (value.isNotEmpty) return value;
+        firstList ??= value;
+      }
+    }
+    return firstList;
+  }
+
+  static List<JagaTanahRegionEntity> parseRegionList(
+    dynamic body, {
+    List<String> preferredKeys = const [],
+  }) {
+    List<dynamic> rawList = const [];
+    if (body is List) {
+      rawList = body;
+    } else if (body is Map) {
+      final data = body['data'];
+      if (data is List) {
+        rawList = data;
+      } else if (data is Map) {
+        rawList =
+            _extractListFromMap(data, preferredKeys: preferredKeys) ??
+            _extractListFromMap(body, preferredKeys: preferredKeys) ??
+            const [];
+      } else {
+        rawList =
+            _extractListFromMap(body, preferredKeys: preferredKeys) ?? const [];
+      }
+    }
+
+    final parsed = <JagaTanahRegionEntity>[];
+    for (final raw in rawList) {
+      if (raw is! Map) continue;
+      final id = (raw['id'] ?? raw['code'] ?? '').toString().trim();
+      final name = (raw['name'] ?? raw['label'] ?? raw['nama'] ?? '')
+          .toString()
+          .trim();
+      if (id.isEmpty || name.isEmpty) continue;
+      final rawCode = raw['code']?.toString().trim();
+      final code = (rawCode != null && rawCode.isNotEmpty) ? rawCode : null;
+      parsed.add(JagaTanahRegionEntity(id: id, name: name, code: code));
+    }
+
+    return List<JagaTanahRegionEntity>.unmodifiable(parsed);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 
 abstract class JagaTanahRepository {
@@ -16,6 +17,25 @@ abstract class JagaTanahRepository {
   Future<Either<Failure, JagaTanahDetailEntity>> getReportDetail(String id);
 
   Future<Either<Failure, List<JagaTanahCategoryEntity>>> getCategories();
+
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getProvinces({
+    bool forceRefresh = false,
+  });
+
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  });
+
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  });
+
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  });
 
   Future<Either<Failure, ComplaintReportEntity>> createReport({
     required String title,

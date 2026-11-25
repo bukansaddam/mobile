@@ -112,6 +112,7 @@ import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_r
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_detail_usecase.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_regions_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_my_jaga_tanah_reports_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
@@ -501,6 +502,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GetJagaTanahDetailUsecase>(
     () => GetJagaTanahDetailUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetJagaTanahRegionsUsecase>(
+    () => GetJagaTanahRegionsUsecase(sl()),
   );
   sl.registerLazySingleton<GetNotificationsUsecase>(
     () => GetNotificationsUsecase(sl()),

@@ -6,6 +6,7 @@ import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
 import 'package:akar/utils/app_logger.dart';
@@ -57,6 +58,72 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
     } catch (e, s) {
       AppLogger.e('[JAGA_TANAH_REPO] Error getCategories', e, s);
       return Left(ServerFailure(ErrorUtils.parseErrorMessage(e)));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getProvinces({
+    bool forceRefresh = false,
+  }) async {
+    try {
+      final items = await remoteDatasource.getProvinces(
+        forceRefresh: forceRefresh,
+      );
+      return Right(items);
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_REPO] Error getProvinces', e, s);
+      return Left(ErrorUtils.toFailure(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  }) async {
+    try {
+      final items = await remoteDatasource.getRegencies(
+        provinceId,
+        forceRefresh: forceRefresh,
+      );
+      return Right(items);
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_REPO] Error getRegencies', e, s);
+      return Left(ErrorUtils.toFailure(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  }) async {
+    try {
+      final items = await remoteDatasource.getDistricts(
+        regencyId,
+        forceRefresh: forceRefresh,
+      );
+      return Right(items);
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_REPO] Error getDistricts', e, s);
+      return Left(ErrorUtils.toFailure(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  }) async {
+    try {
+      final items = await remoteDatasource.getVillages(
+        districtId,
+        forceRefresh: forceRefresh,
+      );
+      return Right(items);
+    } catch (e, s) {
+      AppLogger.e('[JAGA_TANAH_REPO] Error getVillages', e, s);
+      return Left(ErrorUtils.toFailure(e));
     }
   }
 

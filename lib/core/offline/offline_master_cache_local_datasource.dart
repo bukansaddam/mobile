@@ -13,6 +13,7 @@ class OfflineMasterCacheLocalDatasource {
   static const String keyCategoriesJagaTanah = 'categories_jaga_tanah';
   static const String keyCategoriesReport = 'categories_report';
   static const String keyBankSampahLocations = 'bank_sampah_locations';
+  static const String keyBaselineProvinces = 'baseline_regions_provinces';
 
   final Future<Directory> Function() _rootDirectory;
   final Dio _dio;
