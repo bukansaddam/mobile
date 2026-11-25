@@ -20,6 +20,11 @@ class JagaTanahSyncHandler implements OfflineSyncHandler {
         .map((att) => File(att.localPath))
         .toList();
 
+    final rawBoundary = payload['boundary_geojson'];
+    final boundaryGeojson = rawBoundary is Map
+        ? Map<String, dynamic>.from(rawBoundary)
+        : null;
+
     await remoteDatasource.createReport(
       title: payload['title'] as String? ?? 'Laporan Jaga Tanah',
       description: payload['description'] as String? ?? '',
@@ -40,6 +45,8 @@ class JagaTanahSyncHandler implements OfflineSyncHandler {
       tenureInfoSource: payload['tenure_info_source'] as String?,
       possessionMarkers: payload['possession_markers'] as String?,
       conflictInfo: payload['conflict_info'] as String?,
+      boundaryGeojson: boundaryGeojson,
+      estimatedArea: payload['estimated_area'] as String?,
       idempotencyKey: item.clientRequestId,
       skipMediaPreparation: true,
     );

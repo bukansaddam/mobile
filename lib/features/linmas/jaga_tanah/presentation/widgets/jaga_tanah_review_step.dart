@@ -6,6 +6,7 @@ import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_form_draft.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_polygon_utils.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_section_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
 import 'package:flutter/material.dart';
@@ -58,11 +59,16 @@ class JagaTanahReviewStep extends StatelessWidget {
         step: 1,
         title: '2. Lokasi & Data Spasial',
         rows: [
-          ('Provinsi', draft.province),
-          ('Kabupaten/Kota', draft.regency),
-          ('Kecamatan', draft.district),
-          ('Desa/Kelurahan', draft.village),
+          ('Provinsi', draft.province.isNotEmpty ? draft.province : '-'),
+          ('Kabupaten/Kota', draft.regency.isNotEmpty ? draft.regency : '-'),
+          ('Kecamatan', draft.district.isNotEmpty ? draft.district : '-'),
+          ('Desa/Kelurahan', draft.village.isNotEmpty ? draft.village : '-'),
           ('Alamat / Patokan Lokasi', draft.landmarkAddress),
+          if (draft.polygonPoints.length >= 3)
+            (
+              'Titik Bidang Tanah',
+              '${draft.polygonPoints.length} titik (${JagaTanahPolygonUtils.formatArea(JagaTanahPolygonUtils.calculateAreaSquareMeters(draft.polygonPoints))})',
+            ),
           ('Lampiran Foto / Video', attachmentSummary),
           ('Akses Lokasi', draft.aksesLokasi),
         ],
@@ -132,6 +138,7 @@ class JagaTanahReviewStep extends StatelessWidget {
                   JagaTanahSpatialCard(
                     latitude: draft.latitude,
                     longitude: draft.longitude,
+                    polygonPoints: draft.polygonPoints,
                     height: 156,
                     mapPreviewBuilder: mapPreviewBuilder,
                   ),

@@ -57,6 +57,8 @@ abstract class JagaTanahRepository {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   });

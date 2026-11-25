@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
@@ -9,22 +11,29 @@ import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_regions_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/create_jaga_tanah_bloc/create_jaga_tanah_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/pages/location_picker_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_form_draft.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_form_options.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_polygon_utils.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_region_matcher.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_reverse_geocoder.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_polygon_picker_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_attachment_section.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_category_field.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_category_sheet.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_dropdown_field.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_field_label.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_option_sheet.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_region_sheet.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_review_step.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_section_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_step_indicator.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_text_field.dart';
-import 'package:akar/features/masyarakat/complaint/presentation/pages/location_picker_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -51,33 +60,46 @@ enum _DropdownKey {
   informasiKonflik,
 }
 
-typedef JagaTanahLocationPickerOpener = Future<LocationPickerResult?> Function(
+typedef JagaTanahPolygonPickerOpener = Future<List<LatLng>?> Function(
   BuildContext context, {
-  String? initialAddress,
-  LatLng? initialPosition,
+  LatLng? initialCenter,
+  List<LatLng> initialPoints,
 });
 
 typedef JagaTanahAdminAddressResolver = Future<JagaTanahAdminAddress> Function(
   LatLng position,
 );
 
+typedef JagaTanahMapLocationPickerOpener =
+    Future<LocationPickerResult?> Function(
+      BuildContext context, {
+      String? initialAddress,
+      LatLng? initialPosition,
+    });
+
 /// Form pelaporan kondisi dan penyalahgunaan tanah 5 langkah (seperti Laporan Harian).
 class CreateJagaTanahPage extends HookWidget {
   final bool autoFetchLocation;
   final JagaTanahMapPreviewBuilder? mapPreviewBuilder;
-  final JagaTanahLocationPickerOpener? onOpenMapOverride;
+  final JagaTanahPolygonPickerOpener? onOpenPolygonOverride;
   final Future<String?> Function(BuildContext context)? onPickPhotoOverride;
   final Future<String?> Function(BuildContext context)? onPickVideoOverride;
   final JagaTanahAdminAddressResolver? addressResolverOverride;
+  final Future<LatLng?> Function(BuildContext context)? onFetchLocationOverride;
+  final JagaTanahMapLocationPickerOpener? onPickMapLocationOverride;
+  final GetJagaTanahRegionsUsecase? regionsUsecase;
 
   const CreateJagaTanahPage({
     super.key,
     this.autoFetchLocation = true,
     this.mapPreviewBuilder,
-    this.onOpenMapOverride,
+    this.onOpenPolygonOverride,
     this.onPickPhotoOverride,
     this.onPickVideoOverride,
     this.addressResolverOverride,
+    this.onFetchLocationOverride,
+    this.onPickMapLocationOverride,
+    this.regionsUsecase,
   });
 
   static const int _maxPhotos = 5;
@@ -153,11 +175,18 @@ class CreateJagaTanahPage extends HookWidget {
 
   Future<void> _fillAdminFromCoordinates(
     BuildContext context, {
+    required int seq,
+    required ObjectRef<int> locationRequestSeq,
     required LatLng position,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required GetJagaTanahRegionsUsecase? regionsUsecase,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> isSyncingRegions,
+    required ValueNotifier<String?> regionSyncNote,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
     String? fallbackLandmark,
     bool overwriteExisting = true,
@@ -165,7 +194,7 @@ class CreateJagaTanahPage extends HookWidget {
     final resolved = addressResolverOverride != null
         ? await addressResolverOverride!(position)
         : await JagaTanahReverseGeocoder.resolve(position);
-    if (!context.mounted) return;
+    if (!context.mounted || locationRequestSeq.value != seq) return;
 
     final landmark =
         (resolved.landmarkAddress != null &&
@@ -181,41 +210,245 @@ class CreateJagaTanahPage extends HookWidget {
         resolved.village != null ||
         landmark.isNotEmpty;
 
-    void assignField(TextEditingController controller, String? value) {
-      if (overwriteExisting && hasAnyResolved) {
-        controller.text = value ?? '';
-      } else if (value != null &&
-          value.isNotEmpty &&
-          controller.text.trim().isEmpty) {
-        controller.text = value;
-      }
+    if (overwriteExisting && hasAnyResolved) {
+      landmarkController.text = landmark;
+    } else if (landmark.isNotEmpty && landmarkController.text.trim().isEmpty) {
+      landmarkController.text = landmark;
     }
 
-    assignField(provinceController, resolved.province);
-    assignField(regencyController, resolved.regency);
-    assignField(districtController, resolved.district);
-    assignField(villageController, resolved.village);
-    assignField(landmarkController, landmark);
+    if (regionsUsecase == null) return;
+    if (!overwriteExisting && selectedProvince.value != null) return;
+
+    final hasResolvedRegion =
+        resolved.province != null ||
+        resolved.regency != null ||
+        resolved.district != null ||
+        resolved.village != null;
+    if (!hasResolvedRegion) {
+      if (overwriteExisting) {
+        selectedProvince.value = null;
+        selectedRegency.value = null;
+        selectedDistrict.value = null;
+        selectedVillage.value = null;
+        regionSyncNote.value = null;
+      }
+      return;
+    }
+
+    isSyncingRegions.value = true;
+    try {
+      JagaTanahRegionEntity? matchedProvince;
+      JagaTanahRegionEntity? matchedRegency;
+      JagaTanahRegionEntity? matchedDistrict;
+      JagaTanahRegionEntity? matchedVillage;
+      var hadPartialMismatch = false;
+      var provincesFailed = false;
+      var childApiFailed = false;
+
+      final provResult = await regionsUsecase.getProvinces();
+      if (!context.mounted || locationRequestSeq.value != seq) return;
+
+      List<JagaTanahRegionEntity>? provinces;
+      provResult.fold(
+        (_) {
+          provincesFailed = true;
+          regionApiUnavailable.value = true;
+        },
+        (items) {
+          regionApiUnavailable.value = false;
+          provinces = items;
+        },
+      );
+
+      if (provinces != null) {
+        matchedProvince = JagaTanahRegionMatcher.findBestMatch(
+          provinces!,
+          resolved.province,
+          level: JagaTanahRegionLevel.province,
+        );
+
+        if (matchedProvince != null) {
+          final regResult = await regionsUsecase.getRegencies(
+            matchedProvince.id,
+          );
+          if (!context.mounted || locationRequestSeq.value != seq) return;
+
+          List<JagaTanahRegionEntity>? regencies;
+          regResult.fold(
+            (_) => childApiFailed = true,
+            (items) => regencies = items,
+          );
+
+          if (regencies != null) {
+            matchedRegency = JagaTanahRegionMatcher.findBestMatch(
+              regencies!,
+              resolved.regency,
+              level: JagaTanahRegionLevel.regency,
+            );
+
+            if (matchedRegency != null) {
+              final distResult = await regionsUsecase.getDistricts(
+                matchedRegency.id,
+              );
+              if (!context.mounted || locationRequestSeq.value != seq) return;
+
+              List<JagaTanahRegionEntity>? districts;
+              distResult.fold(
+                (_) => childApiFailed = true,
+                (items) => districts = items,
+              );
+
+              if (districts != null) {
+                matchedDistrict = JagaTanahRegionMatcher.findBestMatch(
+                  districts!,
+                  resolved.district,
+                  level: JagaTanahRegionLevel.district,
+                );
+
+                if (matchedDistrict != null) {
+                  final vilResult = await regionsUsecase.getVillages(
+                    matchedDistrict.id,
+                  );
+                  if (!context.mounted || locationRequestSeq.value != seq) {
+                    return;
+                  }
+
+                  List<JagaTanahRegionEntity>? villages;
+                  vilResult.fold(
+                    (_) => childApiFailed = true,
+                    (items) => villages = items,
+                  );
+
+                  if (villages != null) {
+                    matchedVillage = JagaTanahRegionMatcher.findBestMatch(
+                      villages!,
+                      resolved.village,
+                      level: JagaTanahRegionLevel.village,
+                    );
+                    if (matchedVillage == null &&
+                        resolved.village != null &&
+                        resolved.village!.trim().isNotEmpty) {
+                      hadPartialMismatch = true;
+                    }
+                  }
+                } else if (resolved.district != null &&
+                    resolved.district!.trim().isNotEmpty) {
+                  hadPartialMismatch = true;
+                }
+              }
+            } else if (resolved.regency != null &&
+                resolved.regency!.trim().isNotEmpty) {
+              hadPartialMismatch = true;
+            }
+          }
+        } else if (resolved.province != null &&
+            resolved.province!.trim().isNotEmpty) {
+          hadPartialMismatch = true;
+        }
+      }
+
+      if (!context.mounted || locationRequestSeq.value != seq) return;
+
+      if (overwriteExisting || selectedProvince.value == null) {
+        selectedProvince.value = matchedProvince;
+        selectedRegency.value = matchedRegency;
+        selectedDistrict.value = matchedDistrict;
+        selectedVillage.value = matchedVillage;
+
+        if (regionErrors.value.isNotEmpty) {
+          final nextErrors = Map<JagaTanahRegionLevel, String>.of(
+            regionErrors.value,
+          );
+          if (matchedProvince != null) {
+            nextErrors.remove(JagaTanahRegionLevel.province);
+          }
+          if (matchedRegency != null) {
+            nextErrors.remove(JagaTanahRegionLevel.regency);
+          }
+          if (matchedDistrict != null) {
+            nextErrors.remove(JagaTanahRegionLevel.district);
+          }
+          if (matchedVillage != null) {
+            nextErrors.remove(JagaTanahRegionLevel.village);
+          }
+          regionErrors.value = nextErrors;
+        }
+      }
+
+      if (provincesFailed || childApiFailed) {
+        regionApiUnavailable.value = true;
+        regionSyncNote.value =
+            'Daftar wilayah sedang tidak dapat dimuat. Anda dapat memilih ulang saat online atau lanjut dengan koordinat GPS.';
+      } else if (hadPartialMismatch) {
+        regionSyncNote.value =
+            'Sebagian wilayah otomatis belum cocok. Silakan pilih sisanya secara manual.';
+      } else {
+        regionSyncNote.value = null;
+      }
+    } finally {
+      if (context.mounted && locationRequestSeq.value == seq) {
+        isSyncingRegions.value = false;
+      }
+    }
   }
 
   Future<void> _fetchCurrentLocation(
     BuildContext context, {
     required ValueNotifier<bool> isFetchingLocation,
+    required ObjectRef<int> locationRequestSeq,
     required ValueNotifier<double?> latitude,
     required ValueNotifier<double?> longitude,
     required ValueNotifier<double?> accuracyMeters,
     required ValueNotifier<String?> gpsError,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required GetJagaTanahRegionsUsecase? regionsUsecase,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> isSyncingRegions,
+    required ValueNotifier<String?> regionSyncNote,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
     bool showErrorToast = true,
     bool overwriteExisting = true,
   }) async {
     if (isFetchingLocation.value) return;
+    final seq = ++locationRequestSeq.value;
+    isSyncingRegions.value = false;
     isFetchingLocation.value = true;
     try {
+      if (onFetchLocationOverride != null) {
+        final picked = await onFetchLocationOverride!(context);
+        if (picked == null ||
+            !context.mounted ||
+            locationRequestSeq.value != seq) {
+          return;
+        }
+        latitude.value = picked.latitude;
+        longitude.value = picked.longitude;
+        accuracyMeters.value = null;
+        gpsError.value = null;
+        await _fillAdminFromCoordinates(
+          context,
+          seq: seq,
+          locationRequestSeq: locationRequestSeq,
+          position: picked,
+          regionsUsecase: regionsUsecase,
+          selectedProvince: selectedProvince,
+          selectedRegency: selectedRegency,
+          selectedDistrict: selectedDistrict,
+          selectedVillage: selectedVillage,
+          regionErrors: regionErrors,
+          isSyncingRegions: isSyncingRegions,
+          regionSyncNote: regionSyncNote,
+          regionApiUnavailable: regionApiUnavailable,
+          landmarkController: landmarkController,
+          overwriteExisting: overwriteExisting,
+        );
+        return;
+      }
+
       final serviceEnabled = await Geolocator.isLocationServiceEnabled()
           .timeout(const Duration(seconds: 3));
       if (!serviceEnabled) {
@@ -253,7 +486,7 @@ class CreateJagaTanahPage extends HookWidget {
           timeLimit: Duration(seconds: 8),
         ),
       );
-      if (!context.mounted) return;
+      if (!context.mounted || locationRequestSeq.value != seq) return;
 
       latitude.value = position.latitude;
       longitude.value = position.longitude;
@@ -262,53 +495,73 @@ class CreateJagaTanahPage extends HookWidget {
 
       await _fillAdminFromCoordinates(
         context,
+        seq: seq,
+        locationRequestSeq: locationRequestSeq,
         position: LatLng(position.latitude, position.longitude),
-        provinceController: provinceController,
-        regencyController: regencyController,
-        districtController: districtController,
-        villageController: villageController,
+        regionsUsecase: regionsUsecase,
+        selectedProvince: selectedProvince,
+        selectedRegency: selectedRegency,
+        selectedDistrict: selectedDistrict,
+        selectedVillage: selectedVillage,
+        regionErrors: regionErrors,
+        isSyncingRegions: isSyncingRegions,
+        regionSyncNote: regionSyncNote,
+        regionApiUnavailable: regionApiUnavailable,
         landmarkController: landmarkController,
         overwriteExisting: overwriteExisting,
       );
     } catch (_) {
-      if (showErrorToast && context.mounted) {
+      if (showErrorToast && context.mounted && locationRequestSeq.value == seq) {
         AppToast.showError(context, message: 'Gagal mendeteksi koordinat GPS.');
       }
     } finally {
-      if (context.mounted) {
+      if (context.mounted && locationRequestSeq.value == seq) {
         isFetchingLocation.value = false;
       }
     }
   }
 
-  Future<void> _openMapLocationPicker(
+  Future<void> _openPolygonPicker(
     BuildContext context, {
     required ValueNotifier<bool> isFetchingLocation,
+    required ObjectRef<int> locationRequestSeq,
     required ValueNotifier<double?> latitude,
     required ValueNotifier<double?> longitude,
     required ValueNotifier<double?> accuracyMeters,
     required ValueNotifier<String?> gpsError,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required ValueNotifier<List<LatLng>> polygonPoints,
+    required GetJagaTanahRegionsUsecase? regionsUsecase,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> isSyncingRegions,
+    required ValueNotifier<String?> regionSyncNote,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
   }) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final initialPosition = latitude.value != null && longitude.value != null
+    final initialCenter = latitude.value != null && longitude.value != null
         ? LatLng(latitude.value!, longitude.value!)
         : null;
 
-    final opener = onOpenMapOverride ?? LocationPickerPage.showWithResult;
-    final selected = await opener(
+    final opener = onOpenPolygonOverride ?? JagaTanahPolygonPickerPage.open;
+    final picked = await opener(
       context,
-      initialAddress: landmarkController.text,
-      initialPosition: initialPosition,
+      initialCenter: initialCenter,
+      initialPoints: polygonPoints.value,
     );
-    if (selected == null || !context.mounted) return;
+    if (picked == null || !context.mounted) return;
 
-    latitude.value = selected.latitude;
-    longitude.value = selected.longitude;
+    polygonPoints.value = List<LatLng>.unmodifiable(picked);
+    final center = JagaTanahPolygonUtils.centroidOf(picked);
+    if (center == null) return;
+
+    final seq = ++locationRequestSeq.value;
+    isSyncingRegions.value = false;
+    latitude.value = center.latitude;
+    longitude.value = center.longitude;
     accuracyMeters.value = null;
     gpsError.value = null;
 
@@ -316,16 +569,91 @@ class CreateJagaTanahPage extends HookWidget {
     try {
       await _fillAdminFromCoordinates(
         context,
-        position: selected.position,
-        provinceController: provinceController,
-        regencyController: regencyController,
-        districtController: districtController,
-        villageController: villageController,
+        seq: seq,
+        locationRequestSeq: locationRequestSeq,
+        position: center,
+        regionsUsecase: regionsUsecase,
+        selectedProvince: selectedProvince,
+        selectedRegency: selectedRegency,
+        selectedDistrict: selectedDistrict,
+        selectedVillage: selectedVillage,
+        regionErrors: regionErrors,
+        isSyncingRegions: isSyncingRegions,
+        regionSyncNote: regionSyncNote,
+        regionApiUnavailable: regionApiUnavailable,
         landmarkController: landmarkController,
-        fallbackLandmark: selected.address,
+        overwriteExisting: false,
       );
     } finally {
-      if (context.mounted) {
+      if (context.mounted && locationRequestSeq.value == seq) {
+        isFetchingLocation.value = false;
+      }
+    }
+  }
+
+  Future<void> _pickLocationFromMap(
+    BuildContext context, {
+    required ValueNotifier<bool> isFetchingLocation,
+    required ObjectRef<int> locationRequestSeq,
+    required ValueNotifier<double?> latitude,
+    required ValueNotifier<double?> longitude,
+    required ValueNotifier<double?> accuracyMeters,
+    required ValueNotifier<String?> gpsError,
+    required GetJagaTanahRegionsUsecase? regionsUsecase,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> isSyncingRegions,
+    required ValueNotifier<String?> regionSyncNote,
+    required ValueNotifier<bool> regionApiUnavailable,
+    required TextEditingController landmarkController,
+  }) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final initialPosition = latitude.value != null && longitude.value != null
+        ? LatLng(latitude.value!, longitude.value!)
+        : null;
+    final trimmedAddress = landmarkController.text.trim();
+    final opener =
+        onPickMapLocationOverride ?? LocationPickerPage.showWithResult;
+
+    final picked = await opener(
+      context,
+      initialAddress: trimmedAddress.isEmpty ? null : trimmedAddress,
+      initialPosition: initialPosition,
+    );
+    if (picked == null || !context.mounted) return;
+
+    final seq = ++locationRequestSeq.value;
+    isSyncingRegions.value = false;
+    latitude.value = picked.latitude;
+    longitude.value = picked.longitude;
+    accuracyMeters.value = null;
+    gpsError.value = null;
+
+    isFetchingLocation.value = true;
+    try {
+      await _fillAdminFromCoordinates(
+        context,
+        seq: seq,
+        locationRequestSeq: locationRequestSeq,
+        position: picked.position,
+        regionsUsecase: regionsUsecase,
+        selectedProvince: selectedProvince,
+        selectedRegency: selectedRegency,
+        selectedDistrict: selectedDistrict,
+        selectedVillage: selectedVillage,
+        regionErrors: regionErrors,
+        isSyncingRegions: isSyncingRegions,
+        regionSyncNote: regionSyncNote,
+        regionApiUnavailable: regionApiUnavailable,
+        landmarkController: landmarkController,
+        fallbackLandmark: picked.address,
+        overwriteExisting: true,
+      );
+    } finally {
+      if (context.mounted && locationRequestSeq.value == seq) {
         isFetchingLocation.value = false;
       }
     }
@@ -408,10 +736,12 @@ class CreateJagaTanahPage extends HookWidget {
     required ValueNotifier<JagaTanahCategoryEntity?> selectedSubCategory,
     required ValueNotifier<String?> categoryError,
     required ValueNotifier<String?> subCategoryError,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
     required ValueNotifier<double?> latitude,
     required ValueNotifier<double?> longitude,
@@ -454,21 +784,41 @@ class CreateJagaTanahPage extends HookWidget {
 
       final isOfflineFallback =
           hasGps &&
-          provinceController.text.trim().isEmpty &&
-          regencyController.text.trim().isEmpty &&
-          landmarkController.text.trim().startsWith('Lat:');
+          (regionApiUnavailable.value ||
+              (selectedProvince.value == null &&
+                  selectedRegency.value == null &&
+                  landmarkController.text.trim().startsWith('Lat:')));
 
-      final validText = step1FormKey.currentState != null
-          ? (isOfflineFallback
-                ? landmarkController.text.trim().isNotEmpty
-                : step1FormKey.currentState!.validate())
-          : (isOfflineFallback
-                ? landmarkController.text.trim().isNotEmpty
-                : (provinceController.text.trim().isNotEmpty &&
-                      regencyController.text.trim().isNotEmpty &&
-                      districtController.text.trim().isNotEmpty &&
-                      villageController.text.trim().isNotEmpty &&
-                      landmarkController.text.trim().isNotEmpty));
+      var hasValidRegions = true;
+      if (isOfflineFallback) {
+        if (regionErrors.value.isNotEmpty) {
+          regionErrors.value = const {};
+        }
+      } else {
+        final nextRegionErrors = <JagaTanahRegionLevel, String>{};
+        if (selectedProvince.value == null) {
+          nextRegionErrors[JagaTanahRegionLevel.province] =
+              'Provinsi wajib dipilih';
+        }
+        if (selectedRegency.value == null) {
+          nextRegionErrors[JagaTanahRegionLevel.regency] =
+              'Kabupaten/Kota wajib dipilih';
+        }
+        if (selectedDistrict.value == null) {
+          nextRegionErrors[JagaTanahRegionLevel.district] =
+              'Kecamatan wajib dipilih';
+        }
+        if (selectedVillage.value == null) {
+          nextRegionErrors[JagaTanahRegionLevel.village] =
+              'Desa/Kelurahan wajib dipilih';
+        }
+        regionErrors.value = nextRegionErrors;
+        hasValidRegions = nextRegionErrors.isEmpty;
+      }
+
+      final validLandmark = step1FormKey.currentState != null
+          ? step1FormKey.currentState!.validate()
+          : landmarkController.text.trim().isNotEmpty;
 
       final hasPhotos = photos.value.isNotEmpty;
       photoError.value = hasPhotos
@@ -481,7 +831,7 @@ class CreateJagaTanahPage extends HookWidget {
         dropdownErrors: dropdownErrors,
       );
 
-      if (!validText) {
+      if (!hasValidRegions || !validLandmark) {
         return 'Lengkapi seluruh data wilayah dan alamat lokasi.';
       }
       if (!hasGps) {
@@ -517,14 +867,15 @@ class CreateJagaTanahPage extends HookWidget {
     required JagaTanahCategoryEntity? subCategory,
     required TextEditingController titleController,
     required TextEditingController descriptionController,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required JagaTanahRegionEntity? selectedProvince,
+    required JagaTanahRegionEntity? selectedRegency,
+    required JagaTanahRegionEntity? selectedDistrict,
+    required JagaTanahRegionEntity? selectedVillage,
     required TextEditingController landmarkController,
     required double? latitude,
     required double? longitude,
     required double? accuracyMeters,
+    required List<LatLng> polygonPoints,
     required List<String> photos,
     required Map<_DropdownKey, String> values,
   }) {
@@ -535,14 +886,19 @@ class CreateJagaTanahPage extends HookWidget {
       subCategoryLabel: subCategory?.label,
       title: titleController.text.trim(),
       description: descriptionController.text.trim(),
-      province: provinceController.text.trim(),
-      regency: regencyController.text.trim(),
-      district: districtController.text.trim(),
-      village: villageController.text.trim(),
+      province: selectedProvince?.name ?? '',
+      regency: selectedRegency?.name ?? '',
+      district: selectedDistrict?.name ?? '',
+      village: selectedVillage?.name ?? '',
+      provinceId: selectedProvince?.id,
+      regencyId: selectedRegency?.id,
+      districtId: selectedDistrict?.id,
+      villageId: selectedVillage?.id,
       landmarkAddress: landmarkController.text.trim(),
       latitude: latitude ?? 0,
       longitude: longitude ?? 0,
       accuracyMeters: accuracyMeters,
+      polygonPoints: polygonPoints,
       photoPaths: photos,
       aksesLokasi: values[_DropdownKey.aksesLokasi] ?? '-',
       kondisiUtama: values[_DropdownKey.kondisiUtama] ?? '-',
@@ -595,10 +951,12 @@ class CreateJagaTanahPage extends HookWidget {
     required ValueNotifier<JagaTanahCategoryEntity?> selectedSubCategory,
     required ValueNotifier<String?> categoryError,
     required ValueNotifier<String?> subCategoryError,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
     required ValueNotifier<double?> latitude,
     required ValueNotifier<double?> longitude,
@@ -618,10 +976,12 @@ class CreateJagaTanahPage extends HookWidget {
       selectedSubCategory: selectedSubCategory,
       categoryError: categoryError,
       subCategoryError: subCategoryError,
-      provinceController: provinceController,
-      regencyController: regencyController,
-      districtController: districtController,
-      villageController: villageController,
+      selectedProvince: selectedProvince,
+      selectedRegency: selectedRegency,
+      selectedDistrict: selectedDistrict,
+      selectedVillage: selectedVillage,
+      regionErrors: regionErrors,
+      regionApiUnavailable: regionApiUnavailable,
       landmarkController: landmarkController,
       latitude: latitude,
       longitude: longitude,
@@ -664,6 +1024,7 @@ class CreateJagaTanahPage extends HookWidget {
     required double longitude,
     required List<String> attachmentPaths,
     required Map<_DropdownKey, String> dropdownValues,
+    Map<String, dynamic>? boundaryGeojson,
   }) {
     final parts = <String>[
       '$categoryId',
@@ -673,6 +1034,7 @@ class CreateJagaTanahPage extends HookWidget {
       address,
       latitude.toStringAsFixed(6),
       longitude.toStringAsFixed(6),
+      boundaryGeojson != null ? jsonEncode(boundaryGeojson) : '',
       attachmentPaths.join('\x1E'),
       ..._DropdownKey.values.map((k) => dropdownValues[k] ?? ''),
     ];
@@ -762,14 +1124,17 @@ class CreateJagaTanahPage extends HookWidget {
     required ValueNotifier<JagaTanahCategoryEntity?> selectedSubCategory,
     required ValueNotifier<String?> categoryError,
     required ValueNotifier<String?> subCategoryError,
-    required TextEditingController provinceController,
-    required TextEditingController regencyController,
-    required TextEditingController districtController,
-    required TextEditingController villageController,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedProvince,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedRegency,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedDistrict,
+    required ValueNotifier<JagaTanahRegionEntity?> selectedVillage,
+    required ValueNotifier<Map<JagaTanahRegionLevel, String>> regionErrors,
+    required ValueNotifier<bool> regionApiUnavailable,
     required TextEditingController landmarkController,
     required ValueNotifier<double?> latitude,
     required ValueNotifier<double?> longitude,
     required ValueNotifier<String?> gpsError,
+    required ValueNotifier<List<LatLng>> polygonPoints,
     required ValueNotifier<List<String>> photos,
     required ValueNotifier<String?> photoError,
     required ValueNotifier<Map<_DropdownKey, String>> dropdownValues,
@@ -790,10 +1155,12 @@ class CreateJagaTanahPage extends HookWidget {
         selectedSubCategory: selectedSubCategory,
         categoryError: categoryError,
         subCategoryError: subCategoryError,
-        provinceController: provinceController,
-        regencyController: regencyController,
-        districtController: districtController,
-        villageController: villageController,
+        selectedProvince: selectedProvince,
+        selectedRegency: selectedRegency,
+        selectedDistrict: selectedDistrict,
+        selectedVillage: selectedVillage,
+        regionErrors: regionErrors,
+        regionApiUnavailable: regionApiUnavailable,
         landmarkController: landmarkController,
         latitude: latitude,
         longitude: longitude,
@@ -820,6 +1187,18 @@ class CreateJagaTanahPage extends HookWidget {
     final description = descriptionController.text.trim();
     final address = landmarkController.text.trim();
     final values = dropdownValues.value;
+    final boundaryGeojson = JagaTanahPolygonUtils.toBoundaryGeoJson(
+      polygonPoints.value,
+    );
+    final hasPolygon = boundaryGeojson != null;
+    final reportType = hasPolygon ? 'geometries' : 'point';
+    final estimatedArea = hasPolygon
+        ? JagaTanahPolygonUtils.formatArea(
+            JagaTanahPolygonUtils.calculateAreaSquareMeters(
+              polygonPoints.value,
+            ),
+          )
+        : null;
     final idempotencyKey = _resolveIdempotencyKey(
       idempotencyRef,
       categoryId: categoryId,
@@ -831,6 +1210,7 @@ class CreateJagaTanahPage extends HookWidget {
       longitude: lng,
       attachmentPaths: photos.value,
       dropdownValues: values,
+      boundaryGeojson: boundaryGeojson,
     );
 
     bloc.add(
@@ -843,7 +1223,7 @@ class CreateJagaTanahPage extends HookWidget {
         attachments: photos.value.map(File.new).toList(),
         categoryId: categoryId,
         subCategoryId: selectedSubCategory.value?.id,
-        type: 'point',
+        type: reportType,
         locationAccess: values[_DropdownKey.aksesLokasi],
         fieldCondition: values[_DropdownKey.kondisiUtama],
         dominantLandCover: values[_DropdownKey.penutupLahan],
@@ -854,6 +1234,8 @@ class CreateJagaTanahPage extends HookWidget {
         tenureInfoSource: values[_DropdownKey.sumberInformasiPenguasaan],
         possessionMarkers: values[_DropdownKey.tandaPenguasaan],
         conflictInfo: values[_DropdownKey.informasiKonflik],
+        boundaryGeojson: boundaryGeojson,
+        estimatedArea: estimatedArea,
         idempotencyKey: idempotencyKey,
       ),
     );
@@ -874,17 +1256,29 @@ class CreateJagaTanahPage extends HookWidget {
     final categoryError = useState<String?>(null);
     final subCategoryError = useState<String?>(null);
 
-    final provinceController = useTextEditingController();
-    final regencyController = useTextEditingController();
-    final districtController = useTextEditingController();
-    final villageController = useTextEditingController();
+    final effectiveRegionsUsecase =
+        regionsUsecase ??
+        (sl.isRegistered<GetJagaTanahRegionsUsecase>()
+            ? sl<GetJagaTanahRegionsUsecase>()
+            : null);
+
+    final selectedProvince = useState<JagaTanahRegionEntity?>(null);
+    final selectedRegency = useState<JagaTanahRegionEntity?>(null);
+    final selectedDistrict = useState<JagaTanahRegionEntity?>(null);
+    final selectedVillage = useState<JagaTanahRegionEntity?>(null);
+    final regionErrors = useState<Map<JagaTanahRegionLevel, String>>(const {});
+    final isSyncingRegions = useState<bool>(false);
+    final regionSyncNote = useState<String?>(null);
+    final regionApiUnavailable = useState<bool>(false);
     final landmarkController = useTextEditingController();
 
     final isFetchingLocation = useState(false);
+    final locationRequestSeq = useRef<int>(0);
     final latitude = useState<double?>(null);
     final longitude = useState<double?>(null);
     final accuracyMeters = useState<double?>(null);
     final gpsError = useState<String?>(null);
+    final polygonPoints = useState<List<LatLng>>(const []);
 
     final photos = useState<List<String>>(const []);
     final photoError = useState<String?>(null);
@@ -896,19 +1290,35 @@ class CreateJagaTanahPage extends HookWidget {
       (bloc) => bloc.state.isSubmitting,
     );
 
+    void clearRegionErrors(Iterable<JagaTanahRegionLevel> levels) {
+      if (regionErrors.value.isEmpty) return;
+      final next = Map<JagaTanahRegionLevel, String>.of(regionErrors.value);
+      var changed = false;
+      for (final level in levels) {
+        if (next.remove(level) != null) changed = true;
+      }
+      if (changed) regionErrors.value = next;
+    }
+
     useEffect(() {
       if (!autoFetchLocation) return null;
       _fetchCurrentLocation(
         context,
         isFetchingLocation: isFetchingLocation,
+        locationRequestSeq: locationRequestSeq,
         latitude: latitude,
         longitude: longitude,
         accuracyMeters: accuracyMeters,
         gpsError: gpsError,
-        provinceController: provinceController,
-        regencyController: regencyController,
-        districtController: districtController,
-        villageController: villageController,
+        regionsUsecase: effectiveRegionsUsecase,
+        selectedProvince: selectedProvince,
+        selectedRegency: selectedRegency,
+        selectedDistrict: selectedDistrict,
+        selectedVillage: selectedVillage,
+        regionErrors: regionErrors,
+        isSyncingRegions: isSyncingRegions,
+        regionSyncNote: regionSyncNote,
+        regionApiUnavailable: regionApiUnavailable,
         landmarkController: landmarkController,
         showErrorToast: false,
         overwriteExisting: false,
@@ -1052,27 +1462,6 @@ class CreateJagaTanahPage extends HookWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                JagaTanahSpatialCard(
-                  latitude: latitude.value,
-                  longitude: longitude.value,
-                  isFetchingLocation: isFetchingLocation.value,
-                  errorText: gpsError.value,
-                  mapPreviewBuilder: mapPreviewBuilder,
-                  onOpenMap: () => _openMapLocationPicker(
-                    context,
-                    isFetchingLocation: isFetchingLocation,
-                    latitude: latitude,
-                    longitude: longitude,
-                    accuracyMeters: accuracyMeters,
-                    gpsError: gpsError,
-                    provinceController: provinceController,
-                    regencyController: regencyController,
-                    districtController: districtController,
-                    villageController: villageController,
-                    landmarkController: landmarkController,
-                  ),
-                ),
-                const SizedBox(height: 16),
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final textScale = MediaQuery.textScalerOf(context)
@@ -1084,34 +1473,255 @@ class CreateJagaTanahPage extends HookWidget {
                         latitude.value != null && longitude.value != null;
                     final isOfflineLocationFallback =
                         hasCoordinates &&
-                        provinceController.text.trim().isEmpty &&
-                        regencyController.text.trim().isEmpty &&
-                        landmarkController.text.trim().startsWith('Lat:');
+                        (regionApiUnavailable.value ||
+                            (selectedProvince.value == null &&
+                                selectedRegency.value == null &&
+                                landmarkController.text.trim().startsWith(
+                                  'Lat:',
+                                )));
                     final isWilayahRequired = !isOfflineLocationFallback;
 
-                    final provinceField = JagaTanahTextField(
-                      controller: provinceController,
+                    JagaTanahRegionLoader trackRegionLoader(
+                      JagaTanahRegionLoader loader,
+                    ) {
+                      return ({bool forceRefresh = false}) async {
+                        final result = await loader(forceRefresh: forceRefresh);
+                        if (context.mounted) {
+                          result.fold(
+                            (_) => regionApiUnavailable.value = true,
+                            (_) => regionApiUnavailable.value = false,
+                          );
+                        }
+                        return result;
+                      };
+                    }
+
+                    final provinceField = JagaTanahDropdownField(
                       label: 'Provinsi',
-                      hintText: 'Contoh: Jawa Timur',
+                      hintText: 'Pilih provinsi',
+                      selectedValue: selectedProvince.value?.name,
                       isRequired: isWilayahRequired,
+                      isLoading:
+                          isSyncingRegions.value &&
+                          selectedProvince.value == null,
+                      errorText:
+                          regionErrors.value[JagaTanahRegionLevel.province],
+                      onTap: () {
+                        if (effectiveRegionsUsecase == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Layanan data wilayah belum tersedia.',
+                          );
+                          return;
+                        }
+                        JagaTanahRegionSheet.show(
+                          context,
+                          title: 'Pilih Provinsi',
+                          searchHint: 'Cari provinsi...',
+                          selectedId: selectedProvince.value?.id,
+                          loader: trackRegionLoader(
+                            ({bool forceRefresh = false}) =>
+                                effectiveRegionsUsecase.getProvinces(
+                                  forceRefresh: forceRefresh,
+                                ),
+                          ),
+                          onSelected: (picked) {
+                            locationRequestSeq.value++;
+                            isFetchingLocation.value = false;
+                            isSyncingRegions.value = false;
+                            regionSyncNote.value = null;
+                            regionApiUnavailable.value = false;
+                            if (picked.id != selectedProvince.value?.id) {
+                              selectedProvince.value = picked;
+                              selectedRegency.value = null;
+                              selectedDistrict.value = null;
+                              selectedVillage.value = null;
+                              clearRegionErrors(JagaTanahRegionLevel.values);
+                            } else {
+                              clearRegionErrors(const [
+                                JagaTanahRegionLevel.province,
+                              ]);
+                            }
+                          },
+                        );
+                      },
                     );
-                    final regencyField = JagaTanahTextField(
-                      controller: regencyController,
+                    final regencyField = JagaTanahDropdownField(
                       label: 'Kabupaten/Kota',
-                      hintText: 'Contoh: Kab. Mojokerto',
+                      hintText: 'Pilih kabupaten/kota',
+                      selectedValue: selectedRegency.value?.name,
                       isRequired: isWilayahRequired,
+                      isMuted: selectedProvince.value == null,
+                      isLoading:
+                          isSyncingRegions.value &&
+                          selectedProvince.value != null &&
+                          selectedRegency.value == null,
+                      errorText:
+                          regionErrors.value[JagaTanahRegionLevel.regency],
+                      onTap: () {
+                        if (effectiveRegionsUsecase == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Layanan data wilayah belum tersedia.',
+                          );
+                          return;
+                        }
+                        final province = selectedProvince.value;
+                        if (province == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Pilih Provinsi terlebih dahulu.',
+                          );
+                          return;
+                        }
+                        JagaTanahRegionSheet.show(
+                          context,
+                          title: 'Pilih Kabupaten/Kota',
+                          searchHint: 'Cari kabupaten/kota...',
+                          selectedId: selectedRegency.value?.id,
+                          loader: trackRegionLoader(
+                            ({bool forceRefresh = false}) =>
+                                effectiveRegionsUsecase.getRegencies(
+                                  province.id,
+                                  forceRefresh: forceRefresh,
+                                ),
+                          ),
+                          onSelected: (picked) {
+                            locationRequestSeq.value++;
+                            isFetchingLocation.value = false;
+                            isSyncingRegions.value = false;
+                            regionSyncNote.value = null;
+                            if (picked.id != selectedRegency.value?.id) {
+                              selectedRegency.value = picked;
+                              selectedDistrict.value = null;
+                              selectedVillage.value = null;
+                              clearRegionErrors(const [
+                                JagaTanahRegionLevel.regency,
+                                JagaTanahRegionLevel.district,
+                                JagaTanahRegionLevel.village,
+                              ]);
+                            } else {
+                              clearRegionErrors(const [
+                                JagaTanahRegionLevel.regency,
+                              ]);
+                            }
+                          },
+                        );
+                      },
                     );
-                    final districtField = JagaTanahTextField(
-                      controller: districtController,
+                    final districtField = JagaTanahDropdownField(
                       label: 'Kecamatan',
-                      hintText: 'Contoh: Ngoro',
+                      hintText: 'Pilih kecamatan',
+                      selectedValue: selectedDistrict.value?.name,
                       isRequired: isWilayahRequired,
+                      isMuted: selectedRegency.value == null,
+                      isLoading:
+                          isSyncingRegions.value &&
+                          selectedRegency.value != null &&
+                          selectedDistrict.value == null,
+                      errorText:
+                          regionErrors.value[JagaTanahRegionLevel.district],
+                      onTap: () {
+                        if (effectiveRegionsUsecase == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Layanan data wilayah belum tersedia.',
+                          );
+                          return;
+                        }
+                        final regency = selectedRegency.value;
+                        if (regency == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Pilih Kabupaten/Kota terlebih dahulu.',
+                          );
+                          return;
+                        }
+                        JagaTanahRegionSheet.show(
+                          context,
+                          title: 'Pilih Kecamatan',
+                          searchHint: 'Cari kecamatan...',
+                          selectedId: selectedDistrict.value?.id,
+                          loader: trackRegionLoader(
+                            ({bool forceRefresh = false}) =>
+                                effectiveRegionsUsecase.getDistricts(
+                                  regency.id,
+                                  forceRefresh: forceRefresh,
+                                ),
+                          ),
+                          onSelected: (picked) {
+                            locationRequestSeq.value++;
+                            isFetchingLocation.value = false;
+                            isSyncingRegions.value = false;
+                            regionSyncNote.value = null;
+                            if (picked.id != selectedDistrict.value?.id) {
+                              selectedDistrict.value = picked;
+                              selectedVillage.value = null;
+                              clearRegionErrors(const [
+                                JagaTanahRegionLevel.district,
+                                JagaTanahRegionLevel.village,
+                              ]);
+                            } else {
+                              clearRegionErrors(const [
+                                JagaTanahRegionLevel.district,
+                              ]);
+                            }
+                          },
+                        );
+                      },
                     );
-                    final villageField = JagaTanahTextField(
-                      controller: villageController,
+                    final villageField = JagaTanahDropdownField(
                       label: 'Desa/Kelurahan',
-                      hintText: 'Contoh: Sukomulyo',
+                      hintText: 'Pilih desa/kelurahan',
+                      selectedValue: selectedVillage.value?.name,
                       isRequired: isWilayahRequired,
+                      isMuted: selectedDistrict.value == null,
+                      isLoading:
+                          isSyncingRegions.value &&
+                          selectedDistrict.value != null &&
+                          selectedVillage.value == null,
+                      errorText:
+                          regionErrors.value[JagaTanahRegionLevel.village],
+                      onTap: () {
+                        if (effectiveRegionsUsecase == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Layanan data wilayah belum tersedia.',
+                          );
+                          return;
+                        }
+                        final district = selectedDistrict.value;
+                        if (district == null) {
+                          AppToast.showWarning(
+                            context,
+                            message: 'Pilih Kecamatan terlebih dahulu.',
+                          );
+                          return;
+                        }
+                        JagaTanahRegionSheet.show(
+                          context,
+                          title: 'Pilih Desa/Kelurahan',
+                          searchHint: 'Cari desa/kelurahan...',
+                          selectedId: selectedVillage.value?.id,
+                          loader: trackRegionLoader(
+                            ({bool forceRefresh = false}) =>
+                                effectiveRegionsUsecase.getVillages(
+                                  district.id,
+                                  forceRefresh: forceRefresh,
+                                ),
+                          ),
+                          onSelected: (picked) {
+                            locationRequestSeq.value++;
+                            isFetchingLocation.value = false;
+                            isSyncingRegions.value = false;
+                            regionSyncNote.value = null;
+                            selectedVillage.value = picked;
+                            clearRegionErrors(const [
+                              JagaTanahRegionLevel.village,
+                            ]);
+                          },
+                        );
+                      },
                     );
 
                     if (!useTwoColumns) {
@@ -1153,6 +1763,40 @@ class CreateJagaTanahPage extends HookWidget {
                     );
                   },
                 ),
+                if (regionSyncNote.value != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceElevated,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: colors.border),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          size: 18,
+                          color: colors.textSecondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            regionSyncNote.value!,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: colors.textSecondary,
+                              height: 1.35,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 14),
                 JagaTanahTextField(
                   controller: landmarkController,
@@ -1162,6 +1806,168 @@ class CreateJagaTanahPage extends HookWidget {
                   maxLines: 2,
                   maxLength: 255,
                   textInputAction: TextInputAction.done,
+                ),
+                const SizedBox(height: 10),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final textScale = MediaQuery.textScalerOf(context)
+                        .scale(1.0);
+                    final useRow =
+                        constraints.maxWidth >= 300 && textScale <= 1.35;
+                    final locationActionStyle = OutlinedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 44),
+                      backgroundColor: colors.primaryLight,
+                      foregroundColor: colors.primaryDark,
+                      side: BorderSide(
+                        color: colors.primaryDark.withValues(alpha: 0.25),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      textStyle: AppTextStyles.labelLarge.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+
+                    final fetchLocationButton = OutlinedButton.icon(
+                      onPressed: isFetchingLocation.value
+                          ? null
+                          : () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              _fetchCurrentLocation(
+                                context,
+                                isFetchingLocation: isFetchingLocation,
+                                locationRequestSeq: locationRequestSeq,
+                                latitude: latitude,
+                                longitude: longitude,
+                                accuracyMeters: accuracyMeters,
+                                gpsError: gpsError,
+                                regionsUsecase: effectiveRegionsUsecase,
+                                selectedProvince: selectedProvince,
+                                selectedRegency: selectedRegency,
+                                selectedDistrict: selectedDistrict,
+                                selectedVillage: selectedVillage,
+                                regionErrors: regionErrors,
+                                isSyncingRegions: isSyncingRegions,
+                                regionSyncNote: regionSyncNote,
+                                regionApiUnavailable: regionApiUnavailable,
+                                landmarkController: landmarkController,
+                                showErrorToast: true,
+                                overwriteExisting: true,
+                              );
+                            },
+                      style: locationActionStyle,
+                      icon: isFetchingLocation.value
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colors.primaryDark,
+                              ),
+                            )
+                          : const Icon(Icons.my_location_rounded, size: 18),
+                      label: Text(
+                        isFetchingLocation.value
+                            ? 'Mengambil lokasi...'
+                            : 'Ambil Lokasi',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+
+                    final pickFromMapsButton = OutlinedButton.icon(
+                      onPressed: () => _pickLocationFromMap(
+                        context,
+                        isFetchingLocation: isFetchingLocation,
+                        locationRequestSeq: locationRequestSeq,
+                        latitude: latitude,
+                        longitude: longitude,
+                        accuracyMeters: accuracyMeters,
+                        gpsError: gpsError,
+                        regionsUsecase: effectiveRegionsUsecase,
+                        selectedProvince: selectedProvince,
+                        selectedRegency: selectedRegency,
+                        selectedDistrict: selectedDistrict,
+                        selectedVillage: selectedVillage,
+                        regionErrors: regionErrors,
+                        isSyncingRegions: isSyncingRegions,
+                        regionSyncNote: regionSyncNote,
+                        regionApiUnavailable: regionApiUnavailable,
+                        landmarkController: landmarkController,
+                      ),
+                      style: locationActionStyle,
+                      icon: const Icon(Icons.map_outlined, size: 18),
+                      label: const Text(
+                        'Pilih dari Maps',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    );
+
+                    if (!useRow) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          fetchLocationButton,
+                          const SizedBox(height: 10),
+                          pickFromMapsButton,
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(child: fetchLocationButton),
+                        const SizedBox(width: 10),
+                        Expanded(child: pickFromMapsButton),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 16),
+                const JagaTanahFieldLabel(label: 'Peta Lokasi'),
+                const SizedBox(height: 4),
+                Text(
+                  'Ketuk peta atau tombol di bawah untuk menandai dan mengubah titik bidang.',
+                  style: AppTextStyles.caption.copyWith(
+                    color: colors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                JagaTanahSpatialCard(
+                  latitude: latitude.value,
+                  longitude: longitude.value,
+                  polygonPoints: polygonPoints.value,
+                  showMapTypeToggle: true,
+                  initialMapType: MapType.normal,
+                  isFetchingLocation: isFetchingLocation.value,
+                  errorText: gpsError.value,
+                  mapPreviewBuilder: mapPreviewBuilder,
+                  onOpenMap: () => _openPolygonPicker(
+                    context,
+                    isFetchingLocation: isFetchingLocation,
+                    locationRequestSeq: locationRequestSeq,
+                    latitude: latitude,
+                    longitude: longitude,
+                    accuracyMeters: accuracyMeters,
+                    gpsError: gpsError,
+                    polygonPoints: polygonPoints,
+                    regionsUsecase: effectiveRegionsUsecase,
+                    selectedProvince: selectedProvince,
+                    selectedRegency: selectedRegency,
+                    selectedDistrict: selectedDistrict,
+                    selectedVillage: selectedVillage,
+                    regionErrors: regionErrors,
+                    isSyncingRegions: isSyncingRegions,
+                    regionSyncNote: regionSyncNote,
+                    regionApiUnavailable: regionApiUnavailable,
+                    landmarkController: landmarkController,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 JagaTanahAttachmentSection(
@@ -1222,14 +2028,15 @@ class CreateJagaTanahPage extends HookWidget {
             subCategory: selectedSubCategory.value,
             titleController: titleController,
             descriptionController: descriptionController,
-            provinceController: provinceController,
-            regencyController: regencyController,
-            districtController: districtController,
-            villageController: villageController,
+            selectedProvince: selectedProvince.value,
+            selectedRegency: selectedRegency.value,
+            selectedDistrict: selectedDistrict.value,
+            selectedVillage: selectedVillage.value,
             landmarkController: landmarkController,
             latitude: latitude.value,
             longitude: longitude.value,
             accuracyMeters: accuracyMeters.value,
+            polygonPoints: polygonPoints.value,
             photos: photos.value,
             values: dropdownValues.value,
           ),
@@ -1388,14 +2195,17 @@ class CreateJagaTanahPage extends HookWidget {
                                   selectedSubCategory: selectedSubCategory,
                                   categoryError: categoryError,
                                   subCategoryError: subCategoryError,
-                                  provinceController: provinceController,
-                                  regencyController: regencyController,
-                                  districtController: districtController,
-                                  villageController: villageController,
+                                  selectedProvince: selectedProvince,
+                                  selectedRegency: selectedRegency,
+                                  selectedDistrict: selectedDistrict,
+                                  selectedVillage: selectedVillage,
+                                  regionErrors: regionErrors,
+                                  regionApiUnavailable: regionApiUnavailable,
                                   landmarkController: landmarkController,
                                   latitude: latitude,
                                   longitude: longitude,
                                   gpsError: gpsError,
+                                  polygonPoints: polygonPoints,
                                   photos: photos,
                                   photoError: photoError,
                                   dropdownValues: dropdownValues,
@@ -1414,10 +2224,12 @@ class CreateJagaTanahPage extends HookWidget {
                                   selectedSubCategory: selectedSubCategory,
                                   categoryError: categoryError,
                                   subCategoryError: subCategoryError,
-                                  provinceController: provinceController,
-                                  regencyController: regencyController,
-                                  districtController: districtController,
-                                  villageController: villageController,
+                                  selectedProvince: selectedProvince,
+                                  selectedRegency: selectedRegency,
+                                  selectedDistrict: selectedDistrict,
+                                  selectedVillage: selectedVillage,
+                                  regionErrors: regionErrors,
+                                  regionApiUnavailable: regionApiUnavailable,
                                   landmarkController: landmarkController,
                                   latitude: latitude,
                                   longitude: longitude,

@@ -29,6 +29,8 @@ class CreateJagaTanahReportUsecase {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) {
@@ -52,6 +54,8 @@ class CreateJagaTanahReportUsecase {
       tenureInfoSource: tenureInfoSource,
       possessionMarkers: possessionMarkers,
       conflictInfo: conflictInfo,
+      boundaryGeojson: boundaryGeojson,
+      estimatedArea: estimatedArea,
       idempotencyKey: idempotencyKey,
       skipMediaPreparation: skipMediaPreparation,
     );

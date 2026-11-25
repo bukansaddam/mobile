@@ -36,6 +36,8 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
   final String? tenureInfoSource;
   final String? possessionMarkers;
   final String? conflictInfo;
+  final Map<String, dynamic>? boundaryGeojson;
+  final String? estimatedArea;
   final String? idempotencyKey;
 
   const SubmitJagaTanahReportEvent({
@@ -58,6 +60,8 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
     this.tenureInfoSource,
     this.possessionMarkers,
     this.conflictInfo,
+    this.boundaryGeojson,
+    this.estimatedArea,
     this.idempotencyKey,
   });
 
@@ -82,6 +86,8 @@ class SubmitJagaTanahReportEvent extends CreateJagaTanahEvent {
     tenureInfoSource,
     possessionMarkers,
     conflictInfo,
+    boundaryGeojson,
+    estimatedArea,
     idempotencyKey,
   ];
 }

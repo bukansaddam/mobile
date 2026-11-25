@@ -1,3 +1,5 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 /// Ringkasan nilai form Jaga Tanah yang telah lolos validasi sebelum dikirim ke backend.
 class JagaTanahFormDraft {
   final int categoryId;
@@ -10,10 +12,16 @@ class JagaTanahFormDraft {
   final String regency;
   final String district;
   final String village;
+  // shortcut: ID wilayah baru disimpan di draft/state, belum dikirim ke POST /api/jaga-tanah-reports sampai kontrak backend siap.
+  final String? provinceId;
+  final String? regencyId;
+  final String? districtId;
+  final String? villageId;
   final String landmarkAddress;
   final double latitude;
   final double longitude;
   final double? accuracyMeters;
+  final List<LatLng> polygonPoints;
   final List<String> photoPaths;
   final String aksesLokasi;
   final String kondisiUtama;
@@ -37,10 +45,15 @@ class JagaTanahFormDraft {
     required this.regency,
     required this.district,
     required this.village,
+    this.provinceId,
+    this.regencyId,
+    this.districtId,
+    this.villageId,
     required this.landmarkAddress,
     required this.latitude,
     required this.longitude,
     this.accuracyMeters,
+    this.polygonPoints = const [],
     required this.photoPaths,
     required this.aksesLokasi,
     required this.kondisiUtama,

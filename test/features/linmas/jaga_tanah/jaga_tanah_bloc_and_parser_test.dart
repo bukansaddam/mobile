@@ -9,6 +9,7 @@ import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remo
 import 'package:akar/features/linmas/jaga_tanah/data/models/jaga_tanah_detail_model.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
@@ -108,6 +109,8 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
   String? lastTenureInfoSource;
   String? lastPossessionMarkers;
   String? lastConflictInfo;
+  Map<String, dynamic>? lastBoundaryGeojson;
+  String? lastEstimatedArea;
   String? lastIdempotencyKey;
 
   ComplaintReportEntity _sampleReport(String id) => ComplaintReportEntity(
@@ -146,6 +149,29 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     return categoriesResult;
   }
 
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getProvinces({
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
   String? lastDetailId;
   int detailCalls = 0;
 
@@ -179,6 +205,8 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) async {
@@ -202,6 +230,8 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     lastTenureInfoSource = tenureInfoSource;
     lastPossessionMarkers = possessionMarkers;
     lastConflictInfo = conflictInfo;
+    lastBoundaryGeojson = boundaryGeojson;
+    lastEstimatedArea = estimatedArea;
     lastIdempotencyKey = idempotencyKey;
     return createResult;
   }
@@ -915,6 +945,141 @@ void main() {
         'status': 'submitted',
       });
       expect(withoutPoints.entity.pointsAwarded, isNull);
+    });
+  });
+
+  group('JagaTanahRemoteDatasourceImpl.createReport boundary_geojson', () {
+    test('serializes boundary_geojson as JSON string in FormData when provided and omits when null', () async {
+      final capturedFields = <Map<String, String>>[];
+      final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+        ..httpClientAdapter = _FakeDioAdapter((options) async {
+          final formData = options.data as FormData;
+          capturedFields.add(Map.fromEntries(formData.fields));
+          return ResponseBody.fromString(
+            jsonEncode({
+              'success': true,
+              'data': {'id': 101, 'ticket_number': 'JGT-101'},
+            }),
+            200,
+            headers: {
+              Headers.contentTypeHeader: [Headers.jsonContentType],
+            },
+          );
+        });
+      final datasource = JagaTanahRemoteDatasourceImpl(dio: dio);
+
+      const boundary = {
+        'type': 'Polygon',
+        'coordinates': [
+          [
+            [106.8477468, -6.1719736],
+            [106.8483068, -6.1719736],
+            [106.8483068, -6.1715336],
+            [106.8477468, -6.1715336],
+            [106.8477468, -6.1719736],
+          ],
+        ],
+      };
+
+      await datasource.createReport(
+        title: 'Lahan Dengan Arsiran',
+        description: '',
+        address: 'Jl. Merdeka',
+        latitude: -6.1717,
+        longitude: 106.848,
+        attachments: const [],
+        categoryId: 20,
+        type: 'geometries',
+        boundaryGeojson: boundary,
+        estimatedArea: '± 2.900 m²',
+        skipMediaPreparation: true,
+      );
+
+      await datasource.createReport(
+        title: 'Lahan Tanpa Arsiran',
+        description: '',
+        address: 'Jl. Merdeka',
+        latitude: -6.1717,
+        longitude: 106.848,
+        attachments: const [],
+        categoryId: 20,
+        skipMediaPreparation: true,
+      );
+
+      expect(capturedFields, hasLength(2));
+      expect(capturedFields[0]['type'], 'geometries');
+      expect(capturedFields[0]['estimated_area'], '± 2.900 m²');
+      expect(
+        jsonDecode(capturedFields[0]['boundary_geojson']!),
+        equals(boundary),
+      );
+      expect(capturedFields[1]['type'], 'point');
+      expect(capturedFields[1].containsKey('boundary_geojson'), isFalse);
+      expect(capturedFields[1].containsKey('estimated_area'), isFalse);
+    });
+  });
+
+  group('JagaTanahDetailModel boundaryGeoJson parsing', () {
+    test('parses location.boundaryGeoJson closed Polygon ring into distinct LatLng vertices and supports postgisAreaSqm fallback', () {
+      final parsed = JagaTanahDetailModel.fromJson({
+        'report': {
+          'id': 88,
+          'ticketNumber': 'JGT-2611250001',
+          'title': 'Penyalahgunaan Tanah',
+          'status': 'submitted',
+        },
+        'spatialAndCondition': {'estimatedArea': '± 236 m²'},
+        'location': {
+          'address': 'Jalan Keselamatan II, Manggarai Selatan',
+          'type': 'geometries',
+          'geometryType': 'geometries',
+          'latitude': -6.220704,
+          'longitude': 106.8485926,
+          'boundaryGeoJson': {
+            'type': 'Polygon',
+            'coordinates': [
+              [
+                [106.84864025563002, -6.22079498492423],
+                [106.84866204857826, -6.220641666018301],
+                [106.84854470193386, -6.220608002513408],
+                [106.84852324426174, -6.220771320487323],
+                [106.84864025563002, -6.22079498492423],
+              ],
+            ],
+          },
+          'postgisAreaSqm': 234.63,
+        },
+      }).entity;
+
+      expect(parsed.hasPolygon, isTrue);
+      expect(parsed.polygonPoints, hasLength(4));
+      expect(parsed.polygonPoints.first.latitude, closeTo(-6.220795, 1e-6));
+      expect(parsed.polygonPoints.first.longitude, closeTo(106.848640, 1e-6));
+      expect(parsed.estimatedArea, '± 236 m²');
+
+      final fromJsonString = JagaTanahDetailModel.fromJson({
+        'id': 89,
+        'title': 'Tanah String GeoJSON',
+        'location': {
+          'boundary_geojson': jsonEncode({
+            'type': 'Polygon',
+            'coordinates': [
+              [
+                [112.6, -7.5],
+                [112.601, -7.5],
+                [112.601, -7.501],
+                [112.6, -7.5],
+              ],
+            ],
+          }),
+          'postgisAreaSqm': 234.63,
+        },
+      }).entity;
+
+      expect(fromJsonString.hasPolygon, isTrue);
+      expect(fromJsonString.hasSpatialCoordinates, isTrue);
+      expect(fromJsonString.polygonPoints, hasLength(3));
+      expect(fromJsonString.estimatedArea, '± 235 m²');
     });
   });
 }

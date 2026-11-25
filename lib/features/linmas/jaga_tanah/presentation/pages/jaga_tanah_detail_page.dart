@@ -5,6 +5,7 @@ import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_detail_bloc/jaga_tanah_detail_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_detail_labels.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/pages/jaga_tanah_fullscreen_map_page.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_detail_field.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_detail_media_strip.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_detail_status_banner.dart';
@@ -15,6 +16,7 @@ import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Halaman detail lengkap laporan Jaga Tanah dari `GET /api/jaga-tanah-reports/{id}`.
 class JagaTanahDetailPage extends StatelessWidget {
@@ -63,6 +65,7 @@ class JagaTanahDetailPage extends StatelessWidget {
         village: loaded.village,
         latitude: loaded.latitude,
         longitude: loaded.longitude,
+        polygonPoints: loaded.polygonPoints,
         geometryType: loaded.geometryType,
         objectShape: loaded.objectShape,
         estimatedArea: loaded.estimatedArea,
@@ -250,8 +253,26 @@ class JagaTanahDetailPage extends StatelessWidget {
                             JagaTanahSpatialCard(
                               latitude: detail.latitude,
                               longitude: detail.longitude,
-                              height: 164,
+                              polygonPoints: detail.polygonPoints,
+                              showMapTypeToggle: true,
+                              initialMapType: MapType.normal,
+                              height: 184,
                               mapPreviewBuilder: mapPreviewBuilder,
+                              onFullscreen: (currentMapType) {
+                                JagaTanahFullscreenMapPage.open(
+                                  context,
+                                  latitude: detail.latitude,
+                                  longitude: detail.longitude,
+                                  polygonPoints: detail.polygonPoints,
+                                  initialMapType: currentMapType,
+                                  title: detail.title.isNotEmpty
+                                      ? detail.title
+                                      : 'Peta Lokasi',
+                                  address: detail.address,
+                                  estimatedArea: detail.estimatedArea,
+                                  mapPreviewBuilder: mapPreviewBuilder,
+                                );
+                              },
                             ),
                             const SizedBox(height: 14),
                           ],

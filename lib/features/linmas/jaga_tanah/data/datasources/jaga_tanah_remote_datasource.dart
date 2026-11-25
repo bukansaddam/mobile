@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:akar/core/constants/api_constants.dart';
@@ -63,6 +64,8 @@ abstract class JagaTanahRemoteDatasource {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   });
@@ -401,6 +404,8 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) async {
@@ -447,6 +452,8 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
             tenureInfoSource: tenureInfoSource,
             possessionMarkers: possessionMarkers,
             conflictInfo: conflictInfo,
+            boundaryGeojson: boundaryGeojson,
+            estimatedArea: estimatedArea,
           ),
           options: requestOptions,
         ),
@@ -557,6 +564,8 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
   }) async {
     final files = <MultipartFile>[];
     for (final file in attachments) {
@@ -573,11 +582,15 @@ class JagaTanahRemoteDatasourceImpl extends BaseRemoteDataSource
     if (subCategoryId != null) {
       data['sub_category_id'] = subCategoryId;
     }
+    if (boundaryGeojson != null && boundaryGeojson.isNotEmpty) {
+      data['boundary_geojson'] = jsonEncode(boundaryGeojson);
+    }
 
     final optionalTextFields = <String, String?>{
       'description': description,
       'address': address,
       'type': type,
+      'estimated_area': estimatedArea,
       'location_access': locationAccess,
       'field_condition': fieldCondition,
       'dominant_land_cover': dominantLandCover,

@@ -7,6 +7,7 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/datasources/jaga_tanah_remote_datasource.dart';
 import 'package:akar/features/linmas/jaga_tanah/data/sync/jaga_tanah_sync_handler.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_category_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/create_jaga_tanah_report_usecase.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/usecases/get_jaga_tanah_categories_usecase.dart';
@@ -21,6 +22,8 @@ class _MockJagaTanahRemoteDatasource extends Fake
   bool? lastSkipMediaPreparation;
   String? lastTitle;
   List<File>? lastAttachments;
+  Map<String, dynamic>? lastBoundaryGeojson;
+  String? lastEstimatedArea;
 
   @override
   Future<ComplaintReportModel> createReport({
@@ -43,11 +46,15 @@ class _MockJagaTanahRemoteDatasource extends Fake
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) async {
     lastTitle = title;
     lastAttachments = attachments;
+    lastBoundaryGeojson = boundaryGeojson;
+    lastEstimatedArea = estimatedArea;
     lastIdempotencyKey = idempotencyKey;
     lastSkipMediaPreparation = skipMediaPreparation;
     return ComplaintReportModel(
@@ -61,6 +68,29 @@ class _MockJagaTanahRemoteDatasource extends Fake
       reportedAt: DateTime.now(),
     );
   }
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getProvinces({
+    bool forceRefresh = false,
+  }) async => const [];
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  }) async => const [];
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  }) async => const [];
+
+  @override
+  Future<List<JagaTanahRegionEntity>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  }) async => const [];
 }
 
 class _MockJagaTanahRepository extends Fake implements JagaTanahRepository {
@@ -87,6 +117,8 @@ class _MockJagaTanahRepository extends Fake implements JagaTanahRepository {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) async {
@@ -109,6 +141,29 @@ class _MockJagaTanahRepository extends Fake implements JagaTanahRepository {
   Future<Either<Failure, List<JagaTanahCategoryEntity>>> getCategories() async {
     return const Right([]);
   }
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getProvinces({
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getRegencies(
+    String provinceId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getDistricts(
+    String regencyId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<JagaTanahRegionEntity>>> getVillages(
+    String districtId, {
+    bool forceRefresh = false,
+  }) async => const Right([]);
 }
 
 class _MockAuthLocalDatasource extends Fake implements AuthLocalDatasource {
@@ -158,6 +213,18 @@ void main() {
           'latitude': -7.123,
           'longitude': 112.456,
           'category_id': 2,
+          'boundary_geojson': {
+            'type': 'Polygon',
+            'coordinates': [
+              [
+                [106.8477468, -6.1719736],
+                [106.8483068, -6.1719736],
+                [106.8483068, -6.1715336],
+                [106.8477468, -6.1719736],
+              ],
+            ],
+          },
+          'estimated_area': '± 2.900 m²',
         },
         attachments: [
           OfflineAttachment(
@@ -181,6 +248,8 @@ void main() {
       expect(mockDatasource.lastSkipMediaPreparation, isTrue);
       expect(mockDatasource.lastTitle, equals('Laporan Tanah Kosong'));
       expect(mockDatasource.lastAttachments?.length, equals(1));
+      expect(mockDatasource.lastBoundaryGeojson?['type'], equals('Polygon'));
+      expect(mockDatasource.lastEstimatedArea, equals('± 2.900 m²'));
     });
   });
 
@@ -208,6 +277,17 @@ void main() {
           )
           .timeout(const Duration(seconds: 5));
 
+      const sampleBoundary = {
+        'type': 'Polygon',
+        'coordinates': [
+          [
+            [112.5, -7.5],
+            [112.501, -7.5],
+            [112.501, -7.501],
+            [112.5, -7.5],
+          ],
+        ],
+      };
       bloc.add(
         SubmitJagaTanahReportEvent(
           title: 'Patroli Tanah Sengketa',
@@ -217,6 +297,9 @@ void main() {
           longitude: 112.5,
           attachments: [dummyPhoto],
           categoryId: 3,
+          type: 'geometries',
+          boundaryGeojson: sampleBoundary,
+          estimatedArea: '± 2.900 m²',
         ),
       );
 
@@ -232,6 +315,9 @@ void main() {
       expect(pending.length, equals(1));
       expect(pending.first.featureType, equals(OfflineFeatureType.jagaTanah));
       expect(pending.first.payload['title'], equals('Patroli Tanah Sengketa'));
+      expect(pending.first.payload['type'], equals('geometries'));
+      expect(pending.first.payload['boundary_geojson'], equals(sampleBoundary));
+      expect(pending.first.payload['estimated_area'], equals('± 2.900 m²'));
       expect(pending.first.attachments.length, equals(1));
 
       await bloc.close();

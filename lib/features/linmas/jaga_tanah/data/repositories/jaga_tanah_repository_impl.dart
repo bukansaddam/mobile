@@ -148,6 +148,8 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
     String? tenureInfoSource,
     String? possessionMarkers,
     String? conflictInfo,
+    Map<String, dynamic>? boundaryGeojson,
+    String? estimatedArea,
     String? idempotencyKey,
     bool skipMediaPreparation = false,
   }) async {
@@ -172,6 +174,8 @@ class JagaTanahRepositoryImpl implements JagaTanahRepository {
         tenureInfoSource: tenureInfoSource,
         possessionMarkers: possessionMarkers,
         conflictInfo: conflictInfo,
+        boundaryGeojson: boundaryGeojson,
+        estimatedArea: estimatedArea,
         idempotencyKey: idempotencyKey,
         skipMediaPreparation: skipMediaPreparation,
       );

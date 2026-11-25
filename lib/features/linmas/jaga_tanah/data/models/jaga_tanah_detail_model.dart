@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
+import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_polygon_utils.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Model parser defensif untuk payload `GET /api/jaga-tanah-reports/{id}`
 /// yang mendukung struktur flat maupun nested (`report`, `location`, `condition`, `tenure`).
@@ -86,6 +90,19 @@ class JagaTanahDetailModel {
     final bpnMaps = [?bpn, ...followUpMaps];
 
     final categoryPair = _parseCategories(coreMaps);
+    final polygonPoints = _parseBoundaryPolygon(spatialMaps);
+    final rawEstimatedArea = _pickString(spatialMaps, const [
+      'estimated_area',
+      'estimatedArea',
+    ]);
+    final postgisAreaSqm = _pickDouble(spatialMaps, const [
+      'postgisAreaSqm',
+      'postgis_area_sqm',
+    ]);
+    final resolvedEstimatedArea = rawEstimatedArea ??
+        (postgisAreaSqm != null && postgisAreaSqm > 0
+            ? JagaTanahPolygonUtils.formatArea(postgisAreaSqm)
+            : null);
 
     return JagaTanahDetailModel(
       JagaTanahDetailEntity(
@@ -125,6 +142,7 @@ class JagaTanahDetailModel {
           'lng',
           'lon',
         ], coordinateIndex: 0),
+        polygonPoints: polygonPoints,
         geometryType: _pickString(
           [?geometry, ?location, ...coreMaps],
           const ['type', 'geometry_type', 'geometryType'],
@@ -133,10 +151,7 @@ class JagaTanahDetailModel {
           'object_shape',
           'objectShape',
         ]),
-        estimatedArea: _pickString(spatialMaps, const [
-          'estimated_area',
-          'estimatedArea',
-        ]),
+        estimatedArea: resolvedEstimatedArea,
         locationAccess: _pickString(spatialMaps, const [
           'location_access',
           'locationAccess',
@@ -530,6 +545,82 @@ class JagaTanahDetailModel {
       );
     }
     return entries;
+  }
+
+  static List<LatLng> _parseBoundaryPolygon(List<Map<String, dynamic>> maps) {
+    const keys = [
+      'boundaryGeoJson',
+      'boundary_geojson',
+      'boundaryGeojson',
+      'geojson',
+      'boundary',
+    ];
+    for (final map in maps) {
+      for (final key in keys) {
+        final raw = map[key];
+        if (raw == null) continue;
+        final points = _decodeGeoJsonPolygon(raw);
+        if (points.length >= 3) return points;
+      }
+      if (map['coordinates'] is List) {
+        final points = _decodeGeoJsonPolygon(map);
+        if (points.length >= 3) return points;
+      }
+    }
+    return const [];
+  }
+
+  static List<LatLng> _decodeGeoJsonPolygon(dynamic raw) {
+    dynamic decoded = raw;
+    if (decoded is String) {
+      final trimmed = decoded.trim();
+      if (trimmed.isEmpty) return const [];
+      try {
+        decoded = jsonDecode(trimmed);
+      } catch (_) {
+        return const [];
+      }
+    }
+    final geo = _asMap(decoded);
+    if (geo == null) return const [];
+
+    final type = (geo['type'] ?? '').toString().trim().toLowerCase();
+    final coordinates = geo['coordinates'];
+    if (coordinates is! List || coordinates.isEmpty) return const [];
+
+    List<dynamic>? ring;
+    if (type == 'multipolygon') {
+      final firstPolygon = coordinates.first;
+      if (firstPolygon is List &&
+          firstPolygon.isNotEmpty &&
+          firstPolygon.first is List) {
+        ring = firstPolygon.first as List<dynamic>;
+      }
+    } else if (type.isEmpty || type == 'polygon') {
+      if (coordinates.first is List) {
+        ring = coordinates.first as List<dynamic>;
+      }
+    }
+    if (ring == null || ring.length < 3) return const [];
+
+    final points = <LatLng>[];
+    for (final item in ring) {
+      if (item is! List || item.length < 2) continue;
+      final lng = _toDouble(item[0]);
+      final lat = _toDouble(item[1]);
+      if (lat == null || lng == null) continue;
+      points.add(LatLng(lat, lng));
+    }
+    if (points.length >= 4 && points.first == points.last) {
+      points.removeLast();
+    }
+    return points.length >= 3 ? List<LatLng>.unmodifiable(points) : const [];
+  }
+
+  static double? _toDouble(dynamic value) {
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value.trim());
+    return null;
   }
 
   static String _absoluteUrl(String url) {

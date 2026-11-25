@@ -100,6 +100,8 @@ class CreateJagaTanahBloc
       tenureInfoSource: event.tenureInfoSource,
       possessionMarkers: event.possessionMarkers,
       conflictInfo: event.conflictInfo,
+      boundaryGeojson: event.boundaryGeojson,
+      estimatedArea: event.estimatedArea,
       idempotencyKey: event.idempotencyKey,
     );
 
@@ -127,6 +129,10 @@ class CreateJagaTanahBloc
               'tenure_info_source': event.tenureInfoSource,
               'possession_markers': event.possessionMarkers,
               'conflict_info': event.conflictInfo,
+              if (event.boundaryGeojson != null)
+                'boundary_geojson': event.boundaryGeojson,
+              if (event.estimatedArea != null)
+                'estimated_area': event.estimatedArea,
             };
 
             await _offlineQueue.enqueue(

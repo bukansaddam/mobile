@@ -1,5 +1,6 @@
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:equatable/equatable.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Entitas domain lengkap untuk detail laporan Jaga Tanah.
 class JagaTanahDetailEntity extends Equatable {
@@ -24,6 +25,7 @@ class JagaTanahDetailEntity extends Equatable {
   final String? village;
   final double? latitude;
   final double? longitude;
+  final List<LatLng> polygonPoints;
   final String? geometryType;
   final String? objectShape;
   final String? estimatedArea;
@@ -84,6 +86,7 @@ class JagaTanahDetailEntity extends Equatable {
     this.village,
     this.latitude,
     this.longitude,
+    this.polygonPoints = const [],
     this.geometryType,
     this.objectShape,
     this.estimatedArea,
@@ -139,7 +142,10 @@ class JagaTanahDetailEntity extends Equatable {
 
   String get displayTicket => ticketNumber.isNotEmpty ? ticketNumber : id;
 
-  bool get hasSpatialCoordinates => latitude != null && longitude != null;
+  bool get hasPolygon => polygonPoints.length >= 3;
+
+  bool get hasSpatialCoordinates =>
+      (latitude != null && longitude != null) || hasPolygon;
 
   bool get hasRegionFields => [
     province,
@@ -187,6 +193,7 @@ class JagaTanahDetailEntity extends Equatable {
     village,
     latitude,
     longitude,
+    polygonPoints,
     geometryType,
     objectShape,
     estimatedArea,
