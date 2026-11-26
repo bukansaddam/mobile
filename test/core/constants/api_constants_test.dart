@@ -83,14 +83,8 @@ void main() {
       expect(ApiConstants.villageMembersNearby, '/api/village-members/nearby');
     });
 
-    test('google speech constants decode accurately', () {
-      expect(ApiConstants.googleCloudScopes, [
-        'https://www.googleapis.com/auth/cloud-platform',
-      ]);
-      expect(
-        ApiConstants.googleSpeechRecognizeUrl('demo-project'),
-        'https://asia-southeast1-speech.googleapis.com/v2/projects/demo-project/locations/asia-southeast1/recognizers/_:recognize',
-      );
+    test('speech proxy endpoint decodes accurately', () {
+      expect(ApiConstants.speechTranscribe, '/api/speech/transcribe');
     });
 
     test('notification endpoints decode accurately', () {

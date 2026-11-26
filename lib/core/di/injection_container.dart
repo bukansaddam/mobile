@@ -210,7 +210,9 @@ Future<void> init() async {
     () => ThemeBloc(sharedPreferences: sl<SharedPreferences>()),
   );
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
-  sl.registerLazySingleton<GoogleSpeechService>(() => GoogleSpeechService());
+  sl.registerLazySingleton<GoogleSpeechService>(
+    () => GoogleSpeechService(dio: sl<Dio>()),
+  );
   sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());
   final audioAlarmService = AudioAlarmService();
   sl.registerLazySingleton<AudioAlarmService>(() => audioAlarmService);
@@ -533,9 +535,8 @@ Future<void> init() async {
     ),
   );
   sl.registerFactory<PermissionOnboardingBloc>(
-    () => PermissionOnboardingBloc(
-      permissionService: sl<AppPermissionService>(),
-    ),
+    () =>
+        PermissionOnboardingBloc(permissionService: sl<AppPermissionService>()),
   );
   sl.registerLazySingleton<ProfileBloc>(
     () => ProfileBloc(

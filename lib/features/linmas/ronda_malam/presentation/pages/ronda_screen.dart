@@ -4,6 +4,7 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/offline/widgets/offline_status_banner.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/google_speech_service.dart';
+import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
@@ -261,11 +262,12 @@ class _RondaScreenState extends State<RondaScreen> {
     } catch (e) {
       if (mounted) {
         final colors = context.appColors;
+        final message = ErrorUtils.parseErrorMessage(e);
         AppLogger.e('Gagal memproses suara : $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Gagal memproses suara: $e',
+              message,
               style: TextStyle(color: colors.onErrorSolid),
             ),
             backgroundColor: colors.errorSolid,
