@@ -106,7 +106,7 @@ class _KtaCardModalState extends State<KtaCardModal> {
         ? user.phoneNumber!.trim()
         : '-';
     final String roleTitle = user.isOfficer
-        ? 'SATUAN LINMAS'
+        ? 'SATUAN ASLINMAS'
         : 'WARGA TERDAFTAR';
     final String memberId =
         '${AppConstants.appName}-${(user.id.toString()).padLeft(6, '0')}';

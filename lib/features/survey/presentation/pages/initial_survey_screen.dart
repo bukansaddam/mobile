@@ -141,7 +141,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
       child: Scaffold(
         backgroundColor: colors.background,
         appBar: const AppPageBar(
-          title: 'Survey Profil Baseline Linmas',
+          title: 'Survey Profil Baseline Aslinmas',
           showBackButton: false,
         ),
         body: BlocConsumer<SurveyBloc, SurveyState>(
@@ -151,7 +151,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
             } else if (state is InitialSurveySuccessState) {
               AppDialogs.showSuccess(
                 context,
-                title: 'Profil Linmas Berhasil Disimpan',
+                title: 'Profil Aslinmas Berhasil Disimpan',
                 message: 'Terima kasih telah melengkapi data baseline profil lingkungan & keamanan RT Anda.',
                 buttonText: 'Masuk ke Aplikasi',
                 onPressed: () {
@@ -363,7 +363,7 @@ class _InitialSurveyScreenState extends State<InitialSurveyScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Sebagai anggota Linmas, mohon lengkapi ${quiz.questions.length} pertanyaan baseline profil wilayah RT Anda sebelum melanjutkan.',
+                          'Sebagai anggota Aslinmas, mohon lengkapi ${quiz.questions.length} pertanyaan baseline profil wilayah RT Anda sebelum melanjutkan.',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: colors.textSecondary,
                           ),

@@ -518,7 +518,7 @@ void main() {
         );
         expect(find.text(AppConstants.appBarTitle), findsOneWidget);
 
-        final subtitle = tester.widget<Text>(find.text('Laporan Linmas'));
+        final subtitle = tester.widget<Text>(find.text('Laporan Aslinmas'));
         expect(subtitle.style?.color, AppColors.primaryDark);
 
         final gradientBox = tester.widget<DecoratedBox>(

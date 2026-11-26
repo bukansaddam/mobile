@@ -26,7 +26,7 @@ Object? _readName(Map json, String key) {
           userMap?['name'] ??
           userMap?['full_name'] ??
           userMap?['nama'] ??
-          'Petugas Linmas')
+          'Petugas Aslinmas')
       .toString();
 }
 

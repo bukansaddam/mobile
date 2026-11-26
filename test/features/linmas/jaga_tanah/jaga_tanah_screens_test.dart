@@ -139,42 +139,35 @@ class _FakeJagaTanahRepository implements JagaTanahRepository {
     JagaTanahRegionEntity(id: '31', name: 'DKI JAKARTA'),
   ];
 
-  static const Map<String, List<JagaTanahRegionEntity>> defaultRegenciesByProvince = {
+  static const Map<String, List<JagaTanahRegionEntity>>
+  defaultRegenciesByProvince = {
     '35': [
       JagaTanahRegionEntity(id: '3516', name: 'KABUPATEN MOJOKERTO'),
       JagaTanahRegionEntity(id: '3576', name: 'KOTA MOJOKERTO'),
       JagaTanahRegionEntity(id: '3573', name: 'KOTA MALANG'),
       JagaTanahRegionEntity(id: '3578', name: 'KOTA SURABAYA'),
     ],
-    '31': [
-      JagaTanahRegionEntity(id: '3171', name: 'KOTA JAKARTA SELATAN'),
-    ],
+    '31': [JagaTanahRegionEntity(id: '3171', name: 'KOTA JAKARTA SELATAN')],
   };
 
-  static const Map<String, List<JagaTanahRegionEntity>> defaultDistrictsByRegency = {
+  static const Map<String, List<JagaTanahRegionEntity>>
+  defaultDistrictsByRegency = {
     '3516': [
       JagaTanahRegionEntity(id: '351601', name: 'NGORO'),
       JagaTanahRegionEntity(id: '351602', name: 'PACET'),
     ],
-    '3578': [
-      JagaTanahRegionEntity(id: '357801', name: 'GUBENG'),
-    ],
-    '3171': [
-      JagaTanahRegionEntity(id: '317101', name: 'TEBET'),
-    ],
+    '3578': [JagaTanahRegionEntity(id: '357801', name: 'GUBENG')],
+    '3171': [JagaTanahRegionEntity(id: '317101', name: 'TEBET')],
   };
 
-  static const Map<String, List<JagaTanahRegionEntity>> defaultVillagesByDistrict = {
+  static const Map<String, List<JagaTanahRegionEntity>>
+  defaultVillagesByDistrict = {
     '351601': [
       JagaTanahRegionEntity(id: '3516012001', name: 'SUKOMULYO'),
       JagaTanahRegionEntity(id: '3516012002', name: 'KUTOGIRANG'),
     ],
-    '357801': [
-      JagaTanahRegionEntity(id: '3578011001', name: 'AIRLANGGA'),
-    ],
-    '317101': [
-      JagaTanahRegionEntity(id: '3171011001', name: 'TEBET BARAT'),
-    ],
+    '357801': [JagaTanahRegionEntity(id: '3578011001', name: 'AIRLANGGA')],
+    '317101': [JagaTanahRegionEntity(id: '3171011001', name: 'TEBET BARAT')],
   };
 
   Either<Failure, List<JagaTanahRegionEntity>>? provincesOverride;
@@ -654,7 +647,11 @@ void main() {
                             ),
                           ),
                           onOpenPolygonOverride:
-                              (_, {initialCenter, initialPoints = const []}) async {
+                              (
+                                _, {
+                                initialCenter,
+                                initialPoints = const [],
+                              }) async {
                                 return const [
                                   LatLng(-7.983421, 112.621008),
                                   LatLng(-7.983421, 112.622008),
@@ -929,7 +926,7 @@ void main() {
       );
       await pickOption(
         'Pilih sumber informasi kondisi',
-        'Pengamatan langsung oleh Linmas',
+        'Pengamatan langsung oleh Aslinmas',
       );
 
       // Lanjut ke Step 4/5 (Penguasaan / Hak)
@@ -1055,7 +1052,7 @@ void main() {
       );
       expect(
         repository.lastSubmittedConditionInfoSource,
-        'Pengamatan langsung oleh Linmas',
+        'Pengamatan langsung oleh Aslinmas',
       );
       expect(repository.lastSubmittedTenureInfoSource, 'Papan di lokasi');
       expect(
@@ -1066,7 +1063,8 @@ void main() {
       expect(repository.lastSubmittedBoundaryGeojson?['type'], 'Polygon');
       final submittedRing =
           ((repository.lastSubmittedBoundaryGeojson?['coordinates'] as List)
-              .first as List);
+                  .first
+              as List);
       expect(submittedRing, hasLength(5));
       expect(submittedRing.first, equals([112.621008, -7.983421]));
       expect(submittedRing.first, equals(submittedRing.last));
@@ -1153,7 +1151,7 @@ void main() {
           visibleUsage: 'Perkebunan',
           usageLevel: 'Rendah (< 25% dari luas)',
           maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
-          conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+          conditionInfoSource: 'Pengamatan langsung oleh Aslinmas',
           tenureInfoSource: 'Papan di lokasi',
           possessionMarkers: 'Ada papan, tanpa pagar',
           conflictInfo: 'Tidak ada informasi',
@@ -1242,7 +1240,7 @@ void main() {
       expect(find.text('Kondisi Penggunaan & Pemanfaatan'), findsOneWidget);
       expect(find.text('Sebagian dimanfaatkan'), findsOneWidget);
       expect(find.text('Semak belukar'), findsOneWidget);
-      expect(find.text('Pengamatan langsung oleh Linmas'), findsOneWidget);
+      expect(find.text('Pengamatan langsung oleh Aslinmas'), findsOneWidget);
 
       expect(find.text('Informasi Hak & Penguasaan'), findsOneWidget);
       expect(find.text('Papan di lokasi'), findsOneWidget);
@@ -1950,17 +1948,18 @@ void main() {
                                           ),
                                           if (points.length >= 2)
                                             ElevatedButton(
-                                              onPressed: () =>
-                                                  onSelectPoint(1),
-                                              child: const Text('Pilih Titik 2'),
+                                              onPressed: () => onSelectPoint(1),
+                                              child: const Text(
+                                                'Pilih Titik 2',
+                                              ),
                                             ),
                                           if (points.isNotEmpty)
                                             ElevatedButton(
-                                              onPressed: () => onMovePoint(
-                                                0,
-                                                movedPoint,
+                                              onPressed: () =>
+                                                  onMovePoint(0, movedPoint),
+                                              child: const Text(
+                                                'Geser Titik 1',
                                               ),
-                                              child: const Text('Geser Titik 1'),
                                             ),
                                         ],
                                       ),
@@ -2322,7 +2321,7 @@ void main() {
         );
         await pickDropdown(
           'Pilih sumber informasi kondisi',
-          'Pengamatan langsung oleh Linmas',
+          'Pengamatan langsung oleh Aslinmas',
         );
         await tester.tap(find.text('Lanjut'));
         await tester.pumpAndSettle();
@@ -2597,11 +2596,15 @@ void main() {
         expect((ambilRect.top - pilihMapsRect.top).abs(), lessThanOrEqualTo(2));
         expect(pilihMapsRect.left, greaterThan(ambilRect.right));
 
-        final ambilStyle = tester.widget<OutlinedButton>(ambilButtonFinder).style!;
-        final pilihMapsStyle =
-            tester.widget<OutlinedButton>(pilihMapsButtonFinder).style!;
-        final ubahTitikStyle =
-            tester.widget<OutlinedButton>(ubahTitikButtonFinder).style!;
+        final ambilStyle = tester
+            .widget<OutlinedButton>(ambilButtonFinder)
+            .style!;
+        final pilihMapsStyle = tester
+            .widget<OutlinedButton>(pilihMapsButtonFinder)
+            .style!;
+        final ubahTitikStyle = tester
+            .widget<OutlinedButton>(ubahTitikButtonFinder)
+            .style!;
         expect(
           ambilStyle.backgroundColor?.resolve({}),
           ubahTitikStyle.backgroundColor?.resolve({}),

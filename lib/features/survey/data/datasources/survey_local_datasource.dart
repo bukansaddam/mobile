@@ -96,16 +96,14 @@ class SurveyLocalDatasourceImpl implements SurveyLocalDatasource {
     final periodLabel = SurveyEntity.getCurrentPeriodLabel();
     return MonthlySurveyFormEntity(
       id: 'survey_admin_$periodKey',
-      title: 'Survey Bulanan Linmas & RT',
-      description:
-          'Survey berkala dari Admin untuk evaluasi kondisi keamanan, lingkungan, dan pelayanan di wilayah Anda.',
+      title: 'Survey Bulanan Aslinmas & RT',
+      description: 'Survey berkala dari Admin untuk evaluasi kondisi keamanan, lingkungan, dan pelayanan di wilayah Anda.',
       period: periodKey,
       periodLabel: periodLabel,
       questions: const [
         DynamicQuestionEntity(
           id: 'q_keamanan',
-          question:
-              'Bagaimana tingkat kondisi keamanan & ketertiban lingkungan RT Anda bulan ini?',
+          question: 'Bagaimana tingkat kondisi keamanan & ketertiban lingkungan RT Anda bulan ini?',
           type: DynamicQuestionType.singleChoice,
           options: [
             'Sangat Kondusif',
@@ -117,15 +115,13 @@ class SurveyLocalDatasourceImpl implements SurveyLocalDatasource {
         ),
         DynamicQuestionEntity(
           id: 'q_penerangan',
-          question:
-              'Apakah fasilitas penerangan jalan & sarana pos siskamling berfungsi dengan baik?',
+          question: 'Apakah fasilitas penerangan jalan & sarana pos siskamling berfungsi dengan baik?',
           type: DynamicQuestionType.booleanChoice,
           isRequired: true,
         ),
         DynamicQuestionEntity(
           id: 'q_kendala',
-          question:
-              'Sebutkan kendala atau fasilitas lingkungan yang membutuhkan bantuan penanganan Admin/Dinas:',
+          question: 'Sebutkan kendala atau fasilitas lingkungan yang membutuhkan bantuan penanganan Admin/Dinas:',
           type: DynamicQuestionType.textInput,
           isRequired: false,
         ),

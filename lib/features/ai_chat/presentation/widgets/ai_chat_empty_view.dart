@@ -18,7 +18,7 @@ class AiChatEmptyView extends StatelessWidget {
 
   static const List<String> _officerPrompts = [
     'Apa itu Aslinmas dan apa saja fitur utamanya?',
-    'Bagaimana tugas dan peran Linmas di sistem Aslinmas?',
+    'Bagaimana tugas dan peran petugas di sistem Aslinmas?',
     'Bagaimana cara menggunakan fitur laporan dan presensi di Aslinmas?',
   ];
 

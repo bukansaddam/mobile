@@ -28,7 +28,7 @@ class AppLogoBadge extends StatelessWidget {
     this.fallbackIconSize = 22,
     this.boxShadow,
   }) : assetPath = AppConstants.logoDumasAsset,
-       semanticLabel = 'Logo DUMAS Aduan Masyarakat dan Laporan LINMAS';
+       semanticLabel = 'Logo DUMAS Aduan Masyarakat dan Laporan ASLINMAS';
 
   const AppLogoBadge.linmas({
     super.key,
@@ -37,7 +37,7 @@ class AppLogoBadge extends StatelessWidget {
     this.fallbackIconSize = 22,
     this.boxShadow,
   }) : assetPath = AppConstants.logoLinmasAsset,
-       semanticLabel = 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS';
+       semanticLabel = 'Logo ASLINMAS Aduan Masyarakat dan Laporan ASLINMAS';
 
   @override
   Widget build(BuildContext context) {

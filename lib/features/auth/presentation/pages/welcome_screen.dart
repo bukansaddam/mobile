@@ -32,14 +32,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   List<FeatureHighlightItem> _buildFeatures(AppColorScheme colors) => [
     FeatureHighlightItem(
       title: 'Tanggap Darurat',
-      description: 'Laporkan kejadian darurat secara instan untuk respon cepat dan terkoordinasi dari petugas Linmas terdekat.',
+      description: 'Laporkan kejadian darurat secara instan untuk respon cepat dan terkoordinasi dari petugas Aslinmas terdekat.',
       icon: Icons.crisis_alert_rounded,
       iconColor: colors.error,
       backgroundColor: colors.errorLight,
     ),
     FeatureHighlightItem(
-      title: 'Kolaborasi Warga & Linmas',
-      description: 'Sinergi aktif antara masyarakat dan petugas Linmas demi terciptanya lingkungan yang aman, tertib, dan harmonis.',
+      title: 'Kolaborasi Warga & Aslinmas',
+      description: 'Sinergi aktif antara masyarakat dan petugas Aslinmas demi terciptanya lingkungan yang aman, tertib, dan harmonis.',
       icon: Icons.shield_rounded,
       iconColor: colors.primary,
       backgroundColor: colors.primaryLight,
@@ -324,7 +324,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 ),
                                 icon: const Icon(Icons.shield_rounded),
                                 label: const Text(
-                                  'Masuk sebagai Linmas',
+                                  'Masuk sebagai Aslinmas',
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold,

@@ -458,7 +458,7 @@ class FirebaseNotificationService {
           data['name']?.toString() ??
           data['member_name']?.toString() ??
           data['user_name']?.toString() ??
-          (title.isNotEmpty ? title : 'Anggota / Petugas Linmas');
+          (title.isNotEmpty ? title : 'Anggota / Petugas Aslinmas');
 
       final senderPhone =
           data['sender_phone']?.toString() ??
@@ -601,7 +601,7 @@ class FirebaseNotificationService {
               data['member_name']?.toString() ??
               data['user_name']?.toString() ??
               data['title']?.toString() ??
-              'Anggota / Petugas Linmas';
+              'Anggota / Petugas Aslinmas';
 
           final senderPhone =
               data['sender_phone']?.toString() ??

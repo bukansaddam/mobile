@@ -189,7 +189,7 @@ class PanicBottomPanel extends StatelessWidget {
                       children: [
                         const SizedBox(height: 12),
                         Text(
-                          'Petugas Linmas Terdekat:',
+                          'Petugas Aslinmas Terdekat:',
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
@@ -209,7 +209,7 @@ class PanicBottomPanel extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              'Tidak ada petugas Linmas di sekitar lokasi Anda.',
+                              'Tidak ada petugas Aslinmas di sekitar lokasi Anda.',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: colors.textSecondary,

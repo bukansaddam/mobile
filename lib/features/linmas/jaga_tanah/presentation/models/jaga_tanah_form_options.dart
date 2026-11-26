@@ -56,7 +56,7 @@ class JagaTanahFormOptions {
   ];
 
   static const List<String> sumberInformasiKondisi = [
-    'Pengamatan langsung oleh Linmas',
+    'Pengamatan langsung oleh Aslinmas',
     'Laporan masyarakat sekitar',
     'Informasi perangkat desa / kelurahan',
     'Koordinasi instansi terkait',

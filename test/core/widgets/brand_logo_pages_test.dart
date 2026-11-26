@@ -233,7 +233,7 @@ void main() {
         AppConstants.logoLinmasAsset,
       );
       expect(find.text(AppConstants.appBarTitle), findsOneWidget);
-      expect(find.text('Laporan Linmas'), findsOneWidget);
+      expect(find.text('Laporan Aslinmas'), findsOneWidget);
       expect(find.byIcon(Icons.notifications_none_rounded), findsOneWidget);
       expect(find.text('12'), findsOneWidget);
 

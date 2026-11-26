@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen>
   String? get _roleTitle {
     switch (widget.role?.toLowerCase()) {
       case 'linmas':
-        return 'Petugas Linmas';
+        return 'Petugas Aslinmas';
       case 'masyarakat':
         return 'Masyarakat';
       default:

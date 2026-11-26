@@ -460,7 +460,7 @@ void main() {
           visibleUsage: 'Perkebunan',
           usageLevel: 'Rendah (< 25% dari luas)',
           maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
-          conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+          conditionInfoSource: 'Pengamatan langsung oleh Aslinmas',
           tenureInfoSource: 'Papan di lokasi',
           possessionMarkers: 'Ada papan, tanpa pagar',
           conflictInfo: 'Tidak ada informasi',
@@ -493,7 +493,7 @@ void main() {
       );
       expect(
         repository.lastConditionInfoSource,
-        'Pengamatan langsung oleh Linmas',
+        'Pengamatan langsung oleh Aslinmas',
       );
       expect(repository.lastTenureInfoSource, 'Papan di lokasi');
       expect(repository.lastPossessionMarkers, 'Ada papan, tanpa pagar');
@@ -544,7 +544,7 @@ void main() {
         visibleUsage: 'Perkebunan',
         usageLevel: 'Rendah (< 25% dari luas)',
         maintenanceStatus: 'Tidak terpelihara (tidak ada aktivitas)',
-        conditionInfoSource: 'Pengamatan langsung oleh Linmas',
+        conditionInfoSource: 'Pengamatan langsung oleh Aslinmas',
         tenureInfoSource: 'Papan di lokasi',
         possessionMarkers: 'Ada papan, tanpa pagar',
         conflictInfo: 'Tidak ada informasi',
@@ -582,7 +582,7 @@ void main() {
       );
       expect(
         fields['condition_info_source'],
-        'Pengamatan langsung oleh Linmas',
+        'Pengamatan langsung oleh Aslinmas',
       );
       expect(fields['tenure_info_source'], 'Papan di lokasi');
       expect(fields['possession_markers'], 'Ada papan, tanpa pagar');
@@ -710,7 +710,7 @@ void main() {
           'visible_usage': 'Perkebunan',
           'usage_level': 'Rendah (< 25% dari luas)',
           'maintenance_status': 'Tidak terpelihara (tidak ada aktivitas)',
-          'condition_info_source': 'Pengamatan langsung oleh Linmas',
+          'condition_info_source': 'Pengamatan langsung oleh Aslinmas',
         },
         'tenure': {
           'tenure_info_source': 'Papan di lokasi',

@@ -77,7 +77,7 @@ class PanicMemberDetailSheet extends StatelessWidget {
                       Text(
                         isLeader
                             ? 'Detail Tokoh Wilayah'
-                            : 'Detail Petugas Linmas',
+                            : 'Detail Petugas Aslinmas',
                         style: AppTextStyles.titleLarge.copyWith(
                           fontWeight: FontWeight.bold,
                           color: colors.textPrimary,

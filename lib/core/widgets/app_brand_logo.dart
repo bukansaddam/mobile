@@ -7,25 +7,25 @@ enum AppBrandLogoVariant {
     assetPath: AppConstants.logoHorizontalAsset,
     aspectRatio: 2048 / 682,
     maxDecodedWidth: 2048,
-    semanticLabel: 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS',
+    semanticLabel: 'Logo ASLINMAS Aduan Masyarakat dan Laporan ASLINMAS',
   ),
   general(
     assetPath: AppConstants.logoGeneralAsset,
     aspectRatio: 1.0,
     maxDecodedWidth: 1024,
-    semanticLabel: 'Logo SISKAMLING.org Laporan LINMAS dan DUMAS',
+    semanticLabel: 'Logo SISKAMLING.org Laporan ASLINMAS dan DUMAS',
   ),
   linmas(
     assetPath: AppConstants.logoLinmasAsset,
     aspectRatio: 1.0,
     maxDecodedWidth: 1254,
-    semanticLabel: 'Logo LINMAS Aduan Masyarakat dan Laporan LINMAS',
+    semanticLabel: 'Logo ASLINMAS Aduan Masyarakat dan Laporan ASLINMAS',
   ),
   dumas(
     assetPath: AppConstants.logoDumasAsset,
     aspectRatio: 1.0,
     maxDecodedWidth: 1024,
-    semanticLabel: 'Logo DUMAS Aduan Masyarakat dan Laporan LINMAS',
+    semanticLabel: 'Logo DUMAS Aduan Masyarakat dan Laporan ASLINMAS',
   );
 
   const AppBrandLogoVariant({

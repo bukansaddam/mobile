@@ -459,7 +459,7 @@ class _DisasterEmergencyWarningPageState
                       child: Text(
                         phone != null && phone.isNotEmpty
                             ? '📞 $phone'
-                            : 'Petugas / Anggota Linmas',
+                            : 'Petugas / Anggota Aslinmas',
                         style: const TextStyle(
                           color: Color(0xFFF1F5F9), // media-overlay
                           fontSize: 13,

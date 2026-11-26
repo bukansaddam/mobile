@@ -239,7 +239,7 @@ class _AddBankSampahReportScreenState extends State<AddBankSampahReportScreen> {
     }
 
     final authState = context.read<AuthBloc>().state;
-    final petugasNama = authState.user?.name ?? 'Petugas Linmas';
+    final petugasNama = authState.user?.name ?? 'Petugas Aslinmas';
 
     context.read<BankSampahBloc>().add(
       CreateBankSampahReportEvent(

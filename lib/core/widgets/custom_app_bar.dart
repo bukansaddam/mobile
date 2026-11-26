@@ -36,7 +36,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.onNotificationPressed,
     this.unreadCount,
     this.title,
-    this.subtitle = 'Laporan Linmas',
+    this.subtitle = 'Laporan Aslinmas',
     this.showNotificationButton = true,
     this.onLogoTap,
     this.enableDefaultLogoEasterEgg = false,
@@ -156,7 +156,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                       Text(
                         widget.subtitle ??
                             (widget.brand == AppBarBrand.linmas
-                                ? 'Laporan Linmas'
+                                ? 'Laporan Aslinmas'
                                 : 'Dumas'),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
