@@ -11,6 +11,7 @@ import 'package:akar/features/linmas/bank_sampah/data/sync/bank_sampah_sync_hand
 import 'package:akar/features/linmas/jaga_tanah/data/sync/jaga_tanah_sync_handler.dart';
 import 'package:akar/features/linmas/ronda_malam/data/sync/ronda_sync_handler.dart';
 import 'package:akar/features/masyarakat/complaint/data/sync/complaint_sync_handler.dart';
+import 'package:akar/core/services/app_update_service.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/audio_recorder_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
@@ -212,6 +213,9 @@ Future<void> init() async {
   sl.registerLazySingleton<Dio>(() => DioClient.instance);
   sl.registerLazySingleton<GoogleSpeechService>(
     () => GoogleSpeechService(dio: sl<Dio>()),
+  );
+  sl.registerLazySingleton<AppUpdateService>(
+    () => AppUpdateService(dio: sl<Dio>(), prefs: sl<SharedPreferences>()),
   );
   sl.registerLazySingleton<AudioRecorderService>(() => AudioRecorderService());
   final audioAlarmService = AudioAlarmService();

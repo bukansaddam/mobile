@@ -87,6 +87,10 @@ void main() {
       expect(ApiConstants.speechTranscribe, '/api/speech/transcribe');
     });
 
+    test('app version endpoint decodes accurately', () {
+      expect(ApiConstants.appVersion, '/api/app-version');
+    });
+
     test('notification endpoints decode accurately', () {
       expect(ApiConstants.notifications, '/api/notifications');
       expect(ApiConstants.notificationsCount, '/api/notifications/count');

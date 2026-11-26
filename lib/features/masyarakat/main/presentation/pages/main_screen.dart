@@ -1,6 +1,7 @@
 import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
+import 'package:akar/core/widgets/app_update_dialog.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
@@ -24,6 +25,16 @@ class MasyarakatMainScreen extends StatefulWidget {
 }
 
 class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AppUpdateDialog.checkAndShow(context);
+      }
+    });
+  }
+
   void _handleNotificationTap() {
     NotificationNavigationHelper.openNotificationCenter(context);
   }

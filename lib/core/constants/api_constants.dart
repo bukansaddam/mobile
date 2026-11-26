@@ -646,6 +646,26 @@ class ApiConstants {
     20,
   ]);
 
+  // App Version Check (/api/app-version)
+  static final String appVersion = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    125,
+    149,
+    226,
+    94,
+    167,
+    230,
+    44,
+    112,
+    148,
+    239,
+  ]);
+
   // Bank Sampah
   static final String bankSampahMyDeposits = EndpointSecurity.decode(
     const <int>[

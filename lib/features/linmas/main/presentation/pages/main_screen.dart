@@ -1,6 +1,7 @@
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
+import 'package:akar/core/widgets/app_update_dialog.dart';
 import 'package:akar/core/widgets/custom_app_bar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
@@ -37,6 +38,16 @@ class _MainScreenState extends State<MainScreen> {
   int _currentTabIndex = 0;
   int _logoTapCount = 0;
   DateTime? _lastLogoTapTime;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AppUpdateDialog.checkAndShow(context);
+      }
+    });
+  }
 
   bool get _isExclusiveModeActive =>
       kDebugMode && widget.isExclusiveModeEnabled;
