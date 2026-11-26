@@ -16,6 +16,7 @@ import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboar
 import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_event.dart';
 import 'package:akar/features/linmas/dashboard/presentation/bloc/member_dashboard_state.dart';
 import 'package:akar/features/linmas/home/presentation/widgets/bank_sampah_summary_card.dart';
+import 'package:akar/features/linmas/home/presentation/widgets/gps_anomaly_banner.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_event.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_state.dart';
@@ -114,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const OfflineStatusBanner(),
+                      const GpsAnomalyBanner(),
                       BlocBuilder<MemberDashboardBloc, MemberDashboardState>(
                         builder: (context, dashboardState) {
                           final dashboard =

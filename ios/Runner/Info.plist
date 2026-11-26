@@ -77,9 +77,9 @@
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>Aplikasi membutuhkan akses lokasi untuk pelacakan komando SISKAMLING.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando SISKAMLING.</string>
+		<string>Aplikasi membutuhkan akses lokasi di latar belakang untuk koordinasi komando dan patroli SISKAMLING selama sesi aktif.</string>
 		<key>NSLocationAlwaysUsageDescription</key>
-		<string>Aplikasi membutuhkan akses lokasi 24/7 di latar belakang untuk pelacakan komando SISKAMLING.</string>
+		<string>Aplikasi membutuhkan akses lokasi di latar belakang untuk koordinasi komando dan patroli SISKAMLING selama sesi aktif.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Aplikasi membutuhkan akses kamera untuk mengunggah foto laporan aktivitas SISKAMLING.</string>
 		<key>NSMicrophoneUsageDescription</key>

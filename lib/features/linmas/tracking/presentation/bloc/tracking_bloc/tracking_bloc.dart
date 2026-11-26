@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:akar/core/services/gps_calibration_helper.dart';
 import 'package:akar/features/linmas/tracking/domain/usecases/send_location_usecase.dart';
 
 part 'tracking_event.dart';
@@ -16,32 +17,53 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
   final SharedPreferences sharedPreferences;
   final bool isDebugMode;
   final FlutterBackgroundService _service;
+  final Future<bool> Function() _isLocationServiceEnabled;
+  final bool _shouldAutoCheckGpsService;
   StreamSubscription<Map<String, dynamic>?>? _serviceSubscription;
+  StreamSubscription<ServiceStatus>? _gpsServiceSubscription;
 
   TrackingBloc({
     required this.sendLocationUsecase,
     required this.sharedPreferences,
     this.isDebugMode = kDebugMode,
     FlutterBackgroundService? backgroundService,
+    Stream<ServiceStatus>? serviceStatusStream,
+    Future<bool> Function()? isLocationServiceEnabled,
   }) : _service = backgroundService ?? FlutterBackgroundService(),
+       _isLocationServiceEnabled =
+           isLocationServiceEnabled ?? Geolocator.isLocationServiceEnabled,
+       _shouldAutoCheckGpsService =
+           isLocationServiceEnabled != null || backgroundService == null,
        super(const TrackingState()) {
     on<InitTrackingEvent>(_onInitTracking);
     on<StartTrackingEvent>(_onStartTracking);
     on<StopTrackingEvent>(_onStopTracking);
     on<ChangeTrackingIntervalEvent>(_onChangeTrackingInterval);
     on<SendLocationNowEvent>(_onSendLocationNow);
+    on<ApplyCalibratedLocationEvent>(_onApplyCalibratedLocation);
     on<SyncTrackingStatusEvent>(_onSyncTrackingStatus);
+    on<GpsServiceStatusChangedEvent>(_onGpsServiceStatusChanged);
     on<UpdateTrackingDataEvent>(_onUpdateTrackingData);
 
     add(InitTrackingEvent());
 
-    _serviceSubscription = _service
-        .on('locationUpdated')
-        .listen((event) {
-          if (event != null) {
-            add(UpdateTrackingDataEvent.fromMap(event));
-          }
-        });
+    _serviceSubscription = _service.on('locationUpdated').listen((event) {
+      if (event != null) {
+        add(UpdateTrackingDataEvent.fromMap(event));
+      }
+    });
+
+    if (serviceStatusStream != null || backgroundService == null) {
+      try {
+        final gpsStream =
+            serviceStatusStream ?? Geolocator.getServiceStatusStream();
+        _gpsServiceSubscription = gpsStream.listen((status) {
+          add(GpsServiceStatusChangedEvent(status == ServiceStatus.enabled));
+        }, onError: (_, _) {});
+      } catch (_) {
+        // Abaikan jika plugin platform tidak tersedia.
+      }
+    }
   }
 
   Future<void> _onInitTracking(
@@ -66,12 +88,33 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         900;
     final lastLat = sharedPreferences.getDouble('LAST_TRACKING_LAT');
     final lastLng = sharedPreferences.getDouble('LAST_TRACKING_LNG');
-    final lastMsg = sharedPreferences.getString('LAST_TRACKING_MSG');
-    final lastSucc = sharedPreferences.getBool('LAST_TRACKING_SUCCESS') ?? true;
+    final lastAccuracy = sharedPreferences.getDouble('LAST_TRACKING_ACCURACY');
+    String? lastMsg = sharedPreferences.getString('LAST_TRACKING_MSG');
+    final rawAnomaly = sharedPreferences.getString('LAST_TRACKING_ANOMALY');
+    String? lastAnomaly = (rawAnomaly != null && rawAnomaly.trim().isNotEmpty)
+        ? rawAnomaly
+        : null;
+    bool lastSucc = sharedPreferences.getBool('LAST_TRACKING_SUCCESS') ?? true;
     final timeStr = sharedPreferences.getString('LAST_TRACKING_TIME');
     DateTime? lastTime;
     if (timeStr != null) {
       lastTime = DateTime.tryParse(timeStr);
+    }
+
+    if (_shouldAutoCheckGpsService) {
+      try {
+        final serviceEnabled = await _isLocationServiceEnabled().timeout(
+          const Duration(seconds: 2),
+        );
+        if (!serviceEnabled) {
+          lastAnomaly = GpsAnomalyReason.serviceDisabled.code;
+          lastMsg = GpsAnomalyReason.serviceDisabled.userMessage;
+          lastSucc = false;
+        } else if (lastAnomaly == GpsAnomalyReason.serviceDisabled.code) {
+          lastAnomaly = null;
+          lastSucc = true;
+        }
+      } catch (_) {}
     }
 
     emit(
@@ -80,7 +123,10 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         intervalSeconds: interval,
         lastLatitude: lastLat,
         lastLongitude: lastLng,
+        lastAccuracyMeters: lastAccuracy,
         lastMessage: lastMsg,
+        lastAnomalyCode: lastAnomaly,
+        clearAnomaly: lastAnomaly == null,
         lastSuccess: lastSucc,
         lastSentTime: lastTime,
       ),
@@ -104,8 +150,17 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         sharedPreferences.getDouble('LAST_TRACKING_LAT') ?? state.lastLatitude;
     final lastLng =
         sharedPreferences.getDouble('LAST_TRACKING_LNG') ?? state.lastLongitude;
+    final lastAccuracy =
+        sharedPreferences.getDouble('LAST_TRACKING_ACCURACY') ??
+        state.lastAccuracyMeters;
     final lastMsg =
         sharedPreferences.getString('LAST_TRACKING_MSG') ?? state.lastMessage;
+    final rawAnomaly = sharedPreferences.getString('LAST_TRACKING_ANOMALY');
+    final hasStoredAnomalyKey = rawAnomaly != null;
+    final normalizedAnomaly =
+        (rawAnomaly != null && rawAnomaly.trim().isNotEmpty)
+        ? rawAnomaly
+        : null;
     final lastSucc =
         sharedPreferences.getBool('LAST_TRACKING_SUCCESS') ?? state.lastSuccess;
     final timeStr = sharedPreferences.getString('LAST_TRACKING_TIME');
@@ -120,7 +175,10 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         intervalSeconds: interval,
         lastLatitude: lastLat,
         lastLongitude: lastLng,
+        lastAccuracyMeters: lastAccuracy,
         lastMessage: lastMsg,
+        lastAnomalyCode: normalizedAnomaly,
+        clearAnomaly: hasStoredAnomalyKey && normalizedAnomaly == null,
         lastSuccess: lastSucc,
         lastSentTime: lastTime,
       ),
@@ -179,13 +237,23 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     emit(state.copyWith(isSending: true));
 
     try {
-      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final serviceEnabled = await _isLocationServiceEnabled();
       if (!serviceEnabled) {
+        await sharedPreferences.setString(
+          'LAST_TRACKING_ANOMALY',
+          GpsAnomalyReason.serviceDisabled.code,
+        );
+        await sharedPreferences.setString(
+          'LAST_TRACKING_MSG',
+          GpsAnomalyReason.serviceDisabled.userMessage,
+        );
+        await sharedPreferences.setBool('LAST_TRACKING_SUCCESS', false);
         emit(
           state.copyWith(
             isSending: false,
             lastSuccess: false,
-            lastMessage: 'Layanan lokasi (GPS) tidak aktif',
+            lastAnomalyCode: GpsAnomalyReason.serviceDisabled.code,
+            lastMessage: GpsAnomalyReason.serviceDisabled.userMessage,
           ),
         );
         return;
@@ -207,35 +275,37 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
         }
       }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 10),
-        ),
+      final fix = await GpsCalibrationHelper.acquireValidatedBackgroundPosition(
+        previousLat: state.lastLatitude,
+        previousLng: state.lastLongitude,
+        previousTimestamp: state.lastSentTime,
       );
 
-      // Security Check: Deteksi Fake GPS / Mock Location
-      if (position.isMocked) {
+      if (!fix.isValid) {
+        final reason = fix.validation.reason;
+        final msg = fix.validation.message;
+        await sharedPreferences.setString('LAST_TRACKING_ANOMALY', reason.code);
+        await sharedPreferences.setString('LAST_TRACKING_MSG', msg);
+        await sharedPreferences.setBool('LAST_TRACKING_SUCCESS', false);
         emit(
           state.copyWith(
             isSending: false,
             lastSuccess: false,
-            lastMessage:
-                'Terdeteksi penggunaan lokasi palsu (Fake GPS). Pengiriman posisi dibatalkan demi integritas data patroli.',
-            lastLatitude: position.latitude,
-            lastLongitude: position.longitude,
+            lastMessage: msg,
+            lastAnomalyCode: reason.code,
           ),
         );
         return;
       }
 
+      final position = fix.position!;
       final result = await sendLocationUsecase(
         latitude: position.latitude,
         longitude: position.longitude,
       );
 
-      result.fold(
-        (failure) {
+      await result.fold(
+        (failure) async {
           emit(
             state.copyWith(
               isSending: false,
@@ -243,10 +313,37 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
               lastMessage: failure.message,
               lastLatitude: position.latitude,
               lastLongitude: position.longitude,
+              lastAccuracyMeters: position.accuracy,
             ),
           );
         },
-        (entity) {
+        (entity) async {
+          final now = DateTime.now();
+          await sharedPreferences.setString(
+            'LAST_TRACKING_TIME',
+            now.toIso8601String(),
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_LAT',
+            position.latitude,
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_LNG',
+            position.longitude,
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_ACCURACY',
+            position.accuracy,
+          );
+          await sharedPreferences.setString('LAST_TRACKING_ANOMALY', '');
+          await sharedPreferences.setString(
+            'LAST_TRACKING_MSG',
+            entity.message,
+          );
+          await sharedPreferences.setBool(
+            'LAST_TRACKING_SUCCESS',
+            entity.success,
+          );
           emit(
             state.copyWith(
               isSending: false,
@@ -254,7 +351,9 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
               lastMessage: entity.message,
               lastLatitude: position.latitude,
               lastLongitude: position.longitude,
-              lastSentTime: DateTime.now(),
+              lastAccuracyMeters: position.accuracy,
+              lastSentTime: now,
+              clearAnomaly: true,
             ),
           );
         },
@@ -270,25 +369,154 @@ class TrackingBloc extends Bloc<TrackingEvent, TrackingState> {
     }
   }
 
+  Future<void> _onApplyCalibratedLocation(
+    ApplyCalibratedLocationEvent event,
+    Emitter<TrackingState> emit,
+  ) async {
+    emit(state.copyWith(isSending: true));
+    try {
+      final result = await sendLocationUsecase(
+        latitude: event.latitude,
+        longitude: event.longitude,
+      );
+      await result.fold(
+        (failure) async {
+          emit(
+            state.copyWith(
+              isSending: false,
+              lastSuccess: false,
+              lastMessage: failure.message,
+              lastLatitude: event.latitude,
+              lastLongitude: event.longitude,
+              lastAccuracyMeters: event.accuracyMeters,
+            ),
+          );
+        },
+        (entity) async {
+          final now = DateTime.now();
+          await sharedPreferences.setString(
+            'LAST_TRACKING_TIME',
+            now.toIso8601String(),
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_LAT',
+            event.latitude,
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_LNG',
+            event.longitude,
+          );
+          await sharedPreferences.setDouble(
+            'LAST_TRACKING_ACCURACY',
+            event.accuracyMeters,
+          );
+          await sharedPreferences.setBool('LAST_TRACKING_MOCKED', false);
+          await sharedPreferences.setString('LAST_TRACKING_ANOMALY', '');
+          await sharedPreferences.setString(
+            'LAST_TRACKING_MSG',
+            entity.message,
+          );
+          await sharedPreferences.setBool(
+            'LAST_TRACKING_SUCCESS',
+            entity.success,
+          );
+          emit(
+            state.copyWith(
+              isSending: false,
+              lastSuccess: entity.success,
+              lastMessage: entity.message,
+              lastLatitude: event.latitude,
+              lastLongitude: event.longitude,
+              lastAccuracyMeters: event.accuracyMeters,
+              lastSentTime: now,
+              clearAnomaly: true,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isSending: false,
+          lastSuccess: false,
+          lastMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onGpsServiceStatusChanged(
+    GpsServiceStatusChangedEvent event,
+    Emitter<TrackingState> emit,
+  ) async {
+    if (!event.isEnabled) {
+      await sharedPreferences.setString(
+        'LAST_TRACKING_ANOMALY',
+        GpsAnomalyReason.serviceDisabled.code,
+      );
+      await sharedPreferences.setString(
+        'LAST_TRACKING_MSG',
+        GpsAnomalyReason.serviceDisabled.userMessage,
+      );
+      await sharedPreferences.setBool('LAST_TRACKING_SUCCESS', false);
+      emit(
+        state.copyWith(
+          lastSuccess: false,
+          lastAnomalyCode: GpsAnomalyReason.serviceDisabled.code,
+          lastMessage: GpsAnomalyReason.serviceDisabled.userMessage,
+        ),
+      );
+      return;
+    }
+
+    if (state.lastAnomalyCode == GpsAnomalyReason.serviceDisabled.code) {
+      await sharedPreferences.setString('LAST_TRACKING_ANOMALY', '');
+      await sharedPreferences.setBool('LAST_TRACKING_SUCCESS', true);
+      emit(
+        state.copyWith(
+          clearAnomaly: true,
+          lastSuccess: true,
+          lastMessage: 'Layanan lokasi (GPS) aktif kembali.',
+        ),
+      );
+      if (state.isTrackingActive) {
+        add(SendLocationNowEvent());
+      }
+    }
+  }
+
   void _onUpdateTrackingData(
     UpdateTrackingDataEvent event,
     Emitter<TrackingState> emit,
   ) {
+    final hasExplicitAnomalyKey = event.lastAnomalyCode != null;
+    final normalizedAnomaly =
+        (event.lastAnomalyCode != null &&
+            event.lastAnomalyCode!.trim().isNotEmpty)
+        ? event.lastAnomalyCode
+        : null;
     emit(
       state.copyWith(
         isTrackingActive: event.isTrackingActive ?? state.isTrackingActive,
         lastLatitude: event.lastLatitude ?? state.lastLatitude,
         lastLongitude: event.lastLongitude ?? state.lastLongitude,
+        lastAccuracyMeters:
+            event.lastAccuracyMeters ?? state.lastAccuracyMeters,
         lastSentTime: event.lastSentTime ?? state.lastSentTime,
         lastSuccess: event.lastSuccess,
         lastMessage: event.lastMessage ?? state.lastMessage,
+        lastAnomalyCode: normalizedAnomaly,
+        clearAnomaly: hasExplicitAnomalyKey && normalizedAnomaly == null,
       ),
     );
   }
 
   @override
-  Future<void> close() {
-    _serviceSubscription?.cancel();
+  Future<void> close() async {
+    await _serviceSubscription?.cancel();
+    try {
+      await _gpsServiceSubscription?.cancel();
+    } catch (_) {}
     return super.close();
   }
 }

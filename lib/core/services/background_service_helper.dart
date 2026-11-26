@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/constants/app_constants.dart';
+import 'package:akar/core/services/gps_calibration_helper.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -28,9 +29,9 @@ class BackgroundServiceHelper {
 
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       notificationChannelId,
-      '${AppConstants.appName} Location Tracking Service',
+      'Pemantauan Lokasi ${AppConstants.appName}',
       description:
-          'Layanan pelacakan lokasi background 24/7 ${AppConstants.appName}',
+          'Layanan pemantauan lokasi latar belakang ${AppConstants.appName}',
       importance: Importance.low,
     );
 
@@ -49,9 +50,8 @@ class BackgroundServiceHelper {
         autoStart: false,
         isForegroundMode: true,
         notificationChannelId: notificationChannelId,
-        initialNotificationTitle:
-            '${AppConstants.appName} Tracking Service 24/7',
-        initialNotificationContent: 'Pelacakan lokasi aktif di latar belakang',
+        initialNotificationTitle: 'Pemantauan Lokasi ${AppConstants.appName}',
+        initialNotificationContent: 'Pemantauan lokasi aktif di latar belakang',
         foregroundServiceNotificationId: notificationId,
       ),
       iosConfiguration: IosConfiguration(
@@ -114,7 +114,10 @@ class BackgroundServiceHelper {
     Timer? timer;
     bool isExecRunning = false;
 
-    Future<void> sendLocationUpdate({bool force = false}) async {
+    Future<void> sendLocationUpdate({
+      bool force = false,
+      Position? streamPosition,
+    }) async {
       if (isExecRunning) return;
       isExecRunning = true;
 
@@ -131,60 +134,102 @@ class BackgroundServiceHelper {
             updatedPrefs.getInt('intervalSeconds') ??
             currentIntervalSeconds;
 
+        final lastTimeStr = updatedPrefs.getString('LAST_TRACKING_TIME');
+        final prevTime = lastTimeStr != null
+            ? DateTime.tryParse(lastTimeStr)
+            : null;
+        final prevLat = updatedPrefs.getDouble('LAST_TRACKING_LAT');
+        final prevLng = updatedPrefs.getDouble('LAST_TRACKING_LNG');
+
         // Jika tidak dipaksa (force), cek apakah interval waktu dari pengiriman terakhir sudah tercapai (dengan toleransi 500ms)
-        if (!force) {
-          final lastTimeStr = updatedPrefs.getString('LAST_TRACKING_TIME');
-          if (lastTimeStr != null) {
-            final lastTime = DateTime.tryParse(lastTimeStr);
-            if (lastTime != null) {
-              final elapsedMs = DateTime.now()
-                  .difference(lastTime)
-                  .inMilliseconds;
-              if (elapsedMs < (currentIntervalSeconds * 1000 - 500)) {
-                // Interval belum tercapai, lewati pengiriman API
-                return;
-              }
-            }
+        if (!force && prevTime != null) {
+          final elapsedMs = DateTime.now().difference(prevTime).inMilliseconds;
+          if (elapsedMs < (currentIntervalSeconds * 1000 - 500)) {
+            // Interval belum tercapai, lewati pengiriman API
+            return;
           }
         }
 
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        if (!serviceEnabled) return;
-
-        LocationPermission permission = await Geolocator.checkPermission();
-        if (permission == LocationPermission.denied ||
-            permission == LocationPermission.deniedForever) {
-          return;
-        }
-
-        // Use fast last known position first, fallback to quick medium accuracy position
-        Position? position = await Geolocator.getLastKnownPosition();
-        position ??= await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.medium,
-            timeLimit: Duration(seconds: 4),
-          ),
-        );
-
-        // Security Check: Deteksi Fake GPS / Mock Location
-        if (position.isMocked) {
-          AppLogger.w(
-            '⚠️ [Background Service] Posisi terdeteksi palsu (Mock Location / Fake GPS). '
-            'Pengiriman koordinat dibatalkan.',
+        if (!serviceEnabled) {
+          await updatedPrefs.setString(
+            'LAST_TRACKING_ANOMALY',
+            GpsAnomalyReason.serviceDisabled.code,
           );
-          await updatedPrefs.setBool('LAST_TRACKING_MOCKED', true);
           await updatedPrefs.setString(
             'LAST_TRACKING_MSG',
-            'Peringatan: Lokasi tiruan (Fake GPS) terdeteksi.',
+            GpsAnomalyReason.serviceDisabled.userMessage,
           );
           await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
-          service.invoke('mockLocationDetected', {
-            'latitude': position.latitude,
-            'longitude': position.longitude,
+          service.invoke('locationUpdated', {
+            'lastSuccess': false,
+            'lastMessage': GpsAnomalyReason.serviceDisabled.userMessage,
+            'lastAnomalyCode': GpsAnomalyReason.serviceDisabled.code,
+            'isTrackingActive': true,
           });
           return;
         }
 
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          await updatedPrefs.setString(
+            'LAST_TRACKING_ANOMALY',
+            GpsAnomalyReason.permissionDenied.code,
+          );
+          await updatedPrefs.setString(
+            'LAST_TRACKING_MSG',
+            GpsAnomalyReason.permissionDenied.userMessage,
+          );
+          await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
+          service.invoke('locationUpdated', {
+            'lastSuccess': false,
+            'lastMessage': GpsAnomalyReason.permissionDenied.userMessage,
+            'lastAnomalyCode': GpsAnomalyReason.permissionDenied.code,
+            'isTrackingActive': true,
+          });
+          return;
+        }
+
+        final fix =
+            await GpsCalibrationHelper.acquireValidatedBackgroundPosition(
+              preCapturedPosition: streamPosition,
+              previousLat: prevLat,
+              previousLng: prevLng,
+              previousTimestamp: prevTime,
+            );
+
+        if (!fix.isValid) {
+          final reason = fix.validation.reason;
+          final msg = fix.validation.message;
+          AppLogger.w(
+            '[Background Service] Koordinat ditolak (${reason.code}): $msg',
+          );
+          await updatedPrefs.setBool(
+            'LAST_TRACKING_MOCKED',
+            reason == GpsAnomalyReason.mockLocation,
+          );
+          await updatedPrefs.setString('LAST_TRACKING_ANOMALY', reason.code);
+          await updatedPrefs.setString('LAST_TRACKING_MSG', msg);
+          await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
+
+          if (reason == GpsAnomalyReason.mockLocation && fix.position != null) {
+            service.invoke('mockLocationDetected', {
+              'latitude': fix.position!.latitude,
+              'longitude': fix.position!.longitude,
+            });
+          }
+
+          service.invoke('locationUpdated', {
+            'lastSuccess': false,
+            'lastMessage': msg,
+            'lastAnomalyCode': reason.code,
+            'isTrackingActive': true,
+          });
+          return;
+        }
+
+        final position = fix.position!;
         final token = updatedPrefs.getString('CACHED_AUTH_TOKEN');
         final Map<String, String> headers = {
           'Content-Type': 'application/json',
@@ -207,6 +252,12 @@ class BackgroundServiceHelper {
         await updatedPrefs.setString('LAST_TRACKING_TIME', nowStr);
         await updatedPrefs.setDouble('LAST_TRACKING_LAT', position.latitude);
         await updatedPrefs.setDouble('LAST_TRACKING_LNG', position.longitude);
+        await updatedPrefs.setDouble(
+          'LAST_TRACKING_ACCURACY',
+          position.accuracy,
+        );
+        await updatedPrefs.setBool('LAST_TRACKING_MOCKED', false);
+        await updatedPrefs.setString('LAST_TRACKING_ANOMALY', '');
         final successMsg =
             response.data?['message']?.toString() ??
             'Lokasi terkirim otomatis (${currentIntervalSeconds}s)';
@@ -216,8 +267,10 @@ class BackgroundServiceHelper {
         service.invoke('locationUpdated', {
           'lastLatitude': position.latitude,
           'lastLongitude': position.longitude,
+          'lastAccuracyMeters': position.accuracy,
           'lastSentTime': nowStr,
           'lastMessage': successMsg,
+          'lastAnomalyCode': '',
           'lastSuccess': true,
           'isTrackingActive': true,
         });
@@ -225,8 +278,8 @@ class BackgroundServiceHelper {
         if (service is AndroidServiceInstance) {
           if (await service.isForegroundService()) {
             service.setForegroundNotificationInfo(
-              title: '${AppConstants.appName} Location Tracking',
-              content: 'Pelacakan lokasi aktif di latar belakang',
+              title: 'Pemantauan Lokasi ${AppConstants.appName}',
+              content: 'Pemantauan lokasi aktif di latar belakang',
             );
           }
         }
@@ -274,7 +327,7 @@ class BackgroundServiceHelper {
                 permission == LocationPermission.whileInUse) {
               Geolocator.getPositionStream(
                 locationSettings: AppleSettings(
-                  accuracy: LocationAccuracy.medium,
+                  accuracy: LocationAccuracy.high,
                   allowBackgroundLocationUpdates: true,
                   showBackgroundLocationIndicator: true,
                   pauseLocationUpdatesAutomatically: false,
@@ -282,7 +335,7 @@ class BackgroundServiceHelper {
               ).listen(
                 (Position position) {
                   if (isTrackingActive) {
-                    sendLocationUpdate();
+                    sendLocationUpdate(streamPosition: position);
                   }
                 },
                 onError: (error) {
