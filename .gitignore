@@ -79,4 +79,4 @@ anti-slop/*
 test_reports/
 test_report/
 
-tools/video_demo/*
+tools/*
