@@ -106,7 +106,7 @@ void main() {
       expect(
         alwaysStep.disclosureNote,
         equals(
-          'Pada layar berikutnya, pilih Izinkan sepanjang waktu / Selalu agar pelacakan patroli tetap aktif di latar belakang.',
+          'Pada layar berikutnya, pilih Izinkan sepanjang waktu / Selalu agar pemantauan patroli tetap aktif di latar belakang. Pengiriman lokasi berhenti saat Anda keluar (logout).',
         ),
       );
     });
@@ -146,353 +146,334 @@ void main() {
       expect(service.cachedStatuses, isEmpty);
     });
 
-    test(
-      'refreshStatuses(isOfficer: false) caches statuses, sets sync true when all 3 granted, and notifies listeners',
-      () async {
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.camera: PermissionStepStatus.granted,
-          AppPermissionType.notification: PermissionStepStatus.granted,
-        });
+    test('refreshStatuses(isOfficer: false) caches statuses, sets sync true when all 3 granted, and notifies listeners', () async {
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.camera: PermissionStepStatus.granted,
+        AppPermissionType.notification: PermissionStepStatus.granted,
+      });
 
-        var notifications = 0;
-        service.addListener(() => notifications += 1);
+      var notifications = 0;
+      service.addListener(() => notifications += 1);
 
-        final result = await service.refreshStatuses(isOfficer: false);
+      final result = await service.refreshStatuses(isOfficer: false);
 
-        expect(result, hasLength(3));
-        expect(service.cachedStatuses[AppPermissionType.locationWhenInUse],
-            PermissionStepStatus.granted);
-        expect(service.cachedStatuses[AppPermissionType.camera],
-            PermissionStepStatus.granted);
-        expect(service.cachedStatuses[AppPermissionType.notification],
-            PermissionStepStatus.granted);
-        expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isTrue);
-        expect(notifications, equals(1));
-      },
-    );
+      expect(result, hasLength(3));
+      expect(
+        service.cachedStatuses[AppPermissionType.locationWhenInUse],
+        PermissionStepStatus.granted,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.camera],
+        PermissionStepStatus.granted,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.notification],
+        PermissionStepStatus.granted,
+      );
+      expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isTrue);
+      expect(notifications, equals(1));
+    });
 
-    test(
-      'refreshStatuses(isOfficer: true) returns false when only Masyarakat 3 permissions are granted',
-      () async {
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.camera: PermissionStepStatus.granted,
-          AppPermissionType.notification: PermissionStepStatus.granted,
-          AppPermissionType.locationAlways: PermissionStepStatus.denied,
-          AppPermissionType.microphone: PermissionStepStatus.denied,
-        });
+    test('refreshStatuses(isOfficer: true) returns false when only Masyarakat 3 permissions are granted', () async {
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.camera: PermissionStepStatus.granted,
+        AppPermissionType.notification: PermissionStepStatus.granted,
+        AppPermissionType.locationAlways: PermissionStepStatus.denied,
+        AppPermissionType.microphone: PermissionStepStatus.denied,
+      });
 
-        await service.refreshStatuses(isOfficer: true);
+      await service.refreshStatuses(isOfficer: true);
 
-        expect(service.hasAllRequiredPermissionsSync(isOfficer: true), isFalse);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
-        expect(
-          service.cachedStatuses[AppPermissionType.microphone],
-          PermissionStepStatus.notRequested,
-        );
-      },
-    );
+      expect(service.hasAllRequiredPermissionsSync(isOfficer: true), isFalse);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.microphone],
+        PermissionStepStatus.notRequested,
+      );
+    });
 
-    test(
-      'refreshStatuses distinguishes notRequested vs denied/needsSettings using attempted history',
-      () async {
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.locationAlways: PermissionStepStatus.denied,
-          AppPermissionType.camera: PermissionStepStatus.denied,
-          AppPermissionType.microphone: PermissionStepStatus.denied,
-          AppPermissionType.notification: PermissionStepStatus.denied,
-        });
+    test('refreshStatuses distinguishes notRequested vs denied/needsSettings using attempted history', () async {
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.locationAlways: PermissionStepStatus.denied,
+        AppPermissionType.camera: PermissionStepStatus.denied,
+        AppPermissionType.microphone: PermissionStepStatus.denied,
+        AppPermissionType.notification: PermissionStepStatus.denied,
+      });
 
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.camera],
-          PermissionStepStatus.notRequested,
-        );
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.camera],
+        PermissionStepStatus.notRequested,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
 
-        gateway.requestResults[AppPermissionType.camera] =
-            PermissionStepStatus.denied;
-        gateway.requestResults[AppPermissionType.locationAlways] =
-            PermissionStepStatus.denied;
+      gateway.requestResults[AppPermissionType.camera] =
+          PermissionStepStatus.denied;
+      gateway.requestResults[AppPermissionType.locationAlways] =
+          PermissionStepStatus.denied;
 
-        await service.requestPermission(
-          AppPermissionType.camera,
-          isOfficer: true,
-        );
-        await service.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
+      await service.requestPermission(
+        AppPermissionType.camera,
+        isOfficer: true,
+      );
+      await service.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
 
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.camera],
-          PermissionStepStatus.denied,
-        );
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.needsSettings,
-        );
-        expect(
-          service.cachedStatuses[AppPermissionType.microphone],
-          PermissionStepStatus.notRequested,
-        );
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.camera],
+        PermissionStepStatus.denied,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.needsSettings,
+      );
+      expect(
+        service.cachedStatuses[AppPermissionType.microphone],
+        PermissionStepStatus.notRequested,
+      );
 
-        gateway.checkStatuses[AppPermissionType.locationAlways] =
-            PermissionStepStatus.granted;
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.granted,
-        );
-      },
-    );
+      gateway.checkStatuses[AppPermissionType.locationAlways] =
+          PermissionStepStatus.granted;
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.granted,
+      );
+    });
 
-    test(
-      '2-step locationAlways guard blocks request when locationWhenInUse is not granted',
-      () async {
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.denied;
-        await service.refreshStatuses(isOfficer: true);
+    test('2-step locationAlways guard blocks request when locationWhenInUse is not granted', () async {
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.denied;
+      await service.refreshStatuses(isOfficer: true);
 
-        final status = await service.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
+      final status = await service.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
 
-        expect(status, PermissionStepStatus.denied);
-        expect(
-          gateway.requestedTypes,
-          isNot(contains(AppPermissionType.locationAlways)),
-        );
-        expect(
-          gateway.checkedTypes
-              .where((t) => t == AppPermissionType.locationWhenInUse)
-              .length,
-          equals(2),
-        );
-      },
-    );
+      expect(status, PermissionStepStatus.denied);
+      expect(
+        gateway.requestedTypes,
+        isNot(contains(AppPermissionType.locationAlways)),
+      );
+      expect(
+        gateway.checkedTypes
+            .where((t) => t == AppPermissionType.locationWhenInUse)
+            .length,
+        equals(2),
+      );
+    });
 
-    test(
-      '2-step locationAlways guard proceeds when re-check finds locationWhenInUse granted',
-      () async {
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.denied;
-        await service.refreshStatuses(isOfficer: true);
+    test('2-step locationAlways guard proceeds when re-check finds locationWhenInUse granted', () async {
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.denied;
+      await service.refreshStatuses(isOfficer: true);
 
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.granted;
-        gateway.requestResults[AppPermissionType.locationAlways] =
-            PermissionStepStatus.granted;
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.granted;
+      gateway.requestResults[AppPermissionType.locationAlways] =
+          PermissionStepStatus.granted;
 
-        final status = await service.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
+      final status = await service.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
 
-        expect(status, PermissionStepStatus.granted);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationWhenInUse],
-          PermissionStepStatus.granted,
-        );
-        expect(
-          gateway.requestedTypes,
-          contains(AppPermissionType.locationAlways),
-        );
-      },
-    );
+      expect(status, PermissionStepStatus.granted);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationWhenInUse],
+        PermissionStepStatus.granted,
+      );
+      expect(
+        gateway.requestedTypes,
+        contains(AppPermissionType.locationAlways),
+      );
+    });
 
-    test(
-      'locationAlways normalizes denied to needsSettings when locationWhenInUse is granted',
-      () async {
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.granted;
-        await service.refreshStatuses(isOfficer: true);
+    test('locationAlways normalizes denied to needsSettings when locationWhenInUse is granted', () async {
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.granted;
+      await service.refreshStatuses(isOfficer: true);
 
-        gateway.requestResults[AppPermissionType.locationAlways] =
-            PermissionStepStatus.denied;
+      gateway.requestResults[AppPermissionType.locationAlways] =
+          PermissionStepStatus.denied;
 
-        var notifications = 0;
-        service.addListener(() => notifications += 1);
+      var notifications = 0;
+      service.addListener(() => notifications += 1);
 
-        final status = await service.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
+      final status = await service.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
 
-        expect(
-          gateway.requestedTypes,
-          contains(AppPermissionType.locationAlways),
-        );
-        expect(status, PermissionStepStatus.needsSettings);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.needsSettings,
-        );
-        expect(notifications, equals(1));
-      },
-    );
+      expect(
+        gateway.requestedTypes,
+        contains(AppPermissionType.locationAlways),
+      );
+      expect(status, PermissionStepStatus.needsSettings);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.needsSettings,
+      );
+      expect(notifications, equals(1));
+    });
 
-    test(
-      'gateway exception during refreshStatuses or requestPermission degrades to denied without throwing',
-      () async {
-        gateway.checkErrors.add(AppPermissionType.camera);
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.granted;
-        gateway.checkStatuses[AppPermissionType.notification] =
-            PermissionStepStatus.granted;
+    test('gateway exception during refreshStatuses or requestPermission degrades to denied without throwing', () async {
+      gateway.checkErrors.add(AppPermissionType.camera);
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.granted;
+      gateway.checkStatuses[AppPermissionType.notification] =
+          PermissionStepStatus.granted;
 
-        final refreshed = await service.refreshStatuses(isOfficer: false);
-        expect(refreshed[AppPermissionType.camera], PermissionStepStatus.denied);
-        expect(
-          refreshed[AppPermissionType.locationWhenInUse],
-          PermissionStepStatus.granted,
-        );
-        expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isFalse);
+      final refreshed = await service.refreshStatuses(isOfficer: false);
+      expect(refreshed[AppPermissionType.camera], PermissionStepStatus.denied);
+      expect(
+        refreshed[AppPermissionType.locationWhenInUse],
+        PermissionStepStatus.granted,
+      );
+      expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isFalse);
 
-        gateway.requestErrors.add(AppPermissionType.camera);
-        final requested = await service.requestPermission(
-          AppPermissionType.camera,
-          isOfficer: false,
-        );
-        expect(requested, PermissionStepStatus.denied);
-        expect(
-          service.cachedStatuses[AppPermissionType.camera],
-          PermissionStepStatus.denied,
-        );
-      },
-    );
-
-    test('openAppSettings delegates to gateway and returns false on exception',
-        () async {
-      gateway.openSettingsResult = true;
-      expect(await service.openAppSettings(), isTrue);
-      expect(gateway.openSettingsCalls, equals(1));
-
-      gateway.openSettingsThrows = true;
-      expect(await service.openAppSettings(), isFalse);
-      expect(gateway.openSettingsCalls, equals(2));
+      gateway.requestErrors.add(AppPermissionType.camera);
+      final requested = await service.requestPermission(
+        AppPermissionType.camera,
+        isOfficer: false,
+      );
+      expect(requested, PermissionStepStatus.denied);
+      expect(
+        service.cachedStatuses[AppPermissionType.camera],
+        PermissionStepStatus.denied,
+      );
     });
 
     test(
-      'resetCache clears cached statuses, attempted history, and resets sync flag',
+      'openAppSettings delegates to gateway and returns false on exception',
       () async {
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.camera: PermissionStepStatus.granted,
-          AppPermissionType.notification: PermissionStepStatus.granted,
-        });
+        gateway.openSettingsResult = true;
+        expect(await service.openAppSettings(), isTrue);
+        expect(gateway.openSettingsCalls, equals(1));
 
-        await service.refreshStatuses(isOfficer: false);
-        expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isTrue);
-
-        gateway.requestResults[AppPermissionType.camera] =
-            PermissionStepStatus.denied;
-        await service.requestPermission(
-          AppPermissionType.camera,
-          isOfficer: false,
-        );
-
-        var notifications = 0;
-        service.addListener(() => notifications += 1);
-
-        service.resetCache();
-
-        expect(service.cachedStatuses, isEmpty);
-        expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isFalse);
-        expect(notifications, equals(1));
-
-        gateway.checkStatuses[AppPermissionType.camera] =
-            PermissionStepStatus.denied;
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.camera],
-          PermissionStepStatus.notRequested,
-        );
+        gateway.openSettingsThrows = true;
+        expect(await service.openAppSettings(), isFalse);
+        expect(gateway.openSettingsCalls, equals(2));
       },
     );
 
-    test(
-      'iOS (isIosOverride: true) normalizes unattempted locationAlways permanentlyDenied to notRequested when locationWhenInUse is granted, then stays needsSettings after request',
-      () async {
-        final iosService = AppPermissionService(
-          gateway: gateway,
-          isIosOverride: true,
-        );
-        addTearDown(iosService.dispose);
+    test('resetCache clears cached statuses, attempted history, and resets sync flag', () async {
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.camera: PermissionStepStatus.granted,
+        AppPermissionType.notification: PermissionStepStatus.granted,
+      });
 
-        // First refresh: locationWhenInUse starts ungranted.
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.denied,
-          AppPermissionType.locationAlways:
-              PermissionStepStatus.permanentlyDenied,
-          AppPermissionType.camera: PermissionStepStatus.denied,
-          AppPermissionType.microphone: PermissionStepStatus.denied,
-          AppPermissionType.notification: PermissionStepStatus.denied,
-        });
-        await iosService.refreshStatuses(isOfficer: true);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
-          PermissionStepStatus.notRequested,
-        );
+      await service.refreshStatuses(isOfficer: false);
+      expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isTrue);
 
-        // User grants locationWhenInUse; iOS immediately reports locationAlways
-        // as permanentlyDenied before any Always prompt has been shown.
-        gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
-            PermissionStepStatus.granted;
-        await iosService.refreshStatuses(isOfficer: true);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
-          PermissionStepStatus.granted,
-        );
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
+      gateway.requestResults[AppPermissionType.camera] =
+          PermissionStepStatus.denied;
+      await service.requestPermission(
+        AppPermissionType.camera,
+        isOfficer: false,
+      );
 
-        // User triggers native "Change to Always Allow" prompt and declines /
-        // keeps While Using (iOS returns permanentlyDenied/denied).
-        gateway.requestResults[AppPermissionType.locationAlways] =
-            PermissionStepStatus.permanentlyDenied;
-        final requested = await iosService.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
-        expect(
-          gateway.requestedTypes,
-          contains(AppPermissionType.locationAlways),
-        );
-        expect(requested, PermissionStepStatus.needsSettings);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.needsSettings,
-        );
+      var notifications = 0;
+      service.addListener(() => notifications += 1);
 
-        // Subsequent refreshes must remain needsSettings while still ungranted.
-        await iosService.refreshStatuses(isOfficer: true);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.needsSettings,
-        );
+      service.resetCache();
 
-        gateway.checkStatuses[AppPermissionType.locationAlways] =
-            PermissionStepStatus.denied;
-        await iosService.refreshStatuses(isOfficer: true);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.needsSettings,
-        );
-      },
-    );
+      expect(service.cachedStatuses, isEmpty);
+      expect(service.hasAllRequiredPermissionsSync(isOfficer: false), isFalse);
+      expect(notifications, equals(1));
+
+      gateway.checkStatuses[AppPermissionType.camera] =
+          PermissionStepStatus.denied;
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.camera],
+        PermissionStepStatus.notRequested,
+      );
+    });
+
+    test('iOS (isIosOverride: true) normalizes unattempted locationAlways permanentlyDenied to notRequested when locationWhenInUse is granted, then stays needsSettings after request', () async {
+      final iosService = AppPermissionService(
+        gateway: gateway,
+        isIosOverride: true,
+      );
+      addTearDown(iosService.dispose);
+
+      // First refresh: locationWhenInUse starts ungranted.
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.denied,
+        AppPermissionType.locationAlways:
+            PermissionStepStatus.permanentlyDenied,
+        AppPermissionType.camera: PermissionStepStatus.denied,
+        AppPermissionType.microphone: PermissionStepStatus.denied,
+        AppPermissionType.notification: PermissionStepStatus.denied,
+      });
+      await iosService.refreshStatuses(isOfficer: true);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
+        PermissionStepStatus.notRequested,
+      );
+
+      // User grants locationWhenInUse; iOS immediately reports locationAlways
+      // as permanentlyDenied before any Always prompt has been shown.
+      gateway.checkStatuses[AppPermissionType.locationWhenInUse] =
+          PermissionStepStatus.granted;
+      await iosService.refreshStatuses(isOfficer: true);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationWhenInUse],
+        PermissionStepStatus.granted,
+      );
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
+
+      // User triggers native "Change to Always Allow" prompt and declines /
+      // keeps While Using (iOS returns permanentlyDenied/denied).
+      gateway.requestResults[AppPermissionType.locationAlways] =
+          PermissionStepStatus.permanentlyDenied;
+      final requested = await iosService.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
+      expect(
+        gateway.requestedTypes,
+        contains(AppPermissionType.locationAlways),
+      );
+      expect(requested, PermissionStepStatus.needsSettings);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.needsSettings,
+      );
+
+      // Subsequent refreshes must remain needsSettings while still ungranted.
+      await iosService.refreshStatuses(isOfficer: true);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.needsSettings,
+      );
+
+      gateway.checkStatuses[AppPermissionType.locationAlways] =
+          PermissionStepStatus.denied;
+      await iosService.refreshStatuses(isOfficer: true);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.needsSettings,
+      );
+    });
 
     test(
       'non-iOS preserves permanentlyDenied for unattempted locationAlways',
@@ -517,63 +498,57 @@ void main() {
       },
     );
 
-    test(
-      'exception thrown by gateway.request(locationAlways) does not mark _attemptedTypes',
-      () async {
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.locationAlways: PermissionStepStatus.denied,
-        });
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
+    test('exception thrown by gateway.request(locationAlways) does not mark _attemptedTypes', () async {
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.locationAlways: PermissionStepStatus.denied,
+      });
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
 
-        gateway.requestErrors.add(AppPermissionType.locationAlways);
-        final requested = await service.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
-        expect(requested, PermissionStepStatus.denied);
+      gateway.requestErrors.add(AppPermissionType.locationAlways);
+      final requested = await service.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
+      expect(requested, PermissionStepStatus.denied);
 
-        await service.refreshStatuses(isOfficer: true);
-        expect(
-          service.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
-      },
-    );
+      await service.refreshStatuses(isOfficer: true);
+      expect(
+        service.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
+    });
 
-    test(
-      'iOS exception thrown by gateway.request(locationAlways) keeps subsequent refresh at notRequested',
-      () async {
-        final iosService = AppPermissionService(
-          gateway: gateway,
-          isIosOverride: true,
-        );
-        addTearDown(iosService.dispose);
+    test('iOS exception thrown by gateway.request(locationAlways) keeps subsequent refresh at notRequested', () async {
+      final iosService = AppPermissionService(
+        gateway: gateway,
+        isIosOverride: true,
+      );
+      addTearDown(iosService.dispose);
 
-        gateway.checkStatuses.addAll({
-          AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
-          AppPermissionType.locationAlways:
-              PermissionStepStatus.permanentlyDenied,
-        });
-        await iosService.refreshStatuses(isOfficer: true);
+      gateway.checkStatuses.addAll({
+        AppPermissionType.locationWhenInUse: PermissionStepStatus.granted,
+        AppPermissionType.locationAlways:
+            PermissionStepStatus.permanentlyDenied,
+      });
+      await iosService.refreshStatuses(isOfficer: true);
 
-        gateway.requestErrors.add(AppPermissionType.locationAlways);
-        final requested = await iosService.requestPermission(
-          AppPermissionType.locationAlways,
-          isOfficer: true,
-        );
-        expect(requested, PermissionStepStatus.denied);
+      gateway.requestErrors.add(AppPermissionType.locationAlways);
+      final requested = await iosService.requestPermission(
+        AppPermissionType.locationAlways,
+        isOfficer: true,
+      );
+      expect(requested, PermissionStepStatus.denied);
 
-        await iosService.refreshStatuses(isOfficer: true);
-        expect(
-          iosService.cachedStatuses[AppPermissionType.locationAlways],
-          PermissionStepStatus.notRequested,
-        );
-      },
-    );
+      await iosService.refreshStatuses(isOfficer: true);
+      expect(
+        iosService.cachedStatuses[AppPermissionType.locationAlways],
+        PermissionStepStatus.notRequested,
+      );
+    });
   });
 }

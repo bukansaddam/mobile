@@ -15,6 +15,8 @@ import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_pending_report_local_datasource.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
+import 'package:akar/features/linmas/tracking/presentation/widgets/gps_calibration_sheet.dart';
+import 'package:akar/features/permissions/presentation/widgets/profile_permissions_sheet.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';
 import 'package:flutter/material.dart';
@@ -331,7 +333,7 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'KTA Digital Linmas',
+                                'KTA Digital Aslinmas',
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -390,25 +392,61 @@ class _LinmasProfileScreenState extends State<LinmasProfileScreen> {
                   const SizedBox(height: 18),
 
                   const ProfileSettingsSectionLabel(title: 'Pengaturan'),
-                  ProfileMenuGroupCard(
-                    children: [
-                      ProfileMenuItem(
-                        icon: ThemeModeSelectorTile.iconFor(activeThemeMode),
-                        title: 'Tema Tampilan',
-                        trailingLabel: ThemeModeSelectorTile.labelFor(
-                          activeThemeMode,
-                        ),
-                        onTap: () =>
-                            ThemeModeSelectorTile.showSelectorSheet(context),
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.logout_rounded,
-                        title: 'Keluar dari Akun',
-                        textColor: colors.error,
-                        iconColor: colors.error,
-                        onTap: () => _showLogoutDialog(context),
-                      ),
-                    ],
+                  Builder(
+                    builder: (context) {
+                      bool hasGpsAnomaly = false;
+                      try {
+                        hasGpsAnomaly = context
+                            .watch<TrackingBloc>()
+                            .state
+                            .hasGpsAnomaly;
+                      } catch (_) {}
+
+                      return ProfileMenuGroupCard(
+                        children: [
+                          ProfileMenuItem(
+                            icon: ThemeModeSelectorTile.iconFor(
+                              activeThemeMode,
+                            ),
+                            title: 'Tema Tampilan',
+                            trailingLabel: ThemeModeSelectorTile.labelFor(
+                              activeThemeMode,
+                            ),
+                            onTap: () =>
+                                ThemeModeSelectorTile.showSelectorSheet(
+                                  context,
+                                ),
+                          ),
+                          ProfileMenuItem(
+                            icon: Icons.verified_user_outlined,
+                            title: 'Izin Aplikasi',
+                            onTap: () => ProfilePermissionsSheet.show(
+                              context,
+                              isOfficer: true,
+                            ),
+                          ),
+                          ProfileMenuItem(
+                            icon: Icons.my_location_rounded,
+                            title: 'Kalibrasi GPS',
+                            trailingLabel: hasGpsAnomaly ? 'Perlu Cek' : null,
+                            iconColor: hasGpsAnomaly
+                                ? colors.warningDark
+                                : null,
+                            iconBackgroundColor: hasGpsAnomaly
+                                ? colors.warningLight
+                                : null,
+                            onTap: () => GpsCalibrationSheet.show(context),
+                          ),
+                          ProfileMenuItem(
+                            icon: Icons.logout_rounded,
+                            title: 'Keluar dari Akun',
+                            textColor: colors.error,
+                            iconColor: colors.error,
+                            onTap: () => _showLogoutDialog(context),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 16),
 

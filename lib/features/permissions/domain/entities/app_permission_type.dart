@@ -22,20 +22,20 @@ class PermissionStepSpec extends Equatable {
     required this.type,
     required this.title,
     required this.description,
-    required this.actionLabel,
+    this.actionLabel = 'Izinkan',
     required this.settingsHint,
     this.disclosureNote,
   });
 
   @override
   List<Object?> get props => [
-        type,
-        title,
-        description,
-        actionLabel,
-        settingsHint,
-        disclosureNote,
-      ];
+    type,
+    title,
+    description,
+    actionLabel,
+    settingsHint,
+    disclosureNote,
+  ];
 }
 
 /// Ordered catalog of required permission steps per user role.
@@ -44,29 +44,21 @@ abstract class PermissionStepCatalog {
     PermissionStepSpec(
       type: AppPermissionType.locationWhenInUse,
       title: 'Akses Lokasi',
-      description:
-          'Menentukan titik koordinat laporan aduan warga secara akurat agar petugas dapat merespons lokasi kejadian dengan cepat.',
-      actionLabel: 'Izinkan Akses Lokasi',
-      settingsHint:
-          'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan saat aplikasi digunakan.',
+      description: 'Menentukan titik koordinat laporan aduan warga secara akurat agar petugas dapat merespons lokasi kejadian dengan cepat.',
+      settingsHint: 'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan saat aplikasi digunakan.',
     ),
     PermissionStepSpec(
       type: AppPermissionType.camera,
       title: 'Akses Kamera',
-      description:
-          'Mengambil foto atau video bukti kejadian langsung saat membuat laporan pengaduan masyarakat.',
-      actionLabel: 'Izinkan Akses Kamera',
+      description: 'Mengambil foto atau video bukti kejadian langsung saat membuat laporan pengaduan masyarakat.',
       settingsHint:
           'Buka Pengaturan, pilih Izin, pilih Kamera, lalu pilih Izinkan.',
     ),
     PermissionStepSpec(
       type: AppPermissionType.notification,
       title: 'Izin Notifikasi',
-      description:
-          'Menerima peringatan darurat bencana/SOS serta pembaruan status penanganan aduan Anda secara real-time.',
-      actionLabel: 'Izinkan Notifikasi',
-      settingsHint:
-          'Buka Pengaturan, pilih Notifikasi, lalu aktifkan notifikasi untuk aplikasi ini.',
+      description: 'Menerima peringatan darurat bencana/SOS serta pembaruan status penanganan aduan Anda secara real-time.',
+      settingsHint: 'Buka Pengaturan, pilih Notifikasi, lalu aktifkan notifikasi untuk aplikasi ini.',
     ),
   ];
 
@@ -76,49 +68,35 @@ abstract class PermissionStepCatalog {
     PermissionStepSpec(
       type: AppPermissionType.locationWhenInUse,
       title: 'Akses Lokasi',
-      description:
-          'Mencatat posisi saat presensi, patroli ronda malam, pelaporan Jaga Tanah, Bank Sampah, dan aktivasi tombol darurat SOS.',
-      actionLabel: 'Izinkan Akses Lokasi',
-      settingsHint:
-          'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan saat aplikasi digunakan.',
+      description: 'Mencatat posisi saat presensi, patroli ronda malam, pelaporan Jaga Tanah, Bank Sampah, dan aktivasi tombol darurat SOS.',
+      settingsHint: 'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan saat aplikasi digunakan.',
     ),
     PermissionStepSpec(
       type: AppPermissionType.locationAlways,
-      title: 'Lokasi Latar Belakang (24/7)',
-      description:
-          'Menjaga pelacakan komando dan rute patroli Linmas tetap terpantau secara aman meski layar terkunci atau aplikasi berjalan di latar belakang.',
-      actionLabel: 'Izinkan Lokasi 24/7',
-      settingsHint:
-          'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan sepanjang waktu atau Selalu.',
-      disclosureNote:
-          'Pada layar berikutnya, pilih Izinkan sepanjang waktu / Selalu agar pelacakan patroli tetap aktif di latar belakang.',
+      title: 'Lokasi Latar Belakang',
+      description: 'Menjaga koordinasi komando dan rute patroli Aslinmas tetap terpantau saat layar terkunci atau aplikasi berada di latar belakang selama sesi aktif.',
+      settingsHint: 'Buka Pengaturan, pilih Izin, pilih Lokasi, lalu pilih Izinkan sepanjang waktu atau Selalu.',
+      disclosureNote: 'Pada layar berikutnya, pilih Izinkan sepanjang waktu / Selalu agar pemantauan patroli tetap aktif di latar belakang. Pengiriman lokasi berhenti saat Anda keluar (logout).',
     ),
     PermissionStepSpec(
       type: AppPermissionType.camera,
       title: 'Akses Kamera',
-      description:
-          'Mendokumentasikan foto dan video kegiatan ronda malam, presensi lapangan, aktivasi pos, Jaga Tanah, dan Bank Sampah.',
-      actionLabel: 'Izinkan Akses Kamera',
+      description: 'Mendokumentasikan foto dan video kegiatan ronda malam, presensi lapangan, aktivasi pos, Jaga Tanah, dan Bank Sampah.',
       settingsHint:
           'Buka Pengaturan, pilih Izin, pilih Kamera, lalu pilih Izinkan.',
     ),
     PermissionStepSpec(
       type: AppPermissionType.microphone,
       title: 'Akses Mikrofon',
-      description:
-          'Merekam dikte suara untuk mempercepat pengisian laporan harian (Laphar) saat bertugas di lapangan.',
-      actionLabel: 'Izinkan Akses Mikrofon',
+      description: 'Merekam dikte suara untuk mempercepat pengisian laporan harian (Laphar) saat bertugas di lapangan.',
       settingsHint:
           'Buka Pengaturan, pilih Izin, pilih Mikrofon, lalu pilih Izinkan.',
     ),
     PermissionStepSpec(
       type: AppPermissionType.notification,
       title: 'Izin Notifikasi',
-      description:
-          'Menerima panggilan darurat SOS, peringatan bencana kritis, dan instruksi penugasan komando secara instan.',
-      actionLabel: 'Izinkan Notifikasi',
-      settingsHint:
-          'Buka Pengaturan, pilih Notifikasi, lalu aktifkan notifikasi untuk aplikasi ini.',
+      description: 'Menerima panggilan darurat SOS, peringatan bencana kritis, dan instruksi penugasan komando secara instan.',
+      settingsHint: 'Buka Pengaturan, pilih Notifikasi, lalu aktifkan notifikasi untuk aplikasi ini.',
     ),
   ];
 

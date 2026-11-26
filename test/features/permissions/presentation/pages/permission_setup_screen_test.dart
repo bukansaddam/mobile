@@ -25,7 +25,7 @@ class _FakePermissionGateway implements PermissionGateway {
   final Map<AppPermissionType, PermissionStepStatus> checkStatuses = {};
   final Map<AppPermissionType, PermissionStepStatus> requestResults = {};
   final Map<AppPermissionType, Completer<PermissionStepStatus>>
-      pendingRequests = {};
+  pendingRequests = {};
   final List<AppPermissionType> requestedTypes = [];
   int openSettingsCalls = 0;
 
@@ -216,10 +216,10 @@ void main() {
           expect(find.byType(PermissionStepContent), findsOneWidget);
           expect(find.byType(PermissionIllustration), findsOneWidget);
           expect(find.text('Masyarakat'), findsNothing);
-          expect(find.text('Petugas Linmas'), findsNothing);
+          expect(find.text('Petugas Aslinmas'), findsNothing);
           expect(find.text('Langkah 1 dari 3'), findsOneWidget);
           expect(find.text('Akses Lokasi'), findsOneWidget);
-          expect(find.text('Izinkan Akses Lokasi'), findsOneWidget);
+          expect(find.text('Izinkan'), findsOneWidget);
         }
       },
     );
@@ -238,12 +238,12 @@ void main() {
         await tester.pumpWidget(harness.buildApp());
         await tester.pumpAndSettle();
 
-        expect(find.text('Petugas Linmas'), findsNothing);
+        expect(find.text('Petugas Aslinmas'), findsNothing);
         expect(find.text('Masyarakat'), findsNothing);
         expect(find.text('Langkah 2 dari 5'), findsOneWidget);
-        expect(find.text('Lokasi Latar Belakang (24/7)'), findsOneWidget);
+        expect(find.text('Lokasi Latar Belakang'), findsOneWidget);
         expect(find.textContaining('Izinkan sepanjang waktu'), findsOneWidget);
-        expect(find.text('Izinkan Lokasi 24/7'), findsOneWidget);
+        expect(find.text('Izinkan'), findsOneWidget);
       },
     );
 
@@ -261,7 +261,7 @@ void main() {
         await tester.pumpWidget(harness.buildApp());
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Izinkan Akses Lokasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(
@@ -270,7 +270,7 @@ void main() {
         );
         expect(find.text('Langkah 2 dari 3'), findsOneWidget);
         expect(find.text('Akses Kamera'), findsOneWidget);
-        expect(find.text('Izinkan Akses Kamera'), findsOneWidget);
+        expect(find.text('Izinkan'), findsOneWidget);
       },
     );
 
@@ -288,7 +288,7 @@ void main() {
         await tester.pumpWidget(harness.buildApp());
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Izinkan Akses Lokasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 1 dari 3'), findsOneWidget);
@@ -358,7 +358,9 @@ void main() {
 
         harness.gateway.checkStatuses[AppPermissionType.locationAlways] =
             PermissionStepStatus.granted;
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 3 dari 5'), findsOneWidget);
@@ -399,7 +401,10 @@ void main() {
 
         await tester.tap(find.text('Batal'));
         await tester.pumpAndSettle();
-        expect(harness.trackingBloc.events.whereType<StopTrackingEvent>(), isEmpty);
+        expect(
+          harness.trackingBloc.events.whereType<StopTrackingEvent>(),
+          isEmpty,
+        );
         expect(harness.authBloc.events.whereType<LogoutEvent>(), isEmpty);
         expect(harness.eventLog, isEmpty);
 
@@ -478,7 +483,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 5 dari 5'), findsOneWidget);
-        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(
@@ -506,7 +511,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 3 dari 3'), findsOneWidget);
-        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(
@@ -542,7 +547,7 @@ void main() {
         await tester.pumpWidget(harness.buildApp());
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Izinkan Akses Lokasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pump();
         await tester.pump();
 
@@ -589,9 +594,7 @@ void main() {
         final headerTopBefore = tester
             .getTopLeft(find.byType(PermissionProgressHeader))
             .dy;
-        final ctaTopBefore = tester
-            .getTopLeft(find.byType(ElevatedButton))
-            .dy;
+        final ctaTopBefore = tester.getTopLeft(find.byType(ElevatedButton)).dy;
         final logoutTopBefore = tester.getTopLeft(find.text('Keluar')).dy;
 
         await tester.drag(
@@ -692,7 +695,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 5 dari 5'), findsOneWidget);
-        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(
@@ -771,7 +774,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Langkah 5 dari 5'), findsOneWidget);
-        await tester.tap(find.text('Izinkan Notifikasi'));
+        await tester.tap(find.text('Izinkan'));
         await tester.pumpAndSettle();
 
         expect(

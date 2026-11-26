@@ -12,12 +12,10 @@ class AppPermissionService extends ChangeNotifier {
   final Set<AppPermissionType> _attemptedTypes = {};
   bool _hasRefreshed = false;
 
-  AppPermissionService({
-    required this._gateway,
-    bool? isIosOverride,
-  }) : _isIos =
-           isIosOverride ??
-           (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS);
+  AppPermissionService({required this._gateway, bool? isIosOverride})
+    : _isIos =
+          isIosOverride ??
+          (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS);
 
   List<PermissionStepSpec> stepsForRole({required bool isOfficer}) {
     return PermissionStepCatalog.stepsForRole(isOfficer: isOfficer);
@@ -34,6 +32,22 @@ class AppPermissionService extends ChangeNotifier {
     return requiredSteps.every(
       (step) => _statuses[step.type]?.isGranted == true,
     );
+  }
+
+  /// Membaca status izin OS secara langsung tanpa mengubah cache atau memicu notifyListeners(),
+  /// agar pengecekan di layar Profil tidak menyebabkan GoRouter mengalihkan user ke /permission-setup.
+  Future<Map<AppPermissionType, PermissionStepStatus>> inspectLiveStatuses({
+    required bool isOfficer,
+  }) async {
+    final steps = stepsForRole(isOfficer: isOfficer);
+    final live = <AppPermissionType, PermissionStepStatus>{};
+    for (final step in steps) {
+      live[step.type] = await _checkNormalizedStatus(
+        step.type,
+        knownStatuses: live,
+      );
+    }
+    return Map<AppPermissionType, PermissionStepStatus>.unmodifiable(live);
   }
 
   Future<Map<AppPermissionType, PermissionStepStatus>> refreshStatuses({
@@ -58,26 +72,36 @@ class AppPermissionService extends ChangeNotifier {
   Future<PermissionStepStatus> requestPermission(
     AppPermissionType type, {
     required bool isOfficer,
+    bool notify = true,
   }) async {
     // Enforce Android 11+ and iOS 2-step background location prerequisite.
-    if (type == AppPermissionType.locationAlways &&
-        _statuses[AppPermissionType.locationWhenInUse] !=
-            PermissionStepStatus.granted) {
-      final whenInUseStatus = await _checkNormalizedStatus(
-        AppPermissionType.locationWhenInUse,
-      );
-      _statuses[AppPermissionType.locationWhenInUse] = whenInUseStatus;
-      if (!whenInUseStatus.isGranted) {
-        _statuses[AppPermissionType.locationAlways] =
-            PermissionStepStatus.denied;
-        notifyListeners();
-        return PermissionStepStatus.denied;
+    if (type == AppPermissionType.locationAlways) {
+      final cachedWhenInUse = notify
+          ? _statuses[AppPermissionType.locationWhenInUse]
+          : null;
+      if (cachedWhenInUse != PermissionStepStatus.granted) {
+        final whenInUseStatus = await _checkNormalizedStatus(
+          AppPermissionType.locationWhenInUse,
+        );
+        if (notify) {
+          _statuses[AppPermissionType.locationWhenInUse] = whenInUseStatus;
+        }
+        if (!whenInUseStatus.isGranted) {
+          if (notify) {
+            _statuses[AppPermissionType.locationAlways] =
+                PermissionStepStatus.denied;
+            notifyListeners();
+          }
+          return PermissionStepStatus.denied;
+        }
       }
     }
 
     final resolvedStatus = await _executeRequest(type);
-    _statuses[type] = resolvedStatus;
-    notifyListeners();
+    if (notify) {
+      _statuses[type] = resolvedStatus;
+      notifyListeners();
+    }
     return resolvedStatus;
   }
 
