@@ -147,7 +147,7 @@ class _FakeOrganisasiBloc extends Fake implements OrganisasiBloc {
 
 class _FakeSurveyBloc extends Fake implements SurveyBloc {
   @override
-  SurveyState get state => SurveyInitialState();
+  SurveyState get state => const SurveyInitialState();
 
   @override
   Stream<SurveyState> get stream => const Stream.empty();

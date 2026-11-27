@@ -28,7 +28,7 @@ void main() {
 
   group('ErrorUtils.toFailure mapping', () {
     test('preserves statusCode 409 in ServerFailure', () {
-      final exception = ServerException('Laporan sedang diproses', statusCode: 409);
+      const exception = ServerException('Laporan sedang diproses', statusCode: 409);
       final failure = ErrorUtils.toFailure(exception);
       expect(failure.statusCode, equals(409));
       expect(failure.isRetryable, isTrue);

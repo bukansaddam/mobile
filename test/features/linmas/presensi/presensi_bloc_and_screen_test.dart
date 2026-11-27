@@ -74,6 +74,7 @@ void main() {
         final repo = _FakePresensiRepository();
         final presensiBloc = PresensiBloc(
           submitPresensiUsecase: SubmitPresensiUsecase(repo),
+          fetchCurrentPosition: ({required timeLimit}) async => null,
         );
         final authBloc = _FakeAuthBloc();
         addTearDown(() async {

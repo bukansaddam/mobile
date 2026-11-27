@@ -10,9 +10,13 @@ part 'presensi_state.dart';
 
 class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
   final SubmitPresensiUsecase submitPresensiUsecase;
+  final Future<Position?> Function({required Duration timeLimit})?
+  _fetchCurrentPosition;
 
-  PresensiBloc({required this.submitPresensiUsecase})
-    : super(const PresensiState()) {
+  PresensiBloc({
+    required this.submitPresensiUsecase,
+    this._fetchCurrentPosition,
+  }) : super(const PresensiState()) {
     on<InitPresensiLocationEvent>(_onInitLocation);
     on<UpdatePresensiFieldEvent>(_onUpdateField);
     on<SubmitPresensiEvent>(_onSubmitPresensi);
@@ -42,28 +46,36 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
 
     try {
       Position? pos;
-      try {
-        final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        if (serviceEnabled) {
-          var permission = await Geolocator.checkPermission();
-          if (permission == LocationPermission.denied) {
-            permission = await Geolocator.requestPermission();
-          }
-          if (permission != LocationPermission.denied &&
-              permission != LocationPermission.deniedForever) {
-            try {
-              pos = await Geolocator.getCurrentPosition(
-                locationSettings: const LocationSettings(
-                  accuracy: LocationAccuracy.high,
-                  timeLimit: Duration(seconds: 8),
-                ),
-              );
-            } catch (_) {
-              pos = await Geolocator.getLastKnownPosition();
+      if (_fetchCurrentPosition != null) {
+        try {
+          pos = await _fetchCurrentPosition(
+            timeLimit: const Duration(seconds: 8),
+          );
+        } catch (_) {}
+      } else {
+        try {
+          final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+          if (serviceEnabled) {
+            var permission = await Geolocator.checkPermission();
+            if (permission == LocationPermission.denied) {
+              permission = await Geolocator.requestPermission();
+            }
+            if (permission != LocationPermission.denied &&
+                permission != LocationPermission.deniedForever) {
+              try {
+                pos = await Geolocator.getCurrentPosition(
+                  locationSettings: const LocationSettings(
+                    accuracy: LocationAccuracy.high,
+                    timeLimit: Duration(seconds: 8),
+                  ),
+                );
+              } catch (_) {
+                pos = await Geolocator.getLastKnownPosition();
+              }
             }
           }
-        }
-      } catch (_) {}
+        } catch (_) {}
+      }
 
       bool isMocked = false;
       if (pos != null) {
@@ -72,54 +84,58 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
         isMocked = pos.isMocked;
       }
 
-      try {
-        final geocoding = Geocoding();
-        final placemarks = await geocoding.placemarkFromCoordinates(lat, lng);
-        if (placemarks.isNotEmpty) {
-          final place = placemarks.first;
-          kecamatan = place.locality ?? place.subAdministrativeArea ?? 'Gambir';
-          kelurahan = place.subLocality ?? 'Gambir';
+      if (_fetchCurrentPosition == null) {
+        try {
+          final geocoding = Geocoding();
+          final placemarks = await geocoding.placemarkFromCoordinates(lat, lng);
+          if (placemarks.isNotEmpty) {
+            final place = placemarks.first;
+            kecamatan =
+                place.locality ?? place.subAdministrativeArea ?? 'Gambir';
+            kelurahan = place.subLocality ?? 'Gambir';
 
-          final components = <String>[];
-          if (place.street != null && place.street!.trim().isNotEmpty) {
-            final s = place.street!.trim();
-            if (!RegExp(r'-?\d+\.\d{3,}').hasMatch(s) && !s.contains('+')) {
-              components.add(s);
+            final components = <String>[];
+            if (place.street != null && place.street!.trim().isNotEmpty) {
+              final s = place.street!.trim();
+              if (!RegExp(r'-?\d+\.\d{3,}').hasMatch(s) && !s.contains('+')) {
+                components.add(s);
+              }
+            } else if (place.thoroughfare != null &&
+                place.thoroughfare!.trim().isNotEmpty) {
+              components.add(place.thoroughfare!.trim());
             }
-          } else if (place.thoroughfare != null &&
-              place.thoroughfare!.trim().isNotEmpty) {
-            components.add(place.thoroughfare!.trim());
-          }
 
-          if (place.subLocality != null &&
-              place.subLocality!.trim().isNotEmpty) {
-            components.add('Kel. ${place.subLocality!.trim()}');
-          }
+            if (place.subLocality != null &&
+                place.subLocality!.trim().isNotEmpty) {
+              components.add('Kel. ${place.subLocality!.trim()}');
+            }
 
-          if (place.locality != null && place.locality!.trim().isNotEmpty) {
-            components.add('Kec. ${place.locality!.trim()}');
-          }
+            if (place.locality != null && place.locality!.trim().isNotEmpty) {
+              components.add('Kec. ${place.locality!.trim()}');
+            }
 
-          if (place.subAdministrativeArea != null &&
-              place.subAdministrativeArea!.trim().isNotEmpty) {
-            components.add(place.subAdministrativeArea!.trim());
-          }
+            if (place.subAdministrativeArea != null &&
+                place.subAdministrativeArea!.trim().isNotEmpty) {
+              components.add(place.subAdministrativeArea!.trim());
+            }
 
-          if (place.administrativeArea != null &&
-              place.administrativeArea!.trim().isNotEmpty) {
-            components.add(place.administrativeArea!.trim());
-          }
+            if (place.administrativeArea != null &&
+                place.administrativeArea!.trim().isNotEmpty) {
+              components.add(place.administrativeArea!.trim());
+            }
 
-          if (place.postalCode != null && place.postalCode!.trim().isNotEmpty) {
-            components.add(place.postalCode!.trim());
-          }
+            if (place.postalCode != null &&
+                place.postalCode!.trim().isNotEmpty) {
+              components.add(place.postalCode!.trim());
+            }
 
-          address = components.isNotEmpty
-              ? components.join(', ')
-              : 'Jl. Medan Merdeka Barat No. 12, Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat, DKI Jakarta 10110';
-          locationName = address;
-        }
-      } catch (_) {}
+            address = components.isNotEmpty
+                ? components.join(', ')
+                : 'Jl. Medan Merdeka Barat No. 12, Kel. Gambir, Kec. Gambir, Kota Jakarta Pusat, DKI Jakarta 10110';
+            locationName = address;
+          }
+        } catch (_) {}
+      }
 
       emit(
         state.copyWith(
@@ -177,13 +193,15 @@ class PresensiBloc extends Bloc<PresensiEvent, PresensiState> {
     }
 
     try {
-      final livePos = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 5),
-        ),
-      );
-      if (livePos.isMocked) {
+      final Position? livePos = _fetchCurrentPosition != null
+          ? await _fetchCurrentPosition(timeLimit: const Duration(seconds: 5))
+          : await Geolocator.getCurrentPosition(
+              locationSettings: const LocationSettings(
+                accuracy: LocationAccuracy.high,
+                timeLimit: Duration(seconds: 5),
+              ),
+            );
+      if (livePos != null && livePos.isMocked) {
         emit(
           state.copyWith(
             status: PresensiStatus.failure,

@@ -71,7 +71,7 @@ class _FakePanicBloc extends Fake implements PanicBloc {
 
 class _FakeSurveyBloc extends Fake implements SurveyBloc {
   @override
-  SurveyState get state => SurveyInitialState();
+  SurveyState get state => const SurveyInitialState();
 
   @override
   Stream<SurveyState> get stream => const Stream.empty();
