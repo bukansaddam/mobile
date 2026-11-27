@@ -31,23 +31,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AppPermissionService? _permissionService;
 
   AuthBloc({
-    required LoginUsecase loginUsecase,
-    required RegisterUsecase registerUsecase,
-    required GetSavedUserUsecase getSavedUserUsecase,
-    required GetSavedTokenUsecase getSavedTokenUsecase,
-    required LogoutUsecase logoutUsecase,
-    required RefreshTokenUsecase refreshTokenUsecase,
-    FirebaseNotificationService? notificationService,
-    AppPermissionService? permissionService,
-  }) : _loginUsecase = loginUsecase,
-       _registerUsecase = registerUsecase,
-       _getSavedUserUsecase = getSavedUserUsecase,
-       _getSavedTokenUsecase = getSavedTokenUsecase,
-       _logoutUsecase = logoutUsecase,
-       _refreshTokenUsecase = refreshTokenUsecase,
-       _notificationService = notificationService,
-       _permissionService = permissionService,
-       super(const AuthInitial()) {
+    required this._loginUsecase,
+    required this._registerUsecase,
+    required this._getSavedUserUsecase,
+    required this._getSavedTokenUsecase,
+    required this._logoutUsecase,
+    required this._refreshTokenUsecase,
+    this._notificationService,
+    this._permissionService,
+  }) : super(const AuthInitial()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<LoginEvent>(_onLogin);
     on<RegisterEvent>(_onRegister);
@@ -209,14 +201,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onLogout(LogoutEvent event, Emitter<AuthState> emit) async {
     if (state is AuthLoading) return;
+    final previousState = state;
     _permissionService?.resetCache();
     emit(const AuthLoading());
 
     if (event.clearOfflineQueue) {
       String? currentUserId;
-      final currentState = state;
-      if (currentState is AuthAuthenticated) {
-        currentUserId = currentState.user.id.toString();
+      if (previousState is AuthAuthenticated) {
+        currentUserId = previousState.user.id.toString();
       } else if (sl.isRegistered<AuthLocalDatasource>()) {
         currentUserId = sl<AuthLocalDatasource>().getCachedUserId();
       }

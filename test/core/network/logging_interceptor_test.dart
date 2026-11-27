@@ -169,4 +169,45 @@ void main() {
     expect(joined, contains('Duration:'));
     expect(noStopwatchLines.join('\n'), isNot(contains('Duration:')));
   });
+
+  group('LoggingInterceptor PII & secret redaction', () {
+    test('redacts sensitive keys recursively in map and list payloads', () {
+      final formatted = LoggingInterceptor.formatDataForTesting({
+        'email': 'user@example.com',
+        'password': 'super-secret-password',
+        'pin': '123456',
+        'otp': '998877',
+        'nik': '3201010101010001',
+        'nested': {
+          'access_token': 'jwt-access-123',
+          'refresh_token': 'jwt-refresh-456',
+          'safe_field': 'ok',
+        },
+        'items': [
+          {'token': 'hidden-item-token', 'title': 'visible'},
+        ],
+      });
+
+      expect(formatted, isNot(contains('super-secret-password')));
+      expect(formatted, isNot(contains('123456')));
+      expect(formatted, isNot(contains('998877')));
+      expect(formatted, isNot(contains('3201010101010001')));
+      expect(formatted, isNot(contains('jwt-access-123')));
+      expect(formatted, isNot(contains('jwt-refresh-456')));
+      expect(formatted, isNot(contains('hidden-item-token')));
+      expect(formatted, contains('***REDACTED***'));
+      expect(formatted, contains('user@example.com'));
+      expect(formatted, contains('visible'));
+    });
+
+    test('redacts sensitive keys inside JSON string payloads', () {
+      final formatted = LoggingInterceptor.formatDataForTesting(
+        '{"password":"secret-json-pass","status":"ok"}',
+      );
+
+      expect(formatted, isNot(contains('secret-json-pass')));
+      expect(formatted, contains('***REDACTED***'));
+      expect(formatted, contains('"status":"ok"'));
+    });
+  });
 }

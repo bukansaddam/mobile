@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:akar/core/security/secure_token_storage.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,23 +19,42 @@ abstract class AuthLocalDatasource {
 
 class AuthLocalDatasourceImpl implements AuthLocalDatasource {
   final SharedPreferences sharedPreferences;
+  final SecureTokenStorage tokenStorage;
 
-  static const String tokenKey = 'CACHED_AUTH_TOKEN';
+  static const String tokenKey = SecureTokenStorage.accessTokenKey;
   static const String lastActivityAtKey = 'CACHED_LAST_ACTIVITY_AT';
-  static const String refreshTokenKey = 'CACHED_REFRESH_TOKEN';
+  static const String refreshTokenKey = SecureTokenStorage.refreshTokenKey;
   static const String userKey = 'CACHED_USER_DATA';
 
-  AuthLocalDatasourceImpl({required this.sharedPreferences});
+  AuthLocalDatasourceImpl({
+    required this.sharedPreferences,
+    SecureTokenStorage? tokenStorage,
+  }) : tokenStorage = tokenStorage ?? const SecureTokenStorage();
 
   @override
   Future<void> saveToken(String token) async {
-    await sharedPreferences.setString(tokenKey, token);
+    await tokenStorage.writeAccessToken(token);
+    if (sharedPreferences.containsKey(tokenKey)) {
+      await sharedPreferences.remove(tokenKey);
+    }
     await touchActivity();
   }
 
   @override
   Future<String?> getToken() async {
-    return sharedPreferences.getString(tokenKey);
+    final secureToken = await tokenStorage.readAccessToken();
+    if (secureToken != null && secureToken.isNotEmpty) {
+      return secureToken;
+    }
+
+    // Migrasi one-shot dari penyimpanan legacy agar sesi user lama tidak terputus.
+    final legacyToken = sharedPreferences.getString(tokenKey);
+    if (legacyToken != null && legacyToken.isNotEmpty) {
+      await tokenStorage.writeAccessToken(legacyToken);
+      await sharedPreferences.remove(tokenKey);
+      return legacyToken;
+    }
+    return null;
   }
 
   @override
@@ -53,12 +73,27 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
 
   @override
   Future<void> saveRefreshToken(String token) async {
-    await sharedPreferences.setString(refreshTokenKey, token);
+    await tokenStorage.writeRefreshToken(token);
+    if (sharedPreferences.containsKey(refreshTokenKey)) {
+      await sharedPreferences.remove(refreshTokenKey);
+    }
   }
 
   @override
   Future<String?> getRefreshToken() async {
-    return sharedPreferences.getString(refreshTokenKey);
+    final secureRefresh = await tokenStorage.readRefreshToken();
+    if (secureRefresh != null && secureRefresh.isNotEmpty) {
+      return secureRefresh;
+    }
+
+    // Migrasi one-shot dari penyimpanan legacy.
+    final legacyRefresh = sharedPreferences.getString(refreshTokenKey);
+    if (legacyRefresh != null && legacyRefresh.isNotEmpty) {
+      await tokenStorage.writeRefreshToken(legacyRefresh);
+      await sharedPreferences.remove(refreshTokenKey);
+      return legacyRefresh;
+    }
+    return null;
   }
 
   @override
@@ -97,6 +132,7 @@ class AuthLocalDatasourceImpl implements AuthLocalDatasource {
 
   @override
   Future<void> clearSession() async {
+    await tokenStorage.clearTokens();
     await sharedPreferences.remove(tokenKey);
     await sharedPreferences.remove(lastActivityAtKey);
     await sharedPreferences.remove(refreshTokenKey);

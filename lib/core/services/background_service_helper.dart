@@ -3,12 +3,12 @@ import 'dart:ui';
 
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/constants/app_constants.dart';
+import 'package:akar/core/network/logging_interceptor.dart';
+import 'package:akar/core/security/secure_token_storage.dart';
 import 'package:akar/core/services/gps_calibration_helper.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
-
-import '../network/logging_interceptor.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -230,7 +230,27 @@ class BackgroundServiceHelper {
         }
 
         final position = fix.position!;
-        final token = updatedPrefs.getString('CACHED_AUTH_TOKEN');
+        const tokenStorage = SecureTokenStorage();
+        String? token;
+        try {
+          token = await tokenStorage.readAccessToken();
+        } catch (e) {
+          AppLogger.w('[Background Service] Gagal baca secure token: $e');
+        }
+        if (token == null || token.isEmpty) {
+          final legacyToken = updatedPrefs.getString(
+            SecureTokenStorage.accessTokenKey,
+          );
+          if (legacyToken != null && legacyToken.isNotEmpty) {
+            token = legacyToken;
+            try {
+              await tokenStorage.writeAccessToken(legacyToken);
+              await updatedPrefs.remove(SecureTokenStorage.accessTokenKey);
+            } catch (_) {
+              // Tetap kirim request dengan token legacy jika secure storage belum siap.
+            }
+          }
+        }
         final Map<String, String> headers = {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -284,7 +304,7 @@ class BackgroundServiceHelper {
           }
         }
       } catch (e) {
-        debugPrint('Error in background tracking tick: $e');
+        AppLogger.e('Error in background tracking tick', e);
         final updatedPrefs = await SharedPreferences.getInstance();
         await updatedPrefs.setBool('LAST_TRACKING_SUCCESS', false);
 
@@ -310,7 +330,7 @@ class BackgroundServiceHelper {
       timer = Timer.periodic(Duration(seconds: seconds), (_) {
         sendLocationUpdate();
       });
-      debugPrint('Background service timer reset to $seconds seconds');
+      AppLogger.d('Background service timer reset to $seconds seconds');
     }
 
     // Start initial timer if active
@@ -339,17 +359,17 @@ class BackgroundServiceHelper {
                   }
                 },
                 onError: (error) {
-                  debugPrint('Error listening to iOS location stream: $error');
+                  AppLogger.e('Error listening to iOS location stream', error);
                 },
               );
             } else {
-              debugPrint(
+              AppLogger.w(
                 'Izin lokasi belum ada di iOS, geolocator stream ditunda',
               );
             }
           })
           .catchError((error) {
-            debugPrint('Gagal mengecek izin lokasi iOS: $error');
+            AppLogger.e('Gagal mengecek izin lokasi iOS', error);
           });
     }
 

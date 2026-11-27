@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 /// Interceptor untuk logging ringkas network request dan response.
 class LoggingInterceptor extends Interceptor {
@@ -73,6 +74,59 @@ class LoggingInterceptor extends Interceptor {
     return '\n║ Duration: $ms ms (${(ms / 1000).toStringAsFixed(2)} s)';
   }
 
+  static const Set<String> _sensitiveKeys = {
+    'password',
+    'password_confirmation',
+    'current_password',
+    'new_password',
+    'pin',
+    'otp',
+    'otp_code',
+    'token',
+    'access_token',
+    'refresh_token',
+    'fcm_token',
+    'authorization',
+    'secret',
+    'nik',
+    'no_kk',
+    'kk',
+    'api_key',
+    'apikey',
+  };
+
+  static bool _isSensitiveKey(String key) {
+    final normalized = key.toLowerCase().trim();
+    if (_sensitiveKeys.contains(normalized)) return true;
+    return normalized.contains('password') ||
+        normalized.contains('token') ||
+        normalized.contains('secret') ||
+        normalized == 'otp' ||
+        normalized == 'pin';
+  }
+
+  static dynamic _redactSensitiveData(dynamic value) {
+    if (value is Map) {
+      return value.map((key, entryValue) {
+        final keyStr = key.toString();
+        if (_isSensitiveKey(keyStr)) {
+          return MapEntry(keyStr, '***REDACTED***');
+        }
+        return MapEntry(keyStr, _redactSensitiveData(entryValue));
+      });
+    }
+    if (value is List) {
+      return value.map(_redactSensitiveData).toList();
+    }
+    return value;
+  }
+
+  /// Memformat dan meredaksi field sensitif sebelum dicetak ke log debug.
+  static String formatSanitizedData(dynamic data) => _formatData(data);
+
+  @visibleForTesting
+  static String formatDataForTesting(dynamic data) => _formatData(data);
+
   static String _formatData(dynamic data) {
     if (data == null) return 'null';
     if (data is Uint8List || data is ResponseBody) {
@@ -84,10 +138,24 @@ class LoggingInterceptor extends Interceptor {
 
     String raw;
     if (data is String) {
-      raw = data.trim();
+      final trimmed = data.trim();
+      if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+        try {
+          final decoded = jsonDecode(trimmed);
+          raw = jsonEncode(
+            _redactSensitiveData(decoded),
+            toEncodable: _toStringFallback,
+          );
+        } catch (_) {
+          raw = trimmed;
+        }
+      } else {
+        raw = trimmed;
+      }
     } else if (data is Map || data is Iterable) {
       try {
-        raw = jsonEncode(data, toEncodable: _toStringFallback);
+        final sanitized = _redactSensitiveData(data);
+        raw = jsonEncode(sanitized, toEncodable: _toStringFallback);
       } catch (_) {
         raw = data.toString();
       }

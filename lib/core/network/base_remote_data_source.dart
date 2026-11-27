@@ -3,7 +3,8 @@ import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 
-import '../network/dio_client.dart';
+import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/network/logging_interceptor.dart';
 
 class ApiResponse<T> {
   final bool success;
@@ -86,7 +87,7 @@ abstract class BaseRemoteDataSource {
       );
     } on DioException catch (e) {
       AppLogger.e(
-        '[BASE_DS] DioException: ${e.message} | Response data: ${e.response?.data}',
+        '[BASE_DS] DioException: ${e.message} | Response data: ${LoggingInterceptor.formatSanitizedData(e.response?.data)}',
         e,
         e.stackTrace,
       );
