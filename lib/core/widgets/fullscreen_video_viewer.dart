@@ -7,7 +7,7 @@ import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_compress/video_compress.dart';
+import 'package:v_video_compressor/v_video_compressor.dart';
 import 'package:video_player/video_player.dart';
 
 class FullscreenVideoViewer extends StatefulWidget {
@@ -45,6 +45,7 @@ class FullscreenVideoViewer extends StatefulWidget {
 }
 
 class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
+  final VVideoCompressor _videoCompressor = VVideoCompressor();
   VideoPlayerController? _controller;
   String? _error;
   String _statusMessage = 'Memuat video...';
@@ -95,19 +96,23 @@ class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
         file ??= await _downloadToFile(url);
 
         if (file.existsSync()) {
-          final mediaInfo = await VideoCompress.compressVideo(
+          final result = await _videoCompressor.compressVideo(
             file.path,
-            quality: VideoQuality.HighestQuality,
-            deleteOrigin: false,
+            const VVideoCompressionConfig.high(
+              deleteOriginal: false,
+              fallbackToOriginalIfNotSmaller: false,
+            ),
           );
 
           if (!mounted || _isDisposed) return;
 
-          final transcodedPath = mediaInfo?.file?.path ?? mediaInfo?.path;
-          if (transcodedPath != null) {
+          final transcodedPath = result?.compressedFilePath;
+          if (transcodedPath != null && transcodedPath.isNotEmpty) {
             final transcodedFile = File(transcodedPath);
             if (transcodedFile.existsSync()) {
-              _temporaryFiles.add(transcodedFile);
+              if (!result!.usedOriginalFile && transcodedPath != file.path) {
+                _temporaryFiles.add(transcodedFile);
+              }
               controller = VideoPlayerController.file(transcodedFile);
               await controller.initialize();
             } else {
@@ -211,7 +216,7 @@ class _FullscreenVideoViewerState extends State<FullscreenVideoViewer> {
   void dispose() {
     _isDisposed = true;
     _controller?.dispose();
-    VideoCompress.cancelCompression();
+    _videoCompressor.cancelCompression();
     for (final file in _temporaryFiles) {
       try {
         if (file.existsSync()) {

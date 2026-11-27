@@ -7,7 +7,7 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_compress/video_compress.dart';
+import 'package:v_video_compressor/v_video_compressor.dart';
 
 class CameraCaptureScreen {
   CameraCaptureScreen._();
@@ -89,31 +89,44 @@ class CameraCaptureScreen {
     File original,
   ) async {
     _showCompressingDialog(context);
+    final compressor = VVideoCompressor();
     try {
       for (final quality in [
-        VideoQuality.DefaultQuality,
-        VideoQuality.LowQuality,
+        VVideoCompressQuality.medium,
+        VVideoCompressQuality.low,
       ]) {
-        final result = await VideoCompress.compressVideo(
+        final result = await compressor.compressVideo(
           original.path,
-          quality: quality,
-          deleteOrigin: false,
+          VVideoCompressionConfig(
+            quality: quality,
+            deleteOriginal: false,
+            fallbackToOriginalIfNotSmaller: false,
+          ),
         );
-        final compressed = File(result?.path ?? '');
+        final compressedPath = result?.compressedFilePath ?? '';
+        if (compressedPath.isEmpty) continue;
+        final compressed = File(compressedPath);
         if (!compressed.existsSync()) continue;
+
+        final isDistinctOutput =
+            !(result?.usedOriginalFile ?? false) &&
+            compressed.path != original.path;
 
         if (compressed.lengthSync() <=
             FileSecurityUtils.defaultMaxVideoSizeBytes) {
-          // video_compress menulis ke folder permanen, jadi salin ke cache.
           final tempDir = await getTemporaryDirectory();
           final target = await compressed.copy(
             '${tempDir.path}/compressed_'
             '${DateTime.now().millisecondsSinceEpoch}.mp4',
           );
-          await compressed.delete();
+          if (isDistinctOutput) {
+            await compressed.delete();
+          }
           return target.path;
         }
-        await compressed.delete();
+        if (isDistinctOutput) {
+          await compressed.delete();
+        }
       }
 
       if (context.mounted) {

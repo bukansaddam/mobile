@@ -5,10 +5,10 @@ import 'dart:math' as math;
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image/image.dart' as img;
+import 'package:image_compress_plus/image_compress_plus.dart';
 import 'package:path_provider/path_provider.dart';
 
 typedef _GeoMeta = ({
@@ -180,7 +180,7 @@ class ImageCompressHelper {
         ext: 'webp',
       );
 
-      final XFile? result = await FlutterImageCompress.compressAndGetFile(
+      final XFile? result = await ImageCompressPlus.compressAndGetFile(
         file.absolute.path,
         targetPath,
         quality: quality,
