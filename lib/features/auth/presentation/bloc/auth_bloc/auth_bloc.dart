@@ -230,6 +230,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     await _logoutUsecase();
     _permissionService?.resetCache();
+    _notificationService?.resetSyncedDeviceState();
     DioClient.instance.options.headers.remove('Authorization');
     emit(const AuthUnauthenticated(message: 'Logout berhasil'));
   }

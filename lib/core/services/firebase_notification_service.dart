@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:akar/core/offline/widgets/pending_queue_bottom_sheet.dart';
 import 'package:akar/core/routes/app_router.dart';
@@ -169,6 +171,7 @@ class FirebaseNotificationService {
   final FirebaseMessaging _fcm;
   final FlutterLocalNotificationsPlugin _localNotifications;
   final SharedPreferences _prefs;
+  final Dio? _dio;
 
   final _foregroundMessageController =
       StreamController<RemoteMessage>.broadcast();
@@ -178,13 +181,19 @@ class FirebaseNotificationService {
   final DisasterAlertService? _disasterAlertService;
 
   bool _isInitialized = false;
-  StreamSubscription<String>? _tokenRefreshSubscription;
+  StreamSubscription<String>? _registeredSubscription;
+  StreamSubscription<String>? _unregisteredSubscription;
+  Completer<String?>? _pendingRegistrationCompleter;
+  String? _lastSyncedDeviceId;
+  String? _lastSyncedAuthHeader;
+  Future<void>? _inFlightDeviceSync;
 
   FirebaseNotificationService({
     required this._prefs,
     FirebaseMessaging? fcm,
     FlutterLocalNotificationsPlugin? localNotifications,
     this._disasterAlertService,
+    this._dio,
   }) : _fcm = fcm ?? FirebaseMessaging.instance,
        _localNotifications =
            localNotifications ?? FlutterLocalNotificationsPlugin();
@@ -199,6 +208,19 @@ class FirebaseNotificationService {
 
   String? get cachedToken => _prefs.getString(_prefsFcmTokenKey);
   String? get deviceId => cachedToken ?? _prefs.getString(_prefsDeviceIdKey);
+
+  static bool _isLegacyFcmToken(String value) =>
+      value.contains(':') || value.length >= 64;
+
+  static String _maskIdentifier(String value) {
+    if (value.length <= 6) return '***';
+    return '${value.substring(0, 6)}...';
+  }
+
+  bool get _hasValidCachedFid {
+    final current = cachedToken?.trim();
+    return current != null && current.isNotEmpty && !_isLegacyFcmToken(current);
+  }
 
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -224,8 +246,10 @@ class FirebaseNotificationService {
   }
 
   Future<void> ensureTokenCached() async {
-    if (cachedToken == null || cachedToken!.isEmpty) {
+    if (!_hasValidCachedFid) {
       await _initToken();
+    } else {
+      await syncDeviceIdToBackend();
     }
   }
 
@@ -289,27 +313,115 @@ class FirebaseNotificationService {
     }
   }
 
-  Future<void> _initToken() async {
-    try {
-      // Backend masih memakai FCM registration token (bukan FID dari register()).
-      // ignore: deprecated_member_use
-      final token = await _fcm.getToken();
-      if (token != null) {
-        await _prefs.setString(_prefsFcmTokenKey, token);
-        await _prefs.setString(_prefsDeviceIdKey, token);
-        AppLogger.i('🔥 [FCM Service] Current FCM Token (Device ID): $token');
+  void _ensureRegistrationListeners() {
+    _registeredSubscription ??= _fcm.onRegistered.listen((fid) async {
+      final cleaned = fid.trim();
+      if (cleaned.isEmpty) return;
+
+      await _prefs.setString(_prefsFcmTokenKey, cleaned);
+      await _prefs.setString(_prefsDeviceIdKey, cleaned);
+
+      final pending = _pendingRegistrationCompleter;
+      if (pending != null && !pending.isCompleted) {
+        pending.complete(cleaned);
       }
+
+      if (!_tokenRefreshController.isClosed) {
+        _tokenRefreshController.add(cleaned);
+      }
+      AppLogger.i(
+        '🔥 [FCM Service] Registered FID: ${_maskIdentifier(cleaned)}',
+      );
+      unawaited(syncDeviceIdToBackend(deviceIdOverride: cleaned));
+    });
+
+    _unregisteredSubscription ??= _fcm.onUnregistered.listen((fid) async {
+      final cleaned = fid.trim();
+      if (cleaned.isEmpty) return;
+      if (cachedToken == cleaned) {
+        await _prefs.remove(_prefsFcmTokenKey);
+        await _prefs.remove(_prefsDeviceIdKey);
+        resetSyncedDeviceState();
+      }
+      AppLogger.i(
+        '🔥 [FCM Service] Unregistered FID: ${_maskIdentifier(cleaned)}',
+      );
+    });
+  }
+
+  Future<void> _initToken() async {
+    _ensureRegistrationListeners();
+    try {
+      await _fcm.register();
     } catch (e) {
-      AppLogger.w('🔥 [FCM Service] Unable to get FCM token: $e');
+      AppLogger.w('🔥 [FCM Service] Unable to register FCM FID: $e');
+    }
+  }
+
+  void resetSyncedDeviceState() {
+    _lastSyncedDeviceId = null;
+    _lastSyncedAuthHeader = null;
+  }
+
+  /// Menyinkronkan FID ke backend melalui `PATCH /api/auth/device-id`
+  /// dengan payload `{"device_id": "<fid>"}` saat sesi autentikasi aktif.
+  Future<void> syncDeviceIdToBackend({
+    String? deviceIdOverride,
+    bool force = false,
+  }) async {
+    final dio = _dio;
+    if (dio == null) return;
+
+    final authHeader = dio.options.headers['Authorization']?.toString().trim();
+    if (authHeader == null || authHeader.isEmpty) return;
+
+    final candidate = (deviceIdOverride ?? cachedToken)?.trim();
+    if (candidate == null ||
+        candidate.isEmpty ||
+        _isLegacyFcmToken(candidate)) {
+      return;
     }
 
-    // ignore: deprecated_member_use
-    _tokenRefreshSubscription ??= _fcm.onTokenRefresh.listen((newToken) async {
-      await _prefs.setString(_prefsFcmTokenKey, newToken);
-      await _prefs.setString(_prefsDeviceIdKey, newToken);
-      _tokenRefreshController.add(newToken);
-      AppLogger.i('🔥 [FCM Service] Token Refreshed: $newToken');
-    });
+    if (!force &&
+        _lastSyncedDeviceId == candidate &&
+        _lastSyncedAuthHeader == authHeader) {
+      return;
+    }
+
+    final existingSync = _inFlightDeviceSync;
+    if (existingSync != null) {
+      await existingSync;
+      if (!force &&
+          _lastSyncedDeviceId == candidate &&
+          _lastSyncedAuthHeader == authHeader) {
+        return;
+      }
+    }
+
+    final syncFuture = () async {
+      try {
+        await dio.patch(
+          ApiConstants.authDeviceId,
+          data: {'device_id': candidate},
+        );
+        _lastSyncedDeviceId = candidate;
+        _lastSyncedAuthHeader = authHeader;
+        AppLogger.i(
+          '🔥 [FCM Service] Synced FID to backend: ${_maskIdentifier(candidate)}',
+        );
+      } catch (e) {
+        AppLogger.w('🔥 [FCM Service] Failed to sync FID to backend: $e');
+      }
+    }();
+
+    _inFlightDeviceSync = syncFuture;
+    try {
+      await syncFuture;
+    } finally {
+      if (identical(_inFlightDeviceSync, syncFuture)) {
+        _inFlightDeviceSync = null;
+      }
+    }
   }
 
   void _setupMessageListeners() {
@@ -694,19 +806,34 @@ class FirebaseNotificationService {
     }
   }
 
-  Future<String?> getToken() async {
-    try {
-      // Backend masih memakai FCM registration token (bukan FID dari register()).
-      // ignore: deprecated_member_use
-      final token = await _fcm.getToken();
-      if (token != null) {
-        await _prefs.setString(_prefsFcmTokenKey, token);
-        await _prefs.setString(_prefsDeviceIdKey, token);
-      }
-      return token;
-    } catch (e) {
-      AppLogger.e('🔥 [FCM Service] Error getting token: $e');
+  Future<String?> getToken({
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
+    _ensureRegistrationListeners();
+    if (_hasValidCachedFid) {
       return cachedToken;
+    }
+
+    final completer = Completer<String?>();
+    _pendingRegistrationCompleter = completer;
+
+    try {
+      await _fcm.register();
+      if (_hasValidCachedFid) {
+        return cachedToken;
+      }
+      final fid = await completer.future.timeout(
+        timeout,
+        onTimeout: () => _hasValidCachedFid ? cachedToken : null,
+      );
+      return fid;
+    } catch (e) {
+      AppLogger.e('🔥 [FCM Service] Error registering FID: $e');
+      return _hasValidCachedFid ? cachedToken : null;
+    } finally {
+      if (identical(_pendingRegistrationCompleter, completer)) {
+        _pendingRegistrationCompleter = null;
+      }
     }
   }
 
@@ -714,13 +841,13 @@ class FirebaseNotificationService {
 
   Future<void> deleteToken() async {
     try {
-      // ignore: deprecated_member_use
-      await _fcm.deleteToken();
+      await _fcm.unregister();
       await _prefs.remove(_prefsFcmTokenKey);
       await _prefs.remove(_prefsDeviceIdKey);
-      AppLogger.i('🔥 [FCM Service] Token deleted');
+      resetSyncedDeviceState();
+      AppLogger.i('🔥 [FCM Service] FID unregistered');
     } catch (e) {
-      AppLogger.e('🔥 [FCM Service] Error deleting token: $e');
+      AppLogger.e('🔥 [FCM Service] Error unregistering FID: $e');
     }
   }
 
@@ -851,8 +978,11 @@ class FirebaseNotificationService {
   }
 
   void dispose() {
-    _tokenRefreshSubscription?.cancel();
-    _tokenRefreshSubscription = null;
+    _registeredSubscription?.cancel();
+    _registeredSubscription = null;
+    _unregisteredSubscription?.cancel();
+    _unregisteredSubscription = null;
+    _pendingRegistrationCompleter = null;
     _foregroundMessageController.close();
     _notificationTapController.close();
     _tokenRefreshController.close();

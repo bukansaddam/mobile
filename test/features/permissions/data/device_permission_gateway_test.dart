@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/features/permissions/data/services/device_permission_gateway.dart';
 import 'package:akar/features/permissions/domain/entities/app_permission_type.dart';
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,11 +33,14 @@ class _FakeFirebaseNotificationService extends Fake
 
 class _FakeFirebaseMessaging extends Fake implements FirebaseMessaging {
   int requestPermissionCalls = 0;
-  int getTokenCalls = 0;
-  int onTokenRefreshGetterCalls = 0;
+  int registerCalls = 0;
+  int unregisterCalls = 0;
+  int onRegisteredGetterCalls = 0;
   AuthorizationStatus authorizationStatus = AuthorizationStatus.authorized;
-  String? tokenToReturn = 'test-fcm-token';
-  final StreamController<String> _tokenRefreshController =
+  String? fidToEmit = 'e08uogp-QmyNtEllaT1A5E';
+  final StreamController<String> _registeredController =
+      StreamController<String>.broadcast();
+  final StreamController<String> _unregisteredController =
       StreamController<String>.broadcast();
 
   @override
@@ -74,29 +79,45 @@ class _FakeFirebaseMessaging extends Fake implements FirebaseMessaging {
   }) async {}
 
   @override
-  Future<String?> getToken({
+  Future<void> register({
     String? vapidKey,
     String? serviceWorkerScriptPath,
   }) async {
-    getTokenCalls += 1;
-    return tokenToReturn;
+    registerCalls += 1;
+    final fid = fidToEmit;
+    if (fid != null && fid.isNotEmpty) {
+      _registeredController.add(fid);
+    }
   }
 
   @override
-  Stream<String> get onTokenRefresh {
-    onTokenRefreshGetterCalls += 1;
-    return _tokenRefreshController.stream;
+  Future<void> unregister() async {
+    unregisterCalls += 1;
   }
 
-  void emitTokenRefresh(String token) {
-    _tokenRefreshController.add(token);
+  @override
+  Stream<String> get onRegistered {
+    onRegisteredGetterCalls += 1;
+    return _registeredController.stream;
+  }
+
+  @override
+  Stream<String> get onUnregistered => _unregisteredController.stream;
+
+  void emitRegistered(String fid) {
+    _registeredController.add(fid);
+  }
+
+  void emitUnregistered(String fid) {
+    _unregisteredController.add(fid);
   }
 
   @override
   Future<RemoteMessage?> getInitialMessage() async => null;
 
   void dispose() {
-    _tokenRefreshController.close();
+    _registeredController.close();
+    _unregisteredController.close();
   }
 }
 
@@ -474,13 +495,13 @@ void main() {
     );
 
     test(
-      'FirebaseNotificationService.requestNotificationPermission requests FCM permissions without calling androidPlugin.requestNotificationsPermission() and caches missing token locally',
+      'FirebaseNotificationService.requestNotificationPermission requests FCM permissions without calling androidPlugin.requestNotificationsPermission() and caches missing FID locally',
       () async {
         SharedPreferences.setMockInitialValues({});
         final prefs = await SharedPreferences.getInstance();
         final fcm = _FakeFirebaseMessaging()
           ..authorizationStatus = AuthorizationStatus.authorized
-          ..tokenToReturn = 'fresh-local-token';
+          ..fidToEmit = 'freshLocalFid_12345678';
         final localNotifications = _FakeLocalNotificationsPlugin();
         addTearDown(fcm.dispose);
 
@@ -489,8 +510,10 @@ void main() {
           fcm: fcm,
           localNotifications: localNotifications,
         );
+        addTearDown(service.dispose);
 
         final granted = await service.requestNotificationPermission();
+        await Future<void>.delayed(Duration.zero);
 
         expect(granted, isTrue);
         expect(fcm.requestPermissionCalls, equals(1));
@@ -498,15 +521,17 @@ void main() {
           localNotifications.androidPlugin.requestNotificationsCalls,
           equals(0),
         );
-        expect(fcm.getTokenCalls, equals(1));
-        expect(service.cachedToken, equals('fresh-local-token'));
+        expect(fcm.registerCalls, equals(1));
+        expect(service.cachedToken, equals('freshLocalFid_12345678'));
       },
     );
 
     test(
-      'FirebaseNotificationService.requestNotificationPermission returns false when denied and skips token refresh and androidPlugin prompt when already cached',
+      'FirebaseNotificationService.requestNotificationPermission returns false when denied and skips re-register when valid FID already cached',
       () async {
-        SharedPreferences.setMockInitialValues({'FCM_TOKEN': 'existing-token'});
+        SharedPreferences.setMockInitialValues({
+          'FCM_TOKEN': 'existingFid_1234567890',
+        });
         final prefs = await SharedPreferences.getInstance();
         final fcm = _FakeFirebaseMessaging()
           ..authorizationStatus = AuthorizationStatus.denied;
@@ -518,6 +543,7 @@ void main() {
           fcm: fcm,
           localNotifications: localNotifications,
         );
+        addTearDown(service.dispose);
 
         final granted = await service.requestNotificationPermission();
 
@@ -527,17 +553,20 @@ void main() {
           localNotifications.androidPlugin.requestNotificationsCalls,
           equals(0),
         );
-        expect(fcm.getTokenCalls, equals(0));
-        expect(service.cachedToken, equals('existing-token'));
+        expect(fcm.registerCalls, equals(0));
+        expect(service.cachedToken, equals('existingFid_1234567890'));
       },
     );
 
     test(
-      'FirebaseNotificationService.ensureTokenCached fetches token only when cachedToken is null or empty',
+      'FirebaseNotificationService.ensureTokenCached registers FID only when cachedToken is null, empty, or legacy FCM token',
       () async {
-        SharedPreferences.setMockInitialValues({});
+        final legacyToken =
+            'c1234567890:APA91b${List.filled(140, 'x').join()}';
+        SharedPreferences.setMockInitialValues({'FCM_TOKEN': legacyToken});
         final prefs = await SharedPreferences.getInstance();
-        final fcm = _FakeFirebaseMessaging()..tokenToReturn = 'cached-via-helper';
+        final fcm = _FakeFirebaseMessaging()
+          ..fidToEmit = 'migratedFid_1234567890';
         final localNotifications = _FakeLocalNotificationsPlugin();
         addTearDown(fcm.dispose);
 
@@ -549,20 +578,21 @@ void main() {
         addTearDown(service.dispose);
 
         await service.ensureTokenCached();
-        expect(fcm.getTokenCalls, equals(1));
-        expect(service.cachedToken, equals('cached-via-helper'));
+        await Future<void>.delayed(Duration.zero);
+        expect(fcm.registerCalls, equals(1));
+        expect(service.cachedToken, equals('migratedFid_1234567890'));
 
         await service.ensureTokenCached();
-        expect(fcm.getTokenCalls, equals(1));
+        expect(fcm.registerCalls, equals(1));
       },
     );
 
     test(
-      'initialize followed by requestNotificationPermission subscribes to onTokenRefresh only once',
+      'initialize followed by requestNotificationPermission subscribes to onRegistered only once',
       () async {
         SharedPreferences.setMockInitialValues({});
         final prefs = await SharedPreferences.getInstance();
-        final fcm = _FakeFirebaseMessaging()..tokenToReturn = null;
+        final fcm = _FakeFirebaseMessaging()..fidToEmit = null;
         final localNotifications = _FakeLocalNotificationsPlugin();
         addTearDown(fcm.dispose);
 
@@ -573,28 +603,110 @@ void main() {
         );
         addTearDown(service.dispose);
 
-        final emittedTokens = <String>[];
-        final sub = service.onTokenRefresh.listen(emittedTokens.add);
+        final emittedFids = <String>[];
+        final sub = service.onTokenRefresh.listen(emittedFids.add);
         addTearDown(sub.cancel);
 
         await service.initialize();
         expect(service.cachedToken, isNull);
-        expect(fcm.onTokenRefreshGetterCalls, equals(1));
+        expect(fcm.onRegisteredGetterCalls, equals(1));
 
         fcm
           ..authorizationStatus = AuthorizationStatus.authorized
-          ..tokenToReturn = 'post-permission-token';
+          ..fidToEmit = 'postPermFid_1234567890';
 
         final granted = await service.requestNotificationPermission();
+        await Future<void>.delayed(Duration.zero);
         expect(granted, isTrue);
-        expect(service.cachedToken, equals('post-permission-token'));
-        expect(fcm.onTokenRefreshGetterCalls, equals(1));
+        expect(service.cachedToken, equals('postPermFid_1234567890'));
+        expect(fcm.onRegisteredGetterCalls, equals(1));
 
-        fcm.emitTokenRefresh('refreshed-token-1');
+        fcm.emitRegistered('refreshedFid1234567890');
         await Future<void>.delayed(Duration.zero);
 
-        expect(emittedTokens, equals(['refreshed-token-1']));
-        expect(service.cachedToken, equals('refreshed-token-1'));
+        expect(
+          emittedFids,
+          equals(['postPermFid_1234567890', 'refreshedFid1234567890']),
+        );
+        expect(service.cachedToken, equals('refreshedFid1234567890'));
+      },
+    );
+
+    test(
+      'PATCH /api/auth/device-id syncs FID with device_id field when authenticated, deduplicates, and re-syncs after reset',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final fcm = _FakeFirebaseMessaging()..fidToEmit = null;
+        final localNotifications = _FakeLocalNotificationsPlugin();
+        addTearDown(fcm.dispose);
+
+        final patchRequests = <RequestOptions>[];
+        final dio = Dio(BaseOptions(baseUrl: 'https://akaraslinmas.id'));
+        dio.interceptors.add(
+          InterceptorsWrapper(
+            onRequest: (options, handler) {
+              patchRequests.add(options);
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'success': true},
+                ),
+              );
+            },
+          ),
+        );
+
+        final service = FirebaseNotificationService(
+          prefs: prefs,
+          fcm: fcm,
+          localNotifications: localNotifications,
+          dio: dio,
+        );
+        addTearDown(service.dispose);
+
+        await service.initialize();
+
+        // Sebelum login (tanpa Authorization header): onRegistered hanya cache, belum PATCH.
+        fcm.emitRegistered('e08uogp-QmyNtEllaT1A5E');
+        await Future<void>.delayed(Duration.zero);
+        expect(service.cachedToken, equals('e08uogp-QmyNtEllaT1A5E'));
+        expect(patchRequests, isEmpty);
+
+        // Setelah login (header Authorization tersedia): sync mengirim PATCH /api/auth/device-id.
+        dio.options.headers['Authorization'] = 'Bearer jwt-user-a';
+        await service.syncDeviceIdToBackend();
+        expect(patchRequests, hasLength(1));
+        expect(patchRequests.first.method, equals('PATCH'));
+        expect(patchRequests.first.path, equals(ApiConstants.authDeviceId));
+        expect(
+          patchRequests.first.data,
+          equals({'device_id': 'e08uogp-QmyNtEllaT1A5E'}),
+        );
+
+        // Panggilan ulang dengan sesi & FID sama di-deduplikasi.
+        await service.syncDeviceIdToBackend();
+        expect(patchRequests, hasLength(1));
+
+        // Setelah logout/reset lalu login akun baru: sync kembali mengirim PATCH.
+        service.resetSyncedDeviceState();
+        dio.options.headers['Authorization'] = 'Bearer jwt-user-b';
+        await service.syncDeviceIdToBackend();
+        expect(patchRequests, hasLength(2));
+        expect(
+          patchRequests.last.data,
+          equals({'device_id': 'e08uogp-QmyNtEllaT1A5E'}),
+        );
+
+        // Ketika FID baru terbit saat sesi aktif: otomatis PATCH tanpa perlu dipanggil manual.
+        fcm.emitRegistered('newFidValue_9876543210');
+        await pumpEventQueue();
+        expect(patchRequests, hasLength(3));
+        expect(
+          patchRequests.last.data,
+          equals({'device_id': 'newFidValue_9876543210'}),
+        );
       },
     );
   });

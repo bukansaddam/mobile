@@ -171,6 +171,27 @@ class ApiConstants {
     175,
     241,
   ]);
+  static final String authDeviceId = EndpointSecurity.decode(const <int>[
+    117,
+    79,
+    44,
+    118,
+    230,
+    32,
+    120,
+    145,
+    167,
+    7,
+    166,
+    241,
+    41,
+    112,
+    152,
+    228,
+    103,
+    119,
+    40,
+  ]);
 
   // OCR
   static final String ocrScan = EndpointSecurity.decode(const <int>[

@@ -57,8 +57,21 @@ class _NotificationLifecycleListenerState
         context.read<NotificationBloc>().add(
           const FetchNotificationCountEvent(),
         );
+        _syncDeviceId();
       }
     } catch (_) {}
+  }
+
+  void _syncDeviceId() {
+    if (di.sl.isRegistered<FirebaseNotificationService>()) {
+      unawaited(di.sl<FirebaseNotificationService>().ensureTokenCached());
+    }
+  }
+
+  void _resetDeviceIdSync() {
+    if (di.sl.isRegistered<FirebaseNotificationService>()) {
+      di.sl<FirebaseNotificationService>().resetSyncedDeviceState();
+    }
   }
 
   @override
@@ -85,8 +98,10 @@ class _NotificationLifecycleListenerState
         final bloc = context.read<NotificationBloc>();
         if (state is AuthAuthenticated) {
           bloc.add(const FetchNotificationCountEvent());
+          _syncDeviceId();
         } else if (state is AuthUnauthenticated) {
           bloc.add(const ResetNotificationsEvent());
+          _resetDeviceIdSync();
         }
       },
       child: widget.child,

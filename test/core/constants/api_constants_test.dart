@@ -15,6 +15,7 @@ void main() {
       expect(ApiConstants.registerPublic, '/api/register/public');
       expect(ApiConstants.registerOtpSend, '/api/register/public/otp/send');
       expect(ApiConstants.me, '/api/auth/me');
+      expect(ApiConstants.authDeviceId, '/api/auth/device-id');
     });
 
     test('ocr endpoint decodes accurately', () {

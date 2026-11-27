@@ -231,6 +231,7 @@ Future<void> init() async {
     () => FirebaseNotificationService(
       prefs: sl<SharedPreferences>(),
       disasterAlertService: sl<DisasterAlertService>(),
+      dio: sl<Dio>(),
     ),
   );
   sl.registerLazySingleton<PermissionGateway>(
