@@ -1,6 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/permissions/domain/entities/app_permission_type.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Renders the transparent flat-vector AKAR illustration for a permission step.
 class PermissionIllustration extends StatelessWidget {

@@ -7,7 +7,7 @@ import 'package:akar/features/linmas/announcement/presentation/bloc/announcement
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_state.dart';
 import 'package:akar/features/linmas/announcement/presentation/widgets/announcement_detail_modal.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 Widget _buildBannerImage(BuildContext context, String path) {

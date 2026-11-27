@@ -12,7 +12,7 @@ import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_sessions_shee
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_typing_indicator.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Layar utama percakapan dengan Asisten AI Siska (mendukung multi-role Linmas & Dumas).

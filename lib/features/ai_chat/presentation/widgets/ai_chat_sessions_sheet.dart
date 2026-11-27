@@ -7,7 +7,7 @@ import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Bottom sheet daftar sesi riwayat Asisten AI Siska (pencarian debounce 500ms, rename, dan hapus).

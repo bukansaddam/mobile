@@ -16,7 +16,7 @@ import 'package:akar/features/permissions/presentation/widgets/permission_illust
 import 'package:akar/features/permissions/presentation/widgets/permission_progress_header.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_seamless_background.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_step_content.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

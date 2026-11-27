@@ -4,7 +4,7 @@ import 'package:akar/features/permissions/presentation/widgets/permission_comple
 import 'package:akar/features/permissions/presentation/widgets/permission_illustration.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_notice_strip.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_seamless_background.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 

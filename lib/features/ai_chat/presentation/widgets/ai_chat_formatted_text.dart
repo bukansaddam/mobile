@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Renderer teks terstruktur ringan (pure Dart) untuk **bold**, *italic*, dan bullet list.
 class AiChatFormattedText extends StatelessWidget {

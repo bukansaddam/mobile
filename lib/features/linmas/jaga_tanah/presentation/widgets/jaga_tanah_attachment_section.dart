@@ -5,7 +5,7 @@ import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_attachment_tile.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_field_label.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class JagaTanahAttachmentSection extends StatelessWidget {
   final List<String> attachments;

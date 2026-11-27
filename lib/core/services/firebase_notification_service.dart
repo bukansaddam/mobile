@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -291,6 +291,8 @@ class FirebaseNotificationService {
 
   Future<void> _initToken() async {
     try {
+      // Backend masih memakai FCM registration token (bukan FID dari register()).
+      // ignore: deprecated_member_use
       final token = await _fcm.getToken();
       if (token != null) {
         await _prefs.setString(_prefsFcmTokenKey, token);
@@ -301,6 +303,7 @@ class FirebaseNotificationService {
       AppLogger.w('🔥 [FCM Service] Unable to get FCM token: $e');
     }
 
+    // ignore: deprecated_member_use
     _tokenRefreshSubscription ??= _fcm.onTokenRefresh.listen((newToken) async {
       await _prefs.setString(_prefsFcmTokenKey, newToken);
       await _prefs.setString(_prefsDeviceIdKey, newToken);
@@ -693,6 +696,8 @@ class FirebaseNotificationService {
 
   Future<String?> getToken() async {
     try {
+      // Backend masih memakai FCM registration token (bukan FID dari register()).
+      // ignore: deprecated_member_use
       final token = await _fcm.getToken();
       if (token != null) {
         await _prefs.setString(_prefsFcmTokenKey, token);
@@ -709,6 +714,7 @@ class FirebaseNotificationService {
 
   Future<void> deleteToken() async {
     try {
+      // ignore: deprecated_member_use
       await _fcm.deleteToken();
       await _prefs.remove(_prefsFcmTokenKey);
       await _prefs.remove(_prefsDeviceIdKey);

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Skema warna dinamis aplikasi untuk Light Mode dan Deep Slate Forest Dark Mode.
 @immutable

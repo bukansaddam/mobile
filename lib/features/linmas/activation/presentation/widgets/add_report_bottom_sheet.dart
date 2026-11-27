@@ -9,7 +9,7 @@ import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddReportBottomSheet extends StatefulWidget {

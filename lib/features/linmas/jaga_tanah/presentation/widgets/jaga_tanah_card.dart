@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/core/widgets/report_point_badge.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class JagaTanahCard extends StatelessWidget {
   final ComplaintItem item;

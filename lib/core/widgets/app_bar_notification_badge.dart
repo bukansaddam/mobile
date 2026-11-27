@@ -1,5 +1,5 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Badge angka merah kecil untuk tombol notifikasi AppBar (kapasitas max `99+`).
 class AppBarNotificationBadge extends StatelessWidget {

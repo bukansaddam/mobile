@@ -5,7 +5,7 @@ import 'package:akar/core/network/dio_client.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:v_video_compressor/v_video_compressor.dart';
 import 'package:video_player/video_player.dart';

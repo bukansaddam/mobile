@@ -5,7 +5,7 @@ import 'package:akar/core/widgets/app_bar_notification_button.dart';
 import 'package:akar/core/widgets/app_logo_badge.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_alert_banner.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum AppBarBrand { dumas, linmas }
 

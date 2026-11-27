@@ -18,7 +18,7 @@ import 'package:akar/features/linmas/activation/presentation/extensions/activati
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_detail_modal.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/add_report_bottom_sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:akar/core/utils/data_masking_utils.dart';
 import 'package:intl/intl.dart';

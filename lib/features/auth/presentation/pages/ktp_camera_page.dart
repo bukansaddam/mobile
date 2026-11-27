@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:image/image.dart' as img;
 
 import 'package:akar/core/theme/app_color_scheme.dart';

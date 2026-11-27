@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/features/linmas/announcement/domain/entities/announcement_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 Widget _buildImageWidget(
   BuildContext context,

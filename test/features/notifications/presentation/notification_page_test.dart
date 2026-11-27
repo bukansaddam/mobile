@@ -10,7 +10,7 @@ import 'package:akar/features/notifications/presentation/pages/notification_page
 import 'package:akar/features/notifications/presentation/widgets/notification_detail_sheet.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_lifecycle_listener.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

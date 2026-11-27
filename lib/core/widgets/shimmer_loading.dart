@@ -1,5 +1,5 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Provider for synchronized Shimmer animations across child widgets.
 class Shimmer extends StatefulWidget {

@@ -7,7 +7,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/widgets/complaint_list_widget.dart';
 import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyComplaintHistoryPage extends StatefulWidget {

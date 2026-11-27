@@ -9,7 +9,7 @@ import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/auth/domain/usecases/scan_ktp_usecase.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/auth/presentation/pages/register_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';

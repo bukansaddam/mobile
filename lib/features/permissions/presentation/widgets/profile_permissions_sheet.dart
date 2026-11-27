@@ -5,7 +5,7 @@ import 'package:akar/features/permissions/data/services/app_permission_service.d
 import 'package:akar/features/permissions/domain/entities/app_permission_type.dart';
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Bottom sheet daftar status izin aplikasi dan kesehatan GPS perangkat di layar Profil.

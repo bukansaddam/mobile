@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:akar/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -102,9 +102,14 @@ class MyApp extends StatelessWidget {
                 themeMode: themeState.themeMode,
                 routerConfig: AppRouter.router,
                 builder: (context, child) {
-                  return GestureDetector(
-                    onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-                    child: child,
+                  // Jembatan sementara untuk plugin pihak ketiga yang masih memakai package:flutter/material.dart.
+                  // ignore: deprecated_member_use
+                  return MaterialUiCompatibilityBridge(
+                    child: GestureDetector(
+                      onTap: () =>
+                          FocusManager.instance.primaryFocus?.unfocus(),
+                      child: child ?? const SizedBox.shrink(),
+                    ),
                   );
                 },
               );

@@ -5,7 +5,7 @@ import 'package:akar/core/widgets/report_point_banner_strip.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_detail_labels.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Kartu ringkasan status laporan Jaga Tanah.
 class JagaTanahDetailStatusBanner extends StatelessWidget {

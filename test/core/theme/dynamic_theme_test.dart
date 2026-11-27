@@ -12,7 +12,7 @@ import 'package:akar/features/masyarakat/notification/presentation/widgets/emerg
 import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';

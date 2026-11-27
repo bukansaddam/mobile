@@ -1,6 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Indikator progres 5 langkah form Jaga Tanahku dengan slide horizontal pada layar sempit.
 class JagaTanahStepIndicator extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_region_matcher.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef JagaTanahRegionLoader =
     Future<Either<Failure, List<JagaTanahRegionEntity>>> Function({

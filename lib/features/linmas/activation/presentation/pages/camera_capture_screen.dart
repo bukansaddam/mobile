@@ -4,7 +4,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:v_video_compressor/v_video_compressor.dart';

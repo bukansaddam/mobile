@@ -1,5 +1,5 @@
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_formatted_text.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Menampilkan teks jawaban Siska secara bertahap (typewriter) tanpa mengubah posisi scroll.
 class AiChatTypewriterText extends StatefulWidget {

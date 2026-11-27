@@ -1,7 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/core/widgets/report_point_badge.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Ringkasan perolehan poin petugas Linmas per jenis laporan terverifikasi.
 class OfficerPointsBreakdownCard extends StatelessWidget {

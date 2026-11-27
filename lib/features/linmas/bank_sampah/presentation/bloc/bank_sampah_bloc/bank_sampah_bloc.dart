@@ -7,7 +7,7 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';

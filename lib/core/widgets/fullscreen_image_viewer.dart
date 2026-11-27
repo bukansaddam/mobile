@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _mediaWhite = Colors.white; // media-overlay
 const _mediaPillBg = Color(0x99000000); // media-overlay

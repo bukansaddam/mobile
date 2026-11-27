@@ -7,7 +7,7 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/analisis/presentation/widgets/bank_sampah_analisis_card.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/disaster_alert_banner.dart';
 import 'package:akar/features/masyarakat/notification/presentation/widgets/emergency_disaster_dialog.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

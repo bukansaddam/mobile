@@ -2,7 +2,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_visual_config.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Bottom sheet detail notifikasi ketika item tidak memicu navigasi halaman khusus
 /// atau sebagai ringkasan cepat pesan notifikasi.

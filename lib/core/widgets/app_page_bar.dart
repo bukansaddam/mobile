@@ -1,7 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// AppBar standar untuk seluruh sub-halaman aplikasi.
 class AppPageBar extends StatelessWidget implements PreferredSizeWidget {

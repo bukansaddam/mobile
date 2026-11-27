@@ -9,7 +9,7 @@ import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Galeri horizontal lampiran foto & video pada detail laporan Jaga Tanah.
 class JagaTanahDetailMediaStrip extends StatelessWidget {

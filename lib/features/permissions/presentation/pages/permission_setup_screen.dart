@@ -14,7 +14,7 @@ import 'package:akar/features/permissions/presentation/widgets/permission_progre
 import 'package:akar/features/permissions/presentation/widgets/permission_seamless_background.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_step_content.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 

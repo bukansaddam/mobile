@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
 import 'package:akar/features/linmas/activation/presentation/extensions/activation_activity_ui_extension.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_donut_chart.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:intl/intl.dart';
 
 class ActivationCard extends StatelessWidget {

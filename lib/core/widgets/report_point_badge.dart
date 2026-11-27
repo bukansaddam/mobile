@@ -1,7 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/utils/report_point_policy.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Badge ringkas penanda poin yang diperoleh pada kartu daftar laporan.
 class ReportPointBadge extends StatelessWidget {

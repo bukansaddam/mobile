@@ -7,7 +7,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/models/complaint
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/widgets/complaint_list_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ComplaintListPage extends StatefulWidget {

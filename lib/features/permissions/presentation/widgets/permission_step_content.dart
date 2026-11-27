@@ -4,7 +4,7 @@ import 'package:akar/features/permissions/domain/entities/app_permission_type.da
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_illustration.dart';
 import 'package:akar/features/permissions/presentation/widgets/permission_notice_strip.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Scrollable cardless step content (illustration, copy, and conditional notices).
 class PermissionStepContent extends StatelessWidget {

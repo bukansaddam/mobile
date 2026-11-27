@@ -1,7 +1,7 @@
 import 'package:akar/core/services/app_update_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/widgets/app_update_dialog.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _StubAppUpdateService extends AppUpdateService {

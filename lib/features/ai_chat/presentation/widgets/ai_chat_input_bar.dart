@@ -1,6 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Bilah input pesan di bagian bawah layar chat AI dengan proteksi offline & disabled.
 class AiChatInputBar extends StatelessWidget {

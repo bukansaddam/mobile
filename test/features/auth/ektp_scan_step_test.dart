@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/auth/presentation/widgets/ektp_scan_step.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _buildStep({

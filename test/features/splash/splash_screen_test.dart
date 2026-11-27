@@ -15,7 +15,7 @@ import 'package:akar/features/linmas/tracking/domain/repositories/tracking_repos
 import 'package:akar/features/linmas/tracking/domain/usecases/send_location_usecase.dart';
 import 'package:akar/features/linmas/tracking/presentation/bloc/tracking_bloc/tracking_bloc.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';

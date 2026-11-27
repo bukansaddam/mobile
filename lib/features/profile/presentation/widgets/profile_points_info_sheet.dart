@@ -1,7 +1,7 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/profile/presentation/widgets/officer_points_breakdown_card.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_points_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ProfilePointsInfoSheet extends StatelessWidget {
   final int points;

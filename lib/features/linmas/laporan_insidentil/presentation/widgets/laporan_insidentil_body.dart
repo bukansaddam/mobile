@@ -4,7 +4,7 @@ import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/lap
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_status_view.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class LaporanInsidentilBody extends StatelessWidget {
   final MyComplaintListState state;

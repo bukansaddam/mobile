@@ -15,7 +15,7 @@ import 'package:akar/features/vouchers/presentation/widgets/voucher_card.dart';
 import 'package:akar/features/vouchers/presentation/widgets/voucher_detail_dialog.dart';
 import 'package:akar/features/vouchers/presentation/widgets/voucher_redeem_dialog.dart';
 import 'package:akar/features/vouchers/presentation/widgets/voucher_summary_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

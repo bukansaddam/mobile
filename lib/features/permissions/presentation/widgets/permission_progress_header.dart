@@ -2,7 +2,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/permissions/domain/entities/app_permission_type.dart';
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Displays the current step counter and a flat segmented progress bar.
 class PermissionProgressHeader extends StatelessWidget {

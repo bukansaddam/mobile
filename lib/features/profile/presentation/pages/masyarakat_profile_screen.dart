@@ -15,7 +15,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/models/complaint
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/permissions/presentation/widgets/profile_permissions_sheet.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MasyarakatProfileScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Indikator animasi titik mengetik saat Siska sedang memproses jawaban.
 class AiChatTypingIndicator extends StatefulWidget {

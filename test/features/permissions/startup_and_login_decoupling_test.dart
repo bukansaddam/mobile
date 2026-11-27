@@ -12,7 +12,7 @@ import 'package:akar/features/permissions/domain/entities/app_permission_type.da
 import 'package:akar/features/permissions/domain/entities/permission_step_status.dart';
 import 'package:akar/features/permissions/domain/services/permission_gateway.dart';
 import 'package:akar/features/splash/presentation/pages/splash_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';

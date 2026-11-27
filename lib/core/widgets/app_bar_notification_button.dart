@@ -1,7 +1,7 @@
 import 'package:akar/core/widgets/app_bar_circle_button.dart';
 import 'package:akar/core/widgets/app_bar_notification_badge.dart';
 import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Tombol lonceng notifikasi AppBar (48x48dp) dengan badge unread count reaktif.

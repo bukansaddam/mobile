@@ -1,6 +1,6 @@
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class RondaSuccessDialog {
   RondaSuccessDialog._();

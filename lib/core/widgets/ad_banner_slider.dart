@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BannerItem {
   final String imagePath;

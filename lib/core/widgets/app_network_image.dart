@@ -1,6 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Reusable and optimized network image component with persistent caching,
 /// memory downsampling, and graceful loading/error states.

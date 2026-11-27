@@ -1,6 +1,6 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 extension ActivationCategoryUiExtension on ActivationCategory {
   Color resolveColor(AppColorScheme colors) {

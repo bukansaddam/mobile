@@ -5,7 +5,7 @@ import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_d
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_section_card.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Kartu perkembangan status Jaga Tanah (stepper 4 tahap + riwayat kronologis).
 class JagaTanahDetailTimelineCard extends StatelessWidget {

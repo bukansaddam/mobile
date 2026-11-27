@@ -13,7 +13,7 @@ import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_b
 import 'package:akar/features/masyarakat/main/presentation/widgets/custom_bottom_navbar.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:akar/features/profile/presentation/pages/masyarakat_profile_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MasyarakatMainScreen extends StatefulWidget {

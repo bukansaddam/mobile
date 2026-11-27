@@ -20,7 +20,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complain
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';

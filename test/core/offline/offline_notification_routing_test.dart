@@ -2,7 +2,7 @@ import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/services/firebase_notification_service.dart';
 import 'package:akar/core/theme/app_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

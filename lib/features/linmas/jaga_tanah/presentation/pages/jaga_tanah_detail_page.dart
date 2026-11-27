@@ -14,7 +14,7 @@ import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_status_view.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

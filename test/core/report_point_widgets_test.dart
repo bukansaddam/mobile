@@ -2,7 +2,7 @@ import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/core/utils/report_point_policy.dart';
 import 'package:akar/core/widgets/report_point_badge.dart';
 import 'package:akar/core/widgets/report_point_banner_strip.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

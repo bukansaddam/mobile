@@ -6,7 +6,7 @@ import 'package:akar/features/notifications/domain/entities/app_notification_ent
 import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:akar/features/notifications/presentation/pages/notification_page.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_detail_sheet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 

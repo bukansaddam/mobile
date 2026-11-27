@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_theme.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_avatar.dart';
 import 'package:akar/features/ai_chat/presentation/widgets/ai_chat_floating_overlay.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -9,7 +9,7 @@ import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_f
 import 'package:akar/features/linmas/jaga_tanah/presentation/models/jaga_tanah_polygon_utils.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_section_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_spatial_card.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Langkah review seluruh isian form Jaga Tanahku sebelum laporan dikirim.
 class JagaTanahReviewStep extends StatelessWidget {
