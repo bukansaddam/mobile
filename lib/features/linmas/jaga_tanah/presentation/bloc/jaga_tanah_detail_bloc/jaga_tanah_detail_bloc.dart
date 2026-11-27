@@ -11,9 +11,8 @@ class JagaTanahDetailBloc
     extends Bloc<JagaTanahDetailEvent, JagaTanahDetailState> {
   final GetJagaTanahDetailUsecase _getReportDetail;
 
-  JagaTanahDetailBloc({required GetJagaTanahDetailUsecase getReportDetail})
-    : _getReportDetail = getReportDetail,
-      super(const JagaTanahDetailState()) {
+  JagaTanahDetailBloc({required this._getReportDetail})
+    : super(const JagaTanahDetailState()) {
     on<FetchJagaTanahDetailEvent>(_onFetchDetail);
   }
 

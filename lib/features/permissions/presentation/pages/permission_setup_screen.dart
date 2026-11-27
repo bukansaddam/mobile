@@ -142,7 +142,7 @@ class _PermissionSetupScreenState extends State<PermissionSetupScreen>
                         _hasDispatchedCompletion = true;
                         if (state.isOfficer) {
                           context.read<TrackingBloc>().add(
-                            StartTrackingEvent(),
+                            const StartTrackingEvent(),
                           );
                         }
                         _scheduleCompletionFallback();

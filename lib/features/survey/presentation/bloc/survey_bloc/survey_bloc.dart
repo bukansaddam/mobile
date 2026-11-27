@@ -25,7 +25,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     this.submitApiSurveyAnswersUsecase,
     this.getInitialQuizUsecase,
     this.submitInitialQuizUsecase,
-  }) : super(SurveyInitialState()) {
+  }) : super(const SurveyInitialState()) {
     on<CheckSurveyStatusEvent>(_onCheckSurveyStatus);
     on<SubmitSurveyEvent>(_onSubmitSurvey);
     on<SubmitInitialSurveyEvent>(_onSubmitInitialSurvey);
@@ -43,7 +43,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SubmitInitialSurveyEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveySubmittingState());
+    emit(const SurveySubmittingState());
     try {
       await getMonthlySurveyStatusUsecase.repository.saveInitialSurvey(
         event.userId,
@@ -65,7 +65,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     GetInitialQuizEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveyLoadingState());
+    emit(const SurveyLoadingState());
     try {
       final repository = getMonthlySurveyStatusUsecase.repository;
       final InitialQuizResponseEntity? quiz;
@@ -114,7 +114,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SubmitInitialQuizAnswersEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveySubmittingState());
+    emit(const SurveySubmittingState());
     try {
       final repository = getMonthlySurveyStatusUsecase.repository;
       if (submitInitialQuizUsecase != null) {
@@ -147,7 +147,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     LoadDynamicMonthlyFormEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveyLoadingState());
+    emit(const SurveyLoadingState());
     try {
       final periodKey = event.periodKey ?? SurveyEntity.getCurrentPeriodKey();
       final repository = getMonthlySurveyStatusUsecase.repository;
@@ -184,7 +184,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SubmitApiSurveyAnswersEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveySubmittingState());
+    emit(const SurveySubmittingState());
     try {
       if (submitApiSurveyAnswersUsecase != null) {
         await submitApiSurveyAnswersUsecase!(
@@ -235,7 +235,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SubmitDynamicMonthlySurveyEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveySubmittingState());
+    emit(const SurveySubmittingState());
     try {
       final repository = getMonthlySurveyStatusUsecase.repository;
       await repository.submitDynamicMonthlySurvey(event.survey);
@@ -262,7 +262,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     CheckSurveyStatusEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveyLoadingState());
+    emit(const SurveyLoadingState());
     try {
       final statusResult = await getMonthlySurveyStatusUsecase(event.periodKey);
       final history = await getSurveyHistoryUsecase();
@@ -287,7 +287,7 @@ class SurveyBloc extends Bloc<SurveyEvent, SurveyState> {
     SubmitSurveyEvent event,
     Emitter<SurveyState> emit,
   ) async {
-    emit(SurveySubmittingState());
+    emit(const SurveySubmittingState());
     try {
       await submitMonthlySurveyUsecase(event.survey);
       final history = await getSurveyHistoryUsecase();

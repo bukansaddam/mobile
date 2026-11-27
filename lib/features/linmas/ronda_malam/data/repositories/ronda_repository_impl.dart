@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/linmas/ronda_malam/data/datasources/ronda_remote_datasource.dart';
-import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_mapper.dart';
+import 'package:akar/features/linmas/ronda_malam/data/mappers/ronda_laporan_mapper.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/repositories/ronda_repository.dart';
 
 class RondaRepositoryImpl implements RondaRepository {

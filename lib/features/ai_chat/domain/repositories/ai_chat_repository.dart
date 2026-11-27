@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
-import 'package:dio/dio.dart';
 
 /// Kontrak repository domain untuk fitur Asisten AI Siska.
 abstract class AiChatRepository {
@@ -9,7 +9,7 @@ abstract class AiChatRepository {
   Future<Either<Failure, AiChatSendResultEntity>> sendMessage({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
+    AiChatCancellationToken? cancelToken,
   });
 
   Future<Either<Failure, List<AiChatSessionEntity>>> getSessions({

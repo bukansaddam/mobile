@@ -1,4 +1,4 @@
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:equatable/equatable.dart';
 
 /// Jenis laporan Linmas yang memperoleh insentif poin setelah diverifikasi.

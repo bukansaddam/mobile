@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/institusi_entity.dart';
-import '../entities/institusi_category_entity.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_category_entity.dart';
 
 abstract class InstitusiRepository {
   Future<Either<Failure, InstitusiPaginatedEntity>> getInstitusiList({

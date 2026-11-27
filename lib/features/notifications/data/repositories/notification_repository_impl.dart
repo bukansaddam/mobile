@@ -9,8 +9,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
   final NotificationRemoteDatasource _remoteDatasource;
 
   const NotificationRepositoryImpl({
-    required NotificationRemoteDatasource remoteDatasource,
-  }) : _remoteDatasource = remoteDatasource;
+    required this._remoteDatasource,
+  });
 
   @override
   Future<Either<Failure, AppNotificationPageEntity>> getNotifications({

@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
                     }
 
                     if (isOfficer) {
-                      context.read<TrackingBloc>().add(StartTrackingEvent());
+                      context.read<TrackingBloc>().add(const StartTrackingEvent());
                       if (state.user.hasCompletedInitialQuiz) {
                         context.goNamed(AppRouter.main);
                       } else {

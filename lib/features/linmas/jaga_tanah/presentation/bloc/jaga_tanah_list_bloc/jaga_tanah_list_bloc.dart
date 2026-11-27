@@ -18,11 +18,9 @@ class JagaTanahListBloc extends Bloc<JagaTanahListEvent, JagaTanahListState> {
   int _generation = 0;
 
   JagaTanahListBloc({
-    required GetMyJagaTanahReportsUsecase getMyReports,
-    required GetJagaTanahCategoriesUsecase getCategories,
-  }) : _getMyReports = getMyReports,
-       _getCategories = getCategories,
-       super(const JagaTanahListState()) {
+    required this._getMyReports,
+    required this._getCategories,
+  }) : super(const JagaTanahListState()) {
     on<FetchJagaTanahReportsEvent>(_onFetch);
     on<LoadMoreJagaTanahReportsEvent>(_onLoadMore);
     on<SearchJagaTanahReportsEvent>(_onSearch);

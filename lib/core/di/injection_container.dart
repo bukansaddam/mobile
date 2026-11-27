@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:akar/core/network/dio_client.dart';
+import 'package:akar/core/security/secure_token_storage.dart';
 import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/core/offline/offline_sync_coordinator.dart';
@@ -170,9 +171,9 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordi
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_detail_bloc/complaint_detail_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/complaint_list_bloc/complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
-import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_bloc/location_picker_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
 
 // Survey
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
@@ -207,6 +208,9 @@ Future<void> init() async {
   // Core & External
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  sl.registerLazySingleton<SecureTokenStorage>(
+    () => const SecureTokenStorage(),
+  );
   sl.registerFactory<ThemeBloc>(
     () => ThemeBloc(sharedPreferences: sl<SharedPreferences>()),
   );
@@ -273,7 +277,10 @@ Future<void> init() async {
 
   // Data Sources
   sl.registerLazySingleton<AuthLocalDatasource>(
-    () => AuthLocalDatasourceImpl(sharedPreferences: sl()),
+    () => AuthLocalDatasourceImpl(
+      sharedPreferences: sl(),
+      tokenStorage: sl<SecureTokenStorage>(),
+    ),
   );
   sl.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDatasourceImpl(),
@@ -542,7 +549,7 @@ Future<void> init() async {
     () =>
         PermissionOnboardingBloc(permissionService: sl<AppPermissionService>()),
   );
-  sl.registerLazySingleton<ProfileBloc>(
+  sl.registerFactory<ProfileBloc>(
     () => ProfileBloc(
       getProfileUsecase: sl(),
       updateProfileUsecase: sl(),
@@ -571,7 +578,7 @@ Future<void> init() async {
     () => SubmitActivationReportUsecase(sl()),
   );
 
-  sl.registerLazySingleton<ActivationBloc>(
+  sl.registerFactory<ActivationBloc>(
     () => ActivationBloc(
       getActivationRunsUsecase: sl(),
       getActivationSubmissionsUsecase: sl(),
@@ -641,8 +648,8 @@ Future<void> init() async {
     );
   });
 
-  // Dumas Cubits (Factory)
-  sl.registerFactory<MainCubit>(() => MainCubit());
+  // Masyarakat BLoCs (Factory)
+  sl.registerFactory<MainBloc>(() => MainBloc());
   sl.registerFactory<CreateComplaintBloc>(
     () => CreateComplaintBloc(
       createComplaint: sl(),
@@ -674,8 +681,8 @@ Future<void> init() async {
   sl.registerFactory<JagaTanahDetailBloc>(
     () => JagaTanahDetailBloc(getReportDetail: sl()),
   );
-  sl.registerFactory<LocationPickerCubit>(
-    () => LocationPickerCubit(
+  sl.registerFactory<LocationPickerBloc>(
+    () => LocationPickerBloc(
       getLocationSuggestionsUseCase: sl<GetLocationSuggestionsUseCase>(),
       getAddressFromLatLngUseCase: sl<GetAddressFromLatLngUseCase>(),
       searchCoordinatesUseCase: sl<SearchCoordinatesUseCase>(),
@@ -714,7 +721,7 @@ Future<void> init() async {
   sl.registerLazySingleton<GetSurveyHistoryUsecase>(
     () => GetSurveyHistoryUsecase(sl()),
   );
-  sl.registerLazySingleton<SurveyBloc>(
+  sl.registerFactory<SurveyBloc>(
     () => SurveyBloc(
       getMonthlySurveyStatusUsecase: sl(),
       submitMonthlySurveyUsecase: sl(),

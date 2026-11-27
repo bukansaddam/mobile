@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'main_bloc.dart';
 
 class MainState extends Equatable {
   final int selectedIndex;

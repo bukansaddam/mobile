@@ -1,12 +1,12 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_colors.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_category.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-export 'complaint_category.dart';
+export 'package:akar/features/masyarakat/complaint/presentation/models/complaint_category.dart';
 
 enum ComplaintStatus {
   received(

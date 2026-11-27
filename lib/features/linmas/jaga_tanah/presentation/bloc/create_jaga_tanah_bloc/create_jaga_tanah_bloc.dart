@@ -22,15 +22,11 @@ class CreateJagaTanahBloc
   final AuthLocalDatasource? _authLocalDatasource;
 
   CreateJagaTanahBloc({
-    required CreateJagaTanahReportUsecase createReport,
-    required GetJagaTanahCategoriesUsecase getCategories,
-    OfflineQueueLocalDatasource? offlineQueue,
-    AuthLocalDatasource? authLocalDatasource,
-  }) : _createReport = createReport,
-       _getCategories = getCategories,
-       _offlineQueue = offlineQueue,
-       _authLocalDatasource = authLocalDatasource,
-       super(const CreateJagaTanahState()) {
+    required this._createReport,
+    required this._getCategories,
+    this._offlineQueue,
+    this._authLocalDatasource,
+  }) : super(const CreateJagaTanahState()) {
     on<LoadJagaTanahCategoriesEvent>(_onLoadCategories);
     on<SubmitJagaTanahReportEvent>(_onSubmit);
   }

@@ -127,7 +127,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       );
     }
   } catch (e, stack) {
-    debugPrint('Error in firebaseMessagingBackgroundHandler: $e\n$stack');
+    AppLogger.e('Error in firebaseMessagingBackgroundHandler', e, stack);
   }
 }
 
@@ -181,15 +181,13 @@ class FirebaseNotificationService {
   StreamSubscription<String>? _tokenRefreshSubscription;
 
   FirebaseNotificationService({
-    required SharedPreferences prefs,
+    required this._prefs,
     FirebaseMessaging? fcm,
     FlutterLocalNotificationsPlugin? localNotifications,
-    DisasterAlertService? disasterAlertService,
-  }) : _prefs = prefs,
-       _fcm = fcm ?? FirebaseMessaging.instance,
+    this._disasterAlertService,
+  }) : _fcm = fcm ?? FirebaseMessaging.instance,
        _localNotifications =
-           localNotifications ?? FlutterLocalNotificationsPlugin(),
-       _disasterAlertService = disasterAlertService;
+           localNotifications ?? FlutterLocalNotificationsPlugin();
 
   Stream<RemoteMessage> get onForegroundMessage =>
       _foregroundMessageController.stream;

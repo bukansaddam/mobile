@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:akar/utils/app_logger.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class AudioAlarmService {
@@ -23,7 +23,7 @@ class AudioAlarmService {
         _audioPlayer = AudioPlayer();
         _audioPlayer?.setReleaseMode(ReleaseMode.loop);
       } catch (e) {
-        debugPrint('Warning initializing AudioPlayer: $e');
+        AppLogger.w('Warning initializing AudioPlayer: $e');
       }
     }
     return _audioPlayer ?? AudioPlayer();
@@ -39,9 +39,9 @@ class AudioAlarmService {
       await player.setReleaseMode(ReleaseMode.loop);
       await player.setVolume(_volume);
       await player.play(AssetSource('sounds/emergency_alarm.m4a'));
-      debugPrint('Emergency alarm siren started ringing via AudioPlayer!');
+      AppLogger.i('Emergency alarm siren started ringing via AudioPlayer!');
     } catch (e) {
-      debugPrint(
+      AppLogger.w(
         'AudioPlayer failed (e.g. MissingPluginException). Using SystemSound fallback: $e',
       );
       _startSystemFallbackRinging();
@@ -77,7 +77,7 @@ class AudioAlarmService {
         stopAlarm();
       });
     } catch (e) {
-      debugPrint('AudioPlayer test failed, using SystemSound fallback: $e');
+      AppLogger.w('AudioPlayer test failed, using SystemSound fallback: $e');
       _startSystemFallbackRinging();
       Timer(const Duration(seconds: 4), () {
         stopAlarm();
@@ -93,9 +93,9 @@ class AudioAlarmService {
 
     try {
       await _audioPlayer?.stop();
-      debugPrint('🔕 Emergency alarm siren stopped.');
+      AppLogger.i('Emergency alarm siren stopped.');
     } catch (e) {
-      debugPrint('Error stopping AudioPlayer: $e');
+      AppLogger.w('Error stopping AudioPlayer: $e');
     }
   }
 

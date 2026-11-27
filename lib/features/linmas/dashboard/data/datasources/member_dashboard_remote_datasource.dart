@@ -1,7 +1,7 @@
 import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/core/network/base_remote_data_source.dart';
 
-import '../models/member_dashboard_model.dart';
+import 'package:akar/features/linmas/dashboard/data/models/member_dashboard_model.dart';
 
 abstract class MemberDashboardRemoteDataSource {
   Future<MemberDashboardModel> getMemberDashboard();

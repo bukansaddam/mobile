@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:akar/features/linmas/home/domain/entities/tracked_location.dart';
+import 'package:akar/utils/app_logger.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -139,7 +139,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               : 'Street details not available';
         }
       } catch (geocodingError) {
-        debugPrint('Geocoding failed: $geocodingError');
+        AppLogger.w('Geocoding failed: $geocodingError');
         address = 'Street details not available (Network/service error)';
       }
 
@@ -161,7 +161,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(state.copyWith(locations: updatedLocations, errorMessage: null));
     } catch (e) {
-      debugPrint('Error capturing location in HomeBloc: $e');
+      AppLogger.e('Error capturing location in HomeBloc', e);
     }
   }
 

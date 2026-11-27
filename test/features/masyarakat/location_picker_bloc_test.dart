@@ -5,7 +5,7 @@ import 'package:akar/features/masyarakat/complaint/domain/usecases/get_address_f
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_current_location_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_location_suggestions_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/search_coordinates_usecase.dart';
-import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_cubit.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_bloc/location_picker_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -40,20 +40,43 @@ class _FakeLocationRepository implements LocationRepository {
 }
 
 void main() {
-  test('LocationPickerCubit does not throw StateError if closed while locating user', () async {
-    final repo = _FakeLocationRepository();
-    final cubit = LocationPickerCubit(
-      getLocationSuggestionsUseCase: GetLocationSuggestionsUseCase(repo),
-      getAddressFromLatLngUseCase: GetAddressFromLatLngUseCase(repo),
-      searchCoordinatesUseCase: SearchCoordinatesUseCase(repo),
-      getCurrentLocationUseCase: GetCurrentLocationUseCase(repo),
-    );
+  test(
+    'LocationPickerBloc does not throw StateError if closed while locating user',
+    () async {
+      final repo = _FakeLocationRepository();
+      final bloc = LocationPickerBloc(
+        getLocationSuggestionsUseCase: GetLocationSuggestionsUseCase(repo),
+        getAddressFromLatLngUseCase: GetAddressFromLatLngUseCase(repo),
+        searchCoordinatesUseCase: SearchCoordinatesUseCase(repo),
+        getCurrentLocationUseCase: GetCurrentLocationUseCase(repo),
+      );
 
-    cubit.determineUserPosition();
-    await cubit.close();
+      bloc.add(const LocationPickerDetermineUserPosition());
+      await bloc.close();
 
-    await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
-    expect(cubit.isClosed, isTrue);
-  });
+      expect(bloc.isClosed, isTrue);
+    },
+  );
+
+  test(
+    'LocationPickerBloc updates position and fetches address on initialize',
+    () async {
+      final repo = _FakeLocationRepository();
+      final bloc = LocationPickerBloc(
+        getLocationSuggestionsUseCase: GetLocationSuggestionsUseCase(repo),
+        getAddressFromLatLngUseCase: GetAddressFromLatLngUseCase(repo),
+        searchCoordinatesUseCase: SearchCoordinatesUseCase(repo),
+        getCurrentLocationUseCase: GetCurrentLocationUseCase(repo),
+      );
+
+      bloc.add(const LocationPickerInitialized());
+      await Future.delayed(const Duration(milliseconds: 180));
+
+      expect(bloc.state.targetPosition, const LatLng(-6.2, 106.8));
+      expect(bloc.state.selectedAddress, 'Jl. Jend. Sudirman');
+      await bloc.close();
+    },
+  );
 }

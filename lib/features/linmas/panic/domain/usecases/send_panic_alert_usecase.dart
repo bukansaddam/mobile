@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/panic_entity.dart';
-import '../repositories/panic_repository.dart';
+import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
+import 'package:akar/features/linmas/panic/domain/repositories/panic_repository.dart';
 
 class SendPanicAlertUsecase {
   final PanicRepository repository;

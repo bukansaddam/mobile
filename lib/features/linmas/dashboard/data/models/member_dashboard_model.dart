@@ -1,4 +1,4 @@
-import '../../domain/entities/member_dashboard_entity.dart';
+import 'package:akar/features/linmas/dashboard/domain/entities/member_dashboard_entity.dart';
 
 class MemberDashboardResponseModel {
   final bool success;

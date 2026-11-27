@@ -9,7 +9,7 @@ import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/pages/laporan_insidentil_list_screen.dart';
 import 'package:akar/features/linmas/laporan_insidentil/presentation/widgets/laporan_insidentil_card.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';

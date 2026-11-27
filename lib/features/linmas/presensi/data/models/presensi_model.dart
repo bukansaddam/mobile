@@ -1,4 +1,4 @@
-import '../../domain/entities/presensi_entity.dart';
+import 'package:akar/features/linmas/presensi/domain/entities/presensi_entity.dart';
 
 class PresensiDataModel extends PresensiDataEntity {
   const PresensiDataModel({

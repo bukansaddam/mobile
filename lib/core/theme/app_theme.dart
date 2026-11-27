@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'app_color_scheme.dart';
-import 'app_text_styles.dart';
+import 'package:akar/core/theme/app_color_scheme.dart';
+import 'package:akar/core/theme/app_text_styles.dart';
 
-export 'app_color_scheme.dart';
+export 'package:akar/core/theme/app_color_scheme.dart';
 
 class AppTheme {
   AppTheme._();

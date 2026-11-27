@@ -1,9 +1,9 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../../domain/entities/presensi_mapper.dart';
-import '../../domain/repositories/presensi_repository.dart';
-import '../datasources/presensi_remote_datasource.dart';
+import 'package:akar/features/linmas/presensi/data/mappers/presensi_mapper.dart';
+import 'package:akar/features/linmas/presensi/domain/repositories/presensi_repository.dart';
+import 'package:akar/features/linmas/presensi/data/datasources/presensi_remote_datasource.dart';
 
 class PresensiRepositoryImpl implements PresensiRepository {
   final PresensiRemoteDatasource remoteDatasource;

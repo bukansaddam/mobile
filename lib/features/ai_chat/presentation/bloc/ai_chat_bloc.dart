@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/domain/usecases/ai_chat_usecases.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_state.dart';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 
 /// BLoC untuk mengelola percakapan, sesi riwayat, pembatalan request, dan guard offline Asisten AI Siska.
 class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
@@ -56,7 +56,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
   final Future<bool> Function() _checkOffline;
 
   StreamSubscription<bool>? _connectivitySub;
-  CancelToken? _activeSendCancelToken;
+  AiChatCancellationToken? _activeSendCancelToken;
   int _sessionEpoch = 0;
   int _localSequence = 0;
 
@@ -177,7 +177,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     required Emitter<AiChatState> emit,
   }) async {
     final epoch = _sessionEpoch;
-    final token = CancelToken();
+    final token = AiChatCancellationToken();
     _activeSendCancelToken = token;
 
     emit(
@@ -234,10 +234,11 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
           );
         },
       );
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.cancel || epoch != _sessionEpoch) return;
-      _activeSendCancelToken = null;
-      emit(state.copyWith(isSending: false, errorMessage: e.message));
+    } on AiChatCancelledException {
+      if (epoch == _sessionEpoch) {
+        _activeSendCancelToken = null;
+      }
+      return;
     }
   }
 

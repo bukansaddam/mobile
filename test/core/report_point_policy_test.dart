@@ -1,5 +1,5 @@
 import 'package:akar/core/utils/report_point_policy.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

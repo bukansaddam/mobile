@@ -4,7 +4,7 @@ import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../models/organisasi_model.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/models/organisasi_model.dart';
 
 abstract class OrganisasiRemoteDatasource {
   Future<OrganisasiResponseModel> getOrganisasiList({

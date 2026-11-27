@@ -2,9 +2,9 @@ import 'package:akar/features/survey/data/datasources/survey_local_datasource.da
 import 'package:akar/features/survey/data/datasources/survey_remote_datasource.dart';
 import 'package:akar/features/survey/data/models/initial_quiz_model.dart';
 import 'package:akar/features/survey/domain/entities/initial_quiz_entity.dart';
-import 'package:akar/features/survey/domain/entities/initial_quiz_mapper.dart';
+import 'package:akar/features/survey/data/mappers/initial_quiz_mapper.dart';
 import 'package:akar/features/survey/domain/entities/survey_entity.dart';
-import 'package:akar/features/survey/domain/entities/survey_mapper.dart';
+import 'package:akar/features/survey/data/mappers/survey_mapper.dart';
 import 'package:akar/features/survey/domain/repositories/survey_repository.dart';
 
 class SurveyRepositoryImpl implements SurveyRepository {

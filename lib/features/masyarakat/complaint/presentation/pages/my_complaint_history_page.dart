@@ -1,12 +1,12 @@
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_page_bar.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/widgets/complaint_list_widget.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -776,8 +776,8 @@ class _MyComplaintHistoryPageState extends State<MyComplaintHistoryPage> {
                                               context,
                                             );
                                         if (result == true && context.mounted) {
-                                          context.read<MainCubit>().changeTab(
-                                            0,
+                                          context.read<MainBloc>().add(
+                                            const MainTabChanged(0),
                                           );
                                           context
                                               .read<MyComplaintListBloc>()

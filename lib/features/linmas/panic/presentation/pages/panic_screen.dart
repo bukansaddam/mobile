@@ -10,11 +10,11 @@ import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/features/linmas/panic/core/constants/panic_constants.dart';
 import 'package:akar/features/linmas/panic/presentation/bloc/panic_bloc/panic_bloc.dart';
 
-import '../widgets/panic_bottom_panel.dart';
-import '../widgets/panic_dialogs.dart';
-import '../widgets/panic_member_detail_sheet.dart';
-import '../widgets/panic_shimmer_loading.dart';
-import '../widgets/panic_status_banner.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_bottom_panel.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_dialogs.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_member_detail_sheet.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_shimmer_loading.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_status_banner.dart';
 
 class PanicScreen extends StatefulWidget {
   const PanicScreen({super.key});

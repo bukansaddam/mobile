@@ -1,7 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import '../../domain/entities/location_suggestion.dart';
+part of 'location_picker_bloc.dart';
 
 class LocationPickerState extends Equatable {
   static const LatLng defaultLocation = LatLng(-6.175392, 106.827153);

@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../entities/location_suggestion.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/location_suggestion.dart';
 
 abstract class LocationRepository {
   Future<Either<Failure, List<LocationSuggestion>>> getLocationSuggestions(

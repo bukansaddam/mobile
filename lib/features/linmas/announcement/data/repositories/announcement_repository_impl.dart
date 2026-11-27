@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/linmas/announcement/data/datasources/announcement_remote_datasource.dart';
-import 'package:akar/features/linmas/announcement/domain/entities/announcement_mapper.dart';
+import 'package:akar/features/linmas/announcement/data/mappers/announcement_mapper.dart';
 import 'package:akar/features/linmas/announcement/domain/repositories/announcement_repository.dart';
 
 class AnnouncementRepositoryImpl implements AnnouncementRepository {

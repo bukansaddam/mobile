@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/organisasi_entity.dart';
-import '../repositories/organisasi_repository.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/repositories/organisasi_repository.dart';
 
 class UpdateOrganisasiUsecase {
   final OrganisasiRepository repository;

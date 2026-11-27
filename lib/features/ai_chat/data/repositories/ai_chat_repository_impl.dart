@@ -1,6 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/ai_chat/data/datasources/ai_chat_remote_datasource.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dart';
 import 'package:dio/dio.dart';
@@ -15,8 +16,12 @@ class AiChatRepositoryImpl implements AiChatRepository {
     try {
       return Right(await run());
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.cancel) rethrow;
+      if (e.type == DioExceptionType.cancel) {
+        throw AiChatCancelledException(e.message);
+      }
       return Left(ErrorUtils.toFailure(e));
+    } on AiChatCancelledException {
+      rethrow;
     } catch (e) {
       return Left(ErrorUtils.toFailure(e));
     }
@@ -30,14 +35,25 @@ class AiChatRepositoryImpl implements AiChatRepository {
   Future<Either<Failure, AiChatSendResultEntity>> sendMessage({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
-  }) => _guard(
-    () async => (await _datasource.sendMessage(
-      sessionId: sessionId,
-      message: message,
-      cancelToken: cancelToken,
-    )).toDomain(),
-  );
+    AiChatCancellationToken? cancelToken,
+  }) {
+    CancelToken? dioCancelToken;
+    if (cancelToken != null) {
+      dioCancelToken = CancelToken();
+      cancelToken.onCancel((reason) {
+        if (!dioCancelToken!.isCancelled) {
+          dioCancelToken.cancel(reason);
+        }
+      });
+    }
+    return _guard(
+      () async => (await _datasource.sendMessage(
+        sessionId: sessionId,
+        message: message,
+        cancelToken: dioCancelToken,
+      )).toDomain(),
+    );
+  }
 
   @override
   Future<Either<Failure, List<AiChatSessionEntity>>> getSessions({

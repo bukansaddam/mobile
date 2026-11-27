@@ -44,16 +44,13 @@ class OfflineSyncCoordinator {
       _handlers.any((h) => h.canHandle(type));
 
   OfflineSyncCoordinator({
-    required OfflineQueueLocalDatasource queueDatasource,
-    String Function()? currentUserIdResolver,
+    required this._queueDatasource,
+    this._currentUserIdResolver,
     Future<List<ConnectivityResult>> Function()? connectivityChecker,
     Stream<List<ConnectivityResult>>? connectivityStream,
-    FirebaseNotificationService? notificationService,
-  }) : _queueDatasource = queueDatasource,
-       _currentUserIdResolver = currentUserIdResolver,
-       _connectivityChecker =
-           connectivityChecker ?? (() => Connectivity().checkConnectivity()),
-       _notificationService = notificationService {
+    this._notificationService,
+  }) : _connectivityChecker =
+           connectivityChecker ?? (() => Connectivity().checkConnectivity()) {
     if (connectivityStream != null) {
       _connectivitySubscription = connectivityStream.listen(
         _onConnectivityChanged,

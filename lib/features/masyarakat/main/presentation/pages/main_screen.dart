@@ -9,8 +9,7 @@ import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/my_complaint_history_page.dart';
 import 'package:akar/features/masyarakat/home/presentation/pages/home_screen.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_state.dart';
+import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
 import 'package:akar/features/masyarakat/main/presentation/widgets/custom_bottom_navbar.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_navigation_helper.dart';
 import 'package:akar/features/profile/presentation/pages/masyarakat_profile_screen.dart';
@@ -42,7 +41,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
   Future<void> _openCreateComplaint(BuildContext context) async {
     final result = await CreateComplaintPage.show(context);
     if (result == true && context.mounted) {
-      context.read<MainCubit>().changeTab(0);
+      context.read<MainBloc>().add(const MainTabChanged(0));
       context.read<MyComplaintListBloc>().add(
         const FetchMyComplaintsEvent(isRefresh: true),
       );
@@ -56,7 +55,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
     return BlocProvider(
       create: (_) =>
           sl<MyComplaintListBloc>()..add(const FetchMyComplaintsEvent()),
-      child: BlocBuilder<MainCubit, MainState>(
+      child: BlocBuilder<MainBloc, MainState>(
         builder: (context, state) {
           return Scaffold(
             appBar: CustomAppBar(onNotificationPressed: _handleNotificationTap),
@@ -103,7 +102,7 @@ class _MasyarakatMainScreenState extends State<MasyarakatMainScreen> {
               currentIndex: state.selectedIndex,
               onTapTab: (index) {
                 if (index == 0 || index == 1 || index == 3 || index == 4) {
-                  context.read<MainCubit>().changeTab(index);
+                  context.read<MainBloc>().add(MainTabChanged(index));
                 }
               },
             ),

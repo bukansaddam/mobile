@@ -1,4 +1,4 @@
-import '../security/endpoint_security.dart';
+import 'package:akar/core/security/endpoint_security.dart';
 
 class ApiConstants {
   ApiConstants._();

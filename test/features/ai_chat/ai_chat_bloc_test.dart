@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dart';
 import 'package:akar/features/ai_chat/domain/usecases/ai_chat_usecases.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeAiChatRepository implements AiChatRepository {
@@ -14,7 +14,7 @@ class _FakeAiChatRepository implements AiChatRepository {
   Future<Either<Failure, AiChatSendResultEntity>> Function({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
+    AiChatCancellationToken? cancelToken,
   })?
   onSendMessage;
 
@@ -36,7 +36,7 @@ class _FakeAiChatRepository implements AiChatRepository {
   Future<Either<Failure, AiChatSendResultEntity>> sendMessage({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
+    AiChatCancellationToken? cancelToken,
   }) async {
     sendCallCount++;
     if (onSendMessage != null) {
@@ -180,7 +180,7 @@ void main() {
     repo.onSendMessage = ({
       int? sessionId,
       required String message,
-      CancelToken? cancelToken,
+      AiChatCancellationToken? cancelToken,
     }) => completer.future;
 
     bloc.add(const SendAiChatMessageEvent('Halo Siska'));
@@ -224,10 +224,10 @@ void main() {
   });
 
   test('starting new session mid-request cancels CancelToken and ignores stale reply', () async {
-    CancelToken? capturedToken;
+    AiChatCancellationToken? capturedToken;
     final completer = Completer<Either<Failure, AiChatSendResultEntity>>();
     repo.onSendMessage =
-        ({int? sessionId, required String message, CancelToken? cancelToken}) {
+        ({int? sessionId, required String message, AiChatCancellationToken? cancelToken}) {
           capturedToken = cancelToken;
           return completer.future;
         };

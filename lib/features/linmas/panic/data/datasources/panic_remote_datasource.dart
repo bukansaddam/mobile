@@ -4,7 +4,7 @@ import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/utils/app_logger.dart';
 
-import '../models/panic_model.dart';
+import 'package:akar/features/linmas/panic/data/models/panic_model.dart';
 
 abstract class PanicRemoteDatasource {
   Future<List<NearbyMemberModel>> getNearbyMembers({

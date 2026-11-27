@@ -19,13 +19,10 @@ class CreateComplaintBloc
   final AuthLocalDatasource? _authLocalDatasource;
 
   CreateComplaintBloc({
-    required CreateComplaintUsecase createComplaint,
-    OfflineQueueLocalDatasource? offlineQueue,
-    AuthLocalDatasource? authLocalDatasource,
-  }) : _createComplaint = createComplaint,
-       _offlineQueue = offlineQueue,
-       _authLocalDatasource = authLocalDatasource,
-       super(const CreateComplaintInitial()) {
+    required this._createComplaint,
+    this._offlineQueue,
+    this._authLocalDatasource,
+  }) : super(const CreateComplaintInitial()) {
     on<SubmitComplaintEvent>(_onSubmit);
   }
 

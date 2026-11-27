@@ -4,7 +4,7 @@ import 'package:akar/core/network/base_remote_data_source.dart';
 import 'package:akar/utils/app_logger.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../models/tokoh_model.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/models/tokoh_model.dart';
 
 abstract class TokohRemoteDatasource {
   Future<TokohResponseModel> getTokohList({

@@ -1,8 +1,8 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../../domain/entities/member_dashboard_entity.dart';
-import '../../domain/repositories/member_dashboard_repository.dart';
-import '../datasources/member_dashboard_remote_datasource.dart';
+import 'package:akar/features/linmas/dashboard/domain/entities/member_dashboard_entity.dart';
+import 'package:akar/features/linmas/dashboard/domain/repositories/member_dashboard_repository.dart';
+import 'package:akar/features/linmas/dashboard/data/datasources/member_dashboard_remote_datasource.dart';
 
 class MemberDashboardRepositoryImpl implements MemberDashboardRepository {
   final MemberDashboardRemoteDataSource remoteDataSource;

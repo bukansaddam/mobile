@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dart';
-import 'package:dio/dio.dart';
 
 class GetAiChatStatusUsecase {
   GetAiChatStatusUsecase(this._repository);
@@ -19,7 +19,7 @@ class SendAiChatMessageUsecase {
   Future<Either<Failure, AiChatSendResultEntity>> call({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
+    AiChatCancellationToken? cancelToken,
   }) => _repository.sendMessage(
     sessionId: sessionId,
     message: message,

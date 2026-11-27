@@ -1,23 +1,23 @@
 import 'package:akar/features/auth/data/models/auth_model.dart';
-import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/data/mappers/auth_mapper.dart';
 import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_location_model.dart';
 import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_report_model.dart';
-import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_mapper.dart';
-import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_mapper.dart';
+import 'package:akar/features/linmas/bank_sampah/data/mappers/bank_sampah_location_mapper.dart';
+import 'package:akar/features/linmas/bank_sampah/data/mappers/bank_sampah_report_mapper.dart';
 import 'package:akar/features/linmas/demografi/institusi/data/models/institusi_model.dart';
 import 'package:akar/features/linmas/demografi/organisasi/data/models/organisasi_model.dart';
 import 'package:akar/features/linmas/demografi/tokoh/data/models/tokoh_model.dart';
-import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_mapper.dart';
-import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_mapper.dart';
-import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_mapper.dart';
+import 'package:akar/features/linmas/demografi/institusi/data/mappers/institusi_mapper.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/mappers/organisasi_mapper.dart';
+import 'package:akar/features/linmas/demografi/tokoh/data/mappers/tokoh_mapper.dart';
 import 'package:akar/features/linmas/panic/data/models/panic_model.dart';
-import 'package:akar/features/linmas/panic/domain/entities/panic_mapper.dart';
+import 'package:akar/features/linmas/panic/data/mappers/panic_mapper.dart';
 import 'package:akar/features/linmas/presensi/data/models/presensi_model.dart';
-import 'package:akar/features/linmas/presensi/domain/entities/presensi_mapper.dart';
+import 'package:akar/features/linmas/presensi/data/mappers/presensi_mapper.dart';
 import 'package:akar/features/linmas/ronda_malam/data/models/ronda_laporan_model.dart';
-import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_mapper.dart';
+import 'package:akar/features/linmas/ronda_malam/data/mappers/ronda_laporan_mapper.dart';
 import 'package:akar/features/linmas/tracking/data/models/tracking_response_model.dart';
-import 'package:akar/features/linmas/tracking/domain/entities/tracking_mapper.dart';
+import 'package:akar/features/linmas/tracking/data/mappers/tracking_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

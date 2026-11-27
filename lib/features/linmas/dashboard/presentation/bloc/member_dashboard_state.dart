@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/member_dashboard_entity.dart';
+import 'package:akar/features/linmas/dashboard/domain/entities/member_dashboard_entity.dart';
 
 abstract class MemberDashboardState extends Equatable {
   const MemberDashboardState();

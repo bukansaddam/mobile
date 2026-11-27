@@ -1,10 +1,10 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../domain/entities/location_suggestion.dart';
-import '../../domain/repositories/location_repository.dart';
-import '../datasources/location_native_datasource.dart';
-import '../datasources/location_remote_datasource.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/location_suggestion.dart';
+import 'package:akar/features/masyarakat/complaint/domain/repositories/location_repository.dart';
+import 'package:akar/features/masyarakat/complaint/data/datasources/location_native_datasource.dart';
+import 'package:akar/features/masyarakat/complaint/data/datasources/location_remote_datasource.dart';
 
 class LocationRepositoryImpl implements LocationRepository {
   final LocationRemoteDataSource remoteDataSource;

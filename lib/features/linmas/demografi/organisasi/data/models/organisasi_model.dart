@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
 
 part 'organisasi_model.freezed.dart';
 part 'organisasi_model.g.dart';

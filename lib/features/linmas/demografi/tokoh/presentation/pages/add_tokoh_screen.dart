@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 
-import '../../domain/entities/tokoh_entity.dart';
-import '../bloc/tokoh_bloc/tokoh_bloc.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_bloc/tokoh_bloc.dart';
 
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';

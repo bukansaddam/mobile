@@ -7,7 +7,7 @@ import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
 import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/widgets/bank_sampah_card.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/notification/presentation/widgets/emergency_disaster_dialog.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_empty_view.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_error_view.dart';

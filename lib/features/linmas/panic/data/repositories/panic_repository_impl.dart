@@ -1,9 +1,9 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../../domain/entities/panic_mapper.dart';
-import '../../domain/repositories/panic_repository.dart';
-import '../datasources/panic_remote_datasource.dart';
+import 'package:akar/features/linmas/panic/data/mappers/panic_mapper.dart';
+import 'package:akar/features/linmas/panic/domain/repositories/panic_repository.dart';
+import 'package:akar/features/linmas/panic/data/datasources/panic_remote_datasource.dart';
 
 class PanicRepositoryImpl implements PanicRepository {
   final PanicRemoteDatasource remoteDatasource;

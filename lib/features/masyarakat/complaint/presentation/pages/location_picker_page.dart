@@ -7,10 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../domain/entities/location_suggestion.dart';
-import '../bloc/location_picker_cubit.dart';
-import '../bloc/location_picker_state.dart';
-import '../widgets/location_search_bar_widget.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/location_suggestion.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/bloc/location_picker_bloc/location_picker_bloc.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/widgets/location_search_bar_widget.dart';
 
 class LocationPickerResult {
   final String address;
@@ -43,8 +42,13 @@ class LocationPickerPage extends StatefulWidget {
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(
-          create: (_) =>
-              sl<LocationPickerCubit>()..init(initialPosition, initialAddress),
+          create: (_) => sl<LocationPickerBloc>()
+            ..add(
+              LocationPickerInitialized(
+                initialPosition: initialPosition,
+                initialAddress: initialAddress,
+              ),
+            ),
           child: LocationPickerPage(
             initialAddress: initialAddress,
             initialPosition: initialPosition,
@@ -63,8 +67,13 @@ class LocationPickerPage extends StatefulWidget {
       context,
       MaterialPageRoute(
         builder: (context) => BlocProvider(
-          create: (_) =>
-              sl<LocationPickerCubit>()..init(initialPosition, initialAddress),
+          create: (_) => sl<LocationPickerBloc>()
+            ..add(
+              LocationPickerInitialized(
+                initialPosition: initialPosition,
+                initialAddress: initialAddress,
+              ),
+            ),
           child: LocationPickerPage(
             initialAddress: initialAddress,
             initialPosition: initialPosition,
@@ -105,7 +114,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LocationPickerCubit, LocationPickerState>(
+    return BlocConsumer<LocationPickerBloc, LocationPickerState>(
       listenWhen: (previous, current) =>
           current.animateTarget != null ||
           previous.errorMessage != current.errorMessage,
@@ -117,18 +126,22 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          context.read<LocationPickerCubit>().clearErrorMessage();
+          context.read<LocationPickerBloc>().add(
+            const LocationPickerClearErrorMessage(),
+          );
         }
 
         if (state.animateTarget != null) {
           _animateToPosition(state.animateTarget!);
-          context.read<LocationPickerCubit>().clearAnimateTarget();
+          context.read<LocationPickerBloc>().add(
+            const LocationPickerClearAnimateTarget(),
+          );
         }
       },
       builder: (context, state) {
         final colors = context.appColors;
         const pinShadow = Colors.black; // map-overlay
-        final cubit = context.read<LocationPickerCubit>();
+        final bloc = context.read<LocationPickerBloc>();
 
         return Scaffold(
           backgroundColor: colors.background,
@@ -148,11 +161,11 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                 onCameraMove: (position) {
                   _currentMapCenter = position.target;
                   if (state.suggestions.isNotEmpty) {
-                    cubit.clearSuggestions();
+                    bloc.add(const LocationPickerClearSuggestions());
                   }
                 },
                 onCameraIdle: () {
-                  cubit.onCameraIdle(_currentMapCenter);
+                  bloc.add(LocationPickerCameraIdle(_currentMapCenter));
                 },
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
@@ -171,16 +184,18 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   isSearching: state.isSearching,
                   isLoadingSuggestions: state.isLoadingSuggestions,
                   suggestions: state.suggestions,
-                  onChanged: cubit.onSearchTextChanged,
-                  onSubmitted: cubit.searchLocation,
+                  onChanged: (query) =>
+                      bloc.add(LocationPickerSearchTextChanged(query)),
+                  onSubmitted: (query) =>
+                      bloc.add(LocationPickerSearchLocation(query)),
                   onSelectSuggestion: (LocationSuggestion suggestion) {
                     FocusScope.of(context).unfocus();
                     _searchController.text = suggestion.displayName;
-                    cubit.selectSuggestion(suggestion);
+                    bloc.add(LocationPickerSuggestionSelected(suggestion));
                   },
                   onClear: () {
                     _searchController.clear();
-                    cubit.clearSuggestions();
+                    bloc.add(const LocationPickerClearSuggestions());
                   },
                 ),
               ),
@@ -241,7 +256,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   heroTag: 'recenter_gps_fab',
                   onPressed: state.isLocatingUser
                       ? null
-                      : cubit.determineUserPosition,
+                      : () => bloc.add(
+                          const LocationPickerDetermineUserPosition(),
+                        ),
                   backgroundColor: colors.surface,
                   elevation: 4,
                   child: state.isLocatingUser

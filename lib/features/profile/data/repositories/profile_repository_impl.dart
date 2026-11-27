@@ -2,7 +2,7 @@ import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
-import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/data/mappers/auth_mapper.dart';
 import 'package:akar/features/profile/data/datasources/profile_remote_datasource.dart';
 import 'package:akar/features/profile/domain/entities/update_profile_params.dart';
 import 'package:akar/features/profile/domain/repositories/profile_repository.dart';

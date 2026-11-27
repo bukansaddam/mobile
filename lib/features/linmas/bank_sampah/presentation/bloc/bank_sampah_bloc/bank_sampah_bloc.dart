@@ -155,11 +155,9 @@ class BankSampahBloc extends Bloc<BankSampahEvent, BankSampahState> {
     required this.deleteReportUsecase,
     required this.getLocationsUsecase,
     required this.addLocationUsecase,
-    OfflineQueueLocalDatasource? offlineQueue,
-    AuthLocalDatasource? authLocalDatasource,
-  }) : _offlineQueue = offlineQueue,
-       _authLocalDatasource = authLocalDatasource,
-       super(BankSampahInitial()) {
+    this._offlineQueue,
+    this._authLocalDatasource,
+  }) : super(BankSampahInitial()) {
     on<GetBankSampahReportsEvent>(_onGetReports);
     on<RefreshBankSampahReportsEvent>(_onRefreshReports);
     on<SetBankSampahFilterEvent>(_onSetFilter);

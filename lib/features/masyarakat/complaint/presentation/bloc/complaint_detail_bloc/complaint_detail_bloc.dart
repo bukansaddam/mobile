@@ -11,9 +11,8 @@ class ComplaintDetailBloc
     extends Bloc<ComplaintDetailEvent, ComplaintDetailState> {
   final GetComplaintDetailUsecase _getComplaintDetail;
 
-  ComplaintDetailBloc({required GetComplaintDetailUsecase getComplaintDetail})
-    : _getComplaintDetail = getComplaintDetail,
-      super(const ComplaintDetailInitial()) {
+  ComplaintDetailBloc({required this._getComplaintDetail})
+    : super(const ComplaintDetailInitial()) {
     on<FetchComplaintDetailEvent>(_onFetch);
   }
 

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
 
 part 'tokoh_model.freezed.dart';
 part 'tokoh_model.g.dart';

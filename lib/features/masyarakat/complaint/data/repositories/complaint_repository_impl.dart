@@ -5,7 +5,7 @@ import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/masyarakat/complaint/data/datasources/complaint_remote_datasource.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
+import 'package:akar/features/masyarakat/complaint/data/mappers/complaint_report_mapper.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 
 class ComplaintRepositoryImpl implements ComplaintRepository {

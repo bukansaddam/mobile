@@ -3,7 +3,7 @@ import 'package:akar/core/widgets/shimmer_loading.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/bloc/jaga_tanah_list_bloc/jaga_tanah_list_bloc.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_card.dart';
 import 'package:akar/features/linmas/jaga_tanah/presentation/widgets/jaga_tanah_status_view.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:flutter/material.dart';
 
 class JagaTanahBody extends StatelessWidget {

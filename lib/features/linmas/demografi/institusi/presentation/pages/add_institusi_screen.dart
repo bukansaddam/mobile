@@ -8,8 +8,8 @@ import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 
-import '../../domain/entities/institusi_entity.dart';
-import '../bloc/institusi_bloc/institusi_bloc.dart';
+import 'package:akar/features/linmas/demografi/institusi/domain/entities/institusi_entity.dart';
+import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 
 class AddInstitusiScreen extends StatefulWidget {
   final InstitusiEntity? initialInstitusi;

@@ -28,7 +28,7 @@ import 'package:akar/features/linmas/demografi/tokoh/presentation/bloc/tokoh_blo
 import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 import 'package:akar/features/linmas/demografi/institusi/presentation/bloc/institusi_bloc/institusi_bloc.dart';
 import 'package:akar/features/linmas/bank_sampah/presentation/bloc/bank_sampah_bloc/bank_sampah_bloc.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
 import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:akar/features/notifications/presentation/widgets/notification_lifecycle_listener.dart';
 import 'package:akar/features/survey/presentation/bloc/survey_bloc/survey_bloc.dart';
@@ -53,13 +53,13 @@ void main() async {
 
   unawaited(
     di.sl<FirebaseNotificationService>().initialize().catchError((e) {
-      debugPrint('Error initializing notification service: $e');
+      AppLogger.e('Error initializing notification service', e);
     }),
   );
 
   unawaited(
     BackgroundServiceHelper.initializeService().catchError((e) {
-      debugPrint('Error initializing background service: $e');
+      AppLogger.e('Error initializing background service', e);
     }),
   );
 }
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<OrganisasiBloc>(create: (_) => di.sl<OrganisasiBloc>()),
         BlocProvider<InstitusiBloc>(create: (_) => di.sl<InstitusiBloc>()),
         BlocProvider<BankSampahBloc>(create: (_) => di.sl<BankSampahBloc>()),
-        BlocProvider<MainCubit>(create: (_) => di.sl<MainCubit>()),
+        BlocProvider<MainBloc>(create: (_) => di.sl<MainBloc>()),
         BlocProvider<SurveyBloc>(create: (_) => di.sl<SurveyBloc>()),
         BlocProvider<NotificationBloc>(
           create: (_) => di.sl<NotificationBloc>(),

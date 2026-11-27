@@ -6,11 +6,11 @@ import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
-import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/data/mappers/auth_mapper.dart';
 import 'package:akar/features/auth/domain/entities/ktp_ocr_entity.dart';
-import 'package:akar/features/auth/domain/entities/ktp_ocr_mapper.dart';
+import 'package:akar/features/auth/data/mappers/ktp_ocr_mapper.dart';
 import 'package:akar/features/auth/domain/entities/otp_challenge_entity.dart';
-import 'package:akar/features/auth/domain/entities/otp_challenge_mapper.dart';
+import 'package:akar/features/auth/data/mappers/otp_challenge_mapper.dart';
 import 'package:akar/features/auth/domain/repositories/auth_repository.dart';
 import 'package:akar/features/survey/data/datasources/survey_local_datasource.dart';
 

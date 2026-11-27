@@ -1,9 +1,9 @@
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../../domain/entities/organisasi_mapper.dart';
-import '../../domain/repositories/organisasi_repository.dart';
-import '../datasources/organisasi_remote_datasource.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/mappers/organisasi_mapper.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/repositories/organisasi_repository.dart';
+import 'package:akar/features/linmas/demografi/organisasi/data/datasources/organisasi_remote_datasource.dart';
 
 class OrganisasiRepositoryImpl implements OrganisasiRepository {
   final OrganisasiRemoteDatasource remoteDatasource;

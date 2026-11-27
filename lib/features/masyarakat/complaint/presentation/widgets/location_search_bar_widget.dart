@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 
-import '../../domain/entities/location_suggestion.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/location_suggestion.dart';
 
 class LocationSearchBarWidget extends StatelessWidget {
   final TextEditingController controller;

@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/presensi_entity.dart';
-import '../repositories/presensi_repository.dart';
+import 'package:akar/features/linmas/presensi/domain/entities/presensi_entity.dart';
+import 'package:akar/features/linmas/presensi/domain/repositories/presensi_repository.dart';
 
 class SubmitPresensiUsecase {
   final PresensiRepository repository;

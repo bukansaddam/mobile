@@ -10,14 +10,14 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_bloc.dart';
 import 'package:akar/features/linmas/announcement/presentation/bloc/announcement_event.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/complaint_detail_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/create_complaint_page.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/widgets/complaint_list_widget.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/complaint_banner_card.dart';
 import 'package:akar/features/masyarakat/home/presentation/widgets/home_announcement_section.dart';
-import 'package:akar/features/masyarakat/main/presentation/bloc/main_cubit.dart';
+import 'package:akar/features/masyarakat/main/presentation/bloc/main_bloc/main_bloc.dart';
 import 'package:akar/features/masyarakat/notification/presentation/pages/disaster_emergency_call_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openCreateComplaint(BuildContext context) async {
     final result = await CreateComplaintPage.show(context);
     if (result == true && context.mounted) {
-      context.read<MainCubit>().changeTab(0);
+      context.read<MainBloc>().add(const MainTabChanged(0));
       context.read<MyComplaintListBloc>().add(
         const FetchMyComplaintsEvent(isRefresh: true),
       );
@@ -113,7 +113,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             GestureDetector(
                               onTap: () =>
-                                  context.read<MainCubit>().changeTab(3),
+                                  context.read<MainBloc>().add(
+                                    const MainTabChanged(3),
+                                  ),
                               child: Text(
                                 'Lihat Semua',
                                 style: AppTextStyles.labelMedium.copyWith(

@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-import 'audio_alarm_service.dart';
+import 'package:akar/core/services/audio_alarm_service.dart';
+import 'package:akar/utils/app_logger.dart';
 
 enum DisasterSeverity { warning, danger, critical }
 
@@ -98,7 +98,7 @@ class DisasterAlertService {
         await androidPlugin.createNotificationChannel(androidChannel);
       }
     } catch (e) {
-      debugPrint('Error initializing local notifications: $e');
+      AppLogger.e('Error initializing local notifications', e);
     }
   }
 
@@ -153,7 +153,7 @@ class DisasterAlertService {
         notificationDetails: details,
       );
     } catch (e) {
-      debugPrint('Local notification error: $e');
+      AppLogger.e('Local notification error', e);
     }
   }
 
@@ -260,11 +260,11 @@ class DisasterAlertService {
         triggerAlert(event);
       });
 
-      debugPrint(
-        '✅ Native Exact System Alarm Scheduled for $delaySeconds seconds!',
+      AppLogger.i(
+        'Native Exact System Alarm Scheduled for $delaySeconds seconds!',
       );
     } catch (e) {
-      debugPrint('Native AlarmManager Schedule Error, fallback to timer: $e');
+      AppLogger.w('Native AlarmManager Schedule Error, fallback to timer: $e');
       Timer(Duration(seconds: delaySeconds), () {
         triggerAlert(event);
       });

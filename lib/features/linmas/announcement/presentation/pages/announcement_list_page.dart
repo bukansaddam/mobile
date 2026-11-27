@@ -162,29 +162,31 @@ class _AnnouncementListViewState extends State<AnnouncementListView> {
             return RefreshIndicator(
               onRefresh: _onRefresh,
               color: colors.primary,
-              child: ListView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  const SizedBox(height: 120),
-                  Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.campaign_outlined,
-                          size: 48,
-                          color: colors.textHint,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Tidak ada pengumuman',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colors.textSecondary,
-                            fontWeight: FontWeight.w600,
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.campaign_outlined,
+                            size: 48,
+                            color: colors.textHint,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+                          Text(
+                            'Tidak ada pengumuman',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: colors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

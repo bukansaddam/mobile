@@ -1,4 +1,4 @@
-import '../models/presensi_model.dart';
+import 'package:akar/features/linmas/presensi/data/models/presensi_model.dart';
 
 abstract class PresensiRemoteDatasource {
   Future<PresensiDataModel> submitPresensi(PresensiDataModel model);

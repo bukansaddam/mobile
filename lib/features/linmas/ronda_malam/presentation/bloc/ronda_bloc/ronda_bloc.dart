@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:akar/core/offline/offline_queue_item.dart';
 import 'package:akar/core/offline/offline_queue_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
-import 'package:akar/features/linmas/ronda_malam/domain/entities/ronda_laporan_mapper.dart';
+import 'package:akar/features/linmas/ronda_malam/data/mappers/ronda_laporan_mapper.dart';
 import 'package:akar/features/linmas/ronda_malam/domain/usecases/submit_ronda_laporan_usecase.dart';
 import 'package:akar/utils/app_logger.dart';
 

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../domain/entities/bank_sampah_location_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
 
 part 'bank_sampah_location_model.freezed.dart';
 part 'bank_sampah_location_model.g.dart';

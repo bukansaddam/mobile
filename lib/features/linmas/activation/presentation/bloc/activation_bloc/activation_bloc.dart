@@ -10,7 +10,7 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_pending_report_local_datasource.dart';
 import 'package:akar/features/linmas/activation/data/models/pending_activation_report_model.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_run_mapper.dart';
+import 'package:akar/features/linmas/activation/data/mappers/activation_run_mapper.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_submission_entity.dart';
 import 'package:akar/features/linmas/activation/domain/usecases/get_activation_runs_usecase.dart';
 import 'package:akar/features/linmas/activation/domain/usecases/get_activation_submissions_usecase.dart';

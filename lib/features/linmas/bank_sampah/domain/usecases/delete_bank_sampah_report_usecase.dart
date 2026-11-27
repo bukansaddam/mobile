@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../repositories/bank_sampah_repository.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
 
 class DeleteBankSampahReportUsecase {
   final BankSampahRepository repository;

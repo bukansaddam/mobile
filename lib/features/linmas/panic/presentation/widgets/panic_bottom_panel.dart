@@ -3,7 +3,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
 
-import 'panic_member_detail_sheet.dart';
+import 'package:akar/features/linmas/panic/presentation/widgets/panic_member_detail_sheet.dart';
 
 class PanicBottomPanel extends StatelessWidget {
   final String fullAddress;

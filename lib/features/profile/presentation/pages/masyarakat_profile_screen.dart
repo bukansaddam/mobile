@@ -11,7 +11,7 @@ import 'package:akar/core/widgets/theme_mode_selector_tile.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
 import 'package:akar/features/profile/presentation/bloc/profile_bloc/profile_bloc.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/my_complaint_list_bloc/my_complaint_list_bloc.dart';
 import 'package:akar/features/permissions/presentation/widgets/profile_permissions_sheet.dart';
 import 'package:akar/features/profile/presentation/widgets/profile_settings_group.dart';

@@ -127,7 +127,7 @@ class _SplashScreenState extends State<SplashScreen>
         context.read<TrackingBloc>().add(StopTrackingEvent());
         context.goNamed(AppRouter.permissionSetup);
       } else if (isOfficer) {
-        context.read<TrackingBloc>().add(StartTrackingEvent());
+        context.read<TrackingBloc>().add(const StartTrackingEvent());
         context.goNamed(AppRouter.main);
       } else {
         context.read<TrackingBloc>().add(StopTrackingEvent());

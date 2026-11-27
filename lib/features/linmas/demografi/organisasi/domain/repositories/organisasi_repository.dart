@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
 
 abstract class OrganisasiRepository {
   Future<Either<Failure, OrganisasiPaginatedEntity>> getOrganisasiList({

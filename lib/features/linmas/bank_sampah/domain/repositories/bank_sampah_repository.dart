@@ -1,7 +1,7 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/bank_sampah_location_entity.dart';
-import '../entities/bank_sampah_report_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_location_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
 
 abstract class BankSampahRepository {
   Future<Either<Failure, BankSampahReportsDataEntity>> getReports({

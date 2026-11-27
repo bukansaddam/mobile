@@ -17,9 +17,8 @@ class ComplaintListBloc extends Bloc<ComplaintListEvent, ComplaintListState> {
   String? _category;
   String? _query;
 
-  ComplaintListBloc({required GetPublicComplaintsUsecase getComplaints})
-    : _getComplaints = getComplaints,
-      super(const ComplaintListState()) {
+  ComplaintListBloc({required this._getComplaints})
+    : super(const ComplaintListState()) {
     on<FetchComplaintsEvent>(_onFetch);
     on<LoadMoreComplaintsEvent>(_onLoadMore);
   }

@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/tokoh_entity.dart';
+import 'package:akar/features/linmas/demografi/tokoh/domain/entities/tokoh_entity.dart';
 
 abstract class TokohRepository {
   Future<Either<Failure, TokohPaginatedEntity>> getTokohList({

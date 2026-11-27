@@ -1,6 +1,6 @@
 import 'package:akar/core/errors/failures.dart';
 
-import '../entities/panic_entity.dart';
+import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
 
 abstract class PanicRepository {
   Future<Either<Failure, List<NearbyMemberEntity>>> getNearbyMembers({

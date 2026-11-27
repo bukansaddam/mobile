@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:akar/features/auth/data/models/auth_model.dart';
-import 'package:akar/features/auth/domain/entities/auth_mapper.dart';
+import 'package:akar/features/auth/data/mappers/auth_mapper.dart';
 
 void main() {
   group('UserModel points parsing tests', () {

@@ -12,7 +12,7 @@ import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/core/widgets/fullscreen_image_viewer.dart';
 import 'package:akar/core/widgets/fullscreen_video_viewer.dart';
 import 'package:akar/features/linmas/activation/presentation/pages/camera_capture_screen.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_entity.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/bloc/create_complaint_bloc/create_complaint_bloc.dart';
 import 'package:akar/features/masyarakat/complaint/presentation/pages/location_picker_page.dart';
@@ -1149,29 +1149,33 @@ class _CreateComplaintPageState extends State<CreateComplaintPage> {
 
                 SizedBox(
                   height: 104,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.only(top: 8, bottom: 6),
-                    children: [
-                      if (_attachments.length < _maxAttachments) ...[
-                        _buildAddTile(
-                          icon: Icons.camera_alt_rounded,
-                          label: 'Foto',
-                          onTap: _addPhoto,
-                        ),
-                        if (!_hasVideo)
+                  child: Builder(
+                    builder: (context) {
+                      final tiles = <Widget>[
+                        if (_attachments.length < _maxAttachments) ...[
                           _buildAddTile(
-                            icon: Icons.videocam_rounded,
-                            label: 'Video',
-                            onTap: _addVideo,
+                            icon: Icons.camera_alt_rounded,
+                            label: 'Foto',
+                            onTap: _addPhoto,
                           ),
-                      ],
-                      ...List.generate(
-                        _attachments.length,
-                        _buildAttachmentTile,
-                      ),
-                    ],
+                          if (!_hasVideo)
+                            _buildAddTile(
+                              icon: Icons.videocam_rounded,
+                              label: 'Video',
+                              onTap: _addVideo,
+                            ),
+                        ],
+                        for (int i = 0; i < _attachments.length; i++)
+                          _buildAttachmentTile(i),
+                      ];
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.only(top: 8, bottom: 6),
+                        itemCount: tiles.length,
+                        itemBuilder: (_, index) => tiles[index],
+                      );
+                    },
                   ),
                 ),
 

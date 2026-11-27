@@ -24,15 +24,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   int _fetchGeneration = 0;
 
   NotificationBloc({
-    required GetNotificationsUsecase getNotifications,
-    required GetNotificationCountUsecase getNotificationCount,
-    required MarkNotificationReadUsecase markNotificationRead,
-    required MarkAllNotificationsReadUsecase markAllNotificationsRead,
-  }) : _getNotifications = getNotifications,
-       _getNotificationCount = getNotificationCount,
-       _markNotificationRead = markNotificationRead,
-       _markAllNotificationsRead = markAllNotificationsRead,
-       super(const NotificationState()) {
+    required this._getNotifications,
+    required this._getNotificationCount,
+    required this._markNotificationRead,
+    required this._markAllNotificationsRead,
+  }) : super(const NotificationState()) {
     on<FetchNotificationCountEvent>(_onFetchCount);
     on<FetchNotificationsEvent>(_onFetchNotifications);
     on<LoadMoreNotificationsEvent>(_onLoadMore);

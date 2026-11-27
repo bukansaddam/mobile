@@ -1,5 +1,5 @@
 import 'package:akar/features/linmas/activation/data/models/activation_submission_model.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_submission_mapper.dart';
+import 'package:akar/features/linmas/activation/data/mappers/activation_submission_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

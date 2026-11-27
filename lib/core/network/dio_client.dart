@@ -1,11 +1,11 @@
 import 'package:akar/core/constants/app_constants.dart';
 import 'package:dio/dio.dart';
 
-import '../constants/api_constants.dart';
+import 'package:akar/core/constants/api_constants.dart';
 import 'package:akar/utils/app_logger.dart';
-import 'auth_interceptor.dart';
-import 'logging_interceptor.dart';
-import 'token_refresh_interceptor.dart';
+import 'package:akar/core/network/auth_interceptor.dart';
+import 'package:akar/core/network/logging_interceptor.dart';
+import 'package:akar/core/network/token_refresh_interceptor.dart';
 
 class DioClient {
   DioClient._();

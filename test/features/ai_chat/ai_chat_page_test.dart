@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/theme/app_theme.dart';
+import 'package:akar/features/ai_chat/domain/entities/ai_chat_cancellation_token.dart';
 import 'package:akar/features/ai_chat/domain/entities/ai_chat_entities.dart';
 import 'package:akar/features/ai_chat/domain/repositories/ai_chat_repository.dart';
 import 'package:akar/features/ai_chat/domain/usecases/ai_chat_usecases.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:akar/features/ai_chat/presentation/bloc/ai_chat_event.dart';
 import 'package:akar/features/ai_chat/presentation/pages/ai_chat_page.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,7 +27,7 @@ class _TestAiChatRepo implements AiChatRepository {
   Future<Either<Failure, AiChatSendResultEntity>> sendMessage({
     int? sessionId,
     required String message,
-    CancelToken? cancelToken,
+    AiChatCancellationToken? cancelToken,
   }) async {
     sentMessages.add(message);
     if (onSend != null) {

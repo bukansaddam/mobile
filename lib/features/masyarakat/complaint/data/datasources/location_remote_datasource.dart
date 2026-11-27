@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-import '../../domain/entities/location_suggestion.dart';
+import 'package:akar/features/masyarakat/complaint/domain/entities/location_suggestion.dart';
 
 abstract class LocationRemoteDataSource {
   Future<List<LocationSuggestion>> fetchSuggestions(String query);

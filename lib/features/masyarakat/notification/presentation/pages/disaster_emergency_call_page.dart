@@ -7,6 +7,7 @@ import 'package:akar/core/di/injection_container.dart';
 import 'package:akar/core/services/audio_alarm_service.dart';
 import 'package:akar/core/services/disaster_alert_service.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
+import 'package:akar/utils/app_logger.dart';
 
 typedef DisasterEmergencyCallPage = DisasterEmergencyWarningPage;
 typedef MemberEmergencyCallPage = DisasterEmergencyWarningPage;
@@ -119,7 +120,7 @@ class _DisasterEmergencyWarningPageState
           await launchUrl(uri, mode: LaunchMode.externalApplication);
         }
       } catch (e) {
-        debugPrint('Error launching maps: $e');
+        AppLogger.w('Error launching maps: $e');
       }
     }
 
@@ -148,7 +149,7 @@ class _DisasterEmergencyWarningPageState
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      debugPrint('Error launching WhatsApp: $e');
+      AppLogger.w('Error launching WhatsApp: $e');
     }
   }
 
@@ -164,7 +165,7 @@ class _DisasterEmergencyWarningPageState
         await launchUrl(uri);
       }
     } catch (e) {
-      debugPrint('Error launching phone dialer: $e');
+      AppLogger.w('Error launching phone dialer: $e');
     }
   }
 

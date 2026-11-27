@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
+import 'package:akar/features/linmas/activation/presentation/extensions/activation_activity_ui_extension.dart';
 
 part 'analisis_event.dart';
 part 'analisis_state.dart';

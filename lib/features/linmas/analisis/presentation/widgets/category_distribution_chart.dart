@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
+import 'package:akar/features/linmas/activation/presentation/extensions/activation_activity_ui_extension.dart';
 import 'package:akar/features/linmas/analisis/presentation/bloc/analisis_bloc/analisis_bloc.dart';
 import 'package:flutter/material.dart';
 

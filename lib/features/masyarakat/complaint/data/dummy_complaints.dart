@@ -1,4 +1,4 @@
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 
 /// Daftar pengaduan khusus milik pengguna (Pengaduan Saya)
 final List<ComplaintItem> dummyMyComplaints = [

@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 
-import '../../domain/entities/bank_sampah_location_mapper.dart';
-import '../../domain/entities/bank_sampah_report_entity.dart';
-import '../../domain/entities/bank_sampah_report_mapper.dart';
-import '../../domain/repositories/bank_sampah_repository.dart';
-import '../datasources/bank_sampah_remote_datasource.dart';
+import 'package:akar/features/linmas/bank_sampah/data/mappers/bank_sampah_location_mapper.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/data/mappers/bank_sampah_report_mapper.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/repositories/bank_sampah_repository.dart';
+import 'package:akar/features/linmas/bank_sampah/data/datasources/bank_sampah_remote_datasource.dart';
 
 class BankSampahRepositoryImpl implements BankSampahRepository {
   final BankSampahRemoteDataSource remoteDataSource;

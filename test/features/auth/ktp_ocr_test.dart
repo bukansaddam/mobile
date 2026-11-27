@@ -8,7 +8,7 @@ import 'package:akar/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:akar/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:akar/features/auth/data/models/ktp_ocr_model.dart';
 import 'package:akar/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:akar/features/auth/domain/entities/ktp_ocr_mapper.dart';
+import 'package:akar/features/auth/data/mappers/ktp_ocr_mapper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -8,7 +8,7 @@ import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_categ
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_detail_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/entities/jaga_tanah_region_entity.dart';
 import 'package:akar/features/linmas/jaga_tanah/domain/repositories/jaga_tanah_repository.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
+import 'package:akar/features/masyarakat/complaint/data/mappers/complaint_report_mapper.dart';
 import 'package:akar/utils/app_logger.dart';
 
 class JagaTanahRepositoryImpl implements JagaTanahRepository {

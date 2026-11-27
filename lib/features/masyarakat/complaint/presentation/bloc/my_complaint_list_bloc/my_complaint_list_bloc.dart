@@ -20,11 +20,9 @@ class MyComplaintListBloc
   int _generation = 0;
 
   MyComplaintListBloc({
-    required GetMyComplaintsUsecase getMyComplaints,
-    GetIncidentCategoriesUsecase? getIncidentCategories,
-  }) : _getMyComplaints = getMyComplaints,
-       _getIncidentCategories = getIncidentCategories,
-       super(const MyComplaintListState()) {
+    required this._getMyComplaints,
+    this._getIncidentCategories,
+  }) : super(const MyComplaintListState()) {
     on<FetchMyComplaintsEvent>(_onFetch);
     on<LoadMoreMyComplaintsEvent>(_onLoadMore);
     on<SearchMyComplaintsEvent>(_onSearch);

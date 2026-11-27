@@ -6,7 +6,7 @@ import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
-import '../../domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
 
 class OrganisasiDetailSheet extends StatelessWidget {
   final OrganisasiEntity organisasi;

@@ -7,8 +7,8 @@ import 'package:akar/core/offline/offline_master_cache_local_datasource.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/core/utils/image_compress_helper.dart';
 
-import '../models/bank_sampah_location_model.dart';
-import '../models/bank_sampah_report_model.dart';
+import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_location_model.dart';
+import 'package:akar/features/linmas/bank_sampah/data/models/bank_sampah_report_model.dart';
 
 abstract class BankSampahRemoteDataSource {
   Future<BankSampahMyDepositsResponseModel> getMyDeposits({
@@ -41,9 +41,8 @@ class BankSampahRemoteDataSourceImpl extends BaseRemoteDataSource
 
   BankSampahRemoteDataSourceImpl({
     Dio? dio,
-    OfflineMasterCacheLocalDatasource? masterCache,
-  }) : _dioOverride = dio,
-       _masterCache = masterCache;
+    this._masterCache,
+  }) : _dioOverride = dio;
 
   @override
   Dio get dio => _dioOverride ?? super.dio;

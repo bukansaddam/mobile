@@ -6,8 +6,8 @@ import 'package:akar/core/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/entities/bank_sampah_report_entity.dart';
-import 'bank_sampah_detail_sheet.dart';
+import 'package:akar/features/linmas/bank_sampah/domain/entities/bank_sampah_report_entity.dart';
+import 'package:akar/features/linmas/bank_sampah/presentation/widgets/bank_sampah_detail_sheet.dart';
 
 class BankSampahCard extends StatelessWidget {
   final BankSampahReportEntity report;

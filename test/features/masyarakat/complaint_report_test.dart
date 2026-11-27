@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:akar/core/errors/failures.dart';
 import 'package:akar/features/masyarakat/complaint/data/models/complaint_report_model.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_category_option.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_report_mapper.dart';
+import 'package:akar/features/masyarakat/complaint/data/mappers/complaint_report_mapper.dart';
 import 'package:akar/features/masyarakat/complaint/domain/repositories/complaint_repository.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_complaint_detail_usecase.dart';
 import 'package:akar/features/masyarakat/complaint/domain/usecases/get_incident_categories_usecase.dart';

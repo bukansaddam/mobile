@@ -61,9 +61,8 @@ class ComplaintRemoteDatasourceImpl extends BaseRemoteDataSource
 
   ComplaintRemoteDatasourceImpl({
     Dio? dio,
-    OfflineMasterCacheLocalDatasource? masterCache,
-  }) : _dioOverride = dio,
-       _masterCache = masterCache;
+    this._masterCache,
+  }) : _dioOverride = dio;
 
   @override
   Dio get dio => _dioOverride ?? super.dio;

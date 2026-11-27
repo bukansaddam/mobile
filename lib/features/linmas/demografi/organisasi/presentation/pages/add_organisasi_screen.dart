@@ -8,8 +8,8 @@ import 'package:akar/core/widgets/app_page_bar.dart';
 import 'package:akar/core/widgets/app_toast.dart';
 import 'package:akar/features/linmas/demografi/core/constants/demografi_constants.dart';
 
-import '../../domain/entities/organisasi_entity.dart';
-import '../bloc/organisasi_bloc/organisasi_bloc.dart';
+import 'package:akar/features/linmas/demografi/organisasi/domain/entities/organisasi_entity.dart';
+import 'package:akar/features/linmas/demografi/organisasi/presentation/bloc/organisasi_bloc/organisasi_bloc.dart';
 
 class AddOrganisasiScreen extends StatefulWidget {
   final OrganisasiEntity? initialOrganisasi;

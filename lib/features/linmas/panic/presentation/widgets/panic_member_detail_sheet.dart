@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 
-import '../../domain/entities/panic_entity.dart';
+import 'package:akar/features/linmas/panic/domain/entities/panic_entity.dart';
 
 class PanicMemberDetailSheet extends StatelessWidget {
   final NearbyMemberEntity member;

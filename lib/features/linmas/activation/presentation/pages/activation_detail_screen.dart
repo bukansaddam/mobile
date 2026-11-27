@@ -14,6 +14,7 @@ import 'package:akar/core/theme/app_color_scheme.dart';
 import 'package:akar/core/theme/app_text_styles.dart';
 import 'package:akar/core/widgets/app_dialogs.dart';
 import 'package:akar/features/linmas/activation/domain/entities/activation_activity.dart';
+import 'package:akar/features/linmas/activation/presentation/extensions/activation_activity_ui_extension.dart';
 import 'package:akar/features/linmas/activation/presentation/bloc/activation_bloc/activation_bloc.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/activation_detail_modal.dart';
 import 'package:akar/features/linmas/activation/presentation/widgets/add_report_bottom_sheet.dart';

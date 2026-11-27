@@ -1,7 +1,7 @@
 import 'package:akar/core/routes/app_router.dart';
 import 'package:akar/features/auth/domain/entities/auth_entity.dart';
 import 'package:akar/features/auth/presentation/bloc/auth_bloc/auth_bloc.dart';
-import 'package:akar/features/masyarakat/complaint/domain/entities/complaint_item.dart';
+import 'package:akar/features/masyarakat/complaint/presentation/models/complaint_item.dart';
 import 'package:akar/features/notifications/domain/entities/app_notification_entity.dart';
 import 'package:akar/features/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
 import 'package:akar/features/notifications/presentation/pages/notification_page.dart';

@@ -4,8 +4,8 @@ import 'package:akar/core/errors/failures.dart';
 import 'package:akar/core/utils/error_utils.dart';
 import 'package:akar/core/utils/file_security_utils.dart';
 import 'package:akar/features/linmas/activation/data/datasources/activation_remote_datasource.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_run_mapper.dart';
-import 'package:akar/features/linmas/activation/domain/entities/activation_submission_mapper.dart';
+import 'package:akar/features/linmas/activation/data/mappers/activation_run_mapper.dart';
+import 'package:akar/features/linmas/activation/data/mappers/activation_submission_mapper.dart';
 import 'package:akar/features/linmas/activation/domain/repositories/activation_repository.dart';
 
 class ActivationRepositoryImpl implements ActivationRepository {
